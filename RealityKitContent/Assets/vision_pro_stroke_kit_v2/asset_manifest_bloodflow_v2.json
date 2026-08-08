@@ -1,0 +1,215 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v2",
+  "module": "Generic cerebral blood-flow teaching assets",
+  "version": "0.3.0-bloodflow",
+  "generated_with": "5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "quantitative_hemodynamics": false,
+  "cfd_validated": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "assets": [
+    {
+      "id": "artery_wall_cutaway_v2",
+      "title": "Magnified layered artery-wall cutaway",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Three-layer, longitudinally opened artery wall designed to reveal the lumen. Layer thicknesses are exaggerated.",
+      "triangle_count": 20508,
+      "dimensions_m": [
+        0.160017,
+        0.026892,
+        0.028784
+      ],
+      "usdc": "exports/usdc/artery_wall_cutaway_v2.usdc",
+      "usdz": "exports/usdz/artery_wall_cutaway_v2.usdz",
+      "usdz_bytes": 6282219,
+      "usdz_sha256": "53e769258bc78f349dfa43261f18757e5c608b4b88f26f64135688a68f1f10b9",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "artery_interior_bloodflow_v2",
+      "title": "Illustrative lumen blood, cells, and flow cues",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Transparent blood-volume cue with magnified RBCs, emissive streamlines, and direction arrows.",
+      "triangle_count": 16170,
+      "dimensions_m": [
+        0.158866,
+        0.023156,
+        0.022033
+      ],
+      "usdc": "exports/usdc/artery_interior_bloodflow_v2.usdc",
+      "usdz": "exports/usdz/artery_interior_bloodflow_v2.usdz",
+      "usdz_bytes": 259920,
+      "usdz_sha256": "c44bbfc29c43d029c6221ea48efc897280f5738f95913e4749001496d69953fc",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "artery_cutaway_complete_v2",
+      "title": "Complete magnified artery cutaway teaching model",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Complete magnified artery cutaway combining the wall, lumen, cells, and flow-direction cues.",
+      "triangle_count": 36678,
+      "dimensions_m": [
+        0.160017,
+        0.026892,
+        0.028784
+      ],
+      "usdc": "exports/usdc/artery_cutaway_complete_v2.usdc",
+      "usdz": "exports/usdz/artery_cutaway_complete_v2.usdz",
+      "usdz_bytes": 6539717,
+      "usdz_sha256": "d8c8dc03ce6f430153c0fb764308077a8ddb30c64cd74749c1cee1e4871f22f9",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "circle_of_willis_flow_overlay_v2",
+      "title": "Conceptual Circle-of-Willis and major cerebral-flow overlay",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Simplified route overlay in the v2 anatomy coordinate frame for placement over the registered arterial model.",
+      "triangle_count": 10392,
+      "dimensions_m": [
+        0.13959,
+        0.013266,
+        0.16528
+      ],
+      "usdc": "exports/usdc/circle_of_willis_flow_overlay_v2.usdc",
+      "usdz": "exports/usdz/circle_of_willis_flow_overlay_v2.usdz",
+      "usdz_bytes": 475177,
+      "usdz_sha256": "7aa5442f0d8eb6a1fb14b8b8f046c39040501c7df41589f554f1d8d90f845e7a",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "red_blood_cells_closeup_v2",
+      "title": "Magnified biconcave red-blood-cell close-up",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Patient-facing magnified biconcave RBC group with a highlighted hero cell.",
+      "triangle_count": 41984,
+      "dimensions_m": [
+        0.128034,
+        0.091325,
+        0.04432
+      ],
+      "usdc": "exports/usdc/red_blood_cells_closeup_v2.usdc",
+      "usdz": "exports/usdz/red_blood_cells_closeup_v2.usdz",
+      "usdz_bytes": 228694,
+      "usdz_sha256": "8b066cb38dfca75ffcb3aaa4b393640099cf626101e218e4ebfe119caced88f4",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "microcirculation_arterial_venous_v2",
+      "title": "Arteriole-capillary-venule teaching vignette",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Magnified transition from arteriole through a simplified capillary bed to venule, including conceptual cell transit.",
+      "triangle_count": 22072,
+      "dimensions_m": [
+        0.211339,
+        0.068286,
+        0.018416
+      ],
+      "usdc": "exports/usdc/microcirculation_arterial_venous_v2.usdc",
+      "usdz": "exports/usdz/microcirculation_arterial_venous_v2.usdz",
+      "usdz_bytes": 375857,
+      "usdz_sha256": "2b041b7b22224754b1b66d45bc597e986cb96fb71c31ac84ff3f9dda6a72681c",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cerebral_bloodflow_animation_v2",
+      "title": "Baked conceptual cerebral-flow marker animation",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Four-second baked transform animation of glowing markers following a posterior-to-right-MCA teaching route.",
+      "triangle_count": 5128,
+      "dimensions_m": [
+        0.070845,
+        0.01311,
+        0.13256
+      ],
+      "usdc": "exports/usdc/cerebral_bloodflow_animation_v2.usdc",
+      "usdz": "exports/usdz/cerebral_bloodflow_animation_v2.usdz",
+      "usdz_bytes": 192931,
+      "usdz_sha256": "240895d66f1f44d406767096c2070f9789449334d36ffeca5d81884c11473820",
+      "animated": true,
+      "animation_frames": [
+        1,
+        121
+      ],
+      "animation_fps": 30,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cerebral_bloodflow_teaching_set_v2",
+      "title": "Combined cerebral blood-flow teaching set",
+      "module": "cerebral_bloodflow_v2",
+      "description": "Static comparison layout containing the cutaway, cerebral-flow overlay, RBC close-up, and microcirculation vignette.",
+      "triangle_count": 111126,
+      "dimensions_m": [
+        0.3906,
+        0.176039,
+        0.16528
+      ],
+      "usdc": "exports/usdc/cerebral_bloodflow_teaching_set_v2.usdc",
+      "usdz": "exports/usdz/cerebral_bloodflow_teaching_set_v2.usdz",
+      "usdz_bytes": 7609794,
+      "usdz_sha256": "9b2ffde840caa0eaff5a90bd3f472c78c8c39ad6f9d0a19c5a6fc451f1052990",
+      "animated": false,
+      "animation_frames": null,
+      "animation_fps": null,
+      "patient_specific": false,
+      "quantitative_hemodynamics": false,
+      "cfd_validated": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "warnings": [
+    "Conceptual visualization only: not CFD and not a quantitative hemodynamics simulation.",
+    "Not patient-specific and not derived from CTA, MRA, DSA, perfusion imaging, Doppler, pressure, or flow measurements.",
+    "Flow speed, particle timing, streamline placement, arrow spacing, vessel-wall thickness, and cell density are illustrative.",
+    "The cool venous hue is an interface convention; venous blood is not literally blue.",
+    "Do not use for diagnosis, treatment planning, navigation, perfusion assessment, device selection, procedural rehearsal, or outcome prediction.",
+    "Anatomy, laterality, terminology, color language, and the patient-facing sequence require specialist and patient-communications review."
+  ],
+  "source_and_registration": {
+    "geometry_origin": "Custom procedural educational geometry",
+    "flow_overlay_frame": "Designed in the same real-world metre-scale origin frame as the v2 registered head assets",
+    "arterial_reference": "Existing Z-Anatomy/BodyParts3D cerebral arterial asset used only as a visual registration reference; no source mesh is duplicated in this module"
+  }
+}

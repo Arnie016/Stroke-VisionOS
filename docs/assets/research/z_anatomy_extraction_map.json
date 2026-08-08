@@ -1,0 +1,1013 @@
+{
+  "schema_version": 1,
+  "source_blend": "not-distributed/Z-Anatomy/Startup.blend",
+  "source_scene_unit": {
+    "system": "METRIC",
+    "scale_length": 1.0
+  },
+  "groups": {
+    "cerebral_cortex": {
+      "object_count": 126,
+      "types": {
+        "MESH": 126
+      },
+      "vertices_evaluated": 56082,
+      "polygons_evaluated": 102586,
+      "combined_bounds_m": {
+        "min": [
+          -0.068887,
+          -0.081567,
+          1.581789
+        ],
+        "max": [
+          0.068887,
+          0.099132,
+          1.699635
+        ],
+        "dimensions": [
+          0.137774,
+          0.180699,
+          0.117846
+        ]
+      },
+      "role": "Visible cerebral cortex, tiled into gyri/sulci and lobar regions.",
+      "selection": {
+        "direct_collection": "Neo-cortex"
+      },
+      "processing_notes": "Preserve every tile and shared transforms; join only after material remap. Recalculate normals and weld only coincident borders with a conservative threshold.",
+      "target_lod_polygons": {
+        "high": [
+          75000,
+          105000
+        ],
+        "medium": [
+          35000,
+          55000
+        ],
+        "low": [
+          12000,
+          22000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        " Posterior transverse collateral sulcus.l",
+        " Posterior transverse collateral sulcus.r",
+        "Angular gyrus.l",
+        "Angular gyrus.r",
+        "Anterior occipital sulcus*.l",
+        "Anterior occipital sulcus*.r",
+        "Calcarine sulcus.l",
+        "Calcarine sulcus.r",
+        "Central sulcus.l",
+        "Central sulcus.r",
+        "Cingulate gyrus (Posteroventral part*).l",
+        "Cingulate gyrus (Posteroventral part*).r",
+        "Cingulate gyrus and sulcus (Middle anterior part).l",
+        "Cingulate gyrus and sulcus (Middle anterior part).r",
+        "Cingulate gyrus and sulcus (Middle posterior part).l",
+        "Cingulate gyrus and sulcus (Middle posterior part).r",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).l",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).r",
+        "Cingulate sulcus (Marginal part*).l",
+        "Cingulate sulcus (Marginal part*).r",
+        "Circular sulcus of insula.l",
+        "Circular sulcus of insula.r",
+        "Collateral sulcus.l",
+        "Collateral sulcus.r",
+        "Cuneus.l",
+        "Cuneus.r",
+        "Inferior frontal sulcus.l",
+        "Inferior frontal sulcus.r",
+        "Inferior occipital gyrus and sulcus*.l",
+        "Inferior occipital gyrus and sulcus*.r",
+        "Inferior temporal gyrus.l",
+        "Inferior temporal gyrus.r",
+        "Inferior temporal sulcus.l",
+        "Inferior temporal sulcus.r",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).l",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).r",
+        "Intraparietal sulcus.l",
+        "Intraparietal sulcus.r",
+        "Lat_Fis-ant-Horizont.l",
+        "Lat_Fis-ant-Horizont.r",
+        "Lat_Fis-ant-Vertical.l",
+        "Lat_Fis-ant-Vertical.r",
+        "Lat_Fis-post.l",
+        "Lat_Fis-post.r",
+        "Lateral occipital gyrus (Middle occipital gyrus*).l",
+        "Lateral occipital gyrus (Middle occipital gyrus*).r",
+        "Lateral occipitotemporal gyrus.l",
+        "Lateral occipitotemporal gyrus.r",
+        "Lingual gyrus.l",
+        "Lingual gyrus.r",
+        "Lunate sulcus.l",
+        "Lunate sulcus.r",
+        "Medial occipitotemporal gyrus (Parahippocampal*).l",
+        "Medial occipitotemporal gyrus (Parahippocampal*).r",
+        "Middle frontal gyrus.l",
+        "Middle frontal gyrus.r",
+        "Middle temporal gyrus.l",
+        "Middle temporal gyrus.r",
+        "Occipital pole.l",
+        "Occipital pole.r",
+        "Occipitotemporal sulcus (Lateral part*).l",
+        "Occipitotemporal sulcus (Lateral part*).r",
+        "Olfactory sulcus.l",
+        "Olfactory sulcus.r",
+        "Opercular part of inferior frontal gyrus.l",
+        "Opercular part of inferior frontal gyrus.r",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).l",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).r",
+        "Orbital gyri.l",
+        "Orbital gyri.r",
+        "Orbital part of  inferior frontal gyrus.l",
+        "Orbital part of  inferior frontal gyrus.r",
+        "Orbital sulci (H-shaped orbital sulci*).l",
+        "Orbital sulci (H-shaped orbital sulci*).r",
+        "Orbital sulci (Lateral Orbital sulcus*).l",
+        "Orbital sulci (Lateral Orbital sulcus*).r",
+        "Paracentral gyrus and sulcus*.l",
+        "Paracentral gyrus and sulcus*.r",
+        "Paracentral sulcus.l",
+        "Paracentral sulcus.r",
+        "Parieto-occipital sulcus.l",
+        "Parieto-occipital sulcus.r",
+        "Postcentral gyrus.l",
+        "Postcentral gyrus.r",
+        "Postcentral sulcus.l",
+        "Postcentral sulcus.r",
+        "Precentral gyrus.l",
+        "Precentral gyrus.r",
+        "Precentral sulcus (inferior part)*.l",
+        "Precentral sulcus (inferior part)*.r",
+        "Precentral sulcus (Superior part)*.l",
+        "Precentral sulcus (Superior part)*.r",
+        "Precuneus.l",
+        "Precuneus.r",
+        "Straight gyrus (Gyrus rectus).l",
+        "Straight gyrus (Gyrus rectus).r",
+        "Subparietal sulcus.l",
+        "Subparietal sulcus.r",
+        "Sulcus interm_prim-Jensen.l",
+        "Sulcus interm_prim-Jensen.r",
+        "Superior frontal gyrus.l",
+        "Superior frontal gyrus.r",
+        "Superior frontal sulcus.l",
+        "Superior frontal sulcus.r",
+        "Superior occipital gyri.l",
+        "Superior occipital gyri.r",
+        "Superior parietal lobule.l",
+        "Superior parietal lobule.r",
+        "Superior temporal gyrus (Lateral part).l",
+        "Superior temporal gyrus (Lateral part).r",
+        "Superior temporal sulcus.l",
+        "Superior temporal sulcus.r",
+        "Supramarginal gyrus.l",
+        "Supramarginal gyrus.r",
+        "Temporal plane.l",
+        "Temporal plane.r",
+        "Temporal pole.l",
+        "Temporal pole.r",
+        "Transverse frontopolar gyrus and sulcus*.l",
+        "Transverse frontopolar gyrus and sulcus*.r",
+        "Transverse occipital sulcus.l",
+        "Transverse occipital sulcus.r",
+        "Transverse temporal gyri.l",
+        "Transverse temporal gyri.r",
+        "Triangular part of inferior frontal gyrus.l",
+        "Triangular part of inferior frontal gyrus.r"
+      ]
+    },
+    "cerebellum": {
+      "object_count": 33,
+      "types": {
+        "MESH": 33
+      },
+      "vertices_evaluated": 75866,
+      "polygons_evaluated": 150509,
+      "combined_bounds_m": {
+        "min": [
+          -0.049126,
+          -0.010489,
+          1.560228
+        ],
+        "max": [
+          0.049126,
+          0.080128,
+          1.617707
+        ],
+        "dimensions": [
+          0.098252,
+          0.090617,
+          0.057479
+        ]
+      },
+      "role": "Complete externally visible cerebellar lobules and peduncles.",
+      "selection": {
+        "direct_collection": "Cerebellum"
+      },
+      "processing_notes": "Keep folia silhouette; decimate by angle/curvature rather than uniformly. The raw mesh is denser than the cortex.",
+      "target_lod_polygons": {
+        "high": [
+          75000,
+          105000
+        ],
+        "medium": [
+          35000,
+          55000
+        ],
+        "low": [
+          12000,
+          22000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Anterior quadrangular lobule.l",
+        "Anterior quadrangular lobule.r",
+        "Base of peduncle.l",
+        "Base of peduncle.r",
+        "Biventral lobule.l",
+        "Biventral lobule.r",
+        "Central lobule",
+        "Culmen",
+        "Declive",
+        "Flocculus.l",
+        "Flocculus.r",
+        "Folium of vermis",
+        "Gracile lobule.l",
+        "Gracile lobule.r",
+        "Inferior semilunar lobule.l",
+        "Inferior semilunar lobule.r",
+        "Lingula of cerebellum",
+        "Nodule of vermis",
+        "Peduncle of flocculus.l",
+        "Peduncle of flocculus.r",
+        "Posterior quadrangular lobule.l",
+        "Posterior quadrangular lobule.r",
+        "Pyramis of vermis",
+        "Superior cerebellar peduncle.l",
+        "Superior cerebellar peduncle.r",
+        "Superior semilunar lobule.l",
+        "Superior semilunar lobule.r",
+        "Tonsil of cerebellum.l",
+        "Tonsil of cerebellum.r",
+        "Tuber of vermis",
+        "Uvula of vermis",
+        "Wing of central lobule.l",
+        "Wing of central lobule.r"
+      ]
+    },
+    "brainstem_surface": {
+      "object_count": 6,
+      "types": {
+        "MESH": 6
+      },
+      "vertices_evaluated": 22358,
+      "polygons_evaluated": 44682,
+      "combined_bounds_m": {
+        "min": [
+          -0.020515,
+          -0.008279,
+          1.538802
+        ],
+        "max": [
+          0.020515,
+          0.036128,
+          1.617461
+        ],
+        "dimensions": [
+          0.04103,
+          0.044407,
+          0.078659
+        ]
+      },
+      "role": "Outer midbrain, pons, and medulla for the hero brain assembly.",
+      "selection": {
+        "exact_names": [
+          "Midbrain.l",
+          "Midbrain.r",
+          "Pons.l",
+          "Pons.r",
+          "Medulla oblongata.l",
+          "Medulla oblongata.r"
+        ]
+      },
+      "processing_notes": "Join left/right halves after material remap; keep the source-scale alignment.",
+      "target_lod_polygons": {
+        "high": [
+          30000,
+          45000
+        ],
+        "medium": [
+          16000,
+          26000
+        ],
+        "low": [
+          6000,
+          10000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Medulla oblongata.l",
+        "Medulla oblongata.r",
+        "Midbrain.l",
+        "Midbrain.r",
+        "Pons.l",
+        "Pons.r"
+      ]
+    },
+    "cranial_vault": {
+      "object_count": 8,
+      "types": {
+        "MESH": 8
+      },
+      "vertices_evaluated": 34348,
+      "polygons_evaluated": 68117,
+      "combined_bounds_m": {
+        "min": [
+          -0.07439,
+          -0.087112,
+          1.548727
+        ],
+        "max": [
+          0.074286,
+          0.103375,
+          1.705454
+        ],
+        "dimensions": [
+          0.148676,
+          0.190487,
+          0.156727
+        ]
+      },
+      "role": "Cranial enclosure suitable for transparency and craniotomy cutaway staging.",
+      "selection": {
+        "exact_names": [
+          "Frontal bone",
+          "Parietal bone.l",
+          "Parietal bone.r",
+          "Temporal bone.l",
+          "Temporal bone.r",
+          "Occipital bone",
+          "Sphenoid bone",
+          "Ethmoid bone"
+        ]
+      },
+      "processing_notes": "Keep bones separate so frontal/parietal elements can hide or animate independently. Do not boolean a generic bone flap until the clinical scenario and side are specified.",
+      "target_lod_polygons": {
+        "high": [
+          65000,
+          90000
+        ],
+        "medium": [
+          30000,
+          50000
+        ],
+        "low": [
+          12000,
+          22000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Ethmoid bone",
+        "Frontal bone",
+        "Occipital bone",
+        "Parietal bone.l",
+        "Parietal bone.r",
+        "Sphenoid bone",
+        "Temporal bone.l",
+        "Temporal bone.r"
+      ]
+    },
+    "skull_core": {
+      "object_count": 22,
+      "types": {
+        "MESH": 22
+      },
+      "vertices_evaluated": 53208,
+      "polygons_evaluated": 105785,
+      "combined_bounds_m": {
+        "min": [
+          -0.07439,
+          -0.100272,
+          1.496297
+        ],
+        "max": [
+          0.074286,
+          0.103375,
+          1.705454
+        ],
+        "dimensions": [
+          0.148676,
+          0.203647,
+          0.209157
+        ]
+      },
+      "role": "Full principal skull and mandible without teeth, ossicles, sinuses, or nasal cartilage helpers.",
+      "selection": {
+        "exact_names": [
+          "Temporal bone.l",
+          "Temporal bone.r",
+          "Frontal bone",
+          "Occipital bone",
+          "Sphenoid bone",
+          "Parietal bone.l",
+          "Parietal bone.r",
+          "Maxilla.l",
+          "Maxilla.r",
+          "Ethmoid bone",
+          "Palatine bone.l",
+          "Palatine bone.r",
+          "Zygomatic bone.l",
+          "Zygomatic bone.r",
+          "Vomer",
+          "Lacrimal bone.l",
+          "Lacrimal bone.r",
+          "Inferior nasal concha bone.l",
+          "Inferior nasal concha bone.r",
+          "Nasal bone.l",
+          "Nasal bone.r",
+          "Mandible"
+        ]
+      },
+      "processing_notes": "Keep each bone as a named submesh for layer isolation and patient explanation.",
+      "target_lod_polygons": {
+        "high": [
+          85000,
+          120000
+        ],
+        "medium": [
+          40000,
+          65000
+        ],
+        "low": [
+          15000,
+          28000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Ethmoid bone",
+        "Frontal bone",
+        "Inferior nasal concha bone.l",
+        "Inferior nasal concha bone.r",
+        "Lacrimal bone.l",
+        "Lacrimal bone.r",
+        "Mandible",
+        "Maxilla.l",
+        "Maxilla.r",
+        "Nasal bone.l",
+        "Nasal bone.r",
+        "Occipital bone",
+        "Palatine bone.l",
+        "Palatine bone.r",
+        "Parietal bone.l",
+        "Parietal bone.r",
+        "Sphenoid bone",
+        "Temporal bone.l",
+        "Temporal bone.r",
+        "Vomer",
+        "Zygomatic bone.l",
+        "Zygomatic bone.r"
+      ]
+    },
+    "circle_of_willis_core": {
+      "object_count": 12,
+      "types": {
+        "CURVE": 11,
+        "MESH": 1
+      },
+      "vertices_evaluated": 44070,
+      "polygons_evaluated": 43712,
+      "combined_bounds_m": {
+        "min": [
+          -0.055552,
+          -0.036555,
+          1.420299
+        ],
+        "max": [
+          0.055552,
+          0.06797,
+          1.638439
+        ],
+        "dimensions": [
+          0.111104,
+          0.104525,
+          0.21814
+        ]
+      },
+      "role": "Core inflow and Circle of Willis pathways for orientation.",
+      "selection": {
+        "exact_names": [
+          "Internal carotid artery.l",
+          "Internal carotid artery.r",
+          "Anterior cerebral artery.l",
+          "Anterior cerebral artery.r",
+          "Anterior communicating artery",
+          "Posterior communicating artery.l",
+          "Posterior communicating artery.r",
+          "Posterior cerebral artery.l",
+          "Posterior cerebral artery.r",
+          "Basilar artery",
+          "Vertebral artery.l",
+          "Vertebral artery.r"
+        ]
+      },
+      "processing_notes": "Convert curves only after setting a shared circular bevel. Reduce curve resolution before conversion; the raw evaluated polygon count is unnecessarily high.",
+      "target_lod_polygons": {
+        "high": [
+          18000,
+          30000
+        ],
+        "medium": [
+          9000,
+          16000
+        ],
+        "low": [
+          3500,
+          7000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Anterior cerebral artery.l",
+        "Anterior cerebral artery.r",
+        "Anterior communicating artery",
+        "Basilar artery",
+        "Internal carotid artery.l",
+        "Internal carotid artery.r",
+        "Posterior cerebral artery.l",
+        "Posterior cerebral artery.r",
+        "Posterior communicating artery.l",
+        "Posterior communicating artery.r",
+        "Vertebral artery.l",
+        "Vertebral artery.r"
+      ]
+    },
+    "cerebral_arterial_tree": {
+      "object_count": 40,
+      "types": {
+        "CURVE": 39,
+        "MESH": 1
+      },
+      "vertices_evaluated": 174294,
+      "polygons_evaluated": 172736,
+      "combined_bounds_m": {
+        "min": [
+          -0.071,
+          -0.078366,
+          1.420299
+        ],
+        "max": [
+          0.071,
+          0.074047,
+          1.700597
+        ],
+        "dimensions": [
+          0.142,
+          0.152413,
+          0.280298
+        ]
+      },
+      "role": "Major intracranial arterial tree including bilateral MCA branches and cerebellar supply.",
+      "selection": {
+        "exact_names": [
+          "Internal carotid artery.l",
+          "Internal carotid artery.r",
+          "Anterior cerebral artery.l",
+          "Anterior cerebral artery.r",
+          "Anterior communicating artery",
+          "Posterior communicating artery.l",
+          "Posterior communicating artery.r",
+          "Posterior cerebral artery.l",
+          "Posterior cerebral artery.r",
+          "Basilar artery",
+          "Vertebral artery.l",
+          "Vertebral artery.r",
+          "Middle cerebral artery (M1-segment).l",
+          "Middle cerebral artery (M1-segment).r",
+          "Insular branches of middle cerebral artery (M2-segment).l",
+          "Insular branches of middle cerebral artery (M2).r",
+          "Middle cerebral artery (M3 segment).l",
+          "Middle cerebral artery (M3-segment).r",
+          "Temporal branches of middle cerebral artery.l",
+          "Temporal branches of middle cerebral artery.r",
+          "Parietal branches of middle cerebral artery.l",
+          "Parietal branches of middle cerebral artery.r",
+          "Orbitofrontal branches of anterior cerebral artery.l",
+          "Orbitofrontal branches of anterior cerebral artery.r",
+          "Callosomarginal artery.l",
+          "Callosomarginal artery.r",
+          "Frontal branches of callosomarginal artery.l",
+          "Frontal branches of callosomarginal artery.r",
+          "Pericallosal artery.l",
+          "Pericallosal artery.r",
+          "Superior cerebellar artery.l",
+          "Superior cerebellar artery.r",
+          "Anterior inferior cerebellar artery.l",
+          "Anterior inferior cerebellar artery.r",
+          "Posterior inferior cerebellar artery.l",
+          "Posterior inferior cerebellar artery.r",
+          "Lateral pontine branches of basilar artery.l",
+          "Lateral pontine branches of basilar artery.r",
+          "Medial pontine branches of basilar artery.l",
+          "Medial pontine branches of basilar artery.r"
+        ]
+      },
+      "processing_notes": "Keep vessel names through export. Use 6-8 bevel sides for medium LOD and preserve M1/M2/M3 as separate selectable segments.",
+      "target_lod_polygons": {
+        "high": [
+          40000,
+          65000
+        ],
+        "medium": [
+          18000,
+          32000
+        ],
+        "low": [
+          7000,
+          14000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Anterior cerebral artery.l",
+        "Anterior cerebral artery.r",
+        "Anterior communicating artery",
+        "Anterior inferior cerebellar artery.l",
+        "Anterior inferior cerebellar artery.r",
+        "Basilar artery",
+        "Callosomarginal artery.l",
+        "Callosomarginal artery.r",
+        "Frontal branches of callosomarginal artery.l",
+        "Frontal branches of callosomarginal artery.r",
+        "Insular branches of middle cerebral artery (M2).r",
+        "Insular branches of middle cerebral artery (M2-segment).l",
+        "Internal carotid artery.l",
+        "Internal carotid artery.r",
+        "Lateral pontine branches of basilar artery.l",
+        "Lateral pontine branches of basilar artery.r",
+        "Medial pontine branches of basilar artery.l",
+        "Medial pontine branches of basilar artery.r",
+        "Middle cerebral artery (M1-segment).l",
+        "Middle cerebral artery (M1-segment).r",
+        "Middle cerebral artery (M3 segment).l",
+        "Middle cerebral artery (M3-segment).r",
+        "Orbitofrontal branches of anterior cerebral artery.l",
+        "Orbitofrontal branches of anterior cerebral artery.r",
+        "Parietal branches of middle cerebral artery.l",
+        "Parietal branches of middle cerebral artery.r",
+        "Pericallosal artery.l",
+        "Pericallosal artery.r",
+        "Posterior cerebral artery.l",
+        "Posterior cerebral artery.r",
+        "Posterior communicating artery.l",
+        "Posterior communicating artery.r",
+        "Posterior inferior cerebellar artery.l",
+        "Posterior inferior cerebellar artery.r",
+        "Superior cerebellar artery.l",
+        "Superior cerebellar artery.r",
+        "Temporal branches of middle cerebral artery.l",
+        "Temporal branches of middle cerebral artery.r",
+        "Vertebral artery.l",
+        "Vertebral artery.r"
+      ]
+    },
+    "mca_left_stroke_path": {
+      "object_count": 6,
+      "types": {
+        "CURVE": 6
+      },
+      "vertices_evaluated": 9612,
+      "polygons_evaluated": 9504,
+      "combined_bounds_m": {
+        "min": [
+          0.008958,
+          -0.026492,
+          1.485648
+        ],
+        "max": [
+          0.071,
+          0.054779,
+          1.677314
+        ],
+        "dimensions": [
+          0.062042,
+          0.081271,
+          0.191666
+        ]
+      },
+      "role": "Left internal-carotid-to-MCA path for an illustrative thrombectomy sequence.",
+      "selection": {
+        "exact_names": [
+          "Internal carotid artery.l",
+          "Middle cerebral artery (M1-segment).l",
+          "Insular branches of middle cerebral artery (M2-segment).l",
+          "Middle cerebral artery (M3 segment).l",
+          "Temporal branches of middle cerebral artery.l",
+          "Parietal branches of middle cerebral artery.l"
+        ]
+      },
+      "processing_notes": "Keep M1, M2, M3, temporal, and parietal segments individually addressable.",
+      "target_lod_polygons": {
+        "high": [
+          8000,
+          15000
+        ],
+        "medium": [
+          4000,
+          8000
+        ],
+        "low": [
+          1800,
+          3500
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Insular branches of middle cerebral artery (M2-segment).l",
+        "Internal carotid artery.l",
+        "Middle cerebral artery (M1-segment).l",
+        "Middle cerebral artery (M3 segment).l",
+        "Parietal branches of middle cerebral artery.l",
+        "Temporal branches of middle cerebral artery.l"
+      ]
+    },
+    "mca_right_stroke_path": {
+      "object_count": 6,
+      "types": {
+        "CURVE": 6
+      },
+      "vertices_evaluated": 9612,
+      "polygons_evaluated": 9504,
+      "combined_bounds_m": {
+        "min": [
+          -0.071,
+          -0.026492,
+          1.485648
+        ],
+        "max": [
+          -0.008958,
+          0.054779,
+          1.677314
+        ],
+        "dimensions": [
+          0.062042,
+          0.081271,
+          0.191666
+        ]
+      },
+      "role": "Right internal-carotid-to-MCA path for an illustrative thrombectomy sequence.",
+      "selection": {
+        "exact_names": [
+          "Internal carotid artery.r",
+          "Middle cerebral artery (M1-segment).r",
+          "Insular branches of middle cerebral artery (M2).r",
+          "Middle cerebral artery (M3-segment).r",
+          "Temporal branches of middle cerebral artery.r",
+          "Parietal branches of middle cerebral artery.r"
+        ]
+      },
+      "processing_notes": "Keep M1, M2, M3, temporal, and parietal segments individually addressable.",
+      "target_lod_polygons": {
+        "high": [
+          8000,
+          15000
+        ],
+        "medium": [
+          4000,
+          8000
+        ],
+        "low": [
+          1800,
+          3500
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Insular branches of middle cerebral artery (M2).r",
+        "Internal carotid artery.r",
+        "Middle cerebral artery (M1-segment).r",
+        "Middle cerebral artery (M3-segment).r",
+        "Parietal branches of middle cerebral artery.r",
+        "Temporal branches of middle cerebral artery.r"
+      ]
+    },
+    "scalp_shell": {
+      "object_count": 8,
+      "types": {
+        "MESH": 8
+      },
+      "vertices_evaluated": 926,
+      "polygons_evaluated": 768,
+      "combined_bounds_m": {
+        "min": [
+          -0.081875,
+          -0.09449,
+          1.557035
+        ],
+        "max": [
+          0.081875,
+          0.107387,
+          1.709153
+        ],
+        "dimensions": [
+          0.16375,
+          0.201877,
+          0.152118
+        ]
+      },
+      "role": "Epicranial scalp patches only, useful as a transparent cutaway shell.",
+      "selection": {
+        "exact_names": [
+          "Frontal region.l",
+          "Frontal region.r",
+          "Parietal region.l",
+          "Parietal region.r",
+          "Temporal region.l",
+          "Temporal region.r",
+          "Occipital region.l",
+          "Occipital region.r"
+        ]
+      },
+      "processing_notes": "Low-resolution regional patches with visible seams. Join, weld conservatively, remesh/subdivide, and validate silhouette before presentation.",
+      "target_lod_polygons": {
+        "high": [
+          15000,
+          30000
+        ],
+        "medium": [
+          7000,
+          14000
+        ],
+        "low": [
+          2500,
+          5000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Frontal region.l",
+        "Frontal region.r",
+        "Occipital region.l",
+        "Occipital region.r",
+        "Parietal region.l",
+        "Parietal region.r",
+        "Temporal region.l",
+        "Temporal region.r"
+      ]
+    },
+    "outer_head_regions": {
+      "object_count": 87,
+      "types": {
+        "MESH": 87
+      },
+      "vertices_evaluated": 14796,
+      "polygons_evaluated": 16459,
+      "combined_bounds_m": {
+        "min": [
+          -0.102947,
+          -0.116728,
+          1.487737
+        ],
+        "max": [
+          0.09337,
+          0.131619,
+          1.74334
+        ],
+        "dimensions": [
+          0.196317,
+          0.248347,
+          0.255603
+        ]
+      },
+      "role": "All regional outer head/face/ear surface patches in the atlas.",
+      "selection": {
+        "direct_collections_all": [
+          "9: Regions of human body",
+          "Head"
+        ]
+      },
+      "processing_notes": "This is a low-poly regional surface, not a production facial scan. Use only after joining, seam cleanup, smoothing/remeshing, and visual QA; prefer patient-authorized photogrammetry or clinical segmentation for a patient-specific head.",
+      "target_lod_polygons": {
+        "high": [
+          30000,
+          60000
+        ],
+        "medium": [
+          14000,
+          30000
+        ],
+        "low": [
+          5000,
+          10000
+        ]
+      },
+      "missing_names": [],
+      "object_names": [
+        "Angle of mouth.l",
+        "Angle of mouth.r",
+        "Anterior notch of auricle.l",
+        "Anterior notch of auricle.r",
+        "Antihelix.l",
+        "Antihelix.r",
+        "Antitragus.l",
+        "Antitragus.r",
+        "Apex of auricle.l",
+        "Apex of auricle.r",
+        "Auricular region.l",
+        "Auricular region.r",
+        "Auricular tubercle.l",
+        "Auricular tubercle.r",
+        "Buccal region.l",
+        "Buccal region.r",
+        "Cavity of concha.l",
+        "Cavity of concha.r",
+        "Concha of auricle.l",
+        "Concha of auricle.r",
+        "Crura of antihelix.l",
+        "Crura of antihelix.r",
+        "Cymba conchae.l",
+        "Cymba conchae.r",
+        "Eminentia conchae.l",
+        "Eminentia conchae.r",
+        "Eminentia fossae triangularis.l",
+        "Eminentia fossae triangularis.r",
+        "Eminentia scaphae.l",
+        "Eminentia scaphae.r",
+        "Eyebrow.l",
+        "Eyebrow.r",
+        "Eyelashes.l",
+        "Eyelashes.r",
+        "Fossa antihelica.l",
+        "Fossa antihelica.r",
+        "Frontal region.l",
+        "Frontal region.r",
+        "Hairs of eyebrow.l",
+        "Hairs of eyebrow.r",
+        "Hairs of head",
+        "Helix.l",
+        "Helix.r",
+        "Infra-orbital region.l",
+        "Infra-orbital region.r",
+        "Intertragic incisure.l",
+        "Intertragic incisure.r",
+        "Labial commissure.l",
+        "Labial commissure.r",
+        "Lobule of auricle.l",
+        "Lobule of auricle.r",
+        "Mastoid region.l",
+        "Mastoid region.r",
+        "Mental region.l",
+        "Mental region.r",
+        "Mentolabial sulcus.l",
+        "Mentolabial sulcus.r",
+        "Nasal region.l",
+        "Nasal region.r",
+        "Nasolabial sulcus.l",
+        "Nasolabial sulcus.r",
+        "Occipital region.l",
+        "Occipital region.r",
+        "Oral region.l",
+        "Oral region.r",
+        "Orbital region.l",
+        "Orbital region.r",
+        "Parietal region.l",
+        "Parietal region.r",
+        "Parotideomasseteric region.l",
+        "Parotideomasseteric region.r",
+        "Philtrum.l",
+        "Philtrum.r",
+        "Posterior auricular groove.l",
+        "Posterior auricular groove.r",
+        "Scapha.l",
+        "Scapha.r",
+        "Temporal region.l",
+        "Temporal region.r",
+        "Tragus.l",
+        "Tragus.r",
+        "Triangular fossa.l",
+        "Triangular fossa.r",
+        "Tubercle of upper lip.l",
+        "Tubercle of upper lip.r",
+        "Zygomatic region.l",
+        "Zygomatic region.r"
+      ]
+    }
+  },
+  "license_and_provenance": {
+    "atlas": "Z-Anatomy - The libre 3D atlas of anatomy",
+    "atlas_license": "CC BY-SA 4.0",
+    "upstream_meshes": "BodyParts3D, Database Center for Life Science",
+    "upstream_license": "CC BY-SA 2.1 Japan",
+    "required_attribution": [
+      "BodyParts3D - The Database Center for Life Science - CC-BY-SA 2.1 Japan",
+      "Z-Anatomy - The libre 3D atlas of anatomy - CC-BY-SA 4.0"
+    ],
+    "caution": "Exports and modified atlas geometry are derivatives. Preserve attribution and review the CC BY-SA share-alike obligations before app distribution. Atlas geometry is educational reference material, not patient-specific segmentation or a clinically validated surgical-navigation model."
+  }
+}

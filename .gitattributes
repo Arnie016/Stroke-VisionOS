@@ -1,0 +1,4 @@
+# GitHub rejects new LFS objects uploaded from a public fork. Every committed
+# runtime package is below GitHub's 50 MiB warning threshold, so this cross-fork
+# asset PR stores USDZ packages as ordinary binary Git objects.
+*.usdz binary

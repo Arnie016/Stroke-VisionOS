@@ -3,7 +3,10 @@
 An Apple Vision Pro learning experience for exploring how an ischemic stroke can interrupt blood flow, inspecting the affected vessel in 3D, and comparing conceptual response paths in spatial context.
 
 > [!IMPORTANT]
-> This repository is currently at the bootstrap stage. The experience described below is the agreed product direction, not a claim that these features are already implemented. Contributors and coding agents must inspect the repository before describing anything as built, tested, or working.
+> This repository now contains a validated runtime asset catalog, but it does
+> not yet contain the planned Xcode application scaffold. The experience below
+> remains product direction unless a specific capability is present and
+> independently verified in the repository.
 
 ## Product promise
 
@@ -57,6 +60,29 @@ The first coherent vertical slice should include:
 - a local learning summary or report with no patient data.
 
 Not part of the first slice: accounts, cloud sync, clinical decision support, patient-specific simulation, collaboration backends, or production analytics.
+
+## Current 3D asset catalog
+
+The repository includes **65 uniquely named, manifest-backed USDZ runtime
+assets**:
+
+- 36 higher-detail v2 assets: brain/skull anatomy, head layers, cranial
+  vasculature, cerebral blood-flow teaching views, and generic thrombectomy
+  devices;
+- 29 clearly labelled low-poly prototype-v1 assets for sequencing and early
+  interaction work.
+
+The complete one-by-one catalog, paths, descriptions, runtime notes, manifests,
+and loading guidance are in
+[`RealityKitContent/Assets/README.md`](RealityKitContent/Assets/README.md).
+Licensing and provenance are recorded under [`docs/assets`](docs/assets).
+
+![Layered generic head cutaway](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/08_layered_head_cutaway_v2.png)
+
+![Registered cranial vascular context](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/17_cranial_vascular_brain_context.png)
+
+These models are generic educational material—not patient-specific anatomy,
+quantitative flow simulation, or clinical decision support.
 
 ## Intended Apple stack
 
@@ -267,7 +293,10 @@ the exact verification result, the nearest blocker, and one next safe action.
 
 ## Build and verification status
 
-No Xcode project or verified build command exists in the repository yet. The scaffolding pull request must replace this section with:
+The asset catalog has package-level USD/RealityKit validation documented in
+[`docs/assets/VALIDATION.md`](docs/assets/VALIDATION.md). No Xcode project or
+repository-owned app build command exists yet. The scaffolding pull request must
+replace this section with:
 
 - required macOS and Xcode versions;
 - visionOS deployment target;
