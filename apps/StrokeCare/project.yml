@@ -6,8 +6,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.9"
-    MARKETING_VERSION: "0.5"
-    CURRENT_PROJECT_VERSION: "5"
+    MARKETING_VERSION: "0.6"
+    CURRENT_PROJECT_VERSION: "6"
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: VV6YGTA587
 targets:
@@ -34,6 +34,10 @@ targets:
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/craniotomy_bone_flap.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/dural_patch.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/cranial_drill_generic.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/suction_and_forceps.usdz
         buildPhase: resources
     settings:
       base:

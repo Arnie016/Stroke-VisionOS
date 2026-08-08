@@ -1,5 +1,28 @@
+import AVFoundation
 import RealityKit
 import SwiftUI
+
+@MainActor
+private final class StrokePreludeAudio: ObservableObject {
+    private var player: AVAudioPlayer?
+
+    func play() {
+        guard player == nil,
+              let url = Bundle.main.url(forResource: "FlowBed", withExtension: "wav"),
+              let audio = try? AVAudioPlayer(contentsOf: url)
+        else { return }
+        audio.numberOfLoops = -1
+        audio.volume = 0.12
+        audio.prepareToPlay()
+        audio.play()
+        player = audio
+    }
+
+    func stop() {
+        player?.stop()
+        player = nil
+    }
+}
 
 /// A spatial intake threshold. The file itself is the control: pulling it from
 /// the shelf progressively reveals the few facts needed for this conversation.
@@ -15,6 +38,8 @@ struct StrokeJourneyLaunchView: View {
     @State private var caseRevealProgress = 0.0
     @State private var fileDrag = CGSize.zero
     @State private var proofRouteHasRun = false
+    @State private var introBeat = 0
+    @StateObject private var prelude = StrokePreludeAudio()
 
     var body: some View {
         ZStack {
@@ -29,26 +54,38 @@ struct StrokeJourneyLaunchView: View {
                 Label("STROKE CARE", systemImage: "brain.head.profile")
                     .font(.caption.weight(.bold))
                     .tracking(2.0)
-                    .foregroundStyle(.cyan)
+                    .foregroundStyle(.orange)
 
-                Text("Enter the case room")
+                Text(introTitle)
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .contentTransition(.opacity)
 
-                Text("Turn left for patient files. Carry one to the centre.")
+                Text(introSubtitle)
                     .font(.headline)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .contentTransition(.opacity)
 
-                HStack(spacing: 14) {
-                    Button("Family", systemImage: "person.2.fill") {
-                        Task { await enterSpatialCaseRoom(as: .family) }
+                if introBeat >= 2 {
+                    HStack(spacing: 14) {
+                        Button("Doctor → family", systemImage: "person.2.fill") {
+                            Task { await enterSpatialCaseRoom(as: .family) }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.orange)
+
+                        Button("Clinician teaching", systemImage: "stethoscope") {
+                            Task { await enterSpatialCaseRoom(as: .clinician) }
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else {
+                    Button("Continue", systemImage: "arrow.right") {
+                        advanceIntroBeat()
                     }
                     .buttonStyle(.bordered)
-
-                    Button("Presenter", systemImage: "stethoscope") {
-                        Task { await enterSpatialCaseRoom(as: .clinician) }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.cyan)
                 }
 
                 Text("Fictional teaching case · no patient data · emergencies follow hospital protocol")
@@ -61,13 +98,50 @@ struct StrokeJourneyLaunchView: View {
             .blur(radius: isOpening && !reduceMotion ? 10 : 0)
         }
         .frame(width: 620, height: 360)
-        .onAppear(perform: routeProofIfNeeded)
+        .onAppear {
+            prelude.play()
+            routeProofIfNeeded()
+        }
+        .onDisappear { prelude.stop() }
+        .task { await playIntroSequence() }
+    }
+
+    private var introTitle: String {
+        switch introBeat {
+        case 0: "When time is urgent, clarity matters."
+        case 1: "One calm shared picture can reduce uncertainty."
+        default: "Who are you guiding today?"
+        }
+    }
+
+    private var introSubtitle: String {
+        switch introBeat {
+        case 0: "A stroke conversation can begin before every answer is known."
+        case 1: "See the case, explain the change, and leave with a next step."
+        default: "Choose the purpose first. The room changes with it."
+        }
+    }
+
+    private func advanceIntroBeat() {
+        withAnimation(.easeInOut(duration: 0.55)) {
+            introBeat = min(introBeat + 1, 2)
+        }
+    }
+
+    private func playIntroSequence() async {
+        guard !CommandLine.arguments.contains(where: { $0.hasPrefix("--proof-") }) else { return }
+        for target in 1...2 {
+            try? await Task.sleep(for: .seconds(2.2))
+            guard !Task.isCancelled, introBeat < target else { continue }
+            await MainActor.run { advanceIntroBeat() }
+        }
     }
 
     @MainActor
     private func enterSpatialCaseRoom(as lens: StrokeAudienceLens) async {
         guard !isOpening else { return }
         isOpening = true
+        prelude.stop()
         experience.reset()
         experience.audienceLens = lens
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
@@ -339,7 +413,6 @@ struct StrokeJourneyLaunchView: View {
         }
         _ = await openImmersiveSpace(id: StrokeSpace.immersive)
         experience.isImmersivePresented = true
-        openWindow(id: lens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
         dismissWindow(id: StrokeSpace.window)
         isOpening = false
     }
@@ -365,6 +438,9 @@ struct StrokeJourneyLaunchView: View {
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-transparent-layer") {
             experience.prepareTransparentLayerProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-toolkit") {
+            experience.prepareClinicianToolKitProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-spatial-intake") {
             experience.reset()
@@ -394,7 +470,7 @@ struct StrokeJourneyLaunchView: View {
     }
 
     @MainActor
-    private func openProofSpace(opensEvidence: Bool = false, opensCompanion: Bool = true) async {
+    private func openProofSpace(opensEvidence: Bool = false, opensCompanion: Bool = false) async {
         try? await Task.sleep(for: .milliseconds(700))
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
         print("PROOF_IMMERSIVE_RESULT=\(result)")
@@ -448,7 +524,7 @@ private struct CaseFactConstellation: View {
                     .position(x: geometry.size.width * 0.71, y: geometry.size.height * 0.18)
                 fact("TIME", "70 minutes ago", icon: "clock.fill", tint: .yellow, threshold: 0.58)
                     .position(x: geometry.size.width * 0.78, y: geometry.size.height * 0.52)
-                fact("OPEN", "Imaging? Vessel? Options?", icon: "questionmark.bubble.fill", tint: .mint, threshold: 0.78)
+                fact("SCENARIO", "Severe stroke + swelling", icon: "brain.head.profile", tint: .mint, threshold: 0.78)
                     .position(x: geometry.size.width * 0.34, y: geometry.size.height * 0.58)
             }
         }

@@ -1,10 +1,10 @@
-# Stroke Care proof receipt — 2026-08-08 19:18 SGT
+# Stroke Care proof receipt — 2026-08-09 01:38 SGT
 
 ## Current source
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.5 (5)` in current source and Simulator; XCAT still has the
+- Version/build: `0.6 (6)` in current source and Simulator; XCAT still has the
   separately evidenced `0.3 (3)` install.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -26,13 +26,13 @@ v2 brain, cerebral arteries, right-M1 teaching marker, and conceptual dura are
 visible in the three-act path. Prototype-v1 edema/flap/patch remain bundled but
 disabled after a visual integration render demonstrated a mismatched frame.
 
-The 0.5 spatial-workspace pass replaces the flat case board with a draggable
-file shelf and progressive fact constellation. It parks presenter controls to
-the right and family question controls to the left, reduces the core visible
-teaching copy by more than 30%, and adds a pinned spatial case drawer plus a
-clot-focus reticle. The room screenshot is still pending because visionOS
-requires the immersive open to be initiated from the unlocked UI; the side
-window alone is not anatomy proof.
+The 0.6 spatial-workspace pass separates the experience into three explicit
+phases: floating case exhibit, case review, and explanation. Docking a file does
+not reveal anatomy; the wearer must deliberately enter the selected case. The
+entire intake room then disappears. The brain space adds two sparse lesson
+families, registered blood-flow direction chevrons, optional versioned system
+narration, a quiet audio bed, a non-black horizon hypothesis, and a closing
+reflection. None of these proves physical comfort or clinical value.
 
 ## Static contract and Simulator
 
@@ -48,7 +48,7 @@ clinical_review=PENDING
 physical_device=NOT_PROVEN
 ```
 
-The current source built for the visionOS Simulator on 2026-08-08:
+The current source built for the visionOS Simulator on 2026-08-09:
 
 ```text
 xcodebuild ... -destination 'platform=visionOS Simulator,name=Apple Vision Pro' \
@@ -85,15 +85,19 @@ or launch on XCAT.
 | Spatial case threshold | `14-spatial-case-unfold-simulator.png` | `748da0c08360ef8e5726b82bc6cab152e4c2397308aa9bf103b0c9e4d8d84cde` |
 | Presenter side rail | `15-presenter-side-rail-simulator.png` | `8bb6420f8d8c5462f8ca60fe437640bd01fa8b3b0488aa73ec6da5b31b563437` |
 | Family visual-field composition | `16-family-question-surface-simulator.png` | `80feac40810e1e5957078ea2523c39047396e8119e0002ccde4036416a2d4a14` |
+| Purpose-first prelude | `36-purpose-first-prelude-0.6-simulator.png` | `6c3453931eb44b241fdf6afc2402abad94c5ffa34207fd08e48be9b734ae4f44` |
+| Case review phase | `34-case-review-phase-0.6-simulator.png` | `ab50b0a97fa2b02d037c50c03d13ed98869d0d7bfe010dadb3dc4dad77cd937e` |
+| Blood-flow lesson | `35-blood-flow-lesson-0.6-simulator.png` | `0d551fb7eb532afc8806b90f69a02c3783da8074780c2d4990310dbd63517eb1` |
 
 These artifacts prove Simulator-visible UI, model presence, deterministic
 teaching states, and the configured visual hierarchy. They do not prove anatomy
 validity, physical comfort, clinical value, or perception of spatial audio.
 
-The latest family frame specifically demonstrates the intended Simulator
-composition: central anatomy/question focus, opposite peripheral case and role
-surfaces, a short top meaning cue, and non-occluding RealityKit flow ribbons.
-It does not establish foveal comfort or peripheral legibility for a wearer.
+The latest frames demonstrate the 0.6 Simulator composition: a purpose-first
+threshold, case review without anatomy, and a separate central blood-flow
+lesson with five registered points and direction chevrons. They do not
+establish foveal comfort, peripheral legibility, hand-control reliability,
+audio perception, or comprehension for a wearer.
 
 ## XCAT state
 
@@ -113,9 +117,10 @@ destination, and installed over `com.arnav.StrokeTime`. A fresh device query at
 17:33 SGT reports Stroke Care `0.3 (3)` installed while XCAT is
 `available (paired)`.
 
-The PR2-backed `0.5 (5)` build has passed the contract, Simulator build, and
-generic physical-device signing checks above. It has not yet been installed or
-launched on XCAT.
+The earlier PR2-backed `0.5 (5)` build passed the generic physical-device
+signing checks above. Current source is `0.6 (6)` and has passed the static
+contract and Simulator build; a signed 0.6 device bundle is not claimed. No 0.6
+install or launch has been attempted on XCAT.
 
 Two bounded foreground-launch attempts did not return a launch receipt; the
 second ended with the explicit 20-second command timeout, and a subsequent
@@ -128,11 +133,11 @@ worn and ready for foreground activation.
 The static verifier deliberately prints `physical_device=NOT_PROVEN` because a
 source scan cannot establish a device result. The historical section above
 proves only the older `0.3 (3)` installation. Install, launch, and wearer
-judgment remain unrun for the current `0.5 (5)` binary.
+judgment remain unrun for the current `0.6 (6)` binary.
 
 At 21:43–21:47 SGT, `devicectl` still reported XCAT as paired with Developer
 Mode enabled but `unavailable`, `ddiServicesAvailable=false`, and
-`tunnelState=unavailable`. Therefore no 0.5 installation attempt was started;
+`tunnelState=unavailable`. Therefore no 0.6 installation attempt was started;
 the exact next deployment action is to retry once the headset is powered on,
 awake, unlocked, and reachable.
 

@@ -10,11 +10,12 @@ tell one difficult story in three visual acts:
    expansion view explains mechanical purpose without implying that established
    injury is restored.
 
-The launch window is a spatial case-file threshold. The file itself is the
-control: pulling it from the shelf progressively reveals speech, arm, and time
-signals before it stays pinned beside the anatomy. The lesson itself is
-a progressive immersive space: the wearer can use the Digital Crown to choose
-how much of the room remains visible while the clinician controls the pace.
+The launch window begins with a two-beat calm prelude, then asks whether the
+purpose is **Doctor → family** or **Clinician teaching**. Inside the immersive
+space, the file itself is the control: carrying it from the exhibit into the
+centre opens a distinct case-review constellation. The wearer must explicitly
+enter the selected case before the complete intake room disappears and the
+brain appears. Patient-file furniture never persists beside the anatomy.
 
 The companion window has two views over the same spatial state:
 
@@ -24,8 +25,9 @@ The companion window has two views over the same spatial state:
   concise wording boundary. It never bypasses the permission gate or supplies a
   treatment script.
 
-Presenter mode can switch between two sparse ten-point spatial reference fields
-(`Regions` and `Procedure`) and open a separate upper evidence window. The
+Both roles can switch between two sparse lesson fields (`Brain regions` and
+`Blood flow`). The blood-flow lesson adds quiet directional chevrons on the
+same centreline as the vessel droplets. Presenter mode can also open a separate upper evidence window. The
 evidence window exposes full citations, stable source links, support/limitation
 context, pinning, and a deterministic source-bound teaching draft. It is hidden
 from family mode and remains **clinical review pending**.
@@ -57,6 +59,10 @@ tear away from the brain.
 - Quiet mono audio beds are anchored separately to the vessel and affected
   hemisphere. Their mix follows the visible act; it never responds to inferred
   emotion, gaze, voice, heart rate, or a patient measurement.
+- Optional system narration speaks only the exact, versioned family caption;
+  it is not a generative medical answer or inferred-emotion voice agent.
+- A warm low-contrast ground and horizon replace the simulator's ominous black
+  void. This is an unvalidated comfort hypothesis, not a therapeutic claim.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
   explicit user or clinician actions. There is no success animation.
 - A compact spatial patient drawer, clot reticle, and family question marker
@@ -135,3 +141,11 @@ Unreal spokes are documented in `Docs/DCC_LAYER_STUDY_PIPELINE.md`.
 The complete room choreography, screen/state inventory, annotation contract,
 gesture map, implementation map, and image report are in
 `Docs/STROKE_CARE_PRODUCT_UI_MAP.md`.
+
+The clinician-only left-palm selector, right-palm held-tool rig, family/doctor
+visibility split, and high-resolution asset debt are documented in
+`Docs/CLINICIAN_HAND_TOOLKIT.md`.
+
+The calm environment rationale, audio contract, and the explicit gates that
+keep unvalidated brain-scan AI out of the patient path are documented in
+`Docs/ENVIRONMENT_AND_SCAN_GATES.md`.
