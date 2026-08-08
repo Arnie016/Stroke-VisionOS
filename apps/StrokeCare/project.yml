@@ -1,0 +1,46 @@
+name: StrokeTime
+options:
+  bundleIdPrefix: com.arnav
+  deploymentTarget:
+    visionOS: "2.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "0.5"
+    CURRENT_PROJECT_VERSION: "5"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: VV6YGTA587
+targets:
+  StrokeTime:
+    type: application
+    platform: visionOS
+    deploymentTarget: "2.0"
+    sources:
+      - path: Resources/Assets.xcassets
+      - path: Resources/Audio
+      - path: Resources/PaperShader
+      - path: Sources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_anatomy_realistic_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_arteries_realistic_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/ischemic_mca_clot_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/skull_semantic_realistic_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/dura_mater_cutaway_conceptual_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/edema_swelling.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/craniotomy_bone_flap.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/dural_patch.usdz
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.arnav.StrokeTime
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Stroke Care
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES

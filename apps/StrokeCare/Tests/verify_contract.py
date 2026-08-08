@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""Static product-contract checks; not device, wearer, or clinical proof."""
+
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+failures: list[str] = []
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        failures.append(message)
+
+
+state = (ROOT / "Sources" / "StrokeExperienceState.swift").read_text()
+deck = (ROOT / "Sources" / "StrokeControlDeck.swift").read_text()
+app = (ROOT / "Sources" / "StrokeTimeApp.swift").read_text()
+launch = (ROOT / "Sources" / "StrokeJourneyLaunchView.swift").read_text()
+scene = (ROOT / "Sources" / "StrokeSceneFactory.swift").read_text()
+immersive = (ROOT / "Sources" / "StrokeImmersiveView.swift").read_text()
+model_board = (ROOT / "Sources" / "StrokeModelBoardView.swift").read_text()
+readme = (ROOT / "README.md").read_text()
+houdini = (ROOT / "Docs" / "HOUDINI_STROKE_PIPELINE.md").read_text()
+clinical_packet = (ROOT / "Docs" / "ISCHEMIC_STROKE_CLINICAL_REVIEW.md").read_text()
+houdini_builder = (ROOT / "Scripts" / "build_houdini_stroke_graph.py").read_text()
+
+step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
+require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
+require(step_contract.count("\n    case ") == 3, "procedure must remain exactly three steps")
+require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
+require("ImmersionStyle = .progressive" in app, "progressive immersion is not the default")
+require("one deliberate action" in launch and "Enter spatial explanation" in launch, "minimal spatial threshold is missing")
+require("--proof-cabinet-selected" in launch and "CaseRelationshipThreads" in launch, "spatial case cabinet proof route is missing")
+require(".draggable(experience.teachingCase.id)" in launch and ".dropDestination(for: String.self)" in launch, "case-file pinch and place interaction is missing")
+require("hospital protocol" in launch and "Clinician controls" in launch, "emergency accountability boundary is missing")
+require(all(route in launch for route in ("--proof-orient", "--proof-pressure", "--proof-care-purpose")), "deterministic spatial proof routes are missing")
+require('id: "CASE-078"' in state and 'displayName: "Case 78"' in state, "fictional case contract is missing")
+require("No patient data" in deck and "FICTIONAL" in deck, "privacy boundary is not visible")
+require("Two pathways. No ranking. The stroke team decides." in deck, "medicine/thrombectomy pathways are incorrectly framed as ranked")
+require("does not calculate treatment eligibility" in state and "not an EVT decision aid" in state, "clinical decision boundary is missing")
+require("not diagnosis, recommendation, consent, or record" in state, "discussion summary overclaims its role")
+require("brain-left" in scene and "brain-right" in scene and "brain-midline-seam" in scene, "separable brain rig is missing")
+require("brain_anatomy_realistic_v2" in scene and "cerebral_arteries_realistic_v2" in scene and "ischemic_mca_clot_v2" in scene, "PR2 v2 hero anatomy is not integrated")
+require("legacy-v1-pressure-root" in scene and "craniotomy_bone_flap" in scene and "dural_patch" in scene, "PR2 pressure-purpose assets are not segregated")
+require("loadBundledUSDZ" in scene and "procedural-stroke-fallback" in scene, "imported-asset fallback loader is missing")
+require("catheter-review-preview" in scene and "medicine-review-preview" in scene, "care discussion previews are missing")
+require(all(name in scene for name in ("fixed-skull-context", "bone-flap", "dura-expansion")), "pressure-purpose anatomy is missing")
+require("does not restore or shrink established injury" in scene, "non-restoration visual boundary is missing")
+require("authored teaching motion" in scene and "not a patient measurement" in scene, "animation evidence boundary is missing")
+require("TimelineView" in immersive and "focusOcclusion()" in immersive, "runtime spatial animation or focus gesture is missing")
+require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "PressureBed" in immersive, "entity-anchored spatial audio is missing")
+require("Digital Crown" in immersive, "progressive immersion rationale is missing")
+require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
+require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
+require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
+require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
+require("careViewPermissionGranted" in state and "Reveal layers" in immersive, "non-graphic permission gate is missing")
+require("layerRevealProgress" in state and "calm-layer-reveal-seam" in scene, "calm layer-separation animation is missing")
+require("No incision or blood is shown" in immersive, "patient-friendly layer reveal language is missing")
+calm_shader = (ROOT / "Sources" / "CalmPaperFlowView.swift").read_text()
+require("CalmPaperFlowView" in immersive and "not blood" in calm_shader, "calm environmental shader boundary is missing")
+require("LayerContextBreadcrumb" in immersive and "YOU ARE HERE" in immersive, "nested layer context is missing")
+require("never infers emotion" in state and "Clinician controls" in launch, "clinician pace or inference boundary is missing")
+require("presenterCue" in state and "presenterBoundary" in state and "presenterLayerStatus" in state, "precise presenter content is missing")
+require("Picker(\"Audience\"" in immersive and "clinicianPresenter" in immersive, "patient/presenter mode switch is missing")
+require("familyFeedback" in immersive and "I need clarification" in immersive, "family-only clarification control is missing")
+require("clarificationRequested" in state and "never infers emotion" in state, "explicit clarification or emotion-inference boundary is missing")
+require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
+require("--proof-clinician-pressure" in launch, "deterministic presenter proof route is missing")
+require("isImmersivePresented = false\n        advanceJourney()" not in state, "permission incorrectly resets the companion window")
+require("pendingConsentStep" in state and "present(step: .discussCare" in state, "presenter direct-jump consent continuation is missing")
+require("StrokeModelBoardView()" in deck, "the dominant embedded 3D model is missing from the case board")
+require(all(gesture in model_board for gesture in ("DragGesture", "MagnifyGesture", "SpatialTapGesture")), "orbit, scale, or vessel-focus interaction is missing")
+require("makeScene(compact: true)" in model_board, "the windowed 3D model is not using the bounded scene profile")
+require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic proof routes are missing")
+require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
+require("clinician review pending" in readme.lower(), "clinical review status is missing")
+require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
+require("SC-AIS-001.0" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("determine eligibility" in clinical_packet and "No treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
+require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
+require("BRAIN_REVEAL_RIG" in houdini_builder and "OCCLUSION_RADIUS_PROFILE" in houdini_builder, "stroke Houdini graph builder is missing")
+
+if failures:
+    for failure in failures:
+        print(f"FAIL: {failure}")
+    raise SystemExit(1)
+
+print("STROKE_CARE_CONTRACT=PASS")
+print("procedure_steps=3")
+print("default_experience=PROGRESSIVE_SPATIAL_STORY")
+print("spatial_audio=ENTITY_ANCHORED_MONO")
+print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
+print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
+print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
+print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
+print("github_asset_runtime=PR2_EIGHT_ASSET_SHORTLIST")
+print("patient_data=NONE_FICTIONAL_ONLY")
+print("clinical_review=PENDING")
+print("physical_device=NOT_PROVEN")
