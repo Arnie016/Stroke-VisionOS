@@ -5,11 +5,12 @@ set -euo pipefail
 readonly DEVICE_ID="613CC48C-A6AD-5170-A238-D518B6012491"
 readonly DEVICE_NAME="XCAT"
 readonly BUNDLE_ID="com.arnav.StrokeTime"
-readonly PROOF_ROUTE="--proof-family-question"
+readonly PROOF_ROUTE="--hackathon-demo"
 readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly PROJECT_PATH="${APP_ROOT}/StrokeTime.xcodeproj"
-readonly APP_PATH="/Users/arnav/Library/Developer/Xcode/DerivedData/StrokeTime-equmrcwwnrxlypgajmnhksgdufei/Build/Products/Debug-xros/StrokeTime.app"
+readonly DERIVED_DATA_DIR="/tmp/stroke-care-xcat-derived-data"
+readonly APP_PATH="${DERIVED_DATA_DIR}/Build/Products/Debug-xros/StrokeTime.app"
 readonly RUN_ID="$(date '+%Y%m%d-%H%M%S')"
 readonly RECEIPT_DIR="${APP_ROOT}/Proof/xcat/${RUN_ID}"
 
@@ -31,10 +32,20 @@ xcodebuild \
     -project "${PROJECT_PATH}" \
     -scheme StrokeTime \
     -destination 'generic/platform=visionOS' \
+    -derivedDataPath "${DERIVED_DATA_DIR}" \
+    -allowProvisioningUpdates \
     build | tee "${RECEIPT_DIR}/build.log"
+
+if [[ ! -d "${APP_PATH}" ]]; then
+    print -u2 -- "XCAT_DEPLOY=FAILED expected app bundle is missing: ${APP_PATH}"
+    exit 3
+fi
 
 codesign --verify --deep --strict --verbose=2 "${APP_PATH}" \
     2>&1 | tee "${RECEIPT_DIR}/codesign.log"
+
+codesign --display --verbose=4 "${APP_PATH}" \
+    2>&1 | tee "${RECEIPT_DIR}/signing-details.log"
 
 version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${APP_PATH}/Info.plist")"
 build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "${APP_PATH}/Info.plist")"
