@@ -8,12 +8,13 @@ struct StrokeImmersiveView: View {
     @State private var pressureController: AudioPlaybackController?
     @State private var previousDragTranslation = CGSize.zero
     @State private var previousMagnification = 1.0
-    @State private var smoothedOrbit = SIMD2<Float>.zero
-    @State private var smoothedZoom: Float = 1
 
     private let annotationID = "stroke-intention-annotation"
     private let annotationAnchorName = "stroke-intention-annotation-anchor"
     private let calmHorizonID = "stroke-calm-paper-horizon"
+    private let questionMarkerID = "family-question-marker"
+    private let caseDrawerID = "spatial-patient-drawer"
+    private let vesselFocusID = "vessel-focus-reticle"
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
@@ -37,6 +38,24 @@ struct StrokeImmersiveView: View {
                         horizon.scale = [1.48, 1.48, 1]
                         content.add(horizon)
                     }
+
+                    if let marker = attachments.entity(for: questionMarkerID) {
+                        marker.name = questionMarkerID
+                        marker.components.set(BillboardComponent())
+                        content.add(marker)
+                    }
+
+                    if let drawer = attachments.entity(for: caseDrawerID) {
+                        drawer.name = caseDrawerID
+                        drawer.components.set(BillboardComponent())
+                        content.add(drawer)
+                    }
+
+                    if let focus = attachments.entity(for: vesselFocusID) {
+                        focus.name = vesselFocusID
+                        focus.components.set(BillboardComponent())
+                        content.add(focus)
+                    }
                 } update: { content, attachments in
                     guard let root = content.entities.first(where: { $0.name == StrokeSceneFactory.rootName }) else {
                         return
@@ -48,9 +67,11 @@ struct StrokeImmersiveView: View {
                     // Ported from the proven Heart Field interaction engine:
                     // state-owned orbit/zoom, smoothed presentation, entity-
                     // anchored SwiftUI annotation, cheap RealityKit targets.
-                    let blend: Float = 0.16
-                    smoothedOrbit = simd_mix(smoothedOrbit, experience.orbit, SIMD2(repeating: blend))
-                    smoothedZoom += (Float(experience.spatialZoom) - smoothedZoom) * blend
+                    // Gesture values arrive continuously; keep them local to
+                    // the RealityView update so SwiftUI state is never mutated
+                    // during rendering. That avoids a 60 Hz runtime warning.
+                    let smoothedOrbit = experience.orbit
+                    let smoothedZoom = Float(experience.spatialZoom)
 
                     // The anatomy owns the centre of the room. The progressive
                     // immersion style lets the Digital Crown expand or soften
@@ -82,6 +103,32 @@ struct StrokeImmersiveView: View {
                         horizon.position = [0, 1.62, -1.88]
                         horizon.scale = [1.48, 1.48, 1]
                     }
+                    if let marker = attachments.entity(for: questionMarkerID) {
+                        if marker.parent == nil {
+                            content.add(marker)
+                        }
+                        marker.position = questionMarkerPosition
+                        marker.scale = [0.72, 0.72, 0.72]
+                        marker.isEnabled = experience.questionMarkerVisible
+                        marker.components.set(BillboardComponent())
+                    }
+                    if let drawer = attachments.entity(for: caseDrawerID) {
+                        if drawer.parent == nil {
+                            content.add(drawer)
+                        }
+                        drawer.position = [-0.56, 1.58, -0.76]
+                        drawer.scale = [0.68, 0.68, 0.68]
+                        drawer.components.set(BillboardComponent())
+                    }
+                    if let focus = attachments.entity(for: vesselFocusID) {
+                        if focus.parent == nil {
+                            content.add(focus)
+                        }
+                        focus.position = [0.12, 1.79, -0.69]
+                        focus.scale = [0.52, 0.52, 0.52]
+                        focus.isEnabled = experience.procedureStep != .chooseCase
+                        focus.components.set(BillboardComponent())
+                    }
                     updateAudioMix()
                 } attachments: {
                     Attachment(id: annotationID) {
@@ -103,6 +150,21 @@ struct StrokeImmersiveView: View {
                             }
                             .allowsHitTesting(false)
                             .accessibilityHidden(true)
+                    }
+                    Attachment(id: questionMarkerID) {
+                        FamilyQuestionMarker()
+                            .environmentObject(experience)
+                            .frame(width: 210)
+                    }
+                    Attachment(id: caseDrawerID) {
+                        SpatialPatientDrawer()
+                            .environmentObject(experience)
+                            .frame(width: 250)
+                    }
+                    Attachment(id: vesselFocusID) {
+                        VesselFocusReticle()
+                            .environmentObject(experience)
+                            .frame(width: 170, height: 170)
                     }
                 }
             .gesture(
@@ -133,7 +195,9 @@ struct StrokeImmersiveView: View {
                     SpatialTapGesture()
                         .targetedToAnyEntity()
                         .onEnded { value in
-                            if value.entity.name == "vessel-blockage" ||
+                            if experience.questionPlacementArmed {
+                                experience.placeQuestionMarker()
+                            } else if value.entity.name == "vessel-blockage" ||
                                 value.entity.name == "penumbra-shell" {
                                 experience.focusOcclusion()
                             }
@@ -154,6 +218,14 @@ struct StrokeImmersiveView: View {
         case .chooseCase: [-0.42, 1.96, -0.84]
         case .inspectOcclusion: [0.42, 1.94, -0.84]
         case .discussCare: [0.43, 1.94, -0.86]
+        }
+    }
+
+    private var questionMarkerPosition: SIMD3<Float> {
+        switch experience.procedureStep {
+        case .chooseCase: [-0.18, 1.73, -0.75]
+        case .inspectOcclusion: [0.19, 1.82, -0.72]
+        case .discussCare: [0.24, 1.76, -0.74]
         }
     }
 
@@ -236,9 +308,6 @@ private struct StrokeIntentionAnnotation: View {
                 .foregroundStyle(.primary.opacity(0.88))
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("Illustrative teaching cue")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
         }
         .padding(15)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
@@ -248,17 +317,17 @@ private struct StrokeIntentionAnnotation: View {
 
     private var annotationTitle: String {
         switch experience.procedureStep {
-        case .chooseCase: "Fixed space"
-        case .inspectOcclusion: "Pressure has little room"
-        case .discussCare: "Room, not repair"
+        case .chooseCase: "FIXED SPACE"
+        case .inspectOcclusion: "PRESSURE"
+        case .discussCare: "ROOM ≠ REPAIR"
         }
     }
 
     private var annotationMeaning: String {
         switch experience.procedureStep {
-        case .chooseCase: "The skull forms a boundary around the brain."
-        case .inspectOcclusion: "Swelling and injured tissue are related, but not the same problem."
-        case .discussCare: "The opening explains pressure relief; injured tissue remains visible."
+        case .chooseCase: "Skull surrounds brain."
+        case .inspectOcclusion: "Swelling crowds fixed space."
+        case .discussCare: "More room; injury remains."
         }
     }
 
@@ -279,16 +348,131 @@ private struct StrokeIntentionAnnotation: View {
     }
 }
 
+private struct FamilyQuestionMarker: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "questionmark.circle.fill")
+                .font(.title3)
+                .foregroundStyle(.orange)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("QUESTION HERE")
+                    .font(.caption2.weight(.bold))
+                    .tracking(0.8)
+                Text(markerMeaning)
+                    .font(.caption.weight(.medium))
+            }
+        }
+        .padding(11)
+        .background(.regularMaterial, in: Capsule())
+        .overlay(Capsule().stroke(Color.orange.opacity(0.42)))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var markerMeaning: String {
+        switch experience.procedureStep {
+        case .chooseCase: "Which layer is this?"
+        case .inspectOcclusion: "What changed here?"
+        case .discussCare: "What does this make room for?"
+        }
+    }
+}
+
+private struct SpatialPatientDrawer: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label("FILE 78", systemImage: "folder.fill")
+                    .font(.caption.weight(.bold))
+                    .tracking(0.9)
+                Spacer()
+                Image(systemName: "pin.fill")
+                    .foregroundStyle(.orange)
+            }
+
+            HStack(spacing: 8) {
+                evidenceChip("waveform", "Speech", .orange)
+                evidenceChip("figure.arms.open", "Arm", .orange)
+                evidenceChip("clock.fill", "70 min", .yellow)
+            }
+
+            HStack(spacing: 8) {
+                Capsule()
+                    .fill(.secondary.opacity(0.38))
+                    .frame(width: 54, height: 5)
+                Text(experience.procedureStep == .chooseCase ? "PULL INTO VIEW" : "CASE IN VIEW")
+                    .font(.caption2.weight(.bold))
+                    .tracking(0.7)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(14)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.orange.opacity(0.9))
+                .frame(width: 78, height: 10)
+                .offset(x: 12, y: -7)
+        }
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.14)))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Fictional file 78: speech change, arm weakness, reported 70 minutes ago")
+    }
+
+    private func evidenceChip(_ icon: String, _ label: String, _ tint: Color) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.headline)
+                .foregroundStyle(tint)
+            Text(label)
+                .font(.caption2.weight(.semibold))
+        }
+        .frame(maxWidth: .infinity, minHeight: 48)
+        .background(tint.opacity(0.10), in: RoundedRectangle(cornerRadius: 11))
+    }
+}
+
+private struct VesselFocusReticle: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.orange.opacity(0.26), lineWidth: 2)
+            Circle()
+                .trim(from: 0.08, to: 0.72)
+                .stroke(Color.orange, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .rotationEffect(.degrees(experience.procedureStep == .discussCare ? 28 : -18))
+            Circle()
+                .fill(Color.orange)
+                .frame(width: 14, height: 14)
+            Text("CLOT")
+                .font(.caption2.weight(.black))
+                .tracking(1.1)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.regularMaterial, in: Capsule())
+                .offset(y: 52)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Illustrative clot focus marker")
+    }
+}
+
 struct StrokeJourneyCompanionView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
         JourneyCaption()
-            .frame(width: experience.audienceLens == .clinician ? 720 : 640)
+            .frame(width: experience.audienceLens == .clinician ? 500 : 560)
             .padding(18)
             .frame(
-                width: experience.audienceLens == .clinician ? 760 : 680,
-                height: experience.audienceLens == .clinician ? 500 : 330
+                width: experience.audienceLens == .clinician ? 540 : 600,
+                height: experience.audienceLens == .clinician ? 660 : 360
             )
             .animation(.easeInOut(duration: 0.28), value: experience.audienceLens)
     }
@@ -297,6 +481,8 @@ struct StrokeJourneyCompanionView: View {
 private struct JourneyCaption: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -309,14 +495,12 @@ private struct JourneyCaption: View {
                     .font(.caption.weight(.bold))
                     .tracking(1.8)
                 Spacer()
-                Picker("Audience", selection: $experience.audienceLens) {
-                    ForEach(StrokeAudienceLens.allCases) { lens in
-                        Text(lens.rawValue).tag(lens)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 260)
-                .accessibilityLabel("Explanation view")
+                Label(
+                    experience.audienceLens == .clinician ? "PRESENTER ONLY" : "FAMILY QUESTIONS",
+                    systemImage: experience.audienceLens == .clinician ? "lock.fill" : "person.2.fill"
+                )
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(experience.audienceLens == .clinician ? .orange : .cyan)
 
                 Button {
                     experience.soundEnabled.toggle()
@@ -325,6 +509,15 @@ private struct JourneyCaption: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(experience.soundEnabled ? "Mute spatial audio" : "Enable spatial audio")
+
+                Button {
+                    Task { await exitExperience() }
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel("Exit to patient files")
             }
 
             if experience.audienceLens == .clinician {
@@ -343,7 +536,7 @@ private struct JourneyCaption: View {
                 clinicianNavigation
             }
 
-            Text("Teaching model · clinician review pending · not a patient scan")
+            Text("Teaching model · not a patient scan")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }
@@ -378,10 +571,16 @@ private struct JourneyCaption: View {
                             Text(presenterTitle(for: step))
                                 .font(.callout.weight(.semibold))
                         }
+                        .foregroundStyle(experience.procedureStep == step ? Color.black.opacity(0.82) : .primary)
+                        .padding(.horizontal, 10)
+                        .frame(height: 38)
                         .frame(maxWidth: .infinity)
+                        .background(
+                            experience.procedureStep == step ? Color.cyan : Color.white.opacity(0.10),
+                            in: Capsule()
+                        )
                     }
-                    .buttonStyle(.bordered)
-                    .tint(experience.procedureStep == step ? .cyan : .secondary)
+                    .buttonStyle(.plain)
                     .accessibilityLabel("Present act \(step.number), \(presenterTitle(for: step))")
                 }
             }
@@ -391,7 +590,7 @@ private struct JourneyCaption: View {
                     Image(systemName: "questionmark.bubble.fill")
                         .foregroundStyle(.orange)
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("FAMILY ASKED TO CLARIFY")
+                        Text(experience.questionMarkerVisible ? "FAMILY POINTED TO THIS AREA" : "FAMILY ASKED TO CLARIFY")
                             .font(.caption.weight(.bold))
                             .tracking(1.0)
                             .foregroundStyle(.orange)
@@ -401,6 +600,7 @@ private struct JourneyCaption: View {
                     Spacer()
                     Button("Addressed") {
                         experience.acknowledgeClarification()
+                        experience.clearQuestionMarker()
                     }
                     .buttonStyle(.bordered)
                 }
@@ -472,7 +672,7 @@ private struct JourneyCaption: View {
             .buttonStyle(.bordered)
 
             Button(
-                experience.clarificationRequested ? "Clarification marked" : "I need clarification",
+                experience.clarificationRequested ? "Marked" : "Clarify",
                 systemImage: experience.clarificationRequested ? "checkmark.circle.fill" : "questionmark.bubble"
             ) {
                 experience.requestClarification()
@@ -480,52 +680,70 @@ private struct JourneyCaption: View {
             .buttonStyle(.borderedProminent)
             .tint(experience.clarificationRequested ? .orange : .cyan)
             .disabled(experience.clarificationRequested)
+
+            Button(
+                experience.questionPlacementArmed ? "Tap brain…" : "Point on brain",
+                systemImage: experience.questionPlacementArmed ? "hand.point.up.left.fill" : "mappin.and.ellipse"
+            ) {
+                experience.toggleQuestionPlacement()
+            }
+            .buttonStyle(.bordered)
+            .tint(.orange)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Family pace and clarification controls")
     }
 
     private var clinicianNavigation: some View {
-        HStack(spacing: 12) {
-            if experience.procedureStep != .chooseCase {
-                Button("Back", systemImage: "chevron.left") {
-                    experience.retreatJourney()
+        VStack(spacing: 12) {
+            HStack(spacing: 10) {
+                if experience.procedureStep != .chooseCase {
+                    Button("Back", systemImage: "chevron.left") {
+                        experience.retreatJourney()
+                    }
+                    .buttonStyle(.bordered)
+                }
+
+                Button(experience.requestedPause ? "Resume" : "Pause", systemImage: experience.requestedPause ? "play.fill" : "pause.fill") {
+                    experience.togglePause()
                 }
                 .buttonStyle(.bordered)
+
+                Spacer(minLength: 8)
+
+                Button("Reset view", systemImage: "arrow.counterclockwise") {
+                    experience.resetSpatialView()
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .accessibilityHint("Restores the original model rotation and scale")
             }
 
-            Button(experience.requestedPause ? "Resume" : "Pause", systemImage: experience.requestedPause ? "play.fill" : "pause.fill") {
-                experience.togglePause()
-            }
-            .buttonStyle(.bordered)
-
-            Button("Reset view", systemImage: "arrow.counterclockwise") {
-                experience.resetSpatialView()
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
-            .accessibilityHint("Restores the original model rotation and scale")
-
-            Button(experience.primaryActionTitle, systemImage: "arrow.right") {
+            Button {
                 experience.advanceJourney()
+            } label: {
+                Label(experience.primaryActionTitle, systemImage: "arrow.right")
+                    .font(.body.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .tint(.cyan)
-
-            Button("Exit", systemImage: "xmark") {
-                Task {
-                    await dismissImmersiveSpace()
-                    experience.isImmersivePresented = false
-                }
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
         }
+    }
+
+    @MainActor
+    private func exitExperience() async {
+        await dismissImmersiveSpace()
+        experience.isImmersivePresented = false
+        openWindow(id: StrokeSpace.window)
+        dismissWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
     }
 
     private var consentChoice: some View {
         VStack(spacing: 10) {
-            Text("May I gently separate the skull, dura, and brain layers? No incision or blood is shown.")
+            Text("May I separate the skull, dura, and brain? No incision or blood.")
                 .font(.callout.weight(.semibold))
                 .multilineTextAlignment(.center)
 

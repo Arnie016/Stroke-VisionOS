@@ -10,7 +10,9 @@ tell one difficult story in three visual acts:
    expansion view explains mechanical purpose without implying that established
    injury is restored.
 
-The launch window is an early spatial case-file threshold. The lesson itself is
+The launch window is a spatial case-file threshold. The file itself is the
+control: pulling it from the shelf progressively reveals speech, arm, and time
+signals before it stays pinned beside the anatomy. The lesson itself is
 a progressive immersive space: the wearer can use the Digital Crown to choose
 how much of the room remains visible while the clinician controls the pace.
 
@@ -45,6 +47,9 @@ The companion window has two views over the same spatial state:
   emotion, gaze, voice, heart rate, or a patient measurement.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
   explicit user or clinician actions. There is no success animation.
+- A compact spatial patient drawer, clot reticle, and family question marker
+  move the explanation into the room. The side rails carry controls and safety
+  boundaries rather than repeating the lesson as text.
 
 ## Clinical and privacy boundary
 
@@ -90,6 +95,7 @@ xcrun simctl launch --terminate-running-process \
 Simulator builds and screenshots do not prove XCAT performance, physical
 comfort, clinical accuracy, or clinician acceptance.
 
-Current design debt is tracked openly: the 2D case board and bottom companion
-panel are being replaced with side-parked spatial files, progressive fact
-reveal, a presenter-only side rail, and a separate family question surface.
+Current proof debt is tracked openly: the side-parked files, concise rails, and
+spatial drawer/reticle compile in Simulator, but the newest immersive-room
+capture still needs a user-initiated launch on an unlocked Mac. XCAT wearer and
+clinical review remain separate gates.

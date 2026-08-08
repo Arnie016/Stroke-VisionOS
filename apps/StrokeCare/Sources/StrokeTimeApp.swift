@@ -7,17 +7,41 @@ struct StrokeTimeApp: App {
 
     var body: some Scene {
         WindowGroup(id: StrokeSpace.window) {
-            Group {
-                if experience.isImmersivePresented {
-                    StrokeJourneyCompanionView()
-                } else {
-                    StrokeJourneyLaunchView()
-                }
-            }
-            .environmentObject(experience)
+            StrokeJourneyLaunchView()
+                .environmentObject(experience)
         }
-        .defaultSize(width: 820, height: 620)
+        .defaultSize(width: 900, height: 620)
         .windowResizability(.contentSize)
+
+        WindowGroup(id: StrokeSpace.family) {
+            StrokeJourneyCompanionView()
+                .environmentObject(experience)
+                .onAppear { experience.audienceLens = .family }
+        }
+        .defaultSize(width: 600, height: 360)
+        .windowResizability(.contentSize)
+        .defaultWindowPlacement { _, context in
+            if let workspace = context.windows.first(where: { $0.id == StrokeSpace.window }) {
+                WindowPlacement(.leading(workspace))
+            } else {
+                WindowPlacement(.utilityPanel)
+            }
+        }
+
+        WindowGroup(id: StrokeSpace.presenter) {
+            StrokeJourneyCompanionView()
+                .environmentObject(experience)
+                .onAppear { experience.audienceLens = .clinician }
+        }
+        .defaultSize(width: 540, height: 660)
+        .windowResizability(.contentSize)
+        .defaultWindowPlacement { _, context in
+            if let workspace = context.windows.first(where: { $0.id == StrokeSpace.window }) {
+                WindowPlacement(.trailing(workspace))
+            } else {
+                WindowPlacement(.utilityPanel)
+            }
+        }
 
         ImmersiveSpace(id: StrokeSpace.immersive) {
             StrokeImmersiveView()
@@ -29,5 +53,7 @@ struct StrokeTimeApp: App {
 
 enum StrokeSpace {
     static let window = "stroke-time-window"
+    static let family = "stroke-family-questions"
+    static let presenter = "stroke-presenter-rail"
     static let immersive = "stroke-time-immersive"
 }

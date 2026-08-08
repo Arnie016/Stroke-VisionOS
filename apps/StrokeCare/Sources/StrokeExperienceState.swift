@@ -91,6 +91,8 @@ final class StrokeExperienceState: ObservableObject {
     @Published var reportIsVisible = false
     @Published var requestedPause = false
     @Published var clarificationRequested = false
+    @Published var questionPlacementArmed = false
+    @Published var questionMarkerVisible = false
     @Published var soundEnabled = true
     @Published var careViewPermissionGranted = false
     @Published var isConsentPromptVisible = false
@@ -199,6 +201,26 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = true
     }
 
+    func toggleQuestionPlacement() {
+        questionPlacementArmed.toggle()
+        if questionPlacementArmed {
+            requestedPause = true
+        }
+    }
+
+    func placeQuestionMarker() {
+        guard questionPlacementArmed else { return }
+        questionPlacementArmed = false
+        questionMarkerVisible = true
+        clarificationRequested = true
+        requestedPause = true
+    }
+
+    func clearQuestionMarker() {
+        questionPlacementArmed = false
+        questionMarkerVisible = false
+    }
+
     func acknowledgeClarification() {
         clarificationRequested = false
     }
@@ -225,19 +247,19 @@ final class StrokeExperienceState: ObservableObject {
     var journeyCaption: String {
         switch procedureStep {
         case .chooseCase:
-            "The brain rests inside a fixed skull, supplied by branching vessels."
+            "The skull is fixed. Vessels feed the brain."
         case .inspectOcclusion:
-            "A blocked vessel can injure tissue; swelling then has nowhere easy to go."
+            "A clot blocks flow. Swelling has nowhere to go."
         case .discussCare:
-            "Making space may reduce pressure. It does not restore tissue already injured."
+            "Making room can reduce pressure—not repair injury."
         }
     }
 
     var journeyIntent: String {
         switch procedureStep {
-        case .chooseCase: "Build a shared map."
-        case .inspectOcclusion: "Separate injury from pressure."
-        case .discussCare: "Explain purpose without promising outcome."
+        case .chooseCase: "Share one map."
+        case .inspectOcclusion: "Clot → injury → pressure."
+        case .discussCare: "Purpose, not promise."
         }
     }
 
@@ -247,11 +269,11 @@ final class StrokeExperienceState: ObservableObject {
     var presenterCue: String {
         switch procedureStep {
         case .chooseCase:
-            "Establish orientation before pathology. Point to the fixed skull, then the branching arterial map."
+            "Orient first: skull, then arteries."
         case .inspectOcclusion:
-            "Focus the blocked-vessel marker first, then reveal swelling. Name injury and pressure as related but different problems."
+            "Point to the clot, then swelling. Keep injury and pressure distinct."
         case .discussCare:
-            "After permission, separate the skull, dura, and brain layers slowly. State the purpose: create room, not restore injured tissue."
+            "With permission, unzip layers slowly. Say: room, not repair."
         }
     }
 
@@ -269,11 +291,11 @@ final class StrokeExperienceState: ObservableObject {
     var presenterBoundary: String {
         switch procedureStep {
         case .chooseCase:
-            "Generic teaching anatomy. Do not describe laterality, dimensions, or registration as patient-specific."
+            "Generic anatomy—not this patient's scan."
         case .inspectOcclusion:
-            "No pressure value, tissue-volume estimate, prognosis, or treatment-eligibility inference is shown."
+            "No pressure value, prognosis, or eligibility claim."
         case .discussCare:
-            "Not a recommendation or outcome promise. The treating team explains whether this pathway applies."
+            "Not a recommendation or outcome promise."
         }
     }
 
@@ -323,6 +345,7 @@ final class StrokeExperienceState: ObservableObject {
     func present(step: StrokeProcedureStep, reduceMotion: Bool = false) {
         requestedPause = false
         clarificationRequested = false
+        clearQuestionMarker()
         isConsentPromptVisible = false
 
         switch step {
@@ -412,6 +435,7 @@ final class StrokeExperienceState: ObservableObject {
         reportIsVisible = false
         requestedPause = false
         clarificationRequested = false
+        clearQuestionMarker()
         careViewPermissionGranted = false
         isConsentPromptVisible = false
         pendingConsentStep = nil
@@ -453,6 +477,14 @@ final class StrokeExperienceState: ObservableObject {
     func prepareClinicianProof(step: StrokeProcedureStep) {
         prepareProof(step: step)
         audienceLens = .clinician
+    }
+
+    func prepareFamilyQuestionProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        questionMarkerVisible = true
+        clarificationRequested = true
+        requestedPause = true
     }
 
     var discussionReport: String {

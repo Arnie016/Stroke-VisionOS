@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.4 (4)` in current source and Simulator; XCAT still has the
+- Version/build: `0.5 (5)` in current source and Simulator; XCAT still has the
   separately evidenced `0.3 (3)` install.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -25,6 +25,14 @@ The current Simulator build also loads the reviewed PR #2 shortlist. Registered
 v2 brain, cerebral arteries, right-M1 teaching marker, and conceptual dura are
 visible in the three-act path. Prototype-v1 edema/flap/patch remain bundled but
 disabled after a visual integration render demonstrated a mismatched frame.
+
+The 0.5 spatial-workspace pass replaces the flat case board with a draggable
+file shelf and progressive fact constellation. It parks presenter controls to
+the right and family question controls to the left, reduces the core visible
+teaching copy by more than 30%, and adds a pinned spatial case drawer plus a
+clot-focus reticle. The room screenshot is still pending because visionOS
+requires the immersive open to be initiated from the unlocked UI; the side
+window alone is not anatomy proof.
 
 ## Static contract and Simulator
 
@@ -59,6 +67,9 @@ xcodebuild ... -destination 'platform=visionOS Simulator,name=Apple Vision Pro' 
 | PR2 Pressure | `progressive-story/09-pr2-pressure-simulator.png` | `c18fd10e9775246dfaa1387d76a5df07200b1d8c4d49715ef194f24ed00ae5da` |
 | PR2 Make space | `progressive-story/10-pr2-care-purpose-simulator.png` | `ca8f90147dd3053d84aa9551fe79a1c9a36e2015fe9d3b068f56ba10086cff19` |
 | PR2 three-act sheet | `progressive-story/11-pr2-three-act-contact-sheet.png` | `fa53ed44543e2e6ce2dda07814e36192b1339b296986e7f8e1b3ddbd61600697` |
+| Spatial case threshold | `14-spatial-case-unfold-simulator.png` | `748da0c08360ef8e5726b82bc6cab152e4c2397308aa9bf103b0c9e4d8d84cde` |
+| Presenter side rail | `15-presenter-side-rail-simulator.png` | `8bb6420f8d8c5462f8ca60fe437640bd01fa8b3b0488aa73ec6da5b31b563437` |
+| Family question surface | `16-family-question-surface-simulator.png` | `b6a10b4a3397a05ffacbddc01791b5ade718a37c8486bbd99ff391873213cf66` |
 
 These artifacts prove Simulator-visible UI, model presence, deterministic
 teaching states, and the configured visual hierarchy. They do not prove anatomy
