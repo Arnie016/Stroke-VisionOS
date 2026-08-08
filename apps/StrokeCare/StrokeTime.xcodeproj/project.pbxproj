@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */; };
+		12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 860445E33FD0C59397A922AA /* cranial_drill_generic.usdz */; };
 		13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A581FC5A619BE9E342C7BD /* Assets.xcassets */; };
 		16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = F64750DC74A14E49DFEDF063 /* FlowBed.wav */; };
 		1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C144C17AB279CA643242E29B /* StrokeControlDeck.swift */; };
 		21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */; };
 		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
+		3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */; };
 		46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */; };
 		4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */; };
 		6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */; };
@@ -41,7 +43,9 @@
 		65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTimeApp.swift; sourceTree = "<group>"; };
 		70A581FC5A619BE9E342C7BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_arteries_realistic_v2.usdz; sourceTree = "<group>"; };
+		860445E33FD0C59397A922AA /* cranial_drill_generic.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_drill_generic.usdz; sourceTree = "<group>"; };
 		8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
+		8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = suction_and_forceps.usdz; sourceTree = "<group>"; };
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
@@ -57,9 +61,11 @@
 		017A53FCF13A4D2EB0D4CF83 /* usdz */ = {
 			isa = PBXGroup;
 			children = (
+				860445E33FD0C59397A922AA /* cranial_drill_generic.usdz */,
 				9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */,
 				38684AD7663E54E8E55A7C3F /* dural_patch.usdz */,
 				50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */,
+				8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */,
 			);
 			name = usdz;
 			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz;
@@ -197,12 +203,14 @@
 				F35080EB0A3184483D874359 /* PressureBed.wav in Resources */,
 				4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */,
 				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
+				12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */,
 				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
 				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
 				7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */,
 				6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */,
 				9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */,
 				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,
+				3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,7 +309,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -314,7 +322,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 0.5;
+				MARKETING_VERSION = 0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -361,7 +369,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -380,7 +388,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MARKETING_VERSION = 0.5;
+				MARKETING_VERSION = 0.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

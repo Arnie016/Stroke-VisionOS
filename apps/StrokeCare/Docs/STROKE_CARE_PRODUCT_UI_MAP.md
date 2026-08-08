@@ -11,16 +11,18 @@ patient record, a scan viewer, or a treatment decision aid.
 
 ```mermaid
 flowchart LR
-    A["Small doorway window"] --> B["Look left: patient-file cabinet"]
+    A["Two-beat calm prelude"] --> A2["Choose Doctor to family or Clinician teaching"]
+    A2 --> B["Look left: patient-file exhibit"]
     B --> C["Pinch and carry File 78"]
     C --> D["Drop at central case dock"]
-    D --> E["Case facts unfold around the centre"]
-    E --> F["Brain appears at primary visual focus"]
+    D --> E["Case review unfolds around a generic figure"]
+    E --> E2["Explicitly enter this case"]
+    E2 --> F["Library disappears; brain enters primary focus"]
     F --> G["Region point field"]
-    F --> H["Procedure point field"]
+    F --> H["Blood-flow lesson field"]
     F --> I["Transparent layer study"]
     H --> J["Clinical evidence above presenter"]
-    D --> K["Pick file up and return it left"]
+    E --> K["Return file to the library"]
 ```
 
 The interaction borrows the useful spatial principle of a visionOS DJ deck:
@@ -32,70 +34,78 @@ and carries an object; they do not navigate a stack of desktop pages.
 
 | Zone | Object | Why it occupies that space | Current interaction |
 | --- | --- | --- | --- |
-| Left peripheral | Physical case cabinet and archived files | Browsable library; present but not demanding | Gaze + pinch File 78 |
+| Left peripheral, intake only | Case-file exhibit and archived files | Browsable library; present but not demanding | Gaze + pinch File 78 |
 | Centre near-field | Empty circular case dock | Makes the user's next action self-evident | Carry and drop file |
-| Centre foveal | Brain, arteries, clot, affected territory | The shared explanatory object | Gaze, select, orbit, magnify |
-| Around anatomy | Case facts or selected annotation | Context stays close to what it explains | Progressive reveal; point selection |
+| Centre foveal | Brain, arteries, blockage marker, affected territory | The shared explanatory object | Gaze, select, orbit, magnify |
+| Around selected case, review only | Case facts and open questions | The clinician connects signals before entering anatomy | Progressive reveal |
+| Around anatomy, explanation only | Selected lesson point or annotation | Context stays close to what it explains | Point selection |
 | Top spatial spine | Head → brain → artery → clot / pressure space | Orientation without another bottom strip | Changes with the current act |
 | Right secondary | Compact presenter rail | Precision controls without covering the shared model | Act, layer, field, evidence, pause |
+| Left hand, clinician only | Collapsed radial tool cuff | Instruments follow the clinician instead of occupying a room window | Open, gaze, pinch tool |
+| Right hand, clinician only | Selected teaching prop | Makes selection physically legible at useful scale | Held display; no cutting or anatomy mutation |
 | Upper evidence plane | Clinical evidence | Sources sit above, outside the family explanation | Search, pin, open, compose draft |
 
 ## State-by-state UI map
 
 ### 0. Doorway
 
-The only conventional window is a small system-required threshold: **Family**
-or **Presenter**, then “Enter the case room.” It carries no patient cards,
-notes, dashboard, or anatomy controls.
+The only conventional window is a small system-required threshold. Two short,
+non-statistical sentences establish urgency and calm; the wearer then chooses
+**Doctor → family** or **Clinician teaching**. A quiet local audio bed is
+optional. It carries no patient cards, notes, dashboard, or anatomy controls.
 
-### 1. Spatial patient cabinet
+### 1. Spatial patient exhibit
 
-![Spatial patient cabinet](../Proof/27-spatial-case-intake.png)
+![Spatial patient exhibit](../Proof/27-spatial-case-intake.png)
 
-- The cabinet is a RealityKit object at the user's left.
+- The archive is a floating RealityKit exhibit at the user's left—not an imitation office cabinet.
 - The gold folder is a direct/indirect input target with collision and hover.
 - The centre dock is deliberately empty.
-- The anatomy is hidden until the file reaches the dock.
+- The anatomy remains hidden after docking; docking opens a distinct case-review phase.
 - Dragging away and releasing returns the file to the cabinet.
 
 Current limitation: this is a functional geometric prototype, not the final
-high-resolution cabinet. Folder labels, materials, hinges, file fan-out, and
-return animation still need a technical-art pass and XCAT hand testing.
+high-resolution archive. Folder labels, materials, file fan-out, relationship
+threads, and return animation still need a technical-art pass and XCAT hand
+testing.
 
-### 2. Docked case and patient facts
+### 2. Docked case review
 
 ![Docked spatial case](../Proof/30-spatial-docked-case.png)
 
-- Dropping the file makes the brain the central shared object.
+- Dropping the file reveals a generic, non-likeness case figure and four concise facts.
 - Speech, arm, time, and open-question facts become separate spatial artifacts,
   not tiny tabs inside a notes window.
-- The file remains a physical object beneath the anatomy and can be returned.
-- The cabinet stays left as the persistent source library.
+- The file can still be returned before entering the explanation.
+- **Begin family view** or **Begin presenter view** is the explicit threshold.
+- Once entered, the complete intake room is disabled; no cabinet, file, or case furniture persists beside the brain.
 
 Current limitation: the fact artifacts need stronger relationship lines,
 larger typographic treatment, and a better orbit around the case. They are
 implemented, but this visual pass is not the final design.
 
-### 3. Region exploration
+### 3. Lesson family: brain regions
 
 ![Region point field](../Proof/28-spatial-region-explanation.png)
 
-- Cyan points are derived from the registered cortex bounds.
+- Mint points are derived from the registered cortex bounds.
 - A point remains parented to the cortex and follows orbit/magnification.
 - Gaze + pinch selects a point; dragging from it rotates the entire anatomy.
 - The point cannot be detached, preventing loss of anatomical meaning.
 - Only the selected point receives a text label.
 
-### 4. Procedure path
+### 4. Lesson family: blood flow
 
 ![Procedure point field](../Proof/29-spatial-procedure-explanation.png)
 
-- Amber points form a separate ordered reference field along the vessel path.
+- Five amber points form a sparse cause-and-effect reference field: approach,
+  branching, example blockage, changed downstream flow, and affected territory.
+- Six low-motion chevrons share the droplet/vessel centreline and show direction.
 - Switching field changes the meaning of the points; it does not add a second
   simultaneous layer of labels.
-- The selected **Occlusion focus** is the only expanded annotation.
-- The sequence is clinician-reviewed teaching choreography, not a simulated
-  catheter plan or patient-specific trajectory.
+- Only the selected point expands. The field explains why the story changes;
+  it is not a catheter plan or patient-specific trajectory.
+- Both family and presenter can deliberately swap lesson families or hide the points.
 
 ### 5. Transparent anatomy
 
@@ -116,6 +126,17 @@ implemented, but this visual pass is not the final design.
 - A source includes full citation, link, support, and limitation.
 - Pinning and source-bound drafting are clinician-only.
 - Generated wording remains a draft until clinical review.
+
+### 7. Clinician hand toolkit
+
+- A collapsed cuff follows the left palm; opening it reveals a radial selector.
+- **Focus**, **Lens**, and **Layers** control the explanation.
+- Generic forceps and drill concepts may be held on the right palm, but remain
+  display-only and are hidden from the family lens.
+- The current open-cranial tool assets are low-detail prototypes, not the final
+  high-resolution instrument set.
+- Full interaction, asset, and XCAT gates are in
+  [`CLINICIAN_HAND_TOOLKIT.md`](CLINICIAN_HAND_TOOLKIT.md).
 
 ## Annotation engineering contract
 
@@ -141,20 +162,22 @@ peripheral vision.
 | Gesture/action | Result | Reversibility |
 | --- | --- | --- |
 | Gaze + pinch case file | Acquire physical case object | Release away from dock returns it |
-| Carry file to centre | Reveal case and anatomy | Carry file back left |
+| Carry file to centre | Reveal the case review only | Carry file back left |
+| Begin selected case | Remove intake room and reveal anatomy | Finish or exit back to cases |
 | Gaze + pinch anatomy point | Select one intended question | Clear selection |
 | Drag selected point or brain | Orbit complete registered anatomy | Reset view |
 | Two-hand magnify | Scale complete registered anatomy | Reset view |
-| Choose Regions / Procedure | Swap point-field meaning | Swap back; points remain registered |
+| Choose Brain regions / Blood flow | Swap lesson-point meaning | Swap back or hide; points remain registered |
 | See through | Change cortex opacity | Return to Layers |
 | Study apart | Apply small semantic-layer offsets | Return to Layers without drift |
 | Pin source | Preserve evidence in clinician space | Unpin |
 
 ## Patient and presenter split
 
-**Family** sees the shared brain, one calm sentence, pause, clarification, and
-point-on-brain actions. It does not see surgical tools, evidence drafting, or
-procedure precision controls.
+**Family** sees the shared brain, one calm sentence, lesson selector, optional
+system narration of reviewed copy, pause, clarification, and point-on-brain
+actions. It does not see surgical tools, evidence drafting, or procedure
+precision controls.
 
 **Presenter** receives the secondary rail only after the case is docked. Its
 compact menus change act, layer presentation, and point-field flavor. The rail
@@ -184,7 +207,11 @@ is not the product's primary surface; the anatomy remains the centre of action.
 - Clinical correctness and acceptability: **PENDING SPECIALIST REVIEW**.
 - Houdini and Unreal execution: **NOT RUN**; neither editor is installed here.
 
-The current improvement is architectural: the app now has a spatial object
-loop. The next visual pass should refine cabinet/folder craft, make the top
-spine unmistakable, add elegant provenance threads, and reduce the presenter
-rail further after XCAT hand testing.
+The current improvement is architectural: patient management and anatomy are
+now separate spaces, with an explicit threshold between them. The next visual
+pass should replace the geometric file exhibit with higher-craft assets, add
+elegant provenance threads, and reduce the presenter rail after XCAT hand
+testing. The explanation ends in a calm reflection and a return to cases; it
+does not generate a recommendation. A scan-analysis model remains out of scope
+until dataset licensing, registration, validation, privacy, intended use, and
+clinician oversight are defined.

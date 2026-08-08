@@ -25,6 +25,8 @@ enum StrokeSceneFactory {
     static let spatialCaseRoomName = "spatial-case-intake-room"
     static let spatialCaseFileName = "spatial-case-file-78"
     static let spatialCaseDockName = "spatial-case-dock"
+    static let spatialCaseFigureName = "spatial-case-review-figure"
+    static let clinicianHeldToolRootName = "clinician-held-tool-root"
 
     private static let coreName = "infarct-core"
     private static let penumbraName = "penumbra-shell"
@@ -34,6 +36,8 @@ enum StrokeSceneFactory {
     private static let clotName = "vessel-blockage"
     private static let ringName = "time-ring"
     private static let perfusionName = "perfusion-flow"
+    private static let flowArrowName = "calm-flow-direction-arrows"
+    private static let registeredFlowArrowName = "registered-calm-flow-direction-arrows"
     private static let inspectionRingName = "occlusion-focus-ring"
     private static let medicinePreviewName = "medicine-review-preview"
     private static let catheterPreviewName = "catheter-review-preview"
@@ -72,32 +76,23 @@ enum StrokeSceneFactory {
     private static let dropletCount = 64
 
     private static let regionPointDirections: [SIMD3<Float>] = [
-        [-0.66, 0.56, 0.62], [-0.24, 0.88, 0.42], [0.28, 0.86, 0.43],
-        [0.69, 0.56, 0.54], [-0.88, 0.16, 0.45], [-0.43, 0.20, 0.82],
-        [0.27, 0.24, 0.86], [0.84, 0.06, 0.47], [-0.56, -0.43, 0.60],
-        [0.46, -0.44, 0.65]
+        [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
+        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
     ]
 
     private static let regionPointLabels = [
-        "Left frontal teaching anchor", "Superior frontal teaching anchor",
-        "Superior parietal teaching anchor", "Right parietal teaching anchor",
-        "Left temporal teaching anchor", "Left central teaching anchor",
-        "Right central teaching anchor", "Right temporal teaching anchor",
-        "Left posterior teaching anchor", "Right posterior teaching anchor"
+        "Example affected area", "Nearby brain tissue",
+        "Brain surface", "Opposite-side context"
     ]
 
     private static let procedurePointPositions: [SIMD3<Float>] = [
-        [-0.020, -0.090, 0.058], [-0.012, -0.060, 0.060], [-0.004, -0.030, 0.060],
-        [0.008, 0.000, 0.058], [0.023, 0.024, 0.052], [0.036, 0.039, 0.046],
-        [0.050, 0.052, 0.039], [0.066, 0.061, 0.030], [0.083, 0.066, 0.020],
-        [0.098, 0.066, 0.008]
+        [-0.020, -0.090, 0.058], [-0.004, -0.022, 0.061],
+        [0.050, 0.052, 0.039], [0.076, 0.068, 0.025], [0.098, 0.066, 0.008]
     ]
 
     private static let procedurePointLabels = [
-        "Arterial route begins", "Approach follows the vessel", "Vessel turn",
-        "Approach nears the brain", "Cerebral vessel entry", "Branch choice",
-        "Blocked-vessel approach", "Occlusion focus", "Flow beyond the blockage",
-        "Example affected territory"
+        "Blood supply approaches", "Arteries branch", "Example blockage",
+        "Flow beyond the blockage changes", "Affected territory"
     ]
 
     static func makeScene(compact: Bool = false) async -> Entity {
@@ -113,6 +108,7 @@ enum StrokeSceneFactory {
         fallback.addChild(makeCore())
         fallback.addChild(makeClot())
         fallback.addChild(makePerfusion(count: compact ? 24 : dropletCount))
+        fallback.addChild(makeFlowArrows())
         fallback.addChild(makeCarePreview(compact: compact))
         root.addChild(fallback)
 
@@ -137,6 +133,92 @@ enum StrokeSceneFactory {
         return root
     }
 
+    /// A clinician-only presentation kit. The imported open-cranial tools are
+    /// explicitly generic, low-detail concepts pending specialist review; the
+    /// focus, lens, and layer tools are presentation controls rather than
+    /// surgical instruments. No selection mutates anatomy or simulates a cut.
+    static func makeClinicianHeldTools() async -> Entity {
+        let root = Entity()
+        root.name = clinicianHeldToolRootName
+
+        let focus = ModelEntity(
+            mesh: .generateBox(size: [0.006, 0.006, 0.14], cornerRadius: 0.003),
+            materials: [careMaterial(opacity: 0.95)]
+        )
+        focus.name = "clinician-tool-focus"
+        focus.position = [0, 0.035, 0.06]
+        root.addChild(focus)
+
+        let lens = ModelEntity(
+            mesh: .generateSphere(radius: 0.040),
+            materials: [contextMaterial(opacity: 0.23)]
+        )
+        lens.name = "clinician-tool-transparency"
+        lens.scale = [1, 0.08, 1]
+        lens.position = [0, 0.035, 0.055]
+        root.addChild(lens)
+
+        let layers = Entity()
+        layers.name = "clinician-tool-layer-reveal"
+        for index in 0..<3 {
+            let card = ModelEntity(
+                mesh: .generateBox(size: [0.070, 0.004, 0.090], cornerRadius: 0.004),
+                materials: [index == 1 ? careMaterial(opacity: 0.82) : contextMaterial(opacity: 0.48)]
+            )
+            card.position = [Float(index - 1) * 0.014, 0.025 + Float(index) * 0.010, 0.055]
+            layers.addChild(card)
+        }
+        root.addChild(layers)
+
+        if let forceps = await loadBundledUSDZ(named: "suction_and_forceps") {
+            root.addChild(normalizedHeldTool(forceps, name: "clinician-tool-forceps", targetSize: 0.16))
+        }
+        if let drill = await loadBundledUSDZ(named: "cranial_drill_generic") {
+            root.addChild(normalizedHeldTool(drill, name: "clinician-tool-drill", targetSize: 0.15))
+        }
+
+        updateClinicianHeldTools(root, selected: .focus, enabled: false)
+        return root
+    }
+
+    static func updateClinicianHeldTools(
+        _ root: Entity,
+        selected: StrokeClinicianTool,
+        enabled: Bool
+    ) {
+        let selectedName: String
+        switch selected {
+        case .focus: selectedName = "clinician-tool-focus"
+        case .transparency: selectedName = "clinician-tool-transparency"
+        case .layerReveal: selectedName = "clinician-tool-layer-reveal"
+        case .forceps: selectedName = "clinician-tool-forceps"
+        case .cranialDrill: selectedName = "clinician-tool-drill"
+        }
+        for child in root.children {
+            child.isEnabled = enabled && child.name == selectedName
+        }
+    }
+
+    private static func normalizedHeldTool(
+        _ entity: Entity,
+        name: String,
+        targetSize: Float
+    ) -> Entity {
+        let wrapper = Entity()
+        wrapper.name = name
+        let bounds = entity.visualBounds(relativeTo: entity)
+        let size = bounds.max - bounds.min
+        let largest = max(size.x, max(size.y, size.z))
+        if largest > 0.0001 {
+            entity.position = -((bounds.min + bounds.max) / 2)
+            let scale = targetSize / largest
+            entity.scale = [scale, scale, scale]
+        }
+        wrapper.position = [0, 0.04, 0.065]
+        wrapper.addChild(entity)
+        return wrapper
+    }
+
     /// A room-scale intake object: the file starts in a physical cabinet at
     /// the wearer's left and must be carried to the central dock. This is the
     /// product's spatial threshold, not a floating notes window.
@@ -144,10 +226,10 @@ enum StrokeSceneFactory {
         let room = Entity()
         room.name = spatialCaseRoomName
 
-        let wood = SimpleMaterial(
-            color: UIColor(red: 0.31, green: 0.22, blue: 0.16, alpha: 1),
-            roughness: 0.78,
-            isMetallic: false
+        let rail = SimpleMaterial(
+            color: UIColor(red: 0.26, green: 0.24, blue: 0.22, alpha: 0.88),
+            roughness: 0.54,
+            isMetallic: true
         )
         let paper = SimpleMaterial(
             color: UIColor(red: 0.90, green: 0.74, blue: 0.42, alpha: 1),
@@ -160,30 +242,73 @@ enum StrokeSceneFactory {
         cabinet.position = [-0.62, 1.43, -0.92]
 
         for (name, size, position) in [
-            ("cabinet-back", SIMD3<Float>(0.34, 0.48, 0.025), SIMD3<Float>(0, 0, -0.08)),
-            ("cabinet-left", SIMD3<Float>(0.025, 0.48, 0.20), SIMD3<Float>(-0.17, 0, 0)),
-            ("cabinet-right", SIMD3<Float>(0.025, 0.48, 0.20), SIMD3<Float>(0.17, 0, 0)),
-            ("cabinet-top", SIMD3<Float>(0.36, 0.025, 0.20), SIMD3<Float>(0, 0.24, 0)),
-            ("cabinet-bottom", SIMD3<Float>(0.36, 0.025, 0.20), SIMD3<Float>(0, -0.24, 0)),
-            ("cabinet-shelf-1", SIMD3<Float>(0.34, 0.015, 0.20), SIMD3<Float>(0, -0.08, 0)),
-            ("cabinet-shelf-2", SIMD3<Float>(0.34, 0.015, 0.20), SIMD3<Float>(0, 0.08, 0))
+            ("archive-spine", SIMD3<Float>(0.016, 0.52, 0.020), SIMD3<Float>(-0.18, 0, -0.02)),
+            ("archive-rail-low", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, -0.18, 0)),
+            ("archive-rail-mid", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, 0, 0)),
+            ("archive-rail-high", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, 0.18, 0)),
+            ("archive-title-line", SIMD3<Float>(0.30, 0.006, 0.018), SIMD3<Float>(0.01, 0.25, -0.01))
         ] {
-            let panel = ModelEntity(mesh: .generateBox(size: size), materials: [wood])
+            let panel = ModelEntity(mesh: .generateBox(size: size, cornerRadius: 0.006), materials: [rail])
             panel.name = name
             panel.position = position
             cabinet.addChild(panel)
         }
 
+        let archiveSlots: [SIMD3<Float>] = [
+            [-0.095, -0.115, 0.020], [0.020, -0.115, 0.025],
+            [-0.080, 0.065, 0.020], [0.045, 0.065, 0.025],
+            [-0.020, 0.245, 0.022]
+        ]
         for index in 0..<5 {
             let archive = ModelEntity(
-                mesh: .generateBox(size: [0.045, 0.13, 0.16], cornerRadius: 0.006),
-                materials: [contextMaterial(opacity: 0.72)]
+                mesh: .generateBox(size: [0.090, 0.135, 0.018], cornerRadius: 0.008),
+                materials: [contextMaterial(opacity: 0.40)]
             )
             archive.name = "archived-case-\(index + 1)"
-            archive.position = [-0.11 + Float(index) * 0.055, -0.15, 0.025]
+            archive.position = archiveSlots[index]
+            archive.orientation = simd_quatf(angle: -0.05 + Float(index) * 0.018, axis: [0, 1, 0])
             cabinet.addChild(archive)
         }
         room.addChild(cabinet)
+
+        // A deliberately generic 3D case figure: it gives the selected file a
+        // human-scale anchor without claiming a MetaHuman, patient likeness, or
+        // scan-derived avatar. It is shown only during case review.
+        let figure = Entity()
+        figure.name = spatialCaseFigureName
+        figure.position = [0.53, 1.48, -0.90]
+
+        let head = ModelEntity(
+            mesh: .generateSphere(radius: 0.085),
+            materials: [contextMaterial(opacity: 0.72)]
+        )
+        head.name = "generic-case-head"
+        head.scale = [0.78, 1, 0.82]
+        figure.addChild(head)
+
+        let neck = ModelEntity(
+            mesh: .generateCylinder(height: 0.075, radius: 0.030),
+            materials: [contextMaterial(opacity: 0.58)]
+        )
+        neck.position = [0, -0.105, 0]
+        figure.addChild(neck)
+
+        let shoulders = ModelEntity(
+            mesh: .generateSphere(radius: 0.115),
+            materials: [careMaterial(opacity: 0.36)]
+        )
+        shoulders.position = [0, -0.205, 0]
+        shoulders.scale = [1.35, 0.58, 0.58]
+        figure.addChild(shoulders)
+
+        let status = ModelEntity(
+            mesh: .generateCylinder(height: 0.012, radius: 0.135),
+            materials: [warningMaterial(opacity: 0.34)]
+        )
+        status.position = [0, -0.29, 0]
+        figure.addChild(status)
+        figure.isEnabled = false
+        room.addChild(figure)
 
         let file = ModelEntity(
             mesh: .generateBox(size: [0.19, 0.018, 0.25], cornerRadius: 0.012),
@@ -295,6 +420,26 @@ enum StrokeSceneFactory {
         let arteriesLayer = registered.findEntity(named: arteriesLayerName) ?? registered
         let blockageLayer = registered.findEntity(named: blockageLayerName) ?? registered
 
+        // The imported lesson points are derived from the actual registered
+        // artery/clot bounds rather than reusing procedural coordinates. They
+        // sit just in front of the vessels so all five remain discoverable.
+        let arteryBounds = registered.findEntity(named: importedArteriesName)?.visualBounds(relativeTo: registered)
+            ?? brainBounds
+        let arteryCenter = (arteryBounds.min + arteryBounds.max) / 2
+        let arterySize = arteryBounds.max - arteryBounds.min
+        let frontZ = max(arteryBounds.max.z, brainBounds.max.z) + 0.010
+        let clotCenter = registered.findEntity(named: importedClotName).map {
+            let bounds = $0.visualBounds(relativeTo: registered)
+            return (bounds.min + bounds.max) / 2
+        } ?? arteryCenter
+        let registeredFlowPoints: [SIMD3<Float>] = [
+            [arteryCenter.x - arterySize.x * 0.12, arteryBounds.min.y + arterySize.y * 0.14, frontZ],
+            [arteryCenter.x - arterySize.x * 0.08, arteryBounds.min.y + arterySize.y * 0.38, frontZ],
+            [clotCenter.x, clotCenter.y, frontZ + 0.004],
+            [arteryCenter.x + arterySize.x * 0.10, arteryBounds.min.y + arterySize.y * 0.67, frontZ],
+            [brainCenter.x + brainRadii.x * 0.40, brainCenter.y + brainRadii.y * 0.24, frontZ]
+        ]
+
         cortexLayer.addChild(makePointField(
             name: regionPointFieldName,
             points: registeredRegionPoints,
@@ -303,10 +448,11 @@ enum StrokeSceneFactory {
         ))
         arteriesLayer.addChild(makePointField(
             name: procedurePointFieldName,
-            points: procedurePointPositions,
+            points: registeredFlowPoints,
             labels: procedurePointLabels,
             material: warningMaterial(opacity: 0.92)
         ))
+        arteriesLayer.addChild(makeRegisteredFlowArrows(points: registeredFlowPoints))
 
         // Stable semantic gaze/hand targets without generating collisions from
         // the 236k-triangle cortex. The ellipsoidal brain proxy follows the
@@ -779,6 +925,84 @@ enum StrokeSceneFactory {
         return flow
     }
 
+    /// Sparse chevrons answer "which way is blood moving?" without turning the
+    /// vessel into an alarm graphic. They appear only inside the blood-flow
+    /// lesson and share the exact centreline used by droplets and blockage.
+    private static func makeFlowArrows() -> Entity {
+        let arrows = Entity()
+        arrows.name = flowArrowName
+        let shaftMesh = MeshResource.generateBox(size: [0.0018, 0.0018, 0.011], cornerRadius: 0.0008)
+        let wingMesh = MeshResource.generateBox(size: [0.0018, 0.0018, 0.006], cornerRadius: 0.0008)
+
+        for index in 0..<6 {
+            let arrow = Entity()
+            arrow.name = "flow-arrow-\(index)"
+            let material = flowMaterial(opacity: 0.72)
+
+            let shaft = ModelEntity(mesh: shaftMesh, materials: [material])
+            shaft.position = [0, 0, -0.002]
+            arrow.addChild(shaft)
+
+            let left = ModelEntity(mesh: wingMesh, materials: [material])
+            left.position = [-0.0023, 0, 0.004]
+            left.orientation = simd_quatf(angle: -0.62, axis: [0, 1, 0])
+            arrow.addChild(left)
+
+            let right = ModelEntity(mesh: wingMesh, materials: [material])
+            right.position = [0.0023, 0, 0.004]
+            right.orientation = simd_quatf(angle: 0.62, axis: [0, 1, 0])
+            arrow.addChild(right)
+            arrows.addChild(arrow)
+        }
+
+        arrows.isEnabled = false
+        return arrows
+    }
+
+    private static func makeRegisteredFlowArrows(points: [SIMD3<Float>]) -> Entity {
+        let arrows = Entity()
+        arrows.name = registeredFlowArrowName
+        guard points.count > 1 else { return arrows }
+
+        for index in 0..<(points.count - 1) {
+            let start = points[index]
+            let end = points[index + 1]
+            let direction = end - start
+            let arrow = makeFlowArrowGlyph(index: index, scale: 1.55)
+            arrow.position = (start + end) / 2
+            if simd_length(direction) > 0.000_01 {
+                arrow.orientation = simd_quatf(from: [0, 0, 1], to: simd_normalize(direction))
+            }
+            arrows.addChild(arrow)
+        }
+        arrows.isEnabled = false
+        return arrows
+    }
+
+    private static func makeFlowArrowGlyph(index: Int, scale: Float) -> Entity {
+        let arrow = Entity()
+        arrow.name = "registered-flow-arrow-\(index)"
+        arrow.scale = [scale, scale, scale]
+        let material = flowMaterial(opacity: 0.88)
+        let shaft = ModelEntity(
+            mesh: .generateBox(size: [0.0018, 0.0018, 0.011], cornerRadius: 0.0008),
+            materials: [material]
+        )
+        shaft.position = [0, 0, -0.002]
+        arrow.addChild(shaft)
+
+        for side: Float in [-1, 1] {
+            let wing = ModelEntity(
+                mesh: .generateBox(size: [0.0018, 0.0018, 0.006], cornerRadius: 0.0008),
+                materials: [material]
+            )
+            wing.position = [side * 0.0023, 0, 0.004]
+            wing.orientation = simd_quatf(angle: side * 0.62, axis: [0, 1, 0])
+            arrow.addChild(wing)
+        }
+        return arrow
+    }
+
     /// Tissue that is starving but not yet lost. Built from overlapping lobes
     /// rather than one sphere: a perfect ball reads as a diagram, a lumpy
     /// breathing mass reads as tissue.
@@ -949,7 +1173,7 @@ enum StrokeSceneFactory {
 
     /// Two sparse, switchable spatial reference frames. They are intentionally
     /// points rather than labels: the shared brain remains primary, while a
-    /// clinician can choose either regional landmarks or the procedure path.
+    /// clinician can choose either regional context or the story's causal path.
     private static func makePointField(
         name: String,
         points: [SIMD3<Float>],
@@ -958,14 +1182,14 @@ enum StrokeSceneFactory {
     ) -> Entity {
         let field = Entity()
         field.name = name
-        let mesh = MeshResource.generateSphere(radius: 0.00165)
+        let mesh = MeshResource.generateSphere(radius: 0.0025)
 
         for (index, position) in points.enumerated() {
             let point = ModelEntity(mesh: mesh, materials: [material])
             point.name = "\(name)-point-\(index)"
             point.position = position
             point.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
-            point.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.0045)]))
+            point.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.006)]))
             point.components.set(HoverEffectComponent())
             field.addChild(point)
         }
@@ -1018,6 +1242,7 @@ enum StrokeSceneFactory {
         }
 
         updatePerfusion(root: root, step: experience.procedureStep, time: time)
+        updateFlowArrows(root: root, experience: experience, time: time)
 
         if let core = root.findEntity(named: coreName) as? ModelEntity {
             let growth = 1 + focus * 0.52
@@ -1069,12 +1294,12 @@ enum StrokeSceneFactory {
         experience: StrokeExperienceState,
         time: TimeInterval
     ) {
-        let clinicianOnly = experience.audienceLens == .clinician
         let regionField = root.findEntity(named: regionPointFieldName)
         let procedureField = root.findEntity(named: procedurePointFieldName)
 
-        regionField?.isEnabled = clinicianOnly && experience.pointField == .regions
-        procedureField?.isEnabled = clinicianOnly && experience.pointField == .procedure
+        let showLessons = experience.spatialPhase == .explanation && experience.lessonPointsVisible
+        regionField?.isEnabled = showLessons && experience.pointField == .regions
+        procedureField?.isEnabled = showLessons && experience.pointField == .procedure
 
         let active = experience.pointField == .regions ? regionField : procedureField
         if let active {
@@ -1308,6 +1533,45 @@ enum StrokeSceneFactory {
         }
     }
 
+    private static func updateFlowArrows(
+        root: Entity,
+        experience: StrokeExperienceState,
+        time: TimeInterval
+    ) {
+        guard let arrows = root.findEntity(named: flowArrowName) else { return }
+        let shouldShow = experience.spatialPhase == .explanation
+            && experience.lessonPointsVisible
+            && experience.pointField == .procedure
+        arrows.isEnabled = shouldShow
+        if let registeredArrows = root.findEntity(named: registeredFlowArrowName) {
+            registeredArrows.isEnabled = shouldShow && !experience.requestedPause
+            let pulse = Float(0.96 + sin(time * 1.25) * 0.05)
+            for arrow in registeredArrows.children {
+                arrow.scale = [pulse * 1.55, pulse * 1.55, pulse * 1.55]
+            }
+        }
+        guard shouldShow else { return }
+
+        let count = Float(max(arrows.children.count, 1))
+        for (index, arrow) in arrows.children.enumerated() {
+            let offset = Float(index) / count
+            let arc = (offset + Float(time) * 0.065).truncatingRemainder(dividingBy: 1)
+            let nextArc = min(arc + 0.015, 1)
+            let position = samplePath(arc)
+            let next = samplePath(nextArc)
+            let direction = next - position
+            if simd_length(direction) > 0.000_01 {
+                arrow.orientation = simd_quatf(from: [0, 0, 1], to: simd_normalize(direction))
+            }
+            arrow.position = position
+
+            let downstream = arc > clotArc
+            let scale: Float = downstream && experience.procedureStep != .chooseCase ? 0.52 : 1
+            arrow.scale = [scale, scale, scale]
+            arrow.isEnabled = !experience.requestedPause
+        }
+    }
+
     // MARK: - Materials
 
     private enum MaterialKind: Hashable { case context, brain, furrow, warning, lost, flow, care, skull }
@@ -1423,10 +1687,10 @@ enum StrokeSceneFactory {
 
     private static func buildCareMaterial(opacity: CGFloat) -> RealityKit.Material {
         var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: UIColor(red: 0.18, green: 0.76, blue: 0.90, alpha: opacity))
+        material.baseColor = .init(tint: UIColor(red: 0.28, green: 0.72, blue: 0.56, alpha: opacity))
         material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
-        material.emissiveColor = .init(color: UIColor(red: 0.16, green: 0.72, blue: 0.92, alpha: 1))
-        material.emissiveIntensity = 0.32
+        material.emissiveColor = .init(color: UIColor(red: 0.24, green: 0.68, blue: 0.50, alpha: 1))
+        material.emissiveIntensity = 0.24
         return material
     }
 

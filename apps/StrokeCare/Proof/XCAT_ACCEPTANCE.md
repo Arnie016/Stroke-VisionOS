@@ -18,32 +18,39 @@ scene and creates `WEARER_RESULT.md` with every human field set to `NOT RUN`.
 
 The wearer completes one 90-second pass after the machine receipt succeeds:
 
-1. Confirm the proof scene opens with the brain in the centre, family controls
-   on the left, FILE 78 on the opposite edge, and **QUESTION HERE** on anatomy.
-   This verifies only the intended starting composition.
-2. Exit to the files surface. Confirm it says **Pull one case into view**.
-3. Pinch FILE 78 and pull it right. Confirm speech, arm, time, and open questions
-   appear progressively rather than all at once.
-4. Enter **Family questions**. Confirm the brain owns the centre, the case drawer
-   and family panel remain at opposite side edges rather than below it.
-5. Tap **Point on brain**, then tap the clot area. Confirm a visible question
-   marker appears and the story pauses.
-6. Exit and re-enter as **Presenter rail**. Confirm patient-facing narration and
-   presenter-only wording never occupy the same panel.
-7. Advance through Orient, Pressure, and Make space. Do not approve the layer
-   reveal unless the consent question is visible.
+1. Confirm the prelude reveals two short calm lines before **Doctor → family**
+   and **Clinician teaching** appear. Confirm the local audio bed can be muted.
+2. Choose **Doctor → family**. Confirm the floating case exhibit is left of a
+   deliberately empty centre; no brain or office furniture is visible.
+3. Pinch FILE 78 and carry it to the centre. Confirm the generic case figure,
+   speech, arm, time, and open-question artifacts appear while anatomy remains
+   hidden.
+4. Select **Begin family view**. Confirm the complete intake exhibit disappears
+   before the brain owns the centre; no files or cabinet remain beside it.
+5. Change **Brain regions → Blood flow**. Confirm five small points stay attached
+   to the anatomy and the direction chevrons follow the visible vessel route.
+6. Use **Point**, then select the affected area. Confirm a visible question
+   marker appears at brain depth. Orbit and two-hand magnification must move the
+   complete registered model without detaching the point.
+7. Exit and re-enter as **Clinician teaching**. Confirm presenter controls stay
+   in the right peripheral field and the left-palm tool selector does not appear
+   to the family.
+8. Advance through Orient, Pressure, and Make space. Do not approve the layer
+   reveal unless the consent question is visible. Confirm **Not now** pauses it.
+9. Advance once more. Confirm the closing reflection appears and **Cases**
+   returns to the exhibit without a success animation or treatment claim.
 
 Then run one separate clinician-only layer-study pass with the
 `--proof-layer-study` launch argument:
 
-8. Switch **Layers → See through → Study apart → Layers**. Confirm the cortex,
+10. Switch **Layers → See through → Study apart → Layers**. Confirm the cortex,
    arteries, blockage, and dura return without visible transform drift.
-9. Adjust **Brain transparency**. Confirm the vessel remains legible and the
+11. Adjust **Brain transparency**. Confirm the vessel remains legible and the
    view still reads as one anatomical relationship in both eyes.
-10. Gaze at a cyan region point and pinch once. Confirm its title appears.
+12. Gaze at a mint region point and pinch once. Confirm its title appears.
     Dragging from that point must orient the whole brain; the point must not
     detach from its anatomical layer. Two-hand magnification must still work.
-11. Confirm no zipper seam, tearing, cutting sound, or exposed blood appears in
+13. Confirm no zipper seam, tearing, cutting sound, or exposed blood appears in
     the imported-brain patient path. The persistent boundary remains a teaching
     model, not a patient scan.
 
@@ -61,6 +68,6 @@ Record the screenshot filename and all four observations in the generated
 
 ## Clinical gate
 
-After the wearer pass, a clinician reviews the exact 0.5 three-act candidate in
+After the wearer pass, a clinician reviews the exact 0.6 three-act candidate in
 `Docs/ISCHEMIC_STROKE_CLINICAL_REVIEW.md`. Machine, wearer, and clinician gates
 remain separate; none implies either of the others.

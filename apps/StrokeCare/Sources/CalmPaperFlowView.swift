@@ -12,6 +12,31 @@ enum CalmFlowFieldFactory {
     static func makeHorizon() -> Entity {
         let root = Entity()
 
+        // Apple recommends a ground plane so an immersive environment does not
+        // feel like a black void. These low-contrast meshes are atmosphere, not
+        // a literal clinic, office, or claimed therapeutic environment.
+        let ground = ModelEntity(
+            mesh: .generateBox(width: 3.4, height: 0.012, depth: 3.4, cornerRadius: 0.006),
+            materials: [environmentMaterial(
+                color: UIColor(red: 0.30, green: 0.28, blue: 0.25, alpha: 0.30),
+                opacity: 0.30
+            )]
+        )
+        ground.name = "calm-ground-plane"
+        ground.position = [0, -1.70, 0.32]
+        root.addChild(ground)
+
+        let horizonVeil = ModelEntity(
+            mesh: .generateBox(width: 3.2, height: 1.85, depth: 0.012, cornerRadius: 0.18),
+            materials: [environmentMaterial(
+                color: UIColor(red: 0.18, green: 0.17, blue: 0.16, alpha: 0.18),
+                opacity: 0.18
+            )]
+        )
+        horizonVeil.name = "calm-horizon-veil"
+        horizonVeil.position = [0, -0.15, -0.14]
+        root.addChild(horizonVeil)
+
         for index in 0..<6 {
             let progress = Float(index) / 5
             let ribbon = ModelEntity(
@@ -42,8 +67,9 @@ enum CalmFlowFieldFactory {
     static func update(_ root: Entity, time: TimeInterval, isPaused: Bool, reduceMotion: Bool) {
         let phase = isPaused || reduceMotion ? 0 : Float(time * 0.16)
 
-        for (index, ribbon) in root.children.enumerated() {
-            let progress = Float(index) / Float(max(root.children.count - 1, 1))
+        let ribbons = root.children.filter { $0.name.hasPrefix("calm-flow-ribbon-") }
+        for (index, ribbon) in ribbons.enumerated() {
+            let progress = Float(index) / Float(max(ribbons.count - 1, 1))
             let baseY = -0.24 + progress * 0.48
             let drift = sin(phase + progress * 4.2) * (reduceMotion ? 0 : 0.014)
             ribbon.position.y = baseY + drift
@@ -64,6 +90,15 @@ enum CalmFlowFieldFactory {
 
         var material = PhysicallyBasedMaterial()
         material.baseColor = .init(tint: palette[index % palette.count])
+        material.roughness = 1.0
+        material.metallic = 0.0
+        material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
+        return material
+    }
+
+    private static func environmentMaterial(color: UIColor, opacity: CGFloat) -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: color)
         material.roughness = 1.0
         material.metallic = 0.0
         material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
