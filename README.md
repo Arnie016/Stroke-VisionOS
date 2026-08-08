@@ -75,6 +75,9 @@ assets**:
 The complete one-by-one catalog, paths, descriptions, runtime notes, manifests,
 and loading guidance are in
 [`RealityKitContent/Assets/README.md`](RealityKitContent/Assets/README.md).
+The canonical scene hierarchy, asset relationships, pathway state machine,
+interaction physics, and Houdini/RealityKit handoff are defined in
+[`MASTER.md`](MASTER.md).
 Licensing and provenance are recorded under [`docs/assets`](docs/assets).
 
 ![Layered generic head cutaway](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/08_layered_head_cutaway_v2.png)

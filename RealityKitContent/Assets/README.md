@@ -16,6 +16,10 @@ The historical review-only `stroke_kit_asset_gallery.usdz` is deliberately not
 included. It is an unmanifested composite of prototype geometry, not a 66th
 independent asset.
 
+For the canonical scene hierarchy, all component/assembly relationships,
+procedure state logic, interaction physics, and Houdini/RealityKit handoff, see
+[`MASTER.md`](../../MASTER.md).
+
 GitHub does not permit a public fork to upload new LFS objects into its parent
 repository's LFS store. Consequently, this cross-fork pull request stores the
 USDZ packages as ordinary binary Git objects; every individual package is below
