@@ -5,6 +5,7 @@ set -euo pipefail
 readonly DEVICE_ID="613CC48C-A6AD-5170-A238-D518B6012491"
 readonly DEVICE_NAME="XCAT"
 readonly BUNDLE_ID="com.arnav.StrokeTime"
+readonly PROOF_ROUTE="--proof-family-question"
 readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly PROJECT_PATH="${APP_ROOT}/StrokeTime.xcodeproj"
@@ -60,7 +61,7 @@ xcrun devicectl device process launch \
     --timeout 30 \
     --json-output "${RECEIPT_DIR}/launch.json" \
     --log-output "${RECEIPT_DIR}/launch.log" \
-    "${BUNDLE_ID}" | tee "${RECEIPT_DIR}/launch.txt"
+    "${BUNDLE_ID}" -- "${PROOF_ROUTE}" | tee "${RECEIPT_DIR}/launch.txt"
 
 xcrun devicectl device info processes \
     --device "${DEVICE_ID}" \
@@ -82,6 +83,7 @@ cat > "${RECEIPT_DIR}/RECEIPT.md" <<EOF
 - Device: ${DEVICE_NAME} / ${DEVICE_ID}
 - Bundle: ${BUNDLE_ID}
 - Version/build: ${version} (${build})
+- Deterministic launch route: ${PROOF_ROUTE}
 - Signed build: PASS
 - Install command: PASS
 - Installed-app query: PASS
@@ -91,6 +93,22 @@ cat > "${RECEIPT_DIR}/RECEIPT.md" <<EOF
 
 The JSON and command logs beside this file are the authoritative machine
 receipts. They do not prove what the wearer saw or understood.
+EOF
+
+cat > "${RECEIPT_DIR}/WEARER_RESULT.md" <<EOF
+# XCAT wearer result — NOT RUN
+
+- Device: ${DEVICE_NAME} / ${DEVICE_ID}
+- App version/build: ${version} (${build})
+- Deterministic launch route: ${PROOF_ROUTE}
+- Headset screenshot: NOT CAPTURED
+- LEGIBILITY: NOT RUN
+- GESTURE: NOT RUN
+- COMFORT: NOT RUN
+- COMPREHENSION: NOT RUN
+
+Complete this file only after wearing XCAT and following
+Proof/XCAT_ACCEPTANCE.md. A running process is not wearer evidence.
 EOF
 
 print -- "XCAT_DEPLOY=PASS receipt=${RECEIPT_DIR}/RECEIPT.md"

@@ -8,6 +8,80 @@ enum StrokeAudienceLens: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum StrokePointField: String, CaseIterable, Identifiable {
+    case regions = "Regions"
+    case procedure = "Procedure"
+
+    var id: String { rawValue }
+
+    var systemImage: String {
+        switch self {
+        case .regions: "brain.head.profile"
+        case .procedure: "point.3.connected.trianglepath.dotted"
+        }
+    }
+}
+
+enum StrokeEvidenceKind: String, Equatable {
+    case guideline = "Guideline"
+    case decisionAid = "Decision aid"
+    case paper = "Paper"
+    case web = "Web"
+    case audio = "Audio"
+    case video = "Video"
+
+    var systemImage: String {
+        switch self {
+        case .guideline: "checkmark.seal"
+        case .decisionAid: "person.text.rectangle"
+        case .paper: "doc.richtext"
+        case .web: "link"
+        case .audio: "waveform"
+        case .video: "play.rectangle"
+        }
+    }
+}
+
+struct StrokeEvidenceSource: Identifiable, Equatable {
+    let id: String
+    let shortTitle: String
+    let fullCitation: String
+    let stableURL: URL
+    let kind: StrokeEvidenceKind
+    let supports: String
+    let limitation: String
+
+    static let library: [StrokeEvidenceSource] = [
+        StrokeEvidenceSource(
+            id: "AHA-AIS-2026",
+            shortTitle: "AHA/ASA acute stroke guideline",
+            fullCitation: "American Heart Association/American Stroke Association. 2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke.",
+            stableURL: URL(string: "https://doi.org/10.1161/STR.0000000000000513")!,
+            kind: .guideline,
+            supports: "Acute ischemic stroke framing and clinician-led management context.",
+            limitation: "Not a patient-specific recommendation or outcome estimate."
+        ),
+        StrokeEvidenceSource(
+            id: "NICE-NG128",
+            shortTitle: "NICE stroke recommendations",
+            fullCitation: "National Institute for Health and Care Excellence. Stroke and transient ischaemic attack in over 16s: diagnosis and initial management. NG128.",
+            stableURL: URL(string: "https://www.nice.org.uk/guidance/ng128/chapter/recommendations")!,
+            kind: .guideline,
+            supports: "Selection and communication context for decompressive hemicraniectomy.",
+            limitation: "Jurisdiction-specific guidance; eligibility still belongs to the treating team."
+        ),
+        StrokeEvidenceSource(
+            id: "NICE-DHCA-2019",
+            shortTitle: "NICE family decision-aid guide",
+            fullCitation: "National Institute for Health and Care Excellence. Decompressive hemicraniectomy surgery: patient decision aid user guide.",
+            stableURL: URL(string: "https://www.nice.org.uk/guidance/ng128/resources/decompressive-hemicraniectomy-surgery-patient-decision-aid-user-guide-pdf-6775901391")!,
+            kind: .decisionAid,
+            supports: "Family-facing discussion of purpose, uncertainty, and shared decisions.",
+            limitation: "Supports conversation; it is not consent and does not replace local review."
+        )
+    ]
+}
+
 enum StrokeProcedureStep: Int, CaseIterable, Identifiable {
     case chooseCase
     case inspectOcclusion
@@ -23,6 +97,14 @@ enum StrokeProcedureStep: Int, CaseIterable, Identifiable {
         case .discussCare: "Discuss"
         }
     }
+}
+
+/// A question is stored in the anatomy root's coordinate space, not as a
+/// screen point. It therefore stays on the same teaching landmark when the
+/// wearer orbits or magnifies the model.
+struct PlacedStrokeQuestion: Equatable {
+    let rootLocalPosition: SIMD3<Float>
+    let semanticTarget: String
 }
 
 struct TeachingStrokeCase: Identifiable, Equatable {
@@ -93,7 +175,12 @@ final class StrokeExperienceState: ObservableObject {
     @Published var clarificationRequested = false
     @Published var questionPlacementArmed = false
     @Published var questionMarkerVisible = false
+    @Published private(set) var placedQuestion: PlacedStrokeQuestion?
     @Published var soundEnabled = true
+    @Published var pointField: StrokePointField = .regions
+    @Published var selectedEvidenceID: String = StrokeEvidenceSource.library[0].id
+    @Published private(set) var pinnedEvidenceIDs: [String] = []
+    @Published var sourceBoundDraftVisible = false
     @Published var careViewPermissionGranted = false
     @Published var isConsentPromptVisible = false
     @Published var isImmersivePresented = false
@@ -208,10 +295,14 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
-    func placeQuestionMarker() {
+    func placeQuestionMarker(at rootLocalPosition: SIMD3<Float>, target: String) {
         guard questionPlacementArmed else { return }
         questionPlacementArmed = false
         questionMarkerVisible = true
+        placedQuestion = PlacedStrokeQuestion(
+            rootLocalPosition: rootLocalPosition,
+            semanticTarget: target
+        )
         clarificationRequested = true
         requestedPause = true
     }
@@ -219,10 +310,41 @@ final class StrokeExperienceState: ObservableObject {
     func clearQuestionMarker() {
         questionPlacementArmed = false
         questionMarkerVisible = false
+        placedQuestion = nil
     }
 
     func acknowledgeClarification() {
         clarificationRequested = false
+    }
+
+    var selectedEvidence: StrokeEvidenceSource {
+        StrokeEvidenceSource.library.first(where: { $0.id == selectedEvidenceID })
+            ?? StrokeEvidenceSource.library[0]
+    }
+
+    var pinnedEvidence: [StrokeEvidenceSource] {
+        pinnedEvidenceIDs.compactMap { id in
+            StrokeEvidenceSource.library.first(where: { $0.id == id })
+        }
+    }
+
+    func selectEvidence(_ source: StrokeEvidenceSource) {
+        selectedEvidenceID = source.id
+        sourceBoundDraftVisible = false
+    }
+
+    func togglePinnedEvidence(_ source: StrokeEvidenceSource) {
+        if let index = pinnedEvidenceIDs.firstIndex(of: source.id) {
+            pinnedEvidenceIDs.remove(at: index)
+        } else {
+            pinnedEvidenceIDs.append(source.id)
+        }
+        sourceBoundDraftVisible = false
+    }
+
+    func composeSourceBoundDraft() {
+        guard !pinnedEvidenceIDs.isEmpty else { return }
+        sourceBoundDraftVisible = true
     }
 
     var clarificationCue: String {
@@ -247,19 +369,19 @@ final class StrokeExperienceState: ObservableObject {
     var journeyCaption: String {
         switch procedureStep {
         case .chooseCase:
-            "The skull is fixed. Vessels feed the brain."
+            "This is the space the brain lives in."
         case .inspectOcclusion:
-            "Here, a clot blocks flow. Swelling crowds fixed space."
+            "The artery closes. The brain begins to swell."
         case .discussCare:
-            "Making room can reduce pressure—not repair injury."
+            "The operation gives the swelling somewhere safe to go."
         }
     }
 
     var journeyIntent: String {
         switch procedureStep {
-        case .chooseCase: "Share one map."
-        case .inspectOcclusion: "Clot → injury → pressure."
-        case .discussCare: "Purpose, not promise."
+        case .chooseCase: "Start with the whole picture."
+        case .inspectOcclusion: "Follow the change."
+        case .discussCare: "Make room, then keep watch."
         }
     }
 
@@ -436,6 +558,10 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = false
         clarificationRequested = false
         clearQuestionMarker()
+        pointField = .regions
+        selectedEvidenceID = StrokeEvidenceSource.library[0].id
+        pinnedEvidenceIDs = []
+        sourceBoundDraftVisible = false
         careViewPermissionGranted = false
         isConsentPromptVisible = false
         pendingConsentStep = nil
@@ -479,9 +605,21 @@ final class StrokeExperienceState: ObservableObject {
         audienceLens = .clinician
     }
 
+    func prepareEvidenceProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        pointField = .procedure
+        pinnedEvidenceIDs = Array(StrokeEvidenceSource.library.prefix(2).map(\.id))
+        selectedEvidenceID = StrokeEvidenceSource.library[0].id
+        sourceBoundDraftVisible = true
+    }
+
     func prepareFamilyQuestionProof() {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
+        placedQuestion = PlacedStrokeQuestion(
+            rootLocalPosition: [0.046, 0.050, 0.105],
+            semanticTarget: "affected brain surface"
+        )
         questionMarkerVisible = true
         clarificationRequested = true
         requestedPause = true

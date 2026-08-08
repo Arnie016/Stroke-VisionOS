@@ -55,6 +55,17 @@ The composition is organised by attention, not by a flat dashboard grid:
    flow field. It provides orientation and atmosphere without competing for
    diagnosis-level attention.
 
+The clinician may open a fourth, private **upper evidence plane** on demand.
+It holds the selected citation and pinned research sources; it is not a
+permanent patient-facing layer. The first prototype composes only a visibly
+marked source-bound draft from the fixed catalog. It does not browse, summarize
+uncurated media, or generate medical advice.
+
+Two sparse clinician-only point fields share the anatomy without adding labels:
+**Regions** places ten landmarks around the brain; **Procedure** places ten
+ordered points along the teaching path. Family mode hides both fields and keeps
+only the family-authored question marker.
+
 The same hierarchy reads vertically: **top explains, middle demonstrates,
 lower acts**. Emergency accountability, consent, exit, and clinical boundaries
 always remain foveally readable; they are never communicated by peripheral

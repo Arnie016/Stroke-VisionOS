@@ -20,6 +20,8 @@ enum StrokeSceneFactory {
     private static let importedEdemaName = "edema_swelling"
     private static let importedFlapName = "craniotomy_bone_flap"
     private static let importedPatchName = "dural_patch"
+    static let importedBrainTargetName = "imported-brain-surface-target"
+    static let importedClotTargetName = "imported-clot-focus-target"
 
     private static let coreName = "infarct-core"
     private static let penumbraName = "penumbra-shell"
@@ -37,6 +39,8 @@ enum StrokeSceneFactory {
     private static let boneFlapName = "bone-flap"
     private static let duraExpansionName = "dura-expansion"
     private static let layerRevealSeamName = "calm-layer-reveal-seam"
+    private static let regionPointFieldName = "clinician-region-point-field"
+    private static let procedurePointFieldName = "clinician-procedure-point-field"
 
     private enum HemisphereSide: Float {
         case left = -1
@@ -59,6 +63,20 @@ enum StrokeSceneFactory {
 
     private static let dropletCount = 64
 
+    private static let regionPointDirections: [SIMD3<Float>] = [
+        [-0.66, 0.56, 0.62], [-0.24, 0.88, 0.42], [0.28, 0.86, 0.43],
+        [0.69, 0.56, 0.54], [-0.88, 0.16, 0.45], [-0.43, 0.20, 0.82],
+        [0.27, 0.24, 0.86], [0.84, 0.06, 0.47], [-0.56, -0.43, 0.60],
+        [0.46, -0.44, 0.65]
+    ]
+
+    private static let procedurePointPositions: [SIMD3<Float>] = [
+        [-0.020, -0.090, 0.058], [-0.012, -0.060, 0.060], [-0.004, -0.030, 0.060],
+        [0.008, 0.000, 0.058], [0.023, 0.024, 0.052], [0.036, 0.039, 0.046],
+        [0.050, 0.052, 0.039], [0.066, 0.061, 0.030], [0.083, 0.066, 0.020],
+        [0.098, 0.066, 0.008]
+    ]
+
     static func makeScene(compact: Bool = false) async -> Entity {
         let root = Entity()
         root.name = rootName
@@ -77,6 +95,18 @@ enum StrokeSceneFactory {
 
         if !compact, let imported = await makeImportedAnatomy() {
             root.addChild(imported)
+        } else if !compact {
+            // Fallback points share the procedural teaching frame.
+            fallback.addChild(makePointField(
+                name: regionPointFieldName,
+                points: regionPointDirections.map { simd_normalize($0) * SIMD3<Float>(0.071, 0.100, 0.117) },
+                material: careMaterial(opacity: 0.92)
+            ))
+            fallback.addChild(makePointField(
+                name: procedurePointFieldName,
+                points: procedurePointPositions,
+                material: warningMaterial(opacity: 0.92)
+            ))
         }
 
         return root
@@ -128,23 +158,58 @@ enum StrokeSceneFactory {
             }
         }
 
-        guard registered.findEntity(named: importedBrainName) != nil else {
+        guard let importedBrain = registered.findEntity(named: importedBrainName) else {
             return nil
         }
 
-        // Stable hand/gaze targeting without generating collisions from the
-        // 236k-triangle cortical mesh.
-        // Collision-only: a nearly-transparent ModelEntity still composites as
-        // a dark rounded panel in immersive space. InputTarget + Collision do
-        // not need render geometry, so the anatomy stays visually unobstructed.
-        let interactionProxy = Entity()
-        interactionProxy.name = "imported-anatomy-interaction-proxy"
-        interactionProxy.components.set(InputTargetComponent())
-        interactionProxy.components.set(CollisionComponent(shapes: [
-            .generateBox(size: [0.16, 0.19, 0.18])
+        // Derive the region landmarks from the loaded cortex bounds and add
+        // them inside the exact registered-v2 parent. Each normalized direction
+        // lands on the teaching ellipsoid around the actual brain bounds, so a
+        // point cannot drift into unrelated world space when staging changes.
+        let brainBounds = importedBrain.visualBounds(relativeTo: registered)
+        let brainCenter = (brainBounds.min + brainBounds.max) / 2
+        // Keep the landmarks just inside the translucent cortical envelope.
+        // This makes them read as region anchors instead of a decorative halo,
+        // while preserving visibility through the teaching material.
+        let brainRadii = (brainBounds.max - brainBounds.min) / 2 * 0.94
+        let registeredRegionPoints = regionPointDirections.map { direction in
+            brainCenter + brainRadii * simd_normalize(direction)
+        }
+        registered.addChild(makePointField(
+            name: regionPointFieldName,
+            points: registeredRegionPoints,
+            material: careMaterial(opacity: 0.92)
+        ))
+        registered.addChild(makePointField(
+            name: procedurePointFieldName,
+            points: procedurePointPositions,
+            material: warningMaterial(opacity: 0.92)
+        ))
+
+        // Stable semantic gaze/hand targets without generating collisions from
+        // the 236k-triangle cortex. The ellipsoidal brain proxy follows the
+        // head more closely than the old box, so a confirmed question retains
+        // useful surface depth without putting invisible dense-mesh collision
+        // work on the device.
+        let brainTarget = Entity()
+        brainTarget.name = importedBrainTargetName
+        brainTarget.scale = [0.82, 1.0, 0.92]
+        brainTarget.components.set(InputTargetComponent())
+        brainTarget.components.set(CollisionComponent(shapes: [
+            .generateSphere(radius: 0.112)
         ]))
-        interactionProxy.components.set(HoverEffectComponent())
-        imported.addChild(interactionProxy)
+        brainTarget.components.set(HoverEffectComponent())
+        registered.addChild(brainTarget)
+
+        let clotTarget = Entity()
+        clotTarget.name = importedClotTargetName
+        clotTarget.position = [0.036, 0.026, 0.072]
+        clotTarget.components.set(InputTargetComponent())
+        clotTarget.components.set(CollisionComponent(shapes: [
+            .generateSphere(radius: 0.015)
+        ]))
+        clotTarget.components.set(HoverEffectComponent())
+        registered.addChild(clotTarget)
 
         return imported
     }
@@ -672,7 +737,68 @@ enum StrokeSceneFactory {
         entity.name = clotName
         entity.position = [0.03, 0.03, 0.042]
         entity.scale = [1.4, 0.8, 0.8]
+        entity.components.set(InputTargetComponent())
+        entity.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.012)]))
+        entity.components.set(HoverEffectComponent())
         return entity
+    }
+
+    static func isAnatomyInteractionTarget(_ entity: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if [
+                importedBrainTargetName,
+                importedClotTargetName,
+                leftBrainName,
+                rightBrainName,
+                penumbraName,
+                clotName
+            ].contains(current.name) {
+                return true
+            }
+            candidate = current.parent
+        }
+        return false
+    }
+
+    static func semanticTarget(for entity: Entity) -> String {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            switch current.name {
+            case importedClotTargetName, clotName:
+                return "blocked vessel"
+            case penumbraName:
+                return "affected brain region"
+            case importedBrainTargetName, leftBrainName, rightBrainName:
+                return "brain surface"
+            default:
+                candidate = current.parent
+            }
+        }
+        return "teaching anatomy"
+    }
+
+    /// Two sparse, switchable spatial reference frames. They are intentionally
+    /// points rather than labels: the shared brain remains primary, while a
+    /// clinician can choose either regional landmarks or the procedure path.
+    private static func makePointField(
+        name: String,
+        points: [SIMD3<Float>],
+        material: RealityKit.Material
+    ) -> Entity {
+        let field = Entity()
+        field.name = name
+        let mesh = MeshResource.generateSphere(radius: 0.00165)
+
+        for (index, position) in points.enumerated() {
+            let point = ModelEntity(mesh: mesh, materials: [material])
+            point.name = "\(name)-point-\(index)"
+            point.position = position
+            field.addChild(point)
+        }
+
+        field.isEnabled = false
+        return field
     }
 
     /// A world-locked ring under the model. It is the clock: the lesson's single
@@ -761,7 +887,30 @@ enum StrokeSceneFactory {
         }
 
         updateCarePreview(root: root, experience: experience, time: time)
+        updatePointFields(root: root, experience: experience, time: time)
         updateImportedAnatomy(root: root, experience: experience, time: time)
+    }
+
+    private static func updatePointFields(
+        root: Entity,
+        experience: StrokeExperienceState,
+        time: TimeInterval
+    ) {
+        let clinicianOnly = experience.audienceLens == .clinician
+        let regionField = root.findEntity(named: regionPointFieldName)
+        let procedureField = root.findEntity(named: procedurePointFieldName)
+
+        regionField?.isEnabled = clinicianOnly && experience.pointField == .regions
+        procedureField?.isEnabled = clinicianOnly && experience.pointField == .procedure
+
+        let active = experience.pointField == .regions ? regionField : procedureField
+        if let active {
+            for (index, child) in active.children.enumerated() {
+                let phase = Float(time) * 0.85 + Float(index) * 0.42
+                let pulse = 0.96 + sin(phase) * 0.045
+                child.scale = [pulse, pulse, pulse]
+            }
+        }
     }
 
     private static func updateImportedAnatomy(
