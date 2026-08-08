@@ -33,6 +33,20 @@ The wearer completes one 90-second pass after the machine receipt succeeds:
 7. Advance through Orient, Pressure, and Make space. Do not approve the layer
    reveal unless the consent question is visible.
 
+Then run one separate clinician-only layer-study pass with the
+`--proof-layer-study` launch argument:
+
+8. Switch **Layers → See through → Study apart → Layers**. Confirm the cortex,
+   arteries, blockage, and dura return without visible transform drift.
+9. Adjust **Brain transparency**. Confirm the vessel remains legible and the
+   view still reads as one anatomical relationship in both eyes.
+10. Gaze at a cyan region point and pinch once. Confirm its title appears.
+    Dragging from that point must orient the whole brain; the point must not
+    detach from its anatomical layer. Two-hand magnification must still work.
+11. Confirm no zipper seam, tearing, cutting sound, or exposed blood appears in
+    the imported-brain patient path. The persistent boundary remains a teaching
+    model, not a patient scan.
+
 ## Record exactly four observations
 
 - `LEGIBILITY`: pass/fail — can every required label be read without leaning?

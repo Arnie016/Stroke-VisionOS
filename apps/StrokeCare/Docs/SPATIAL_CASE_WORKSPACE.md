@@ -16,8 +16,8 @@ questions, and wording boundaries.
    annotation point at what changed. The user can orbit, scale, or tap the clot.
 4. A family wearer can place a question marker on the anatomy. The presenter
    sees a clarification cue, not inferred anxiety or physiology.
-5. With explicit permission, the model separates skull, dura, and brain using a
-   calm zip-like reveal. There is no incision or blood effect.
+5. With explicit permission, protective layers become transparent one at a
+   time. There is no incision or blood effect.
 
 ## Depth system
 

@@ -14,6 +14,7 @@ struct StrokeJourneyLaunchView: View {
     @State private var casePlaced = false
     @State private var caseRevealProgress = 0.0
     @State private var fileDrag = CGSize.zero
+    @State private var proofRouteHasRun = false
 
     var body: some View {
         ZStack {
@@ -24,30 +25,58 @@ struct StrokeJourneyLaunchView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 16) {
-                header
+            VStack(spacing: 24) {
+                Label("STROKE CARE", systemImage: "brain.head.profile")
+                    .font(.caption.weight(.bold))
+                    .tracking(2.0)
+                    .foregroundStyle(.cyan)
 
-                HStack(spacing: 26) {
-                    patientFileShelf
-                        .frame(width: 245)
-                        .zIndex(3)
+                Text("Enter the case room")
+                    .font(.system(size: 34, weight: .semibold, design: .rounded))
 
-                    unfoldingCaseSpace
-                        .frame(maxWidth: .infinity)
+                Text("Turn left for patient files. Carry one to the centre.")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 14) {
+                    Button("Family", systemImage: "person.2.fill") {
+                        Task { await enterSpatialCaseRoom(as: .family) }
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button("Presenter", systemImage: "stethoscope") {
+                        Task { await enterSpatialCaseRoom(as: .clinician) }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.cyan)
                 }
-                .frame(height: 450)
 
-                Text("Fictional case · Emergencies follow hospital protocol")
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.40))
+                Text("Fictional teaching case · no patient data · emergencies follow hospital protocol")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
-            .padding(26)
+            .padding(34)
             .scaleEffect(isOpening && !reduceMotion ? 1.025 : 1)
             .opacity(isOpening ? 0.28 : 1)
             .blur(radius: isOpening && !reduceMotion ? 10 : 0)
         }
-        .frame(width: 900, height: 620)
+        .frame(width: 620, height: 360)
         .onAppear(perform: routeProofIfNeeded)
+    }
+
+    @MainActor
+    private func enterSpatialCaseRoom(as lens: StrokeAudienceLens) async {
+        guard !isOpening else { return }
+        isOpening = true
+        experience.reset()
+        experience.audienceLens = lens
+        let result = await openImmersiveSpace(id: StrokeSpace.immersive)
+        guard result == .opened else {
+            isOpening = false
+            return
+        }
+        experience.isImmersivePresented = true
+        dismissWindow(id: StrokeSpace.window)
     }
 
     private var header: some View {
@@ -316,6 +345,8 @@ struct StrokeJourneyLaunchView: View {
     }
 
     private func routeProofIfNeeded() {
+        guard !proofRouteHasRun else { return }
+        proofRouteHasRun = true
         if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
             caseRevealProgress = 1
@@ -326,6 +357,22 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-evidence") {
             experience.prepareEvidenceProof()
             Task { await openProofSpace(opensEvidence: true) }
+        } else if CommandLine.arguments.contains("--proof-layer-study") {
+            experience.prepareLayerStudyProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-procedure-field") {
+            experience.prepareProcedureFieldProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-transparent-layer") {
+            experience.prepareTransparentLayerProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-spatial-intake") {
+            experience.reset()
+            experience.audienceLens = .clinician
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-spatial-docked-case") {
+            experience.prepareSpatialDockedCaseProof()
+            Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-clinician-pressure") {
             experience.prepareClinicianProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
@@ -347,13 +394,15 @@ struct StrokeJourneyLaunchView: View {
     }
 
     @MainActor
-    private func openProofSpace(opensEvidence: Bool = false) async {
+    private func openProofSpace(opensEvidence: Bool = false, opensCompanion: Bool = true) async {
         try? await Task.sleep(for: .milliseconds(700))
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
         print("PROOF_IMMERSIVE_RESULT=\(result)")
         guard result == .opened else { return }
         experience.isImmersivePresented = true
-        openWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+        if opensCompanion {
+            openWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+        }
         if opensEvidence {
             // In normal use the presenter taps the evidence button after this
             // window exists. The deterministic proof waits for the same

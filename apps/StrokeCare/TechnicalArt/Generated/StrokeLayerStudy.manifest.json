@@ -1,0 +1,97 @@
+{
+  "status": "BLENDER_LAYER_STUDY=PASS",
+  "blenderVersion": "5.2.0 LTS",
+  "sourceAssetRoot": "RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz",
+  "outputBlend": "TechnicalArt/Generated/StrokeLayerStudy.blend",
+  "outputUSDC": "TechnicalArt/Generated/StrokeLayerStudy.usdc",
+  "usdExport": "PASS",
+  "semanticLayers": [
+    {
+      "layer": "cortex",
+      "source": "RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_anatomy_realistic_v2.usdz",
+      "root": "VISIONOS_CORTEX_ROOT",
+      "objects": 5,
+      "meshes": 4,
+      "boundsMin": [
+        -0.0681886225938797,
+        -0.08348048478364944,
+        -0.07285064458847046
+      ],
+      "boundsMax": [
+        0.06817904114723206,
+        0.08351975679397583,
+        0.07287277281284332
+      ]
+    },
+    {
+      "layer": "arteries",
+      "source": "RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_arteries_realistic_v2.usdz",
+      "root": "VISIONOS_ARTERIES_ROOT",
+      "objects": 2,
+      "meshes": 1,
+      "boundsMin": [
+        -0.07133873552083969,
+        -0.0872252807021141,
+        -0.22086575627326965
+      ],
+      "boundsMax": [
+        0.07114896923303604,
+        0.06536149978637695,
+        0.06001126766204834
+      ]
+    },
+    {
+      "layer": "blockage",
+      "source": "RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/ischemic_mca_clot_v2.usdz",
+      "root": "VISIONOS_BLOCKAGE_ROOT",
+      "objects": 2,
+      "meshes": 1,
+      "boundsMin": [
+        -0.024911820888519287,
+        -0.03437749296426773,
+        -0.03249331936240196
+      ],
+      "boundsMax": [
+        -0.01874123327434063,
+        -0.03288290649652481,
+        -0.030499327927827835
+      ]
+    },
+    {
+      "layer": "dura",
+      "source": "RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/dura_mater_cutaway_conceptual_v2.usdz",
+      "root": "VISIONOS_DURA_ROOT",
+      "objects": 2,
+      "meshes": 1,
+      "boundsMin": [
+        -0.06272432208061218,
+        -0.08629171550273895,
+        -0.07690006494522095
+      ],
+      "boundsMax": [
+        0.07199190557003021,
+        0.08698448538780212,
+        0.07667168229818344
+      ]
+    }
+  ],
+  "regionAnchors": [
+    "REGION_ANCHOR_01",
+    "REGION_ANCHOR_02",
+    "REGION_ANCHOR_03",
+    "REGION_ANCHOR_04",
+    "REGION_ANCHOR_05",
+    "REGION_ANCHOR_06",
+    "REGION_ANCHOR_07",
+    "REGION_ANCHOR_08",
+    "REGION_ANCHOR_09",
+    "REGION_ANCHOR_10"
+  ],
+  "pointCount": 10,
+  "boundaries": [
+    "authoring artifact only",
+    "not a patient scan",
+    "layer and point positions require clinician review",
+    "runtime transforms remain owned by StrokeExperienceState"
+  ]
+}

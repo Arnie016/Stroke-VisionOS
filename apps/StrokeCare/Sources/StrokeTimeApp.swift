@@ -15,7 +15,7 @@ struct StrokeTimeApp: App {
                     .environmentObject(experience)
             }
         }
-        .defaultSize(width: 900, height: 620)
+        .defaultSize(width: 620, height: 360)
         .windowResizability(.contentSize)
 
         WindowGroup(id: StrokeSpace.family) {
@@ -38,7 +38,7 @@ struct StrokeTimeApp: App {
                 .environmentObject(experience)
                 .onAppear { experience.audienceLens = .clinician }
         }
-        .defaultSize(width: 540, height: 660)
+        .defaultSize(width: 460, height: 560)
         .windowResizability(.contentSize)
         .defaultWindowPlacement { _, context in
             if let workspace = context.windows.first(where: { $0.id == StrokeSpace.window }) {
