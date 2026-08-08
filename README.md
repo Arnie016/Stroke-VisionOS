@@ -43,6 +43,10 @@ This is an educational prototype. It is not a medical device and must not:
 
 Educational simplifications must be labelled in the interface and documentation. Scientific or clinical statements should be traceable to reputable sources before release.
 
+### Research library
+
+The draft [open cranial surgery after stroke evidence and communication library](docs/research/open-cranial-stroke-surgery/README.md) maps the major surgical pathways, annotated clinical evidence, urgent-family communication guidance, synthetic conversation demos, and product safety requirements. It is a research foundation for specialist review—not approved patient-specific content, a clinical guideline, or a consent tool.
+
 ## MVP scope
 
 The first coherent vertical slice should include:
