@@ -249,7 +249,7 @@ final class StrokeExperienceState: ObservableObject {
         case .chooseCase:
             "The skull is fixed. Vessels feed the brain."
         case .inspectOcclusion:
-            "A clot blocks flow. Swelling has nowhere to go."
+            "Here, a clot blocks flow. Swelling crowds fixed space."
         case .discussCare:
             "Making room can reduce pressure—not repair injury."
         }

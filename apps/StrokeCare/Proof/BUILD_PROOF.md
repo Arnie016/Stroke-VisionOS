@@ -8,7 +8,7 @@
   separately evidenced `0.3 (3)` install.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.0`; clinician review pending.
+- Clinical content version: `SC-AIS-001.1`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
@@ -56,6 +56,21 @@ xcodebuild ... -destination 'platform=visionOS Simulator,name=Apple Vision Pro' 
 ** BUILD SUCCEEDED **
 ```
 
+The `0.5 (5)` physical-device product also built and signed successfully at
+21:46 SGT on 2026-08-08:
+
+```text
+destination=generic/platform=visionOS
+Signing Identity=Apple Development
+Provisioning Profile=iOS Team Provisioning Profile: com.arnav.StrokeTime
+codesign --verify --deep --strict=PASS
+bundle version=0.5 (5)
+** BUILD SUCCEEDED **
+```
+
+This proves a valid signed app bundle on the Mac. It does not prove installation
+or launch on XCAT.
+
 | State | Artifact | SHA-256 |
 | --- | --- | --- |
 | Threshold | `progressive-story/00-threshold-simulator.png` | `973ab1ab3980b68b5843bce308a86d3c3cdf1396914a28b0b9fa4918e39c84eb` |
@@ -93,8 +108,9 @@ destination, and installed over `com.arnav.StrokeTime`. A fresh device query at
 17:33 SGT reports Stroke Care `0.3 (3)` installed while XCAT is
 `available (paired)`.
 
-The PR2-backed `0.4 (4)` build has passed the Simulator contract/build and
-visual checks above. It has not yet been signed, installed, or launched on XCAT.
+The PR2-backed `0.5 (5)` build has passed the contract, Simulator build, and
+generic physical-device signing checks above. It has not yet been installed or
+launched on XCAT.
 
 Two bounded foreground-launch attempts did not return a launch receipt; the
 second ended with the explicit 20-second command timeout, and a subsequent
@@ -105,9 +121,15 @@ since boot, but the command line cannot establish that the headset is currently
 worn and ready for foreground activation.
 
 The static verifier deliberately prints `physical_device=NOT_PROVEN` because a
-source scan cannot establish a device result. This dated receipt supplies
-separate signed-build and installation evidence; launch and wearer judgment
-remain unrun for `0.3 (3)`.
+source scan cannot establish a device result. The historical section above
+proves only the older `0.3 (3)` installation. Install, launch, and wearer
+judgment remain unrun for the current `0.5 (5)` binary.
+
+At 21:43–21:47 SGT, `devicectl` still reported XCAT as paired with Developer
+Mode enabled but `unavailable`, `ddiServicesAvailable=false`, and
+`tunnelState=unavailable`. Therefore no 0.5 installation attempt was started;
+the exact next deployment action is to retry once the headset is powered on,
+awake, unlocked, and reachable.
 
 ## Clinical and procedural gates
 
