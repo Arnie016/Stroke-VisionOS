@@ -1,4 +1,4 @@
-# Stroke Care proof receipt — 2026-08-09 01:38 SGT
+# Stroke Care proof receipt — 2026-08-09 01:49 SGT
 
 ## Current source
 
@@ -56,15 +56,20 @@ xcodebuild ... -destination 'platform=visionOS Simulator,name=Apple Vision Pro' 
 ** BUILD SUCCEEDED **
 ```
 
-The current `0.5 (5)` physical-device product built and signed successfully at
-22:17 SGT on 2026-08-08 after the visual-field and transparent-geometry fixes:
+The current `0.6 (6)` source built and signed for the generic physical visionOS
+destination at 01:48 SGT on 2026-08-09:
 
 ```text
 destination=generic/platform=visionOS
-Signing Identity=Apple Development
+derivedDataPath=/tmp/stroke-care-xcat-derived-data
+Signing Identity=Apple Development certificate (identity redacted)
 Provisioning Profile=iOS Team Provisioning Profile: com.arnav.StrokeTime
 codesign --verify --deep --strict=PASS
-bundle version=0.5 (5)
+bundle version=0.6 (6)
+TeamIdentifier=VV6YGTA587
+CDHash=47e085ccb50db832af966a6b3c09c5bb84321a65
+XCAT hardware UDID in embedded profile=PASS
+profile expiration=2026-08-15 15:56:35 SGT
 ** BUILD SUCCEEDED **
 ```
 
@@ -101,7 +106,7 @@ audio perception, or comprehension for a wearer.
 
 ## XCAT state
 
-`xcrun devicectl list devices` at 22:18 SGT currently reports XCAT as
+`xcrun devicectl list devices` at 01:45 SGT on 2026-08-09 reports XCAT as
 `unavailable` with identifier
 `613CC48C-A6AD-5170-A238-D518B6012491`.
 
@@ -117,10 +122,10 @@ destination, and installed over `com.arnav.StrokeTime`. A fresh device query at
 17:33 SGT reports Stroke Care `0.3 (3)` installed while XCAT is
 `available (paired)`.
 
-The earlier PR2-backed `0.5 (5)` build passed the generic physical-device
-signing checks above. Current source is `0.6 (6)` and has passed the static
-contract and Simulator build; a signed 0.6 device bundle is not claimed. No 0.6
-install or launch has been attempted on XCAT.
+Current `0.6 (6)` has passed the static contract, Simulator build, generic
+physical-device build, signature verification, and XCAT provisioning-profile
+membership check. No 0.6 install or launch has been attempted because the
+device is unavailable. A valid signed bundle is not device execution proof.
 
 Two bounded foreground-launch attempts did not return a launch receipt; the
 second ended with the explicit 20-second command timeout, and a subsequent
@@ -135,9 +140,10 @@ source scan cannot establish a device result. The historical section above
 proves only the older `0.3 (3)` installation. Install, launch, and wearer
 judgment remain unrun for the current `0.6 (6)` binary.
 
-At 21:43–21:47 SGT, `devicectl` still reported XCAT as paired with Developer
+At 01:45 SGT on 2026-08-09, `devicectl` reported XCAT as paired with Developer
 Mode enabled but `unavailable`, `ddiServicesAvailable=false`, and
-`tunnelState=unavailable`. Therefore no 0.6 installation attempt was started;
+`tunnelState=unavailable`. The device reports visionOS 27.0 beta. Therefore no
+0.6 installation attempt was started;
 the exact next deployment action is to retry once the headset is powered on,
 awake, unlocked, and reachable.
 

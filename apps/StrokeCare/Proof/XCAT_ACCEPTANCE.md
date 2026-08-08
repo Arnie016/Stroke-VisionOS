@@ -11,8 +11,9 @@ Scripts/deploy_xcat.zsh
 The command stops before building or installing unless XCAT is reachable. A
 successful run creates a dated folder under `Proof/xcat/` containing the signed
 build log, install receipt, installed-app query, foreground-launch receipt, and
-running-process query. It launches the deterministic `--proof-family-question`
-scene and creates `WEARER_RESULT.md` with every human field set to `NOT RUN`.
+running-process query. It launches the deterministic `--hackathon-demo` route
+so the wearer starts at the prelude and follows the complete 0.6 flow. It also
+creates `WEARER_RESULT.md` with every human field set to `NOT RUN`.
 
 ## Wearer gate
 
