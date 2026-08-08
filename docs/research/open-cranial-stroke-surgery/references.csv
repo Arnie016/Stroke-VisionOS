@@ -1,0 +1,89 @@
+source_id,year,topic,source_type,short_title,doi_or_identifier,url,evidence_note
+A1,2022,ICH,Guideline,AHA-ASA spontaneous ICH guideline,10.1161/STR.0000000000000407,https://pubmed.ncbi.nlm.nih.gov/35579034/,Primary current US guideline
+A2,2025,ICH,Guideline,ESO-EANS spontaneous ICH guideline,10.1177/23969873251340815,https://pmc.ncbi.nlm.nih.gov/articles/PMC12098356/,Primary current European guideline
+A3,2021,Ischemic stroke,Guideline,ESO space-occupying infarction guideline,10.1177/23969873211027001,https://pmc.ncbi.nlm.nih.gov/articles/PMC8370077/,Primary decompression guideline
+A4,2014,Ischemic stroke,Scientific statement,AHA-ASA infarction with swelling statement,10.1161/01.str.0000441965.15164.d6,https://pubmed.ncbi.nlm.nih.gov/24481970/,US swelling pathway
+A5,2023,aSAH,Guideline,AHA-ASA aneurysmal SAH guideline,10.1161/STR.0000000000000436,https://pubmed.ncbi.nlm.nih.gov/37212182/,Primary current US guideline
+A6,2023,aSAH,Guideline,NCS aneurysmal SAH guideline,10.1007/s12028-023-01713-5,https://pubmed.ncbi.nlm.nih.gov/37202712/,Neurocritical-care pathway
+A7,2026,aSAH,Guideline,ESO-EANS-ESMINT aneurysmal SAH guideline,10.1093/esj/aakag043,https://pmc.ncbi.nlm.nih.gov/articles/PMC13151661/,Newest European guideline at search date
+A8,2017,CVT,Guideline,ESO cerebral venous thrombosis guideline,10.1111/ene.13381,https://pubmed.ncbi.nlm.nih.gov/28833980/,Decompression rescue recommendation
+A9,2024,CVT,Guideline,Canadian Stroke Best Practices CVT update,10.1017/cjn.2024.269,https://pubmed.ncbi.nlm.nih.gov/38826076/,Current Canadian pathway
+A10,2017,AVM,Scientific statement,AHA-ASA brain AVM statement,10.1161/STR.0000000000000134,https://pubmed.ncbi.nlm.nih.gov/28642352/,Multimodal AVM management
+A11,2024,ICH,Guideline,NCS ICH neuroprognostication guideline,PMID:37923968,https://pmc.ncbi.nlm.nih.gov/articles/PMC10959839/,Avoid deterministic early prognosis
+A12,2026,Ischemic stroke,Guideline,NCS-DGNI ischemic-stroke neuroprognostication guideline,PMID:41942818,https://pmc.ncbi.nlm.nih.gov/articles/PMC13249629/,Multimodal conditional prognosis
+A13,2025,Stroke communication,Scientific statement,AHA palliative and end-of-life stroke statement,10.1161/STR.0000000000000479,https://pubmed.ncbi.nlm.nih.gov/39676661/,Palliative care alongside treatment
+A14,2025,ICU family care,Guideline,SCCM family-centered adult ICU guideline,PMID:39982184,https://pubmed.ncbi.nlm.nih.gov/39982184/,Structured family support
+A15,2021,Shared decision making,Guideline,NICE NG197 shared decision making,NG197,https://www.nice.org.uk/guidance/ng197,Emergency scope limitation applies
+A16,2019,Ischemic stroke,Evidence review,NICE hemicraniectomy evidence review,NG128 Evidence Review H,https://www.nice.org.uk/guidance/ng128/evidence/h-surgery-decompressive-hemicraniectomy-pdf-6777399573,UK trial synthesis
+B1,2007,Ischemic stroke,RCT,DECIMAL,10.1161/STROKEAHA.107.485235,https://doi.org/10.1161/STROKEAHA.107.485235,Small early decompression RCT
+B2,2007,Ischemic stroke,RCT,DESTINY,10.1161/STROKEAHA.107.485649,https://pubmed.ncbi.nlm.nih.gov/17690310/,Small survival-focused RCT
+B3,2009,Ischemic stroke,RCT,HAMLET,10.1016/S1474-4422(09)70047-X,https://pubmed.ncbi.nlm.nih.gov/19269254/,No overall primary benefit through 96 hours
+B4,2007,Ischemic stroke,IPD meta-analysis,Pooled DECIMAL-DESTINY-HAMLET,10.1016/S1474-4422(07)70036-4,https://pubmed.ncbi.nlm.nih.gov/17303527/,Practice-shaping early pooled analysis
+B5,2014,Ischemic stroke,RCT,DESTINY II,10.1056/NEJMoa1311367,https://www.nejm.org/doi/full/10.1056/NEJMoa1311367,Older-adult survival-disability tradeoff
+B6,2012,Ischemic stroke,RCT,Zhao trial up to age 80,10.1007/s12028-012-9703-3,https://pubmed.ncbi.nlm.nih.gov/22528280/,Small broadened-age RCT
+B7,2021,Ischemic stroke,IPD meta-analysis,Surgical decompression IPD meta-analysis,PMCID:PMC7551237,https://pmc.ncbi.nlm.nih.gov/articles/PMC7551237/,Seven randomized trials
+B8,2020,Ischemic stroke,Systematic review,Wei decompression meta-analysis,10.1042/BSR20191448,https://pmc.ncbi.nlm.nih.gov/articles/PMC6944664/,Nine RCTs with heterogeneous endpoints
+B9,2021,Ischemic stroke,Systematic review,Dominant versus non-dominant hemicraniectomy,10.1016/j.jstrokecerebrovasdis.2021.106102,https://doi.org/10.1016/j.jstrokecerebrovasdis.2021.106102,Low-certainty hemisphere comparison
+B10,2005,Ischemic stroke,Case series,Aphasia recovery after hemicraniectomy,10.1161/01.STR.0000157595.93115.70,https://doi.org/10.1161/01.STR.0000157595.93115.70,Small observational language study
+B11,2017,Ischemic stroke,Survey cohort,DESTINY-S attitudes,10.1007/s12028-016-0362-7,https://doi.org/10.1007/s12028-016-0362-7,Retrospective preference evidence
+B12,2022,Ischemic stroke,Systematic review,Strokectomy evidence,10.1007/s00415-020-10358-9,https://pmc.ncbi.nlm.nih.gov/articles/PMC8739160/,Investigational selected-center technique
+C1,1992,Cerebellar infarction,Case series,Severe cerebellar infarction decompression,10.1161/01.STR.23.7.957,https://pubmed.ncbi.nlm.nih.gov/1615544/,Historical feasibility
+C2,2016,Cerebellar infarction,Matched cohort,Preventive suboccipital decompression,10.1161/STROKEAHA.116.014078,https://pubmed.ncbi.nlm.nih.gov/27608818/,Nonrandom timing evidence
+C3,2018,Cerebellar infarction,Systematic review,Suboccipital decompression meta-analysis,10.1016/j.wneu.2017.10.144,https://pubmed.ncbi.nlm.nih.gov/29104155/,Heterogeneous retrospective evidence
+C4,2024,Cerebellar infarction,Comparative cohort,Necrosectomy versus decompression,10.1227/neu.0000000000002707,https://pubmed.ncbi.nlm.nih.gov/37800900/,Technique comparison nonrandomized
+C5,2019,Cerebellar infarction,Case series,Suyama decompression series,PMCID:PMC8766232,https://pmc.ncbi.nlm.nih.gov/articles/PMC8766232/,Small single-center evidence
+C6,2025,Cerebellar infarction,Systematic review,Conservative versus surgical cerebellar infarction,PMID:41204465,https://pubmed.ncbi.nlm.nih.gov/41204465/,Confounded observational comparison
+D1,2005,ICH,RCT,STICH,10.1016/S0140-6736(05)17826-X,https://pubmed.ncbi.nlm.nih.gov/15680453/,No overall routine craniotomy benefit
+D2,2013,ICH,RCT,STICH II,10.1016/S0140-6736(13)60986-1,https://pmc.ncbi.nlm.nih.gov/articles/PMC3906609/,Selected superficial lobar ICH
+D3,2024,ICH,RCT,SWITCH,10.1016/S0140-6736(24)00702-5,https://pubmed.ncbi.nlm.nih.gov/38761811/,Underpowered deep-ICH decompression trial
+D4,2025,ICH,Systematic review,Cochrane surgery for supratentorial ICH,PMID:40673401,https://pubmed.ncbi.nlm.nih.gov/40673401/,Current umbrella synthesis
+D5,2024,ICH,RCT,ENRICH,10.1056/NEJMoa2308440,https://pubmed.ncbi.nlm.nih.gov/38598795/,Minimally invasive comparator
+D6,2019,ICH,RCT,MISTIE III,10.1016/S0140-6736(19)30195-3,https://pubmed.ncbi.nlm.nih.gov/30739747/,Primary functional endpoint not improved
+D7,2017,IVH,RCT,CLEAR III,10.1016/S0140-6736(16)32410-2,https://pmc.ncbi.nlm.nih.gov/articles/PMC6108339/,Mortality-function divergence
+D8,2019,Cerebellar ICH,IPD observational,Cerebellar ICH surgery versus conservative,10.1001/jama.2019.13014,https://pubmed.ncbi.nlm.nih.gov/31593272/,Survival association not function overall
+D9,2019,Cerebellar ICH,Systematic review,Cerebellar hemorrhage surgery review,PMID:31848229,https://pubmed.ncbi.nlm.nih.gov/31848229/,Observational heterogeneous evidence
+D10,2015,ICH,Cohort,Decompressive hemicraniectomy with or without clot evacuation,10.1016/j.clineuro.2014.11.015,https://pubmed.ncbi.nlm.nih.gov/25496934/,Historical observational feasibility
+D11,2024,ICH,Network meta-analysis,Surgical strategies for supratentorial ICH,10.1016/j.eclinm.2024.102999,https://pubmed.ncbi.nlm.nih.gov/39720609/,Indirect rankings not bedside hierarchy
+D12,2024,Brainstem ICH,Systematic review,Stereotactic aspiration for brainstem hemorrhage,10.1016/j.clineuro.2024.108583,https://pubmed.ncbi.nlm.nih.gov/39395282/,Emerging nonrandom evidence
+E1,2002,aSAH,RCT,ISAT,10.1016/S0140-6736(02)11314-6,https://pubmed.ncbi.nlm.nih.gov/12414200/,Coiling benefit in dual-suitable aneurysms
+E2,2005,aSAH,RCT follow-up,ISAT long-term follow-up,PMID:16139655,https://pubmed.ncbi.nlm.nih.gov/16139655/,Durability and rebleeding context
+E3,2019,aSAH,RCT follow-up,BRAT ten-year results,10.3171/2018.8.JNS181846,https://pubmed.ncbi.nlm.nih.gov/30849758/,Clinical durability tradeoff and crossover
+E4,2018,aSAH,Systematic review,Cochrane coiling versus clipping,PMID:30110521,https://pubmed.ncbi.nlm.nih.gov/30110521/,Applicability limited to suitable aneurysms
+E5,2022,aSAH,Systematic review,Clipping versus coiling meta-analysis,PMCID:PMC8976818,https://pmc.ncbi.nlm.nih.gov/articles/PMC8976818/,Mixed-design tradeoff evidence
+E6,2017,aSAH,Systematic review,Decompression after poor-grade aSAH,10.3171/2016.9.JNS161383,https://pubmed.ncbi.nlm.nih.gov/28059660/,No reliable control groups
+E7,2021,aSAH,Cohort plus review,Primary decompression after aSAH,PMCID:PMC8338868,https://pmc.ncbi.nlm.nih.gov/articles/PMC8338868/,Selected rescue practice
+F1,2011,CVT,Registry plus IPD review,CVT decompressive surgery,10.1161/STROKEAHA.111.615393,https://pubmed.ncbi.nlm.nih.gov/21799156/,Meaningful recovery possible
+F2,2012,CVT,Prospective case series,Severe CVT hemicraniectomy,PMCID:PMC3366184,https://pmc.ncbi.nlm.nih.gov/articles/PMC3366184/,Ten uncontrolled cases
+F3,2013,CVT,Case series,CVT single-center 44 cases,10.1136/jnnp-2012-303356,https://pubmed.ncbi.nlm.nih.gov/23591554/,Local selection and no controls
+F4,2024,CVT,Prospective cohort,DECOMPRESS2,10.1161/STROKEAHA.123.045051,https://pubmed.ncbi.nlm.nih.gov/38572636/,Contemporary nonrandomized outcome study
+F5,2026,CVT,Cohort,DECOMPRESS2 quality of life,10.1016/j.jstrokecerebrovasdis.2026.108549,https://pubmed.ncbi.nlm.nih.gov/41500360/,QoL not captured by mRS alone
+G1,2020,AVM,Cohort,Delayed treatment after ruptured AVM,10.1016/j.wneu.2019.10.148,https://pubmed.ncbi.nlm.nih.gov/31678312/,Selection limits timing inference
+G2,2021,AVM,Systematic review,Microsurgery for low-grade AVM,10.1007/s00234-021-02714-x,https://pubmed.ncbi.nlm.nih.gov/34562139/,Expert-center retrospective evidence
+G3,2022,AVM,Systematic review,Preoperative AVM embolization,PMCID:PMC9160113,https://pmc.ncbi.nlm.nih.gov/articles/PMC9160113/,No universal preoperative benefit
+G4,2024,AVM,Cohort,Early versus delayed ruptured AVM resection,10.1016/j.wneu.2024.08.073,https://pubmed.ncbi.nlm.nih.gov/39168243/,Confounded timing comparison
+H1,2015,Craniectomy complications,Systematic review,Decompressive craniectomy complications,PMCID:PMC4704457,https://pmc.ncbi.nlm.nih.gov/articles/PMC4704457/,Complications differ by phase
+H2,2016,Craniectomy complications,Systematic review,Syndrome of the trephined,10.1227/NEU.0000000000001366,https://pubmed.ncbi.nlm.nih.gov/27489166/,Inconsistent low-level evidence
+H3,2013,Cranioplasty,Cohort,Cranioplasty timing after stroke,10.3171/2012.10.JNS121037,https://pubmed.ncbi.nlm.nih.gov/23140156/,No definitive timing rule
+H4,2020,Cranioplasty,Cohort,Stroke cranioplasty complications,PMCID:PMC7184041,https://pmc.ncbi.nlm.nih.gov/articles/PMC7184041/,Aggregate risk not patient-specific
+H5,2025,Cranioplasty,Systematic review,Cranioplasty timing meta-analysis,PMID:41181848,https://pubmed.ncbi.nlm.nih.gov/41181848/,Heterogeneous definitions
+H6,2021,Cranioplasty,Systematic review,Cranioplasty implant materials,PMID:34100535,https://pubmed.ncbi.nlm.nih.gov/34100535/,Confounded material comparisons
+I1,2022,Communication,Clinical review,Neurocritical prognosis and shared decisions,10.1136/bmj-2021-060154,https://www.bmj.com/content/377/bmj-2021-060154,Core decision framework
+I2,2025,Communication,Clinical review,Communicating after severe acute brain injury,10.1007/s12028-025-02252-x,https://pubmed.ncbi.nlm.nih.gov/40214887/,Longitudinal family communication
+I3,2025,Communication,Qualitative meta-synthesis,Family communication experiences in SABI,PMCID:PMC11950011,https://pmc.ncbi.nlm.nih.gov/articles/PMC11950011/,Family needs and uncertainty
+I4,2023,Communication,Implementation study,NeuroICU shared decision bundle,PMCID:PMC9973293,https://pmc.ncbi.nlm.nih.gov/articles/PMC9973293/,Human-facilitated process improvement
+I5,2022,Communication,Pilot study,SABI surrogate decision aid,PMCID:PMC9576301,https://pmc.ncbi.nlm.nih.gov/articles/PMC9576301/,Feasible not efficacy-proven
+I6,2021,Communication,Cohort,Family dissatisfaction in neurocritical care,PMCID:PMC8021441,https://pmc.ncbi.nlm.nih.gov/articles/PMC8021441/,Supports continuity and access
+I7,2017,Communication,Cohort,Surrogate numeric prognosis preferences,PMCID:PMC5693603,https://pmc.ncbi.nlm.nih.gov/articles/PMC5693603/,TBI transferability caution
+I8,2018,Communication,Cohort,ICH surrogate prognostic perspectives,PMID:29608394,https://pubmed.ncbi.nlm.nih.gov/29608394/,Meaning making beyond data
+I9,2001,Prognostication,Cohort,Self-fulfilling prophecy after ICH,10.1212/WNL.56.6.766,https://pubmed.ncbi.nlm.nih.gov/11274312/,Withdrawal bias warning
+I10,2016,Prognostication,Cohort,Withdrawal bias in ICH mortality models,10.1097/CCM.0000000000001570,https://pubmed.ncbi.nlm.nih.gov/26807687/,Nuanced limitation
+I11,2017,Communication,Proof of concept,Best Case-Worst Case,PMID:28146230,https://pubmed.ncbi.nlm.nih.gov/28146230/,Adapt not validated for stroke
+I12,2007,Communication,RCT,VALUE ICU family conference,10.1056/NEJMoa063446,https://pubmed.ncbi.nlm.nih.gov/17267907/,End-of-life ICU context
+I13,2000,Communication,Framework,SPIKES,10.1634/theoncologist.5-4-302,https://academic.oup.com/oncolo/article/5/4/302/6386019,Oncology-derived scaffold
+I14,current,Communication,Government tool,AHRQ teach-back,AHRQ Teach-Back,https://www.ahrq.gov/teamstepps-program/curriculum/communication/tools/teachback.html,Understanding repair
+I15,current,Health literacy,Government toolkit,AHRQ Universal Precautions Toolkit,AHRQ HLU Toolkit 3rd,https://www.ahrq.gov/health-literacy/improve/precautions/index.html,Default low cognitive load
+I16,current,Consent,Professional guidance,GMC seven consent principles,GMC Consent,https://www.gmc-uk.org/professional-standards/the-professional-standards/decision-making-and-consent/the-seven-principles-of-decision-making-and-consent,UK professional guidance
+I17,current,Consent,Professional guidance,GMC emergency circumstances,GMC Emergencies,https://www.gmc-uk.org/professional-standards/the-professional-standards/decision-making-and-consent/circumstances-that-affect-the-decision-making-process,Jurisdiction-specific adaptation
+I18,current,Consent,Professional guidance,American College of Surgeons informed consent,ACS Consent,https://www.facs.org/for-patients/preparing-for-surgery/informed-consent/,Surgeon-owned dialogue
+I19,2022,Consent,Accreditation guidance,Joint Commission informed consent,Quick Safety 21,https://www.jointcommission.org/-/media/tjc/newsletters/quick-safety-21-update-4-4-22.pdf,More than a signature
+I20,current,Language access,Government standards,HHS National CLAS Standards,National CLAS Standards,https://thinkculturalhealth.hhs.gov/clas/standards,Qualified language assistance
