@@ -1,0 +1,126 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v2",
+  "module": "Generic thrombectomy device concepts",
+  "version": "0.2.0-realistic-device-slice",
+  "generated_with": "5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "device_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "assets": [
+    {
+      "id": "guidewire_educational_v2",
+      "title": "Generic educational guidewire",
+      "module": "realistic_devices_v2",
+      "description": "Generic metallic guidewire segment with a curved atraumatic distal tip and highlighted radiopaque distal section.",
+      "clinical_note": "Illustrates guidewire navigation only; tip shape and dimensions are conceptual and require specialist review.",
+      "triangle_count": 5440,
+      "dimensions_m": [
+        0.198413,
+        0.008405,
+        0.00043
+      ],
+      "usdc": "exports/usdc/guidewire_educational_v2.usdc",
+      "usdz": "exports/usdz/guidewire_educational_v2.usdz",
+      "usdz_bytes": 238023,
+      "usdz_sha256": "50e86ae808c91aca059d29b4f2594a5c6a0ca21d31f2d46d0ba04aa0535fd471",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "microcatheter_educational_v2",
+      "title": "Generic educational microcatheter",
+      "module": "realistic_devices_v2",
+      "description": "Generic hollow microcatheter segment with a shaped distal section, transition, lumen, and distal marker band.",
+      "clinical_note": "Illustrates a delivery catheter at an educational level; not a product specification or sizing reference.",
+      "triangle_count": 8800,
+      "dimensions_m": [
+        0.159625,
+        0.007631,
+        0.00144
+      ],
+      "usdc": "exports/usdc/microcatheter_educational_v2.usdc",
+      "usdz": "exports/usdz/microcatheter_educational_v2.usdz",
+      "usdz_bytes": 385101,
+      "usdz_sha256": "105c732b3baa68676e6663c9c034ca7459827893599f2d6e8d4ccc5e54a30f9c",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "aspiration_catheter_educational_v2",
+      "title": "Generic educational aspiration catheter",
+      "module": "realistic_devices_v2",
+      "description": "Generic hollow large-bore aspiration catheter with crossed reinforcement and two radiopaque distal markers.",
+      "clinical_note": "Illustrates an aspiration pathway only; lumen, shaft construction, and marker placement require specialist review.",
+      "triangle_count": 18024,
+      "dimensions_m": [
+        0.172202,
+        0.006699,
+        0.002858
+      ],
+      "usdc": "exports/usdc/aspiration_catheter_educational_v2.usdc",
+      "usdz": "exports/usdz/aspiration_catheter_educational_v2.usdz",
+      "usdz_bytes": 803363,
+      "usdz_sha256": "819193def17b52bf918353c4eb08df5d81a5a6ee73484912378fa12deb82c1e1",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "stent_retriever_educational_v2",
+      "title": "Generic educational self-expanding stent retriever concept",
+      "module": "realistic_devices_v2",
+      "description": "Generic deployed self-expanding retrieval lattice with abbreviated pusher wire, end crowns, and marker concepts.",
+      "clinical_note": "Conceptual deployed state only; not intended to reproduce device-vessel mechanics or a marketed implant.",
+      "triangle_count": 22272,
+      "dimensions_m": [
+        0.091055,
+        0.00437,
+        0.004367
+      ],
+      "usdc": "exports/usdc/stent_retriever_educational_v2.usdc",
+      "usdz": "exports/usdz/stent_retriever_educational_v2.usdz",
+      "usdz_bytes": 1048091,
+      "usdz_sha256": "462017c222abce6e15f45e6e8c13472cbc076941e5c651b3a62f891e08d4870b",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "thrombectomy_device_set_educational_v2",
+      "title": "Generic educational thrombectomy device set",
+      "module": "realistic_devices_v2",
+      "description": "Comparison layout containing the four generic thrombectomy device concepts as independently modeled components.",
+      "clinical_note": "Presentation grouping only; relative placement does not represent a registered procedural configuration.",
+      "triangle_count": 54536,
+      "dimensions_m": [
+        0.198413,
+        0.110052,
+        0.004367
+      ],
+      "usdc": "exports/usdc/thrombectomy_device_set_educational_v2.usdc",
+      "usdz": "exports/usdz/thrombectomy_device_set_educational_v2.usdz",
+      "usdz_bytes": 2466551,
+      "usdz_sha256": "797ee01a6c301fc89bd296bcec741f710ee00dcb22efd03e9258a66431b4a7d7",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "nominal_visual_dimensions": {
+    "guidewire": "approximately 0.36 mm OD, abbreviated 200 mm distal/display segment",
+    "microcatheter": "approximately 0.86 mm OD / 0.58 mm ID, abbreviated 160 mm segment",
+    "aspiration_catheter": "approximately 2.1 mm OD / 1.56 mm ID, abbreviated 175 mm segment",
+    "stent_retriever": "conceptual deployed 4 mm diameter x 20 mm lattice with abbreviated pusher"
+  },
+  "warnings": [
+    "Generic, non-branded visual concepts; not representations of any cleared or marketed device.",
+    "Nominal dimensions are for visual plausibility only and are not specifications.",
+    "Do not use for device selection, sizing, deployment simulation, procedural training, treatment planning, navigation, or outcome prediction.",
+    "Geometry, materials, relative scale, and procedure narrative require interventional neuroradiology review before patient-facing use."
+  ]
+}

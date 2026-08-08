@@ -1,0 +1,121 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v2",
+  "version": "0.2.0-realistic-vertical-slice",
+  "generated_with": "Blender 5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "sources": [
+    "NIH 3D 3DPX-020960 v1.01 / HRA Brain Male / CC BY 4.0",
+    "NIH 3D 3DPX-020591 v1.03 / Visible Human Skull and Eyes / CC BY 4.0",
+    "Z-Anatomy / CC BY-SA 4.0; BodyParts3D / CC BY-SA 2.1 Japan"
+  ],
+  "assets": [
+    {
+      "id": "brain_anatomy_realistic_v2",
+      "title": "Realistic generic brain anatomy",
+      "triangle_count": 236798,
+      "dimensions_m": [
+        0.136368,
+        0.167,
+        0.145723
+      ],
+      "usdc": "exports/usdc/brain_anatomy_realistic_v2.usdc",
+      "usdz": "exports/usdz/brain_anatomy_realistic_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "brain_deep_structures_v2",
+      "title": "Generic deep brain structures",
+      "triangle_count": 47224,
+      "dimensions_m": [
+        0.069519,
+        0.091225,
+        0.081299
+      ],
+      "usdc": "exports/usdc/brain_deep_structures_v2.usdc",
+      "usdz": "exports/usdz/brain_deep_structures_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "brain_ventricles_v2",
+      "title": "Generic ventricular system",
+      "triangle_count": 16602,
+      "dimensions_m": [
+        0.074908,
+        0.128477,
+        0.101773
+      ],
+      "usdc": "exports/usdc/brain_ventricles_v2.usdc",
+      "usdz": "exports/usdz/brain_ventricles_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "skull_semantic_realistic_v2",
+      "title": "Semantic Visible Human skull",
+      "triangle_count": 32164,
+      "dimensions_m": [
+        0.172759,
+        0.25791,
+        0.28036
+      ],
+      "usdc": "exports/usdc/skull_semantic_realistic_v2.usdc",
+      "usdz": "exports/usdz/skull_semantic_realistic_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cerebral_arteries_realistic_v2",
+      "title": "Generic cerebral arterial tree",
+      "triangle_count": 84999,
+      "dimensions_m": [
+        0.142488,
+        0.152587,
+        0.280877
+      ],
+      "usdc": "exports/usdc/cerebral_arteries_realistic_v2.usdc",
+      "usdz": "exports/usdz/cerebral_arteries_realistic_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "ischemic_mca_clot_v2",
+      "title": "Conceptual right M1 ischemic clot",
+      "triangle_count": 1280,
+      "dimensions_m": [
+        0.006171,
+        0.001495,
+        0.001994
+      ],
+      "usdc": "exports/usdc/ischemic_mca_clot_v2.usdc",
+      "usdz": "exports/usdz/ischemic_mca_clot_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "thrombectomy_registered_hero_v2",
+      "title": "Registered thrombectomy anatomy hero set",
+      "triangle_count": 440648,
+      "dimensions_m": [
+        0.172759,
+        0.25791,
+        0.331046
+      ],
+      "usdc": "exports/usdc/thrombectomy_registered_hero_v2.usdc",
+      "usdz": "exports/usdz/thrombectomy_registered_hero_v2.usdz",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "warnings": [
+    "Generic anatomy is not patient-specific.",
+    "Do not use for diagnosis, treatment planning, navigation, device sizing, or outcome prediction.",
+    "Right M1 clot geometry and registration require interventional neuroradiology review.",
+    "Z-Anatomy-derived arterial geometry carries ShareAlike obligations; review before proprietary distribution."
+  ]
+}

@@ -1,0 +1,1717 @@
+{
+  "module": "cranial vascular detail v2",
+  "source_blend": "not-distributed/Z-Anatomy/Startup.blend",
+  "registration_center_m": [
+    0.0,
+    0.008782502,
+    1.640712023
+  ],
+  "source_license": "Z-Anatomy CC BY-SA 4.0; BodyParts3D CC BY-SA 2.1 Japan",
+  "accepted_unique_source_objects": 64,
+  "explicit_rejections": {
+    "Sinus of frontal bone": "bony air sinus; not a vein",
+    "Sinus of sphenoid bone": "bony air sinus; not a vein"
+  },
+  "missing_source_objects": [],
+  "objects": [
+    {
+      "anatomical_name": "Anterior intercavernous sinus",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.00917,
+        0.002287,
+        0.00216
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0096947,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Cavernous sinus.l",
+      "source_type": "MESH",
+      "triangles": 9728,
+      "dimensions_m": [
+        0.013269,
+        0.019789,
+        0.016829
+      ],
+      "component_count_after": 3,
+      "largest_component_vertex_fraction": 0.474002,
+      "fragment_cleanup": {
+        "component_count_before": 3,
+        "components_before": [
+          {
+            "vertices": 2352,
+            "vertex_fraction": 0.4740024,
+            "diagonal_m": 0.0072904,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 2352,
+            "vertex_fraction": 0.4740024,
+            "diagonal_m": 0.0072904,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 258,
+            "vertex_fraction": 0.0519952,
+            "diagonal_m": 0.0264599,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Cavernous sinus.r",
+      "source_type": "MESH",
+      "triangles": 9728,
+      "dimensions_m": [
+        0.013269,
+        0.019789,
+        0.016829
+      ],
+      "component_count_after": 3,
+      "largest_component_vertex_fraction": 0.474002,
+      "fragment_cleanup": {
+        "component_count_before": 3,
+        "components_before": [
+          {
+            "vertices": 2352,
+            "vertex_fraction": 0.4740024,
+            "diagonal_m": 0.0072904,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 2352,
+            "vertex_fraction": 0.4740024,
+            "diagonal_m": 0.0072904,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 258,
+            "vertex_fraction": 0.0519952,
+            "diagonal_m": 0.0264599,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior petrosal sinus.l",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.038009,
+        0.030578,
+        0.02358
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0541822,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior petrosal sinus.r",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.038009,
+        0.030578,
+        0.02358
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0541822,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior sagittal sinus",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.002,
+        0.084654,
+        0.044174
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0955072,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Occipital sinus",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.002,
+        0.03139,
+        0.020147
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0373525,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Posterior intercavernous sinus",
+      "source_type": "CURVE",
+      "triangles": 640,
+      "dimensions_m": [
+        0.011638,
+        0.00797,
+        0.004076
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 328,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0146826,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Sigmoid sinus.l",
+      "source_type": "CURVE",
+      "triangles": 384,
+      "dimensions_m": [
+        0.016033,
+        0.019622,
+        0.027212
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 200,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0371826,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Sigmoid sinus.r",
+      "source_type": "CURVE",
+      "triangles": 384,
+      "dimensions_m": [
+        0.016033,
+        0.019622,
+        0.027212
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 200,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0371826,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Straight sinus",
+      "source_type": "CURVE",
+      "triangles": 1024,
+      "dimensions_m": [
+        0.003,
+        0.050827,
+        0.03289
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 520,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0606142,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior petrosal sinus.l",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.046925,
+        0.045194,
+        0.008592
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0657134,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior petrosal sinus.r",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.046925,
+        0.045194,
+        0.008592
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0657134,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior sagittal sinus",
+      "source_type": "CURVE",
+      "triangles": 2816,
+      "dimensions_m": [
+        0.004,
+        0.177172,
+        0.120991
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 1416,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.2145801,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Transverse sinus.l",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.060987,
+        0.041553,
+        0.014117
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0751358,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Transverse sinus.r",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.060987,
+        0.041553,
+        0.014117
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0751358,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Internal jugular vein.l",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.020036,
+        0.043633,
+        0.162612
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1695523,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Internal jugular vein.r",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.020036,
+        0.043633,
+        0.162612
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1695523,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Angular vein.l",
+      "source_type": "CURVE",
+      "triangles": 1920,
+      "dimensions_m": [
+        0.021809,
+        0.016776,
+        0.071314
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.860656,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 840,
+            "vertex_fraction": 0.8606557,
+            "diagonal_m": 0.0764365,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 136,
+            "vertex_fraction": 0.1393443,
+            "diagonal_m": 0.0096056,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Angular vein.r",
+      "source_type": "CURVE",
+      "triangles": 1920,
+      "dimensions_m": [
+        0.021809,
+        0.016776,
+        0.071314
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.860656,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 840,
+            "vertex_fraction": 0.8606557,
+            "diagonal_m": 0.0764365,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 136,
+            "vertex_fraction": 0.1393443,
+            "diagonal_m": 0.0096056,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Anterior division of retromandibular vein.l",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.009992,
+        0.005131,
+        0.020778
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0236196,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Anterior division of retromandibular vein.r",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.009992,
+        0.005131,
+        0.020778
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0236196,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Anterior jugular vein.l",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.032841,
+        0.011935,
+        0.042663
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0551463,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Anterior jugular vein.r",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.032841,
+        0.011935,
+        0.042663
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0551463,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "External jugular vein.l",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.02098,
+        0.020922,
+        0.127427
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.130826,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "External jugular vein.r",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.02098,
+        0.020922,
+        0.127427
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.130826,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Facial vein.l",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.009906,
+        0.061664,
+        0.045634
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0773501,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Facial vein.r",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.009906,
+        0.061664,
+        0.045634
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0773501,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior labial veins.l",
+      "source_type": "CURVE",
+      "triangles": 2688,
+      "dimensions_m": [
+        0.032553,
+        0.031958,
+        0.032893
+      ],
+      "component_count_after": 3,
+      "largest_component_vertex_fraction": 0.426901,
+      "fragment_cleanup": {
+        "component_count_before": 3,
+        "components_before": [
+          {
+            "vertices": 584,
+            "vertex_fraction": 0.4269006,
+            "diagonal_m": 0.0254539,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 456,
+            "vertex_fraction": 0.3333333,
+            "diagonal_m": 0.0438292,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 328,
+            "vertex_fraction": 0.2397661,
+            "diagonal_m": 0.0202558,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior labial veins.r",
+      "source_type": "CURVE",
+      "triangles": 2688,
+      "dimensions_m": [
+        0.032553,
+        0.031958,
+        0.032893
+      ],
+      "component_count_after": 3,
+      "largest_component_vertex_fraction": 0.426901,
+      "fragment_cleanup": {
+        "component_count_before": 3,
+        "components_before": [
+          {
+            "vertices": 584,
+            "vertex_fraction": 0.4269006,
+            "diagonal_m": 0.0254539,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 456,
+            "vertex_fraction": 0.3333333,
+            "diagonal_m": 0.0438292,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 328,
+            "vertex_fraction": 0.2397661,
+            "diagonal_m": 0.0202558,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior ophthalmic vein.l",
+      "source_type": "CURVE",
+      "triangles": 384,
+      "dimensions_m": [
+        0.005508,
+        0.030125,
+        0.013295
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 200,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0333858,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Inferior ophthalmic vein.r",
+      "source_type": "CURVE",
+      "triangles": 384,
+      "dimensions_m": [
+        0.005508,
+        0.030125,
+        0.013295
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 200,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0333858,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Lingual vein.l",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.016185,
+        0.045998,
+        0.012834
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0504228,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Lingual vein.r",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.016185,
+        0.045998,
+        0.012834
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0504228,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Maxillary veins.l",
+      "source_type": "CURVE",
+      "triangles": 1280,
+      "dimensions_m": [
+        0.016041,
+        0.062333,
+        0.011295
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 648,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0653475,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Maxillary veins.r",
+      "source_type": "CURVE",
+      "triangles": 1280,
+      "dimensions_m": [
+        0.016041,
+        0.062333,
+        0.011295
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 648,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0653475,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Occipital vein.l",
+      "source_type": "CURVE",
+      "triangles": 2304,
+      "dimensions_m": [
+        0.042963,
+        0.102679,
+        0.108449
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.828767,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 968,
+            "vertex_fraction": 0.8287671,
+            "diagonal_m": 0.1554029,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 200,
+            "vertex_fraction": 0.1712329,
+            "diagonal_m": 0.0360349,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Occipital vein.r",
+      "source_type": "CURVE",
+      "triangles": 2304,
+      "dimensions_m": [
+        0.042963,
+        0.102679,
+        0.108449
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.828767,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 968,
+            "vertex_fraction": 0.8287671,
+            "diagonal_m": 0.1554029,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 200,
+            "vertex_fraction": 0.1712329,
+            "diagonal_m": 0.0360349,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Posterior auricular vein.l",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.027961,
+        0.037841,
+        0.05633
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0733947,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Posterior auricular vein.r",
+      "source_type": "CURVE",
+      "triangles": 896,
+      "dimensions_m": [
+        0.027961,
+        0.037841,
+        0.05633
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 456,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0733947,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Posterior division of retromandibular vein.l",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.010512,
+        0.009826,
+        0.014098
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0201445,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Posterior division of retromandibular vein.r",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.010512,
+        0.009826,
+        0.014098
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0201445,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Retromandibular vein.l",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.009822,
+        0.002657,
+        0.014781
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0179447,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Retromandibular vein.r",
+      "source_type": "CURVE",
+      "triangles": 256,
+      "dimensions_m": [
+        0.009822,
+        0.002657,
+        0.014781
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 136,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0179447,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Submental vein.l",
+      "source_type": "CURVE",
+      "triangles": 1024,
+      "dimensions_m": [
+        0.027608,
+        0.038818,
+        0.013971
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 520,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0496409,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Submental vein.r",
+      "source_type": "CURVE",
+      "triangles": 1024,
+      "dimensions_m": [
+        0.027608,
+        0.038818,
+        0.013971
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 520,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0496409,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superficial temporal veins.l",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.030636,
+        0.042894,
+        0.1095
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.663265,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 520,
+            "vertex_fraction": 0.6632653,
+            "diagonal_m": 0.0746397,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 264,
+            "vertex_fraction": 0.3367347,
+            "diagonal_m": 0.0581908,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superficial temporal veins.r",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.030636,
+        0.042894,
+        0.1095
+      ],
+      "component_count_after": 2,
+      "largest_component_vertex_fraction": 0.663265,
+      "fragment_cleanup": {
+        "component_count_before": 2,
+        "components_before": [
+          {
+            "vertices": 520,
+            "vertex_fraction": 0.6632653,
+            "diagonal_m": 0.0746397,
+            "removed_as_fragment": false
+          },
+          {
+            "vertices": 264,
+            "vertex_fraction": 0.3367347,
+            "diagonal_m": 0.0581908,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior labial vein.l",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.022099,
+        0.022971,
+        0.003462
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0320627,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior labial vein.r",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.022099,
+        0.022971,
+        0.003462
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0320627,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior ophthalmic vein.l",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.012356,
+        0.061096,
+        0.0154
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0642073,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior ophthalmic vein.r",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.012356,
+        0.061096,
+        0.0154
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0642073,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior thyroid vein.l",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.03076,
+        0.012285,
+        0.049225
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0593313,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Superior thyroid vein.r",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.03076,
+        0.012285,
+        0.049225
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0593313,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Vertebral vein.l",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.03469,
+        0.059055,
+        0.158223
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1724106,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Vertebral vein.r",
+      "source_type": "CURVE",
+      "triangles": 1536,
+      "dimensions_m": [
+        0.03469,
+        0.059055,
+        0.158223
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 776,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1724106,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Left common carotid artery",
+      "source_type": "CURVE",
+      "triangles": 512,
+      "dimensions_m": [
+        0.022836,
+        0.014078,
+        0.091354
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 264,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0952112,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Right common carotid artery",
+      "source_type": "CURVE",
+      "triangles": 384,
+      "dimensions_m": [
+        0.024553,
+        0.025204,
+        0.076726
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 200,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0844094,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Internal carotid artery.l",
+      "source_type": "CURVE",
+      "triangles": 1280,
+      "dimensions_m": [
+        0.027548,
+        0.030332,
+        0.118286
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 648,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1251817,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Internal carotid artery.r",
+      "source_type": "CURVE",
+      "triangles": 1280,
+      "dimensions_m": [
+        0.027548,
+        0.030332,
+        0.118286
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 648,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1251817,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "External carotid artery.l",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.017857,
+        0.010162,
+        0.075251
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0780053,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "External carotid artery.r",
+      "source_type": "CURVE",
+      "triangles": 768,
+      "dimensions_m": [
+        0.017857,
+        0.010162,
+        0.075251
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 392,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.0780053,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Vertebral artery.l",
+      "source_type": "CURVE",
+      "triangles": 2176,
+      "dimensions_m": [
+        0.043107,
+        0.030343,
+        0.158897
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 1096,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1674133,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    },
+    {
+      "anatomical_name": "Vertebral artery.r",
+      "source_type": "CURVE",
+      "triangles": 2176,
+      "dimensions_m": [
+        0.043107,
+        0.030343,
+        0.158897
+      ],
+      "component_count_after": 1,
+      "largest_component_vertex_fraction": 1.0,
+      "fragment_cleanup": {
+        "component_count_before": 1,
+        "components_before": [
+          {
+            "vertices": 1096,
+            "vertex_fraction": 1.0,
+            "diagonal_m": 0.1674133,
+            "removed_as_fragment": false
+          }
+        ],
+        "removed_vertex_count": 0
+      },
+      "automated_geometry_qc": "PASS"
+    }
+  ],
+  "automated_qc": "PASS",
+  "visual_fragment_review": "PASS_AFTER_RENDER_REVIEW",
+  "cavernous_sinus_source_confirmation": {
+    "objects": [
+      "Cavernous sinus.l",
+      "Cavernous sinus.r"
+    ],
+    "result": "CONFIRMED_NAMED_SOURCE_GEOMETRY_NOT_EYES_OR_HELPERS",
+    "evidence_preview": "previews/18_cavernous_sinuses_source_identity.png"
+  },
+  "notes": [
+    "Only audited cardiovascular structures were accepted.",
+    "No gaps were bridged and no replacement vascular anatomy was generated.",
+    "Sub-millimetre loose islands could be removed only under the strict fragment threshold recorded per object."
+  ]
+}

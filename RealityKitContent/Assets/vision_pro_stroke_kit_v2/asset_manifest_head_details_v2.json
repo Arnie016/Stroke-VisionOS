@@ -1,0 +1,208 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v2 / Head Detail Expansion",
+  "module": "head_details_v2",
+  "version": "0.3.0-head-detail-expansion",
+  "generated_with": "Blender 5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "sources": [
+    "NIH 3D 3DPX-021016 v2 / HRA Skin, Male / CC BY 4.0",
+    "NIH 3D 3DPX-020591 v1.03 / Visible Human Skull and Eyes / CC BY 4.0",
+    "NIH 3D 3DPX-020960 v1.01 / HRA Brain Male / CC BY 4.0",
+    "Original procedural conceptual dura geometry",
+    "Z-Anatomy Falx cerebri and bilateral Tentorium cerebelli / CC BY-SA 4.0; BodyParts3D / CC BY-SA 2.1 Japan",
+    "Custom ImageGen skin and dura albedo textures"
+  ],
+  "assets": [
+    {
+      "id": "external_head_scalp_realistic_v2",
+      "module": "head_details_v2",
+      "title": "Generic exterior head and scalp context",
+      "description": "A closed, metre-scale head and upper-neck shell cropped from the official HRA Skin Male atlas and textured for realistic spatial context.",
+      "clinical_note": "Generic atlas-derived exterior context only; not patient-specific and not suitable for diagnosis, treatment planning, navigation, or outcome prediction.",
+      "triangle_count": 60156,
+      "dimensions_m": [
+        0.195671,
+        0.242102,
+        0.251174
+      ],
+      "usdc": "exports/usdc/external_head_scalp_realistic_v2.usdc",
+      "usdz": "exports/usdz/external_head_scalp_realistic_v2.usdz",
+      "usdz_bytes": 7900991,
+      "usdz_sha256": "deb9218ed3fb8e6556c1ad4772f56153010cfd7f93453a3820f8d434df42ed38",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "external_head_scalp_cutaway_v2",
+      "module": "head_details_v2",
+      "title": "Generic exterior head with educational cranial cutaway",
+      "description": "The HRA-derived exterior head with a smooth, rounded educational viewing window for revealing independently toggleable internal layers.",
+      "clinical_note": "The viewing window is illustrative and does not represent a surgical incision or patient-specific craniotomy.",
+      "triangle_count": 58384,
+      "dimensions_m": [
+        0.192628,
+        0.242102,
+        0.251173
+      ],
+      "usdc": "exports/usdc/external_head_scalp_cutaway_v2.usdc",
+      "usdz": "exports/usdz/external_head_scalp_cutaway_v2.usdz",
+      "usdz_bytes": 7970496,
+      "usdz_sha256": "bc2c021f026d8204180cc04e139f9482a5e2633ebb4c1497b747037191298856",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "eyes_context_realistic_v2",
+      "module": "head_details_v2",
+      "title": "Generic Visible Human eye context",
+      "description": "Opaque bilateral eye context derived from the NIH Visible Human atlas; the separate transparent corneal overlay is omitted for robust RealityKit rendering.",
+      "clinical_note": "Approximate cross-source orbit alignment for orientation only; not patient-specific and not for orbital diagnosis or planning.",
+      "triangle_count": 6029,
+      "dimensions_m": [
+        0.097353,
+        0.042658,
+        0.025702
+      ],
+      "usdc": "exports/usdc/eyes_context_realistic_v2.usdc",
+      "usdz": "exports/usdz/eyes_context_realistic_v2.usdz",
+      "usdz_bytes": 1625622,
+      "usdz_sha256": "032529aff7b9ab3d65f7dc91352cb1c51ca39c97096176aba7218fa12466c45b",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "dura_mater_conceptual_v2",
+      "module": "head_details_v2",
+      "title": "Conceptual dura mater covering",
+      "description": "A thin opaque conceptual membrane derived from a smoothed registered cerebral hull, with subtle educational PBR texture.",
+      "clinical_note": "Conceptual geometry with non-physiologic thickness; not a patient segmentation and not for diagnosis or treatment planning.",
+      "triangle_count": 24000,
+      "dimensions_m": [
+        0.143225,
+        0.173276,
+        0.153582
+      ],
+      "usdc": "exports/usdc/dura_mater_conceptual_v2.usdc",
+      "usdz": "exports/usdz/dura_mater_conceptual_v2.usdz",
+      "usdz_bytes": 6727477,
+      "usdz_sha256": "4071f7383ff7e94c253bd57aecc3a33f408d649bdb134ed08b970443c9fc3c6d",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "dura_mater_cutaway_conceptual_v2",
+      "module": "head_details_v2",
+      "title": "Conceptual dura mater educational cutaway",
+      "description": "The conceptual cerebral-hull dura shell with a clean rounded viewing window for layer-by-layer patient education.",
+      "clinical_note": "Both shell thickness and viewing window are illustrative and must not be interpreted as surgical anatomy or a planned dural opening.",
+      "triangle_count": 24464,
+      "dimensions_m": [
+        0.134716,
+        0.173276,
+        0.153572
+      ],
+      "usdc": "exports/usdc/dura_mater_cutaway_conceptual_v2.usdc",
+      "usdz": "exports/usdz/dura_mater_cutaway_conceptual_v2.usdz",
+      "usdz_bytes": 6869866,
+      "usdz_sha256": "6411ecc9e58dc2f3322459cab8cea13d6c7e9fd532a33a88b84eb3cb7985b809",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "falx_cerebri_atlas_v2",
+      "module": "head_details_v2",
+      "title": "Falx cerebri atlas layer",
+      "description": "A separately toggleable falx cerebri mesh retained from the named Z-Anatomy/BodyParts3D atlas structure.",
+      "clinical_note": "Generic atlas anatomy for education only; requires specialist review and must not guide diagnosis, navigation, or intervention.",
+      "triangle_count": 7996,
+      "dimensions_m": [
+        0.005866,
+        0.174806,
+        0.119539
+      ],
+      "usdc": "exports/usdc/falx_cerebri_atlas_v2.usdc",
+      "usdz": "exports/usdz/falx_cerebri_atlas_v2.usdz",
+      "usdz_bytes": 381136,
+      "usdz_sha256": "388037dfbac68efae5bd21102cdd44f210da3764fb469ffe272abccc63309a79",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "tentorium_cerebelli_atlas_v2",
+      "module": "head_details_v2",
+      "title": "Bilateral tentorium cerebelli atlas layer",
+      "description": "Separately toggleable left and right tentorium cerebelli meshes retained from named Z-Anatomy/BodyParts3D atlas structures.",
+      "clinical_note": "Generic atlas anatomy for education only; requires specialist review and must not guide diagnosis, navigation, or intervention.",
+      "triangle_count": 6000,
+      "dimensions_m": [
+        0.120674,
+        0.090475,
+        0.030922
+      ],
+      "usdc": "exports/usdc/tentorium_cerebelli_atlas_v2.usdc",
+      "usdz": "exports/usdz/tentorium_cerebelli_atlas_v2.usdz",
+      "usdz_bytes": 266048,
+      "usdz_sha256": "0603001f07b03ad219fc7173a9cda185e030c4b456f4d0ccdc6f91913968722f",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "meningeal_partitions_atlas_v2",
+      "module": "head_details_v2",
+      "title": "Falx and bilateral tentorium atlas layers",
+      "description": "A registered opaque set combining the falx cerebri and bilateral tentorium cerebelli while preserving each named structure as an independent mesh.",
+      "clinical_note": "Cross-atlas educational context only; not patient-specific and not a substitute for clinical imaging or professional counselling.",
+      "triangle_count": 13996,
+      "dimensions_m": [
+        0.120674,
+        0.174806,
+        0.119539
+      ],
+      "usdc": "exports/usdc/meningeal_partitions_atlas_v2.usdc",
+      "usdz": "exports/usdz/meningeal_partitions_atlas_v2.usdz",
+      "usdz_bytes": 644124,
+      "usdz_sha256": "05340e8b17e9e5a6037902b00033a922b4ee92bfeb4cfc6d33d0efa5c5810134",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "layered_head_cutaway_registered_v2",
+      "module": "head_details_v2",
+      "title": "Registered generic layered head educational cutaway",
+      "description": "An opaque layered assembly combining the HRA scalp cutaway, conceptual dura cutaway, atlas meningeal partitions, and HRA brain. Skull and eyes remain separate optional assets.",
+      "clinical_note": "Generic cross-source assembly for patient education only. The approximate skull is intentionally omitted to prevent skin intersections; use the semantic skull only as a separately selectable specialist-reviewed layer.",
+      "triangle_count": 333642,
+      "dimensions_m": [
+        0.192628,
+        0.242102,
+        0.251173
+      ],
+      "usdc": "exports/usdc/layered_head_cutaway_registered_v2.usdc",
+      "usdz": "exports/usdz/layered_head_cutaway_registered_v2.usdz",
+      "usdz_bytes": 29527080,
+      "usdz_sha256": "7cc6b39274fbd124791c70fa040deab1962e8d19693100101859a8983461afc7",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "presentation": {
+    "default_strategy": "opaque educational cutaway",
+    "transparency_stacking": false,
+    "layered_head_default_eyes": "omitted; load eyes_context_realistic_v2 only for an orbit-detail mode",
+    "full_scalp_and_full_dura_should_not_be_enabled_together_when_internal_layers_need_to_be_visible": true,
+    "layered_head_default_skull": "omitted; load skull_semantic_realistic_v2 only as a separate optional layer"
+  },
+  "warnings": [
+    "All anatomy is generic and not patient-specific.",
+    "The HRA skin is aligned in the native HRA frame to the HRA brain; optional separately loaded skull and eye overlays are approximate cross-source fits.",
+    "Eyes are intentionally omitted from the default layered cutaway and remain a separate opaque toggleable asset.",
+    "The dura shell is a smoothed registered brain hull; its thickness and cutaway window are conceptual educational geometry.",
+    "Z-Anatomy-derived meningeal partitions carry ShareAlike obligations.",
+    "Do not use for diagnosis, treatment planning, navigation, device sizing, or outcome prediction.",
+    "Clinical and accessibility review is required before any patient-facing use."
+  ]
+}

@@ -1,0 +1,542 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Starter Kit",
+  "version": "0.1.0-prototype",
+  "generated_with": "Blender 5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+  "performance_target": "Keep assembled visible content near or below 100,000 triangles until on-device profiling.",
+  "assets": [
+    {
+      "id": "head_skin_generic",
+      "title": "Generic head and scalp",
+      "module": "shared_anatomy",
+      "description": "Neutral, non-identifying outer head layer for patient education.",
+      "clinical_note": "Generic only; do not present as patient-specific.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1748,
+      "dimensions_m": [
+        0.21,
+        0.205,
+        0.322
+      ],
+      "source_collection": "ASSET__head_skin_generic",
+      "usdc": "exports/usdc/head_skin_generic.usdc",
+      "usdz": "exports/usdz/head_skin_generic.usdz"
+    },
+    {
+      "id": "skull_cranium_generic",
+      "title": "Generic skull and cranium",
+      "module": "shared_anatomy",
+      "description": "Simplified cranial shell and landmarks.",
+      "clinical_note": "Not suitable for surgical measurements.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 2348,
+      "dimensions_m": [
+        0.188,
+        0.158,
+        0.232
+      ],
+      "source_collection": "ASSET__skull_cranium_generic",
+      "usdc": "exports/usdc/skull_cranium_generic.usdc",
+      "usdz": "exports/usdz/skull_cranium_generic.usdz"
+    },
+    {
+      "id": "brain_structures_generic",
+      "title": "Generic brain structures",
+      "module": "shared_anatomy",
+      "description": "Simplified hemispheres, cerebellum, and brainstem.",
+      "clinical_note": "Stylized anatomy; clinician review required.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 2988,
+      "dimensions_m": [
+        0.19,
+        0.154,
+        0.2345
+      ],
+      "source_collection": "ASSET__brain_structures_generic",
+      "usdc": "exports/usdc/brain_structures_generic.usdc",
+      "usdz": "exports/usdz/brain_structures_generic.usdz"
+    },
+    {
+      "id": "cerebral_arteries_generic",
+      "title": "Cerebral arterial tree",
+      "module": "shared_anatomy",
+      "description": "Simplified Circle of Willis and principal branches.",
+      "clinical_note": "Topology and laterality must be reviewed for each narrative.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1280,
+      "dimensions_m": [
+        0.1679,
+        0.0821,
+        0.1967
+      ],
+      "source_collection": "ASSET__cerebral_arteries_generic",
+      "usdc": "exports/usdc/cerebral_arteries_generic.usdc",
+      "usdz": "exports/usdz/cerebral_arteries_generic.usdz"
+    },
+    {
+      "id": "ischemic_lvo_clot",
+      "title": "Ischemic large-vessel clot",
+      "module": "shared_pathology",
+      "description": "Intraluminal clot distinct from hemorrhage.",
+      "clinical_note": "Use only in ischemic-stroke modules.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 764,
+      "dimensions_m": [
+        0.3518,
+        0.0428,
+        0.0428
+      ],
+      "source_collection": "ASSET__ischemic_lvo_clot",
+      "usdc": "exports/usdc/ischemic_lvo_clot.usdc",
+      "usdz": "exports/usdz/ischemic_lvo_clot.usdz"
+    },
+    {
+      "id": "ich_hematoma",
+      "title": "Intracerebral hematoma",
+      "module": "shared_pathology",
+      "description": "Escaped blood collection within brain tissue.",
+      "clinical_note": "Do not depict as an arterial plug.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1210,
+      "dimensions_m": [
+        0.24,
+        0.1184,
+        0.19
+      ],
+      "source_collection": "ASSET__ich_hematoma",
+      "usdc": "exports/usdc/ich_hematoma.usdc",
+      "usdz": "exports/usdz/ich_hematoma.usdz"
+    },
+    {
+      "id": "edema_swelling",
+      "title": "Brain swelling and pressure",
+      "module": "shared_pathology",
+      "description": "Conceptual swelling constrained by the skull.",
+      "clinical_note": "Conceptual visualization, not a pressure simulation.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 2132,
+      "dimensions_m": [
+        0.25,
+        0.0992,
+        0.226
+      ],
+      "source_collection": "ASSET__edema_swelling",
+      "usdc": "exports/usdc/edema_swelling.usdc",
+      "usdz": "exports/usdz/edema_swelling.usdz"
+    },
+    {
+      "id": "patient_supine_generic",
+      "title": "Generic supine patient",
+      "module": "shared_room",
+      "description": "Neutral patient silhouette with modesty drape.",
+      "clinical_note": "Generic body, no patient identity.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1316,
+      "dimensions_m": [
+        0.73,
+        2.155,
+        0.235
+      ],
+      "source_collection": "ASSET__patient_supine_generic",
+      "usdc": "exports/usdc/patient_supine_generic.usdc",
+      "usdz": "exports/usdz/patient_supine_generic.usdz"
+    },
+    {
+      "id": "angiography_operating_table",
+      "title": "Procedure table",
+      "module": "shared_room",
+      "description": "Reusable angiography or operating table.",
+      "clinical_note": "Match local equipment before production use.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 432,
+      "dimensions_m": [
+        0.65,
+        2.1,
+        0.9775
+      ],
+      "source_collection": "ASSET__angiography_operating_table",
+      "usdc": "exports/usdc/angiography_operating_table.usdc",
+      "usdz": "exports/usdz/angiography_operating_table.usdz"
+    },
+    {
+      "id": "angiography_c_arm",
+      "title": "Angiography C-arm",
+      "module": "thrombectomy",
+      "description": "Simplified imaging gantry for an angiography suite.",
+      "clinical_note": "Illustrative equipment, not a device replica.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 964,
+      "dimensions_m": [
+        1.3484,
+        0.5,
+        1.158
+      ],
+      "source_collection": "ASSET__angiography_c_arm",
+      "usdc": "exports/usdc/angiography_c_arm.usdc",
+      "usdz": "exports/usdz/angiography_c_arm.usdz"
+    },
+    {
+      "id": "vital_sign_monitor",
+      "title": "Vital-sign monitor",
+      "module": "shared_room",
+      "description": "Stylized bedside/procedure monitor.",
+      "clinical_note": "Waveform is illustrative only.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 608,
+      "dimensions_m": [
+        0.58,
+        0.36,
+        1.41
+      ],
+      "source_collection": "ASSET__vital_sign_monitor",
+      "usdc": "exports/usdc/vital_sign_monitor.usdc",
+      "usdz": "exports/usdz/vital_sign_monitor.usdz"
+    },
+    {
+      "id": "iv_pole_and_bag",
+      "title": "IV pole and bag",
+      "module": "shared_room",
+      "description": "Reusable clinical-room prop.",
+      "clinical_note": "Do not imply a specific medication.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 420,
+      "dimensions_m": [
+        0.3839,
+        0.36,
+        1.7657
+      ],
+      "source_collection": "ASSET__iv_pole_and_bag",
+      "usdc": "exports/usdc/iv_pole_and_bag.usdc",
+      "usdz": "exports/usdz/iv_pole_and_bag.usdz"
+    },
+    {
+      "id": "clinical_team_generic",
+      "title": "Generic clinical team",
+      "module": "shared_room",
+      "description": "Two neutral staff silhouettes.",
+      "clinical_note": "Roles and attire must match the partner hospital.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1940,
+      "dimensions_m": [
+        1.1016,
+        0.2475,
+        1.675
+      ],
+      "source_collection": "ASSET__clinical_team_generic",
+      "usdc": "exports/usdc/clinical_team_generic.usdc",
+      "usdz": "exports/usdz/clinical_team_generic.usdz"
+    },
+    {
+      "id": "arterial_access_site",
+      "title": "Arterial access site",
+      "module": "thrombectomy",
+      "description": "Introducer sheath and guidewire entering an artery.",
+      "clinical_note": "Access route must be configured and locally approved.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 328,
+      "dimensions_m": [
+        0.36,
+        0.1529,
+        0.1715
+      ],
+      "source_collection": "ASSET__arterial_access_site",
+      "usdc": "exports/usdc/arterial_access_site.usdc",
+      "usdz": "exports/usdz/arterial_access_site.usdz"
+    },
+    {
+      "id": "catheter_body_to_brain_route",
+      "title": "Catheter route",
+      "module": "thrombectomy",
+      "description": "Conceptual intravascular route toward the brain.",
+      "clinical_note": "Catheter remains intravascular; skull stays closed.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 514,
+      "dimensions_m": [
+        0.2259,
+        0.0844,
+        1.1902
+      ],
+      "source_collection": "ASSET__catheter_body_to_brain_route",
+      "usdc": "exports/usdc/catheter_body_to_brain_route.usdc",
+      "usdz": "exports/usdz/catheter_body_to_brain_route.usdz"
+    },
+    {
+      "id": "guidewire_microcatheter_set",
+      "title": "Guidewire and microcatheter",
+      "module": "thrombectomy",
+      "description": "Separated device components for animation.",
+      "clinical_note": "Exact device geometry requires manufacturer/institution approval.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 368,
+      "dimensions_m": [
+        0.5578,
+        0.056,
+        0.1959
+      ],
+      "source_collection": "ASSET__guidewire_microcatheter_set",
+      "usdc": "exports/usdc/guidewire_microcatheter_set.usdc",
+      "usdz": "exports/usdz/guidewire_microcatheter_set.usdz"
+    },
+    {
+      "id": "stent_retriever",
+      "title": "Stent retriever",
+      "module": "thrombectomy",
+      "description": "Stylized retrieval cage with captured clot.",
+      "clinical_note": "Educational approximation, not a branded device.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 3428,
+      "dimensions_m": [
+        0.2409,
+        0.0304,
+        0.0304
+      ],
+      "source_collection": "ASSET__stent_retriever",
+      "usdc": "exports/usdc/stent_retriever.usdc",
+      "usdz": "exports/usdz/stent_retriever.usdz"
+    },
+    {
+      "id": "aspiration_catheter",
+      "title": "Aspiration catheter",
+      "module": "thrombectomy",
+      "description": "Stylized aspiration option shown separately.",
+      "clinical_note": "Use only if this strategy matches the approved procedure.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 902,
+      "dimensions_m": [
+        0.6123,
+        0.0513,
+        0.1138
+      ],
+      "source_collection": "ASSET__aspiration_catheter",
+      "usdc": "exports/usdc/aspiration_catheter.usdc",
+      "usdz": "exports/usdz/aspiration_catheter.usdz"
+    },
+    {
+      "id": "angiography_contrast_flow",
+      "title": "Angiography contrast-flow overlay",
+      "module": "thrombectomy",
+      "description": "Conceptual vessel filling for before/after explanation.",
+      "clinical_note": "Not a hemodynamic or diagnostic simulation.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 912,
+      "dimensions_m": [
+        0.3271,
+        0.024,
+        0.248
+      ],
+      "source_collection": "ASSET__angiography_contrast_flow",
+      "usdc": "exports/usdc/angiography_contrast_flow.usdc",
+      "usdz": "exports/usdz/angiography_contrast_flow.usdz"
+    },
+    {
+      "id": "scalp_incision_flap",
+      "title": "Scalp incision and reflected flap",
+      "module": "open_cranial",
+      "description": "Non-graphic scalp-layer reveal.",
+      "clinical_note": "Forbidden in thrombectomy modules.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 584,
+      "dimensions_m": [
+        0.3,
+        0.2912,
+        0.1024
+      ],
+      "source_collection": "ASSET__scalp_incision_flap",
+      "usdc": "exports/usdc/scalp_incision_flap.usdc",
+      "usdz": "exports/usdz/scalp_incision_flap.usdz"
+    },
+    {
+      "id": "craniotomy_bone_flap",
+      "title": "Cranial bone flap",
+      "module": "open_cranial",
+      "description": "Removable bone-flap teaching object.",
+      "clinical_note": "End state differs for craniotomy versus decompressive craniectomy.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1010,
+      "dimensions_m": [
+        0.282,
+        0.3109,
+        0.1811
+      ],
+      "source_collection": "ASSET__craniotomy_bone_flap",
+      "usdc": "exports/usdc/craniotomy_bone_flap.usdc",
+      "usdz": "exports/usdz/craniotomy_bone_flap.usdz"
+    },
+    {
+      "id": "cranial_drill_generic",
+      "title": "Generic cranial drill",
+      "module": "open_cranial",
+      "description": "Stylized surgical drill prop.",
+      "clinical_note": "Illustrative equipment, not a device replica.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 400,
+      "dimensions_m": [
+        0.42,
+        0.12,
+        0.2782
+      ],
+      "source_collection": "ASSET__cranial_drill_generic",
+      "usdc": "exports/usdc/cranial_drill_generic.usdc",
+      "usdz": "exports/usdz/cranial_drill_generic.usdz"
+    },
+    {
+      "id": "suction_and_forceps",
+      "title": "Suction and forceps",
+      "module": "open_cranial",
+      "description": "Separated open-surgery instruments.",
+      "clinical_note": "Exact tool set varies by procedure.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 284,
+      "dimensions_m": [
+        0.5414,
+        0.173,
+        0.1057
+      ],
+      "source_collection": "ASSET__suction_and_forceps",
+      "usdc": "exports/usdc/suction_and_forceps.usdc",
+      "usdz": "exports/usdz/suction_and_forceps.usdz"
+    },
+    {
+      "id": "scalp_closure_sutures",
+      "title": "Scalp closure",
+      "module": "open_cranial",
+      "description": "Non-graphic incision closure with sutures.",
+      "clinical_note": "Closure technique varies by institution.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 680,
+      "dimensions_m": [
+        0.34,
+        0.2,
+        0.044
+      ],
+      "source_collection": "ASSET__scalp_closure_sutures",
+      "usdc": "exports/usdc/scalp_closure_sutures.usdc",
+      "usdz": "exports/usdz/scalp_closure_sutures.usdz"
+    },
+    {
+      "id": "dural_patch",
+      "title": "Dural patch",
+      "module": "open_cranial",
+      "description": "Configurable dural-expansion teaching object.",
+      "clinical_note": "Use only in a clinically approved pathway.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 448,
+      "dimensions_m": [
+        0.28,
+        0.22,
+        0.025
+      ],
+      "source_collection": "ASSET__dural_patch",
+      "usdc": "exports/usdc/dural_patch.usdc",
+      "usdz": "exports/usdz/dural_patch.usdz"
+    },
+    {
+      "id": "minimally_invasive_evacuator_port",
+      "title": "Minimally invasive evacuation port",
+      "module": "hemorrhage",
+      "description": "Trajectory and port for a reviewed minimally invasive branch.",
+      "clinical_note": "Not a default treatment for every hemorrhage.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 860,
+      "dimensions_m": [
+        0.26,
+        0.2564,
+        0.2822
+      ],
+      "source_collection": "ASSET__minimally_invasive_evacuator_port",
+      "usdc": "exports/usdc/minimally_invasive_evacuator_port.usdc",
+      "usdz": "exports/usdz/minimally_invasive_evacuator_port.usdz"
+    },
+    {
+      "id": "optional_evd_system",
+      "title": "Optional EVD system",
+      "module": "hemorrhage",
+      "description": "Ventricular catheter and drainage chamber.",
+      "clinical_note": "Optional branch; do not imply routine use.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1192,
+      "dimensions_m": [
+        0.535,
+        0.1334,
+        0.751
+      ],
+      "source_collection": "ASSET__optional_evd_system",
+      "usdc": "exports/usdc/optional_evd_system.usdc",
+      "usdz": "exports/usdz/optional_evd_system.usdz"
+    },
+    {
+      "id": "postoperative_head_dressing",
+      "title": "Postoperative head dressing",
+      "module": "recovery",
+      "description": "Generic postoperative bandage and dressing.",
+      "clinical_note": "Appearance and placement vary by procedure.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 1340,
+      "dimensions_m": [
+        0.2566,
+        0.176,
+        0.265
+      ],
+      "source_collection": "ASSET__postoperative_head_dressing",
+      "usdc": "exports/usdc/postoperative_head_dressing.usdc",
+      "usdz": "exports/usdz/postoperative_head_dressing.usdz"
+    },
+    {
+      "id": "spatial_step_markers",
+      "title": "Spatial step markers",
+      "module": "guidance",
+      "description": "Eight numbered markers and arrows for guided sequencing.",
+      "clinical_note": "Narrative order must be procedure-specific.",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_CLINICAL_REVIEW",
+      "triangle_count": 5642,
+      "dimensions_m": [
+        1.23,
+        0.0246,
+        0.11
+      ],
+      "source_collection": "ASSET__spatial_step_markers",
+      "usdc": "exports/usdc/spatial_step_markers.usdc",
+      "usdz": "exports/usdz/spatial_step_markers.usdz"
+    }
+  ],
+  "prohibited_combinations": [
+    "Do not use scalp incision, bone flap, drill, or exposed brain in a thrombectomy sequence.",
+    "Do not depict an arterial stent retriever removing an intracerebral hematoma.",
+    "Do not describe decompressive craniectomy as clot removal.",
+    "Do not replace the bone flap at the end of a scene labelled decompressive craniectomy.",
+    "Do not present a generic model as patient-specific or predictive of outcome."
+  ]
+}
