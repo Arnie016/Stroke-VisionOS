@@ -1,0 +1,350 @@
+:root {
+  color-scheme: dark;
+  --flow-speed: 0.14;
+  --depth-warp: 0.30;
+  --focus-x: 50%;
+  --focus-y: 54%;
+  --portal-energy: 0;
+  --portal-size: 12%;
+  --portal-glow: 28px;
+  --portal-inner-glow: 30px;
+  background: #0b1e23;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #0b1e23;
+}
+
+.shader-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 18% 25%, rgba(105, 184, 173, 0.34), transparent 32%),
+    radial-gradient(circle at 76% 62%, rgba(232, 185, 165, 0.28), transparent 38%),
+    linear-gradient(135deg, #0b1e23, #245c61 56%, #687d78);
+}
+
+.shader-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--focus-x) var(--focus-y), rgba(255, 255, 255, 0.22), transparent 18%),
+    radial-gradient(circle at var(--focus-x) var(--focus-y), rgba(82, 240, 194, 0.20), transparent 34%);
+  mix-blend-mode: screen;
+}
+
+body[data-sound="on"] .shader-stage::after {
+  animation: soundPulse 2.8s ease-in-out infinite;
+}
+
+.shader-field {
+  position: absolute;
+  inset: -24% -16%;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  filter: saturate(0.82) contrast(0.96);
+}
+
+.shader-field canvas {
+  z-index: 0 !important;
+  opacity: 1 !important;
+}
+
+.shader-field.is-fallback,
+.shader-field:not(.is-live) {
+  background:
+    radial-gradient(circle at 20% 52%, rgba(232, 185, 165, 0.68), transparent 25%),
+    radial-gradient(circle at 55% 38%, rgba(105, 184, 173, 0.62), transparent 31%),
+    radial-gradient(circle at 80% 20%, rgba(255, 242, 223, 0.52), transparent 35%);
+  filter: blur(26px) saturate(0.82);
+}
+
+.frequency-depth {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  opacity: 0.86;
+  mix-blend-mode: screen;
+}
+
+body[data-depth="off"] .frequency-depth {
+  opacity: 0;
+}
+
+.center-text {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 47%;
+  max-width: 82%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.90);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", system-ui, sans-serif;
+  font-size: clamp(48px, 10vw, 150px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.30),
+    0 0 42px rgba(82, 240, 194, 0.34),
+    0 16px 52px rgba(0, 0, 0, 0.42);
+  mix-blend-mode: screen;
+}
+
+body[data-display-font="serif"] .center-text {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+}
+
+body[data-display-font="mono"] .center-text {
+  font-family: "SF Mono", Menlo, Monaco, monospace;
+  font-weight: 750;
+}
+
+.wand-layer {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 12px rgba(82, 240, 194, 0.64));
+}
+
+.wand-stroke {
+  fill: none;
+  stroke: url(#wandGradient);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.94;
+  animation: wandFade 6.2s ease-out forwards;
+}
+
+.wand-echo {
+  fill: none;
+  stroke: url(#wandGradient);
+  stroke-width: var(--echo-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: var(--echo-opacity);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform:
+    translate(var(--echo-x), var(--echo-y))
+    scale(var(--echo-scale));
+  filter: blur(var(--echo-blur));
+  animation: echoFade 6.8s ease-out forwards;
+}
+
+.wand-spark {
+  fill: rgba(244, 196, 48, 0.92);
+  filter: drop-shadow(0 0 10px rgba(244, 196, 48, 0.82));
+  animation: sparkFade 1.2s ease-out forwards;
+}
+
+body[data-wand="off"] .wand-layer {
+  opacity: 0.18;
+}
+
+.depth-sheet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--sheet-width);
+  height: var(--sheet-height);
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 48% 52%, hsla(var(--sheet-hue), 94%, 64%, var(--sheet-alpha)), transparent 46%),
+    radial-gradient(ellipse at 70% 38%, rgba(255, 255, 255, 0.12), transparent 36%);
+  box-shadow:
+    0 0 var(--portal-glow) hsla(var(--sheet-hue), 92%, 58%, var(--sheet-shadow-alpha)),
+    inset 0 0 var(--portal-inner-glow) hsla(var(--sheet-hue), 90%, 58%, var(--sheet-inner-alpha));
+  filter: blur(var(--sheet-blur)) saturate(1.2);
+  transform:
+    translate3d(calc(-50% + var(--sheet-x)), calc(-50% + var(--sheet-y)), var(--sheet-z))
+    rotateX(var(--sheet-rx))
+    rotateY(var(--sheet-ry))
+    rotateZ(var(--sheet-rz))
+    scale(var(--sheet-scale));
+  animation: sheetDrift var(--sheet-duration, 10s) ease-in-out infinite alternate;
+  animation-delay: var(--sheet-delay);
+}
+
+.depth-horizon {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  top: var(--horizon-top);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsla(var(--horizon-hue), 96%, 64%, var(--horizon-alpha)), rgba(255, 255, 255, 0.20), transparent);
+  box-shadow: 0 0 20px hsla(var(--horizon-hue), 96%, 64%, var(--horizon-shadow-alpha));
+  transform:
+    translateZ(var(--horizon-z))
+    rotateX(68deg)
+    scaleX(var(--horizon-scale));
+  opacity: var(--horizon-alpha);
+  animation: horizonDrift var(--horizon-duration, 8s) ease-in-out infinite alternate;
+  animation-delay: var(--horizon-delay);
+}
+
+.portal-core {
+  position: absolute;
+  z-index: 1;
+  left: var(--focus-x);
+  top: var(--focus-y);
+  width: var(--portal-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.34), rgba(82, 240, 194, 0.18) 18%, rgba(34, 150, 255, 0.12) 38%, transparent 68%);
+  filter: blur(var(--portal-blur, 3px));
+  opacity: var(--portal-opacity, 0.18);
+  transform: translate(-50%, -50%);
+  animation: corePulse 2.4s ease-in-out infinite alternate;
+}
+
+body[data-motion="paused"] .depth-sheet,
+body[data-motion="paused"] .depth-horizon,
+body[data-motion="paused"] .shader-stage::after {
+  animation-play-state: paused;
+}
+
+@keyframes wandFade {
+  0% {
+    opacity: 0.98;
+    stroke-width: 8;
+  }
+
+  72% {
+    opacity: 0.72;
+  }
+
+  100% {
+    opacity: 0;
+    stroke-width: 2;
+  }
+}
+
+@keyframes echoFade {
+  0% {
+    opacity: var(--echo-opacity);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(var(--echo-x-far), var(--echo-y-far))
+      scale(var(--echo-scale-far));
+  }
+}
+
+@keyframes sparkFade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(3.4);
+  }
+}
+
+@keyframes sheetDrift {
+  from {
+    filter: blur(var(--sheet-blur)) saturate(1.04) brightness(0.94);
+  }
+
+  to {
+    filter: blur(var(--sheet-blur-far)) saturate(1.42) brightness(1.12);
+    transform:
+      translate3d(calc(-50% + var(--sheet-x-far)), calc(-50% + var(--sheet-y-far)), var(--sheet-z))
+      rotateX(var(--sheet-rx-far))
+      rotateY(var(--sheet-ry-far))
+      rotateZ(var(--sheet-rz-far))
+      scale(var(--sheet-scale-far));
+  }
+}
+
+@keyframes corePulse {
+  from {
+    transform: translate(-50%, -50%) scale(0.88);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+}
+
+@keyframes horizonDrift {
+  from {
+    transform:
+      translateY(-2px)
+      translateZ(var(--horizon-z))
+      rotateX(68deg)
+      scaleX(var(--horizon-scale));
+  }
+
+  to {
+    transform:
+      translateY(8px)
+      translateZ(var(--horizon-z-far))
+      rotateX(68deg)
+      scaleX(var(--horizon-scale-far));
+  }
+}
+
+@keyframes soundPulse {
+  0%, 100% {
+    opacity: 0.03;
+  }
+
+  45% {
+    opacity: 0.26;
+  }
+}
+
+.shader-state {
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  top: 18px;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(82, 240, 194, 0.78);
+  box-shadow: 0 0 18px rgba(82, 240, 194, 0.65);
+}
+
+span {
+  margin: 0;
+}

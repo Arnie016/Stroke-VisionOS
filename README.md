@@ -3,10 +3,9 @@
 An Apple Vision Pro learning experience for exploring how an ischemic stroke can interrupt blood flow, inspecting the affected vessel in 3D, and comparing conceptual response paths in spatial context.
 
 > [!IMPORTANT]
-> This repository now contains a validated runtime asset catalog, but it does
-> not yet contain the planned Xcode application scaffold. The experience below
-> remains product direction unless a specific capability is present and
-> independently verified in the repository.
+> This repository contains a validated runtime asset catalog and an active
+> native visionOS prototype under [`apps/StrokeCare`](apps/StrokeCare). Build,
+> Simulator, physical-device, clinical, and human-use evidence remain separate.
 
 ## Product promise
 
@@ -103,28 +102,17 @@ The implementation direction is native visionOS:
 
 Exact deployment target, Xcode version, project name, scheme, and package choices must be recorded after the initial Xcode scaffold is merged. Do not guess them in code or documentation.
 
-## Proposed repository layout
+## Repository layout
 
 The first scaffolding pull request may refine this layout, but it should keep feature ownership obvious:
 
 ```text
 Stroke-VisionOS/
-├── README.md
-├── StrokeVisionOS/                 # App source after project creation
-│   ├── App/                        # App entry point and navigation
-│   ├── Experience/                 # Shared spatial state and lesson flow
-│   ├── Features/
-│   │   ├── ModuleGallery/
-│   │   ├── VesselExplorer/
-│   │   ├── StrokeSimulation/
-│   │   ├── PlanComparison/
-│   │   └── LearningReport/
-│   ├── Models/                     # Domain and lesson-state models
-│   ├── Components/                 # Reusable SwiftUI/RealityKit pieces
-│   └── Resources/                  # App-owned resources
-├── RealityKitContent/              # Reality Composer Pro package/assets
-├── Tests/                          # Unit, contract, and UI tests
-└── docs/                           # Decisions, evidence, sources, and asset records
+├── apps/StrokeCare/                # Native visionOS communication prototype
+├── RealityKitContent/Assets/       # Canonical 65-asset catalog
+├── docs/                            # Research, provenance, and review gates
+├── MASTER.md                        # Asset relationships and state contract
+└── README.md
 ```
 
 Keep shared transform state—zoom, orbit, translation, cutaway state, and reset behavior—in one explicit experience-state owner. A Reset/Home action must restore the complete spatial view, not only one transform.

@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */; };
+		13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A581FC5A619BE9E342C7BD /* Assets.xcassets */; };
+		16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = F64750DC74A14E49DFEDF063 /* FlowBed.wav */; };
+		1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C144C17AB279CA643242E29B /* StrokeControlDeck.swift */; };
+		21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */; };
+		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
+		46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */; };
+		4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */; };
+		6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */; };
+		76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */; };
+		7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 38684AD7663E54E8E55A7C3F /* dural_patch.usdz */; };
+		7F98B5090691342A2B4E810F /* StrokeImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */; };
+		858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */; };
+		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
+		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
+		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
+		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
+		F35080EB0A3184483D874359 /* PressureBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = AD36F9CDA16675FE73F438E6 /* PressureBed.wav */; };
+		F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = ischemic_mca_clot_v2.usdz; sourceTree = "<group>"; };
+		38684AD7663E54E8E55A7C3F /* dural_patch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_patch.usdz; sourceTree = "<group>"; };
+		4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dura_mater_cutaway_conceptual_v2.usdz; sourceTree = "<group>"; };
+		4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalmPaperFlowView.swift; sourceTree = "<group>"; };
+		50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = edema_swelling.usdz; sourceTree = "<group>"; };
+		5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeSceneFactory.swift; sourceTree = "<group>"; };
+		5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeExperienceState.swift; sourceTree = "<group>"; };
+		61FC44E51C2EC58E8E04E60E /* StrokeTime.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StrokeTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTimeApp.swift; sourceTree = "<group>"; };
+		70A581FC5A619BE9E342C7BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_arteries_realistic_v2.usdz; sourceTree = "<group>"; };
+		8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
+		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
+		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
+		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
+		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
+		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
+		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
+		EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeJourneyLaunchView.swift; sourceTree = "<group>"; };
+		F64750DC74A14E49DFEDF063 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		017A53FCF13A4D2EB0D4CF83 /* usdz */ = {
+			isa = PBXGroup;
+			children = (
+				9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */,
+				38684AD7663E54E8E55A7C3F /* dural_patch.usdz */,
+				50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */,
+			);
+			name = usdz;
+			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz;
+			sourceTree = "<group>";
+		};
+		93BD8CC6E16F4FD9D1D28BE9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				61FC44E51C2EC58E8E04E60E /* StrokeTime.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9B4B671F7C2817C690DAF068 = {
+			isa = PBXGroup;
+			children = (
+				B6A8B1824ABF106BD38149C0 /* Audio */,
+				AE09F0E5E7835807FA968CB8 /* Resources */,
+				9DD278786D9ADEFB4C872605 /* Sources */,
+				F232DE35F4303E0EB1034FBA /* usdz */,
+				017A53FCF13A4D2EB0D4CF83 /* usdz */,
+				93BD8CC6E16F4FD9D1D28BE9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9DD278786D9ADEFB4C872605 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */,
+				C144C17AB279CA643242E29B /* StrokeControlDeck.swift */,
+				5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */,
+				D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */,
+				EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */,
+				B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */,
+				5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */,
+				65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		AE09F0E5E7835807FA968CB8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				70A581FC5A619BE9E342C7BD /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B6A8B1824ABF106BD38149C0 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F64750DC74A14E49DFEDF063 /* FlowBed.wav */,
+				AD36F9CDA16675FE73F438E6 /* PressureBed.wav */,
+			);
+			name = Audio;
+			path = Resources/Audio;
+			sourceTree = "<group>";
+		};
+		F232DE35F4303E0EB1034FBA /* usdz */ = {
+			isa = PBXGroup;
+			children = (
+				8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */,
+				7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */,
+				4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */,
+				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
+				CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */,
+			);
+			name = usdz;
+			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41C2016D69E657B7DF0053BD /* StrokeTime */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C78550EBCCA49F827090676D /* Build configuration list for PBXNativeTarget "StrokeTime" */;
+			buildPhases = (
+				63FEA57C632B6D1C417CA084 /* Sources */,
+				CE24712D67BC96471A904E0C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StrokeTime;
+			packageProductDependencies = (
+			);
+			productName = StrokeTime;
+			productReference = 61FC44E51C2EC58E8E04E60E /* StrokeTime.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C94B0A9EAD1EE4BEF32D7735 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					41C2016D69E657B7DF0053BD = {
+						DevelopmentTeam = VV6YGTA587;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D0AE3D3BDF05B7CB944C55F5 /* Build configuration list for PBXProject "StrokeTime" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9B4B671F7C2817C690DAF068;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 93BD8CC6E16F4FD9D1D28BE9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41C2016D69E657B7DF0053BD /* StrokeTime */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CE24712D67BC96471A904E0C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */,
+				16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */,
+				F35080EB0A3184483D874359 /* PressureBed.wav in Resources */,
+				4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */,
+				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
+				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
+				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
+				7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */,
+				6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */,
+				9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */,
+				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		63FEA57C632B6D1C417CA084 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */,
+				1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */,
+				DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */,
+				7F98B5090691342A2B4E810F /* StrokeImmersiveView.swift in Sources */,
+				F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */,
+				B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */,
+				0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */,
+				37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		87F43E3AE922F1DE67D9CDE6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Stroke Care";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.StrokeTime;
+				SDKROOT = xros;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		8B428AE868C731661FA24FC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Stroke Care";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.StrokeTime;
+				SDKROOT = xros;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		B9A7F8809D7E18BF28C51D7E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VV6YGTA587;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MARKETING_VERSION = 0.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		DD7A1E6C6ACE1D38B1743AEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VV6YGTA587;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MARKETING_VERSION = 0.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C78550EBCCA49F827090676D /* Build configuration list for PBXNativeTarget "StrokeTime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B428AE868C731661FA24FC6 /* Debug */,
+				87F43E3AE922F1DE67D9CDE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D0AE3D3BDF05B7CB944C55F5 /* Build configuration list for PBXProject "StrokeTime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD7A1E6C6ACE1D38B1743AEE /* Debug */,
+				B9A7F8809D7E18BF28C51D7E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C94B0A9EAD1EE4BEF32D7735 /* Project object */;
+}
