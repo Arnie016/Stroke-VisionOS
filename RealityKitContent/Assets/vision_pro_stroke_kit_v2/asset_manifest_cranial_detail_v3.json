@@ -1,0 +1,563 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit",
+  "module": "cranial_detail_v3",
+  "version": "0.1.0-cranial-detail-v3-release-safe",
+  "generated_with": "5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "registration_center_source_m": [
+    0.0,
+    0.008782502,
+    1.640712023
+  ],
+  "source": {
+    "name": "Z-Anatomy / BodyParts3D",
+    "license": "CC BY-SA 4.0 / CC BY-SA 2.1 Japan",
+    "attribution_required": true,
+    "sharealike_required": true,
+    "additional_inner_ear_caveat": "The bundled Z-Anatomy README separately lists an adapted University of Dundee School of Medicine inner-ear source under CC BY-NC-SA 4.0. Assets containing selected ear geometry are held for licence review.",
+    "additional_cranial_nerve_attribution": "The bundled Z-Anatomy README lists Cranial Nerves and Foramina by University of Dundee, CAHID under CC BY 4.0 among referenced/included/adapted models; retain that attribution pending per-object provenance review."
+  },
+  "patient_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "prohibited_combinations": [
+    {
+      "asset": "cranial_nerves_complete_assembly_v3",
+      "excludes": [
+        "cranial_nerve_olfactory_i_bilateral_v3",
+        "cranial_nerve_optic_ii_bilateral_v3",
+        "cranial_nerves_ocular_motor_iii_iv_vi_v3",
+        "cranial_nerve_trigeminal_v_expanded_v3",
+        "cranial_nerve_facial_vii_bilateral_v3",
+        "cranial_nerve_vestibulocochlear_viii_v3",
+        "cranial_nerves_glossopharyngeal_ix_vagus_x_v3",
+        "cranial_nerve_accessory_xi_bilateral_v3",
+        "cranial_nerve_hypoglossal_xii_bilateral_v3"
+      ],
+      "reason": "The review assembly duplicates all nine independently loadable cranial-nerve groups."
+    }
+  ],
+  "assets": [
+    {
+      "id": "cranial_nerve_olfactory_i_bilateral_v3",
+      "title": "Cranial nerve I — bilateral olfactory nerves",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral source-named olfactory nerve geometry registered to the shared cranial frame.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 2,
+      "triangle_count": 18216,
+      "dimensions_m": [
+        0.046698,
+        0.05127,
+        0.017926
+      ],
+      "usdc": "exports/usdc/cranial_nerve_olfactory_i_bilateral_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_olfactory_i_bilateral_v3.usdz",
+      "usdz_bytes": 845380,
+      "usdz_sha256": "222751ff3420111e4fc680efe168ae9b96298e0b6e48abae2c6e5aa75efde0fa",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_optic_ii_bilateral_v3",
+      "title": "Cranial nerve II — bilateral optic nerves",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral source-named optic nerve geometry; eyeballs are intentionally excluded to avoid duplicating the existing eye asset.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 2,
+      "triangle_count": 1176,
+      "dimensions_m": [
+        0.060942,
+        0.042505,
+        0.016705
+      ],
+      "usdc": "exports/usdc/cranial_nerve_optic_ii_bilateral_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_optic_ii_bilateral_v3.usdz",
+      "usdz_bytes": 57124,
+      "usdz_sha256": "2ce252f5fbc702e41dd5d78408c2b8fb36d4fa768de10fd5035b2e72b7c59851",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerves_ocular_motor_iii_iv_vi_v3",
+      "title": "Cranial nerves III, IV and VI — ocular motor group",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral oculomotor, trochlear and abducens nerves as six separately named child meshes.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 6,
+      "triangle_count": 11760,
+      "dimensions_m": [
+        0.07817,
+        0.087945,
+        0.034125
+      ],
+      "usdc": "exports/usdc/cranial_nerves_ocular_motor_iii_iv_vi_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerves_ocular_motor_iii_iv_vi_v3.usdz",
+      "usdz_bytes": 544722,
+      "usdz_sha256": "6586e0763466725163778984f533f14ab59d73fed441e193897af182e59aabdf",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_trigeminal_v_expanded_v3",
+      "title": "Cranial nerve V — expanded trigeminal pathways",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Source-named bilateral trigeminal roots and major ophthalmic, maxillary and mandibular divisions for spatial orientation.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 26,
+      "triangle_count": 43064,
+      "dimensions_m": [
+        0.152444,
+        0.122068,
+        0.16354
+      ],
+      "usdc": "exports/usdc/cranial_nerve_trigeminal_v_expanded_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_trigeminal_v_expanded_v3.usdz",
+      "usdz_bytes": 2027779,
+      "usdz_sha256": "0991327783330ecb3a757a5eeb27e753188dea9868b7a4970cb00d8b163d558d",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_facial_vii_bilateral_v3",
+      "title": "Cranial nerve VII — bilateral facial nerves",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral facial nerves plus the separately named chorda tympani branches.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 4,
+      "triangle_count": 19512,
+      "dimensions_m": [
+        0.131133,
+        0.104146,
+        0.116136
+      ],
+      "usdc": "exports/usdc/cranial_nerve_facial_vii_bilateral_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_facial_vii_bilateral_v3.usdz",
+      "usdz_bytes": 903057,
+      "usdz_sha256": "b259bc55203fe30902bb50e22e88e3456a29869ec50a7de4a3248fa89b029f50",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_vestibulocochlear_viii_v3",
+      "title": "Cranial nerve VIII — vestibulocochlear group",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral VIII trunks and source-available vestibular/cochlear subdivisions; the atlas includes one unlatered cochlear mesh and one left-labelled curve.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 6,
+      "triangle_count": 6426,
+      "dimensions_m": [
+        0.081114,
+        0.018404,
+        0.006931
+      ],
+      "usdc": "exports/usdc/cranial_nerve_vestibulocochlear_viii_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_vestibulocochlear_viii_v3.usdz",
+      "usdz_bytes": 317943,
+      "usdz_sha256": "4b60eda8eda199a8d4759377cdf399d784786d3c86c47c534d735d26fa2d3630",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerves_glossopharyngeal_ix_vagus_x_v3",
+      "title": "Cranial nerves IX and X — lower cranial pathways",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral glossopharyngeal and vagus paths retained at their atlas-provided extents into the neck.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 4,
+      "triangle_count": 29304,
+      "dimensions_m": [
+        0.110508,
+        0.088611,
+        0.472361
+      ],
+      "usdc": "exports/usdc/cranial_nerves_glossopharyngeal_ix_vagus_x_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerves_glossopharyngeal_ix_vagus_x_v3.usdz",
+      "usdz_bytes": 1398498,
+      "usdz_sha256": "90cc617c8880692036abcac63899696528ebcebafcad26762fe5c35162d513b4",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_accessory_xi_bilateral_v3",
+      "title": "Cranial nerve XI — bilateral accessory nerves",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral accessory nerve paths retained through the atlas-provided neck extent.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 2,
+      "triangle_count": 10320,
+      "dimensions_m": [
+        0.119082,
+        0.124349,
+        0.279543
+      ],
+      "usdc": "exports/usdc/cranial_nerve_accessory_xi_bilateral_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_accessory_xi_bilateral_v3.usdz",
+      "usdz_bytes": 479737,
+      "usdz_sha256": "2929783ef71dc8675b30e1389096be0d416fc9aaa751d8040852a1db5bf0440c",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerve_hypoglossal_xii_bilateral_v3",
+      "title": "Cranial nerve XII — bilateral hypoglossal nerves",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral hypoglossal nerve paths with exact source identities preserved.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 2,
+      "triangle_count": 10944,
+      "dimensions_m": [
+        0.055947,
+        0.075729,
+        0.064531
+      ],
+      "usdc": "exports/usdc/cranial_nerve_hypoglossal_xii_bilateral_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerve_hypoglossal_xii_bilateral_v3.usdz",
+      "usdz_bytes": 508373,
+      "usdz_sha256": "3b32c8d8d671b54f27800dc80e322e5b3ab06c5f48497fe62aae79dc176d569a",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "extraocular_muscles_orbital_support_v3",
+      "title": "Extraocular muscles and orbital support",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral extraocular muscles, levator palpebrae, common tendinous rings and trochleae without duplicating the existing eyeball asset.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 18,
+      "triangle_count": 22952,
+      "dimensions_m": [
+        0.088227,
+        0.047763,
+        0.033713
+      ],
+      "usdc": "exports/usdc/extraocular_muscles_orbital_support_v3.usdc",
+      "usdz": "exports/usdz/extraocular_muscles_orbital_support_v3.usdz",
+      "usdz_bytes": 1010371,
+      "usdz_sha256": "29892dd0e248e5ab85ba5c1b97ac9890143bb191d835b3de81f6a092467d115a",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "pituitary_adenohypophysis_neurohypophysis_v3",
+      "title": "Pituitary gland — anterior and posterior lobes",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Two exact source meshes separating the adenohypophysis and neurohypophysis in the registered cranial frame.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 2,
+      "triangle_count": 1272,
+      "dimensions_m": [
+        0.0119,
+        0.009157,
+        0.01256
+      ],
+      "usdc": "exports/usdc/pituitary_adenohypophysis_neurohypophysis_v3.usdc",
+      "usdz": "exports/usdz/pituitary_adenohypophysis_neurohypophysis_v3.usdz",
+      "usdz_bytes": 62692,
+      "usdz_sha256": "076c35f64353d68cb87b412934597a5f3f4993444e23cc8da83d1165941f3e6d",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "nasal_cavity_paranasal_spaces_v3",
+      "title": "Nasal cavity and available paranasal spaces",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Nasal mucosa/septal context, bilateral inferior conchae, ethmoid air-cell groups, and the separately available frontal and sphenoid sinus spaces.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 14,
+      "triangle_count": 19526,
+      "dimensions_m": [
+        0.050386,
+        0.093663,
+        0.082993
+      ],
+      "usdc": "exports/usdc/nasal_cavity_paranasal_spaces_v3.usdc",
+      "usdz": "exports/usdz/nasal_cavity_paranasal_spaces_v3.usdz",
+      "usdz_bytes": 996676,
+      "usdz_sha256": "1e0953d8e64cbbbc477f56494c4de1d56c3e0991e11eb7b887412038758c8c66",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "pharyngeal_upper_airway_context_v3",
+      "title": "Pharyngeal and upper-airway context",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Source-defined nasopharynx, oropharynx, laryngopharynx, soft palate and epiglottis for swallowing and airway orientation.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 5,
+      "triangle_count": 14112,
+      "dimensions_m": [
+        0.065618,
+        0.075948,
+        0.134842
+      ],
+      "usdc": "exports/usdc/pharyngeal_upper_airway_context_v3.usdc",
+      "usdz": "exports/usdz/pharyngeal_upper_airway_context_v3.usdz",
+      "usdz_bytes": 706671,
+      "usdz_sha256": "80adae2469199f81c028f23f622e4dd53f029d1978f1de8f32a2e9a75c7190cd",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "muscles_of_mastication_bilateral_v3",
+      "title": "Bilateral muscles of mastication",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Bilateral temporalis, superficial/deep masseter and medial/lateral pterygoid components retained separately.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 12,
+      "triangle_count": 27412,
+      "dimensions_m": [
+        0.153665,
+        0.113909,
+        0.149787
+      ],
+      "usdc": "exports/usdc/muscles_of_mastication_bilateral_v3.usdc",
+      "usdz": "exports/usdz/muscles_of_mastication_bilateral_v3.usdz",
+      "usdz_bytes": 1214277,
+      "usdz_sha256": "bdb377b4fd1c98929993f035207084ec4701378a5f4836053dbf784269414f4b",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "head_neck_orientation_muscles_v3",
+      "title": "Major head and neck orientation muscles",
+      "module": "cranial_detail_v3",
+      "asset_role": "independent",
+      "description": "Selected bilateral head/neck muscles that establish facial, submandibular and cervical spatial orientation without attempting a complete myology atlas.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 18,
+      "triangle_count": 39332,
+      "dimensions_m": [
+        0.122872,
+        0.194217,
+        0.292629
+      ],
+      "usdc": "exports/usdc/head_neck_orientation_muscles_v3.usdc",
+      "usdz": "exports/usdz/head_neck_orientation_muscles_v3.usdz",
+      "usdz_bytes": 1726173,
+      "usdz_sha256": "96a8e100ac32d45333d8c41c8ad8c7c251109e68073c5f195a6e44df1e6a5984",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "cranial_nerves_complete_assembly_v3",
+      "title": "Cranial nerves I–XII review assembly",
+      "module": "cranial_detail_v3",
+      "asset_role": "review_assembly",
+      "description": "Review assembly combining all source-supported I–XII cranial nerve group assets while retaining every semantic child.",
+      "clinical_note": "Generic atlas-derived educational anatomy; not patient-specific or clinically validated. Color is a UI differentiation convention and encodes no physiology. Requires specialist review. Do not use for diagnosis, planning, navigation, rehearsal, device sizing, or clinical decisions.",
+      "source_object_count": 54,
+      "triangle_count": 150722,
+      "dimensions_m": [
+        0.152444,
+        0.200312,
+        0.559504
+      ],
+      "usdc": "exports/usdc/cranial_nerves_complete_assembly_v3.usdc",
+      "usdz": "exports/usdz/cranial_nerves_complete_assembly_v3.usdz",
+      "usdz_bytes": 7059481,
+      "usdz_sha256": "fd31b4ff3aa99443bf73df8e769cd1c684e18aa668118efb66c216ff627c40ae",
+      "patient_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "selection": {
+    "cranial_nerve_olfactory_i_bilateral_v3": [
+      "Olfactory nerve (I).l",
+      "Olfactory nerve (I).r"
+    ],
+    "cranial_nerve_optic_ii_bilateral_v3": [
+      "Optic nerve (II).l",
+      "Optic nerve (II).r"
+    ],
+    "cranial_nerves_ocular_motor_iii_iv_vi_v3": [
+      "Oculomotor nerve (III).l",
+      "Oculomotor nerve (III).r",
+      "Trochlear nerve (IV).l",
+      "Trochlear nerve (IV).r",
+      "Abducens nerve (VI).l",
+      "Abducens nerve (VI).r"
+    ],
+    "cranial_nerve_trigeminal_v_expanded_v3": [
+      "Trigeminal nerve (V).l",
+      "Trigeminal nerve (V).r",
+      "Sensory root of trigeminal nerve.l",
+      "Sensory root of trigeminal nerve.r",
+      "Motor root of trigeminal nerve.l",
+      "Motor root of trigeminal nerve.r",
+      "Ophthalmic nerve.l",
+      "Ophthalmic nerve.r",
+      "Maxillary nerve.l",
+      "Maxillary nerve.r",
+      "Meningeal branch of maxillary nerve.l",
+      "Meningeal branch of maxillary nerve.r",
+      "Anterior division of mandibular nerve.l",
+      "Anterior division of mandibular nerve.r",
+      "Posterior division of mandibular nerve.l",
+      "Posterior division of mandibular nerve.r",
+      "Buccal nerve.l",
+      "Buccal nerve.r",
+      "Inferior alveolar nerve.l",
+      "Inferior alveolar nerve.r",
+      "Lingual nerve.l",
+      "Lingual nerve.r",
+      "Mental nerve.l",
+      "Mental nerve.r",
+      "Nerve to mylohyoid muscle.l",
+      "Nerve to mylohyoid muscle.r"
+    ],
+    "cranial_nerve_facial_vii_bilateral_v3": [
+      "Facial nerve (VII).l",
+      "Facial nerve (VII).r",
+      "Chorda tympani.l",
+      "Chorda tympani.r"
+    ],
+    "cranial_nerve_vestibulocochlear_viii_v3": [
+      "Vestibulocochlear nerve (VIII).l",
+      "Vestibulocochlear nerve (VIII).r",
+      "Vestibular nerve.l",
+      "Vestibular nerve.r",
+      "Cochlear nerve",
+      "Cochlear nerve.l"
+    ],
+    "cranial_nerves_glossopharyngeal_ix_vagus_x_v3": [
+      "Glossopharyngeal nerve (IX).l",
+      "Glossopharyngeal nerve (IX).r",
+      "Vagus nerve (X).l",
+      "Vagus nerve (X).r"
+    ],
+    "cranial_nerve_accessory_xi_bilateral_v3": [
+      "Accessory nerve (XI).l",
+      "Accessory nerve (XI).r"
+    ],
+    "cranial_nerve_hypoglossal_xii_bilateral_v3": [
+      "Hypoglossal nerve (XII).l",
+      "Hypoglossal nerve (XII).r"
+    ],
+    "extraocular_muscles_orbital_support_v3": [
+      "Superior rectus muscle.l",
+      "Superior rectus muscle.r",
+      "Inferior rectus muscle.l",
+      "Inferior rectus muscle.r",
+      "Medial rectus muscle.l",
+      "Medial rectus muscle.r",
+      "Lateral rectus muscle.l",
+      "Lateral rectus muscle.r",
+      "Superior oblique muscle.l",
+      "Superior oblique muscle.r",
+      "Inferior oblique muscle.l",
+      "Inferior oblique muscle.r",
+      "Levator palpebrae superioris.l",
+      "Levator palpebrae superioris.r",
+      "Common tendinous ring.l",
+      "Common tendinous ring.r",
+      "Trochlea of superior oblique muscle.l",
+      "Trochlea of superior oblique muscle.r"
+    ],
+    "pituitary_adenohypophysis_neurohypophysis_v3": [
+      "Adenohypophysis",
+      "Neurohypophysis"
+    ],
+    "nasal_cavity_paranasal_spaces_v3": [
+      "Mucosa of nasal cavity",
+      "Nasal septal cartilage",
+      "Lateral process of nasal septal cartilage.l",
+      "Lateral process of nasal septal cartilage.r",
+      "Inferior nasal concha bone.l",
+      "Inferior nasal concha bone.r",
+      "Anterior cells of ethmoid bone.l",
+      "Anterior cells of ethmoid bone.r",
+      "Middle cells of ethmoid bone.l",
+      "Middle cells of ethmoid bone.r",
+      "Posterior cells of ethmoid bone.l",
+      "Posterior cells of ethmoid bone.r",
+      "Sinus of frontal bone",
+      "Sinus of sphenoid bone"
+    ],
+    "pharyngeal_upper_airway_context_v3": [
+      "Nasopharynx",
+      "Oropharynx",
+      "Laryngopharynx",
+      "Soft palate",
+      "Epiglottis"
+    ],
+    "muscles_of_mastication_bilateral_v3": [
+      "Temporalis muscle.l",
+      "Temporalis muscle.r",
+      "Superficial part of masseter.l",
+      "Superficial part of masseter.r",
+      "Deep part of masseter.l",
+      "Deep part of masseter.r",
+      "Medial pterygoid muscle.l",
+      "Medial pterygoid muscle.r",
+      "Superior head of lateral pterygoid muscle.l",
+      "Superior head of lateral pterygoid muscle.r",
+      "Inferior head of lateral pterygoid muscle.l",
+      "Inferior head of lateral pterygoid muscle.r"
+    ],
+    "head_neck_orientation_muscles_v3": [
+      "Sternocleidomastoid muscle.l",
+      "Sternocleidomastoid muscle.r",
+      "Anterior belly of digastric muscle.l",
+      "Anterior belly of digastric muscle.r",
+      "Posterior belly of digastric muscle.l",
+      "Posterior belly of digastric muscle.r",
+      "Intermediate tendon of digastric muscle.l",
+      "Intermediate tendon of digastric muscle.r",
+      "Mylohyoid muscle.l",
+      "Mylohyoid muscle.r",
+      "Frontalis muscle.l",
+      "Frontalis muscle.r",
+      "Occipitalis muscle.l",
+      "Occipitalis muscle.r",
+      "Orbital part of orbicularis oculi.l",
+      "Orbital part of orbicularis oculi.r",
+      "Palpebral part of orbicularis oculi.l",
+      "Palpebral part of orbicularis oculi.r"
+    ]
+  },
+  "assemblies": {
+    "cranial_nerves_complete_assembly_v3": [
+      "cranial_nerve_olfactory_i_bilateral_v3",
+      "cranial_nerve_optic_ii_bilateral_v3",
+      "cranial_nerves_ocular_motor_iii_iv_vi_v3",
+      "cranial_nerve_trigeminal_v_expanded_v3",
+      "cranial_nerve_facial_vii_bilateral_v3",
+      "cranial_nerve_vestibulocochlear_viii_v3",
+      "cranial_nerves_glossopharyngeal_ix_vagus_x_v3",
+      "cranial_nerve_accessory_xi_bilateral_v3",
+      "cranial_nerve_hypoglossal_xii_bilateral_v3"
+    ]
+  },
+  "warnings": [
+    "This release-safe manifest contains 16 non-held cranial packages. The two inner-ear-containing build packages are intentionally omitted.",
+    "middle_inner_ear_bilateral_v3 and cranial_support_registered_assembly_v3 remain HOLD_FOR_INNER_EAR_LICENSE_REVIEW and their binaries are not in the publishing tree.",
+    "Generic atlas-derived anatomy; not patient-specific and not a clinical segmentation.",
+    "Color differentiates teaching layers only and encodes no physiology, deficit, function, or pathology.",
+    "Do not use for diagnosis, treatment planning, navigation, procedural rehearsal, device sizing, or clinical decisions.",
+    "The source atlas is not exhaustive; absent anatomy is never inferred or procedurally invented.",
+    "Anatomical identity, laterality, continuity, spatial registration, terminology and patient-facing use require specialist review.",
+    "Derivatives retain Z-Anatomy/BodyParts3D attribution and ShareAlike obligations.",
+    "Retain the bundled University of Dundee CAHID CC BY 4.0 cranial-nerve attribution pending per-object provenance review."
+  ],
+  "release_manifest": true,
+  "release_asset_count": 16,
+  "omitted_license_hold_asset_ids": [
+    "middle_inner_ear_bilateral_v3",
+    "cranial_support_registered_assembly_v3"
+  ]
+}

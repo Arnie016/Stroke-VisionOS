@@ -1,10 +1,16 @@
 # Stroke VisionOS asset catalog
 
-This directory contains **65 unique, manifest-backed runtime USDZ assets**:
+This directory contains **108 unique, manifest-backed runtime USDZ assets**:
 
+- **43 release-eligible v3 assets** across three manifests.
 - **36 higher-detail v2 assets** across five manifests.
 - **29 prototype-v1 assets** in one manifest.
-- **180,427,924 bytes** of runtime USDZ payload.
+- **262,040,610 bytes** of runtime USDZ payload.
+
+“Release-eligible” here means only that a package is not on the known
+inner-ear licence hold and is present in the publishing catalog. It does not
+mean clinically approved, hospital-ready, or suitable for patient-specific
+decisions.
 
 The count refers only to independently loadable USDZ packages. Manifests,
 preview renders, material maps, and documentation are supporting files and are
@@ -12,9 +18,13 @@ not counted as additional runtime assets. Composite assemblies are counted
 because they are separately loadable packages, although they duplicate geometry
 from their component layers.
 
+The complete source build has **110 unique package records**: 65 original plus
+45 v3. The two inner-ear-containing v3 packages are licence-held and their
+binaries are deliberately absent here, so the release catalog remains 108.
+
 The historical review-only `stroke_kit_asset_gallery.usdz` is deliberately not
-included. It is an unmanifested composite of prototype geometry, not a 66th
-independent asset.
+included. It is an unmanifested composite of prototype geometry, not a 109th
+release asset or a 111th source-build package.
 
 For the canonical scene hierarchy, all component/assembly relationships,
 procedure state logic, interaction physics, and Houdini/RealityKit handoff, see
@@ -29,7 +39,7 @@ migrate them to LFS in a coordinated follow-up.
 ## Naming and layout
 
 Runtime filenames use stable lowercase `snake_case` IDs. Higher-detail assets
-use the `_v2` suffix; combined review files say `assembly`, `hero`, or `set`;
+use the `_v2` or `_v3` suffix; combined review files say `assembly`, `hero`, or `set`;
 conceptual and educational files say so explicitly. The prototype filenames
 remain unchanged because their manifest and existing viewer code reference
 those exact IDs. Human-facing display names below provide readable labels
@@ -46,12 +56,18 @@ Assets/
     ├── asset_manifest_cranial_vascular_v2.json
     ├── asset_manifest_bloodflow_v2.json
     ├── asset_manifest_devices_v2.json
-    ├── exports/usdz/                 # 36 higher-detail packages
-    ├── previews/                     # supporting renders
+    ├── asset_manifest_neural_detail_v3.json
+    ├── asset_manifest_cranial_detail_v3.json  # release-safe, held records omitted
+    ├── asset_manifest_intracranial_micro_v3.json
+    ├── exports/usdz/                 # 36 v2 + 43 release-eligible v3 packages
+    ├── previews/                     # supporting v2/v3 renders
     └── textures/source/              # supporting material maps
 ```
 
-All stages use metres and Y-up. The models are generic and non-patient-specific.
+All stages use metres and Y-up. Macroscopic v2/v3 atlas stages preserve their
+recorded project registration frames. Micro-v3 metres describe only a
+presentation stage: those packages are magnified, scale-separated, and never
+registered to the head. The models are generic and non-patient-specific.
 See [licences](../../docs/assets/LICENSES.md),
 [provenance](../../docs/assets/PROVENANCE.md), and
 [validation](../../docs/assets/VALIDATION.md) before redistribution or use.
@@ -189,6 +205,83 @@ as the preferred patient-facing visual layer when a v2 equivalent exists.
 | 64 | [postoperative_head_dressing.usdz](vision_pro_stroke_kit/exports/usdz/postoperative_head_dressing.usdz) | **Postoperative head dressing.** Generic bandage/dressing recovery state. |
 | 65 | [spatial_step_markers.usdz](vision_pro_stroke_kit/exports/usdz/spatial_step_markers.usdz) | **Spatial step markers.** Eight numbered markers and arrows in one wide entity for guided sequencing. |
 
+## Intracranial detail v3 assets (43 release packages)
+
+The complete [v3 one-by-one catalog](../../docs/assets/INTRACRANIAL_ASSET_CATALOG_V3.md) records every relationship, source/scale contract, geometry summary, transitive exclusion, and both non-published hold records. The tables below are the release runtime index.
+
+### HRA neural detail (15)
+
+These static generic-atlas layers share the established project brain frame. Preserve semantic children and use cutaways/visibility variants; do not stack overlapping opaque hierarchy levels or call them patient anatomy.
+
+| # | Runtime file | Description and runtime note |
+|---:|---|---|
+| 66 | [frontal_cortex_parcellation_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/frontal_cortex_parcellation_v3.usdz) | **Frontal cortical parcellation.** Named bilateral HRA frontal cortical gyri and lobules retained as separate semantic children in the established brain frame. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 67 | [parietal_cortex_parcellation_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/parietal_cortex_parcellation_v3.usdz) | **Parietal cortical parcellation.** Named bilateral HRA parietal gyri and lobules, including pre/postcentral and association regions, retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 68 | [temporal_cortex_parcellation_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/temporal_cortex_parcellation_v3.usdz) | **Temporal cortical parcellation.** Named bilateral HRA temporal gyri, poles, auditory planes, and temporal fusiform cortex retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 69 | [occipital_cortex_parcellation_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/occipital_cortex_parcellation_v3.usdz) | **Occipital cortical parcellation.** Named bilateral HRA occipital gyri, poles, cuneus, lingual, and occipital fusiform regions retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 70 | [insular_opercular_cortex_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/insular_opercular_cortex_v3.usdz) | **Insular and opercular cortex.** Named bilateral HRA short and long insular gyri, limen, agranular insula, and frontal operculum retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 71 | [cingulate_parahippocampal_cortex_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cingulate_parahippocampal_cortex_v3.usdz) | **Cingulate and parahippocampal cortex.** Named bilateral HRA cingulate, parahippocampal, perirhinal, piriform, and related medial cortical regions retained as semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 72 | [cerebellar_substructures_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cerebellar_substructures_v3.usdz) | **Cerebellar substructures.** Bilateral HRA lateral hemispheres, paravermis, vermis, deep nuclei, and cerebellar peduncles retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 73 | [brainstem_substructures_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/brainstem_substructures_v3.usdz) | **Brainstem substructures.** Bilateral HRA midbrain, pontine, medullary, collicular, peduncular, olivary, and red-nucleus structures retained as semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 74 | [basal_ganglia_deep_nuclei_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/basal_ganglia_deep_nuclei_v3.usdz) | **Basal ganglia and adjacent deep nuclei.** Named HRA caudate segments, putamen, pallidal segments, accumbens, subthalamic and substantia nigra regions, claustrum, and zona incerta. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 75 | [thalamic_hypothalamic_nuclei_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/thalamic_hypothalamic_nuclei_v3.usdz) | **Thalamic and hypothalamic nuclei.** Detailed HRA thalamic nuclei, hypothalamic regions, geniculate and habenular nuclei, mammillary region, and pineal body without overlapping broad parent volumes. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 76 | [hippocampal_amygdala_limbic_nuclei_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/hippocampal_amygdala_limbic_nuclei_v3.usdz) | **Hippocampal, amygdala, and limbic nuclei.** Named HRA hippocampal head/body/tail, source-backed amygdala nuclei, basal forebrain, bed nucleus, and septal nuclei retained as children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 77 | [ventricular_spaces_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/ventricular_spaces_v3.usdz) | **Ventricular spaces and connecting channels.** Source HRA lateral-ventricle segments, third and fourth ventricles, cerebral aqueduct, and central canal. These are atlas space surfaces, not a fluid simulation or measured CSF volume. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 78 | [major_white_matter_regions_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/major_white_matter_regions_v3.usdz) | **Major forebrain and hindbrain white-matter regions.** Bilateral HRA broad forebrain and hindbrain white-matter source volumes, kept separate from detailed tract assets because the source hierarchy overlaps them. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 79 | [commissural_sensory_pathways_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/commissural_sensory_pathways_v3.usdz) | **Major commissural and sensory pathways.** Source HRA corpus callosum, fornix, anterior commissure, mammillothalamic, optic, and olfactory structures retained as separate semantic children. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+| 80 | [neural_detail_registered_review_assembly_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/neural_detail_registered_review_assembly_v3.usdz) | **Registered neural-detail unilateral reveal assembly.** An opaque registered review assembly with the right cortical parcels and broad white-matter parent volumes omitted to reveal bilateral deep source structures. Generic, non-patient-specific atlas anatomy; not validated for diagnosis, treatment planning, navigation, or clinical decision-making. Static generic atlas anatomy; specialist review required. |
+
+### Cranial support detail (16 release-eligible)
+
+The release-safe cranial manifest contains 15 independent layers plus the cranial-nerve review assembly. Attribution and ShareAlike obligations apply. The assembly replaces its nine nerve-group components while active.
+
+| # | Runtime file | Description and runtime note |
+|---:|---|---|
+| 81 | [cranial_nerve_olfactory_i_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_olfactory_i_bilateral_v3.usdz) | **Cranial nerve I — bilateral olfactory nerves.** Bilateral source-named olfactory nerve geometry registered to the shared cranial frame. Static generic atlas anatomy; specialist review required. |
+| 82 | [cranial_nerve_optic_ii_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_optic_ii_bilateral_v3.usdz) | **Cranial nerve II — bilateral optic nerves.** Bilateral source-named optic nerve geometry; eyeballs are intentionally excluded to avoid duplicating the existing eye asset. Static generic atlas anatomy; specialist review required. |
+| 83 | [cranial_nerves_ocular_motor_iii_iv_vi_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerves_ocular_motor_iii_iv_vi_v3.usdz) | **Cranial nerves III, IV and VI — ocular motor group.** Bilateral oculomotor, trochlear and abducens nerves as six separately named child meshes. Static generic atlas anatomy; specialist review required. |
+| 84 | [cranial_nerve_trigeminal_v_expanded_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_trigeminal_v_expanded_v3.usdz) | **Cranial nerve V — expanded trigeminal pathways.** Source-named bilateral trigeminal roots and major ophthalmic, maxillary and mandibular divisions for spatial orientation. Static generic atlas anatomy; specialist review required. |
+| 85 | [cranial_nerve_facial_vii_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_facial_vii_bilateral_v3.usdz) | **Cranial nerve VII — bilateral facial nerves.** Bilateral facial nerves plus the separately named chorda tympani branches. Static generic atlas anatomy; specialist review required. |
+| 86 | [cranial_nerve_vestibulocochlear_viii_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_vestibulocochlear_viii_v3.usdz) | **Cranial nerve VIII — vestibulocochlear group.** Bilateral VIII trunks and source-available vestibular/cochlear subdivisions; the atlas includes one unlatered cochlear mesh and one left-labelled curve. Static generic atlas anatomy; specialist review required. |
+| 87 | [cranial_nerves_glossopharyngeal_ix_vagus_x_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerves_glossopharyngeal_ix_vagus_x_v3.usdz) | **Cranial nerves IX and X — lower cranial pathways.** Bilateral glossopharyngeal and vagus paths retained at their atlas-provided extents into the neck. Static generic atlas anatomy; specialist review required. |
+| 88 | [cranial_nerve_accessory_xi_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_accessory_xi_bilateral_v3.usdz) | **Cranial nerve XI — bilateral accessory nerves.** Bilateral accessory nerve paths retained through the atlas-provided neck extent. Static generic atlas anatomy; specialist review required. |
+| 89 | [cranial_nerve_hypoglossal_xii_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerve_hypoglossal_xii_bilateral_v3.usdz) | **Cranial nerve XII — bilateral hypoglossal nerves.** Bilateral hypoglossal nerve paths with exact source identities preserved. Static generic atlas anatomy; specialist review required. |
+| 90 | [extraocular_muscles_orbital_support_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/extraocular_muscles_orbital_support_v3.usdz) | **Extraocular muscles and orbital support.** Bilateral extraocular muscles, levator palpebrae, common tendinous rings and trochleae without duplicating the existing eyeball asset. Static generic atlas anatomy; specialist review required. |
+| 91 | [pituitary_adenohypophysis_neurohypophysis_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/pituitary_adenohypophysis_neurohypophysis_v3.usdz) | **Pituitary gland — anterior and posterior lobes.** Two exact source meshes separating the adenohypophysis and neurohypophysis in the registered cranial frame. Static generic atlas anatomy; specialist review required. |
+| 92 | [nasal_cavity_paranasal_spaces_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/nasal_cavity_paranasal_spaces_v3.usdz) | **Nasal cavity and available paranasal spaces.** Nasal mucosa/septal context, bilateral inferior conchae, ethmoid air-cell groups, and the separately available frontal and sphenoid sinus spaces. Static generic atlas anatomy; specialist review required. |
+| 93 | [pharyngeal_upper_airway_context_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/pharyngeal_upper_airway_context_v3.usdz) | **Pharyngeal and upper-airway context.** Source-defined nasopharynx, oropharynx, laryngopharynx, soft palate and epiglottis for swallowing and airway orientation. Static generic atlas anatomy; specialist review required. |
+| 94 | [muscles_of_mastication_bilateral_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/muscles_of_mastication_bilateral_v3.usdz) | **Bilateral muscles of mastication.** Bilateral temporalis, superficial/deep masseter and medial/lateral pterygoid components retained separately. Static generic atlas anatomy; specialist review required. |
+| 95 | [head_neck_orientation_muscles_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/head_neck_orientation_muscles_v3.usdz) | **Major head and neck orientation muscles.** Selected bilateral head/neck muscles that establish facial, submandibular and cervical spatial orientation without attempting a complete myology atlas. Static generic atlas anatomy; specialist review required. |
+| 96 | [cranial_nerves_complete_assembly_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_nerves_complete_assembly_v3.usdz) | **Cranial nerves I–XII review assembly.** Review assembly combining all source-supported I–XII cranial nerve group assets while retaining every semantic child. Static generic atlas anatomy; specialist review required. |
+
+### Scale-separated conceptual micro detail (12)
+
+Every package below is magnified, non-histologic, non-quantitative, non-patient-specific, and not registered to the head. A persistent “magnified conceptual view — not to anatomical scale” warning is mandatory. The teaching-set assembly replaces all eleven individual vignettes while active.
+
+| # | Runtime file | Description and runtime note |
+|---:|---|---|
+| 97 | [blood_brain_barrier_neurovascular_unit_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/blood_brain_barrier_neurovascular_unit_conceptual_v3.usdz) | **Blood-brain barrier and neurovascular-unit teaching model.** Opened capillary with endothelial layer, tight-junction seams, basement membrane, pericyte, astrocyte endfeet, and magnified RBC context. Use only in the separate micro teaching stage. |
+| 98 | [capillary_endothelium_tight_junctions_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/capillary_endothelium_tight_junctions_conceptual_v3.usdz) | **Capillary endothelium and tight-junction close-up.** Flattened endothelial-cell sheet with nuclei, basement membrane, conceptual tight-junction seams, and pericyte context. Use only in the separate micro teaching stage. |
+| 99 | [formed_blood_elements_magnified_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/formed_blood_elements_magnified_v3.usdz) | **Magnified formed blood elements.** Scale-separated red blood cells, a generic leukocyte cue, and platelet forms with illustrative granules. Use only in the separate micro teaching stage. |
+| 100 | [platelet_fibrin_thrombus_microstructure_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/platelet_fibrin_thrombus_microstructure_conceptual_v3.usdz) | **Conceptual platelet-fibrin thrombus microstructure.** Opened vessel context with entrapped RBCs, platelet-rich cues, fibrin strands, and a textured clot-volume reference. Use only in the separate micro teaching stage. |
+| 101 | [multipolar_neuron_detailed_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz) | **Detailed multipolar-neuron teaching model.** Generic soma, nucleus, dendrites, enlarged spine cues, axon, and terminal branches. Use only in the separate micro teaching stage. |
+| 102 | [astrocyte_capillary_endfeet_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/astrocyte_capillary_endfeet_conceptual_v3.usdz) | **Astrocyte and capillary-endfeet teaching model.** Branching astrocyte morphology with enlarged endfeet approaching an opaque capillary context. Use only in the separate micro teaching stage. |
+| 103 | [oligodendrocyte_myelinated_axons_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/oligodendrocyte_myelinated_axons_conceptual_v3.usdz) | **Oligodendrocyte and myelinated-axon teaching model.** Generic oligodendrocyte with processes connected to several simplified myelin internodes. Use only in the separate micro teaching stage. |
+| 104 | [myelinated_axon_node_of_ranvier_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/myelinated_axon_node_of_ranvier_conceptual_v3.usdz) | **Myelinated axon and node-of-Ranvier close-up.** Continuous axon core with separated myelin internodes, surface-ring cues, and enlarged channel-location markers. Use only in the separate micro teaching stage. |
+| 105 | [chemical_synapse_closeup_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/chemical_synapse_closeup_conceptual_v3.usdz) | **Chemical-synapse teaching close-up.** Presynaptic axon terminal, enlarged vesicles, cleft particles, postsynaptic dendrite, and generic receptor-location cues. Use only in the separate micro teaching stage. |
+| 106 | [choroid_plexus_csf_interface_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/choroid_plexus_csf_interface_conceptual_v3.usdz) | **Choroid-plexus and CSF-interface teaching model.** Simplified capillary folds with epithelial-cell cues and non-quantitative CSF direction markers. Use only in the separate micro teaching stage. |
+| 107 | [ischemic_tissue_zones_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/ischemic_tissue_zones_conceptual_v3.usdz) | **Conceptual ischemic tissue-zone teaching model.** Opaque layered surrounding, at-risk, and core teaching regions with non-quantitative microvessel context. Use only in the separate micro teaching stage. |
+| 108 | [intracranial_micro_teaching_set_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/intracranial_micro_teaching_set_v3.usdz) | **Intracranial microanatomy teaching-set review assembly.** Review-only gallery of all eleven scale-separated microanatomy vignettes; use individual packages at runtime. Use only in the separate micro teaching stage. |
+
+### Full-build records excluded from release (2)
+
+| Build-record ID | Status | Publishing-tree rule |
+|---|---|---|
+| `middle_inner_ear_bilateral_v3` | `HOLD_FOR_INNER_EAR_LICENSE_REVIEW` | Binary and runtime-manifest record omitted pending source/licence clearance or verified replacement. |
+| `cranial_support_registered_assembly_v3` | `HOLD_FOR_INNER_EAR_LICENSE_REVIEW` | Binary and runtime-manifest record omitted because the assembly contains the held ear geometry. |
+
+Preview renders that visibly contain either held package are omitted as well.
+
 ## Manifests
 
 - [Prototype-v1 manifest](vision_pro_stroke_kit/asset_manifest.json)
@@ -197,6 +290,9 @@ as the preferred patient-facing visual layer when a v2 equivalent exists.
 - [Cranial-vascular-v2 manifest](vision_pro_stroke_kit_v2/asset_manifest_cranial_vascular_v2.json)
 - [Blood-flow-v2 manifest](vision_pro_stroke_kit_v2/asset_manifest_bloodflow_v2.json)
 - [Thrombectomy-device-v2 manifest](vision_pro_stroke_kit_v2/asset_manifest_devices_v2.json)
+- [Neural-detail-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_neural_detail_v3.json)
+- [Release-safe cranial-detail-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_cranial_detail_v3.json)
+- [Intracranial-micro-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_intracranial_micro_v3.json)
 
 Manifest `usdz` paths are relative to the corresponding kit directory. Keep
 the package layout intact or rewrite paths intentionally in the app's catalog
@@ -219,6 +315,13 @@ entity.name = manifestRecord.id
 Do not apply another axis correction: the exported USD stages already use Y-up
 and metres. Center inspection views using visual bounds. Load combined hero
 assemblies lazily, and use the separate opaque layers for reveal/toggle flows.
+Filter or reject any future record whose `license_review_status` starts with
+`HOLD_`; the current release-safe cranial manifest omits both held records.
+
+Never center, fit, or register a `microscopic_conceptual_separate` package
+inside `HeadRegisteredRoot`. Open it in a separate teaching stage and keep the
+magnification, conceptual/nonquantitative, and non-patient-specific warnings
+visible for the entire time the asset is shown.
 
 The blood-flow animation is a baked illustrative transform animation. Discover
 its imported resource through `availableAnimations`, play it explicitly, and

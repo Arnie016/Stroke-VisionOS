@@ -63,14 +63,28 @@ Not part of the first slice: accounts, cloud sync, clinical decision support, pa
 
 ## Current 3D asset catalog
 
-The repository includes **65 uniquely named, manifest-backed USDZ runtime
+The repository includes **108 uniquely named, manifest-backed USDZ runtime
 assets**:
 
-- 36 higher-detail v2 assets: brain/skull anatomy, head layers, cranial
-  vasculature, cerebral blood-flow teaching views, and generic thrombectomy
-  devices;
-- 29 clearly labelled low-poly prototype-v1 assets for sequencing and early
-  interaction work.
+- 65 original packages: 36 higher-detail v2 assets and 29 clearly labelled
+  low-poly prototype-v1 assets;
+- 43 release-eligible v3 detail packages: 15 HRA neural-detail assets, 16
+  non-held cranial-support assets, and 12 scale-separated conceptual
+  microanatomy teaching assets;
+- 110 total build records: the v3 source build produced 45 packages, but
+  `middle_inner_ear_bilateral_v3` and
+  `cranial_support_registered_assembly_v3` are on an inner-ear licence hold,
+  and their binaries are deliberately absent from this publishing tree.
+
+In this inventory, “release-eligible” means present in the non-held publishing
+set—not clinically approved or hospital-ready.
+
+The higher-detail catalog covers brain/skull anatomy, head layers, cranial
+vasculature, cerebral blood-flow teaching views, and generic thrombectomy
+devices, plus cortical parcellations, deep nuclei, white-matter regions,
+cranial nerves, orbital/airway/muscle context, blood-brain-barrier teaching,
+blood elements, thrombus microstructure, neurons, glia, myelin, synapse, CSF
+interface, and conceptual ischemic-tissue zones.
 
 The complete one-by-one catalog, paths, descriptions, runtime notes, manifests,
 and loading guidance are in
@@ -79,13 +93,23 @@ The canonical scene hierarchy, asset relationships, pathway state machine,
 interaction physics, and Houdini/RealityKit handoff are defined in
 [`MASTER.md`](MASTER.md).
 Licensing and provenance are recorded under [`docs/assets`](docs/assets).
+The 45 v3 build records—including the two non-published hold records—are
+cataloged one by one in
+[`INTRACRANIAL_ASSET_CATALOG_V3.md`](docs/assets/INTRACRANIAL_ASSET_CATALOG_V3.md).
 
 ![Layered generic head cutaway](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/08_layered_head_cutaway_v2.png)
 
 ![Registered cranial vascular context](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/17_cranial_vascular_brain_context.png)
 
+![Registered neural-detail review](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/neural_detail_v3/36_registered_neural_review_assembly_v3.png)
+
+![Blood-brain barrier conceptual teaching model](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/intracranial_micro_v3/40_blood_brain_barrier_neurovascular_unit_v3.png)
+
 These models are generic educational material—not patient-specific anatomy,
-quantitative flow simulation, or clinical decision support.
+histology, quantitative flow simulation, or clinical decision support. The
+micro-detail packages must always appear in a separate magnified teaching stage
+with persistent “not to anatomical scale,” conceptual/nonquantitative, and
+non-patient-specific warnings.
 
 ## Intended Apple stack
 
