@@ -30,6 +30,12 @@ evidence window exposes full citations, stable source links, support/limitation
 context, pinning, and a deterministic source-bound teaching draft. It is hidden
 from family mode and remains **clinical review pending**.
 
+The clinician layer study adds three reversible presentations: assembled
+**Layers**, adjustable **See through**, and a gently offset **Study apart**
+view. A selected point stays attached to its anatomical parent and becomes a
+handle for orbit and magnification of the whole registered model; markers never
+tear away from the brain.
+
 ## Spatial rig
 
 - The default immersive path loads the exact PR #2 registered-v2 brain,
@@ -122,3 +128,10 @@ receipt and the separate 90-second wearer protocol are documented in
 The product promise, museum-like patient-file discovery, 3D case-bust safety
 contract, point-field behavior, role separation, and 90-second judging script
 are maintained in `Docs/PRESENTATION_DESIGN_CANON.md`.
+
+The executed Blender/USD receipt and the deliberately unexecuted Houdini and
+Unreal spokes are documented in `Docs/DCC_LAYER_STUDY_PIPELINE.md`.
+
+The complete room choreography, screen/state inventory, annotation contract,
+gesture map, implementation map, and image report are in
+`Docs/STROKE_CARE_PRODUCT_UI_MAP.md`.

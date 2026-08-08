@@ -95,6 +95,26 @@ An exclamation marker means “review this item,” not “this person is unheal
   control through pause, back, reset, and the Digital Crown.
 - A point is not meaningful until it has a title, an intended question, an
   approved visual response, and a source or explicit review status.
+- A point is an anatomy-anchored handle, not a detachable object. Gaze and pinch
+  select it; dragging or magnifying from that point orients the whole registered
+  anatomy while the point remains attached to its region.
+
+## Reversible layer study
+
+The presenter has three mutually exclusive views:
+
+1. **Layers** keeps the registered anatomy assembled.
+2. **See through** changes cortex transparency while vessels and blockage remain
+   spatially registered.
+3. **Study apart** adds only small, reversible offsets between semantic layer
+   wrappers so their relationship can be inspected.
+
+The sequence is a visual reveal, never literal peeling. Fade one protective
+layer at a time; keep the brain intact; keep vessels and the teaching clot
+distinct. The family-facing permission cue is “May I make the protective
+layers transparent?” Never use zipper, tearing, cutting, drilling, or blood
+language. Returning to **Layers** must restore the assembled view without
+drift.
 
 ## Patient and clinician lenses
 

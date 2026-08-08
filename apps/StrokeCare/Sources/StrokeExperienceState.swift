@@ -22,6 +22,22 @@ enum StrokePointField: String, CaseIterable, Identifiable {
     }
 }
 
+enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
+    case assembled = "Layers"
+    case transparent = "See through"
+    case exploded = "Study apart"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .assembled: "PROTECTIVE LAYERS"
+        case .transparent: "SEE THROUGH BRAIN"
+        case .exploded: "STUDY LAYERS APART"
+        }
+    }
+}
+
 enum StrokeEvidenceKind: String, Equatable {
     case guideline = "Guideline"
     case decisionAid = "Decision aid"
@@ -178,12 +194,18 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
     @Published var soundEnabled = true
     @Published var pointField: StrokePointField = .regions
+    @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
+    @Published var cortexOpacity: Double = 0.34
+    @Published private(set) var selectedPointEntityName: String?
+    @Published private(set) var selectedPointLabel: String?
     @Published var selectedEvidenceID: String = StrokeEvidenceSource.library[0].id
     @Published private(set) var pinnedEvidenceIDs: [String] = []
     @Published var sourceBoundDraftVisible = false
     @Published var careViewPermissionGranted = false
     @Published var isConsentPromptVisible = false
     @Published var isImmersivePresented = false
+    @Published var spatialCaseDocked = false
+    @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
     @Published private(set) var pendingConsentStep: StrokeProcedureStep?
     /// Spatial interaction state follows the proven Heart Field ownership
     /// pattern: the app state owns pose, while RealityKit only renders it.
@@ -199,11 +221,42 @@ final class StrokeExperienceState: ObservableObject {
     private var layerRevealTask: Task<Void, Never>?
 
     func selectTeachingCase() {
+        spatialCaseDocked = true
         isCaseSelected = true
         procedureStep = .inspectOcclusion
         withAnimation(.easeInOut(duration: 0.9)) {
             brainRevealProgress = 0.72
             vesselFocusProgress = 0.55
+        }
+    }
+
+    func moveSpatialCaseFile(to position: SIMD3<Float>) {
+        spatialCaseFilePosition = SIMD3<Float>(
+            min(max(position.x, -0.78), 0.32),
+            min(max(position.y, 1.18), 1.72),
+            min(max(position.z, -1.08), -0.58)
+        )
+        spatialCaseDocked = simd_distance(spatialCaseFilePosition, [0, 1.43, -0.82]) < 0.16
+        isCaseSelected = spatialCaseDocked
+    }
+
+    func settleSpatialCaseFile() {
+        if simd_distance(spatialCaseFilePosition, [0, 1.43, -0.82]) < 0.22 {
+            withAnimation(.easeInOut(duration: 0.38)) {
+                spatialCaseFilePosition = [0, 1.43, -0.82]
+                spatialCaseDocked = true
+                isCaseSelected = true
+                procedureStep = .chooseCase
+                brainRevealProgress = 0.34
+            }
+        } else {
+            withAnimation(.easeInOut(duration: 0.32)) {
+                spatialCaseFilePosition = [-0.58, 1.45, -0.82]
+                spatialCaseDocked = false
+                isCaseSelected = false
+                procedureStep = .chooseCase
+                brainRevealProgress = 0
+            }
         }
     }
 
@@ -395,7 +448,7 @@ final class StrokeExperienceState: ObservableObject {
         case .inspectOcclusion:
             "Point to the clot, then swelling. Keep injury and pressure distinct."
         case .discussCare:
-            "With permission, unzip layers slowly. Say: room, not repair."
+            "With permission, fade one protective layer at a time. Say: room, not repair."
         }
     }
 
@@ -406,7 +459,7 @@ final class StrokeExperienceState: ObservableObject {
         case .inspectOcclusion:
             "Occlusion marker · affected tissue · swelling · fixed skull"
         case .discussCare:
-            "Persistent injury · bone flap · dural expansion"
+            "Persistent injury · protective covering · room cue"
         }
     }
 
@@ -442,6 +495,25 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    func setAnatomyPresentation(_ presentation: StrokeAnatomyPresentation) {
+        anatomyPresentation = presentation
+        if presentation == .assembled {
+            selectedPointEntityName = nil
+            selectedPointLabel = nil
+        }
+    }
+
+    func selectPoint(entityName: String, label: String) {
+        selectedPointEntityName = entityName
+        selectedPointLabel = label
+        requestedPause = true
+    }
+
+    func clearPointSelection() {
+        selectedPointEntityName = nil
+        selectedPointLabel = nil
+    }
+
     func rotateSpatialView(delta: CGSize) {
         orbit.x += Float(delta.width) * 0.008
         orbit.y = min(max(orbit.y + Float(delta.height) * 0.006, -0.78), 0.78)
@@ -473,6 +545,7 @@ final class StrokeExperienceState: ObservableObject {
         switch step {
         case .chooseCase:
             cancelLayerReveal()
+            anatomyPresentation = .assembled
             procedureStep = .chooseCase
             withAnimation(.easeInOut(duration: 0.65)) {
                 brainRevealProgress = 0
@@ -481,6 +554,7 @@ final class StrokeExperienceState: ObservableObject {
             }
         case .inspectOcclusion:
             cancelLayerReveal()
+            anatomyPresentation = .assembled
             isCaseSelected = true
             procedureStep = .inspectOcclusion
             withAnimation(.easeInOut(duration: 0.65)) {
@@ -496,6 +570,7 @@ final class StrokeExperienceState: ObservableObject {
             }
             isCaseSelected = true
             procedureStep = .discussCare
+            anatomyPresentation = .transparent
             withAnimation(.easeInOut(duration: 0.75)) {
                 brainRevealProgress = 0.58
                 vesselFocusProgress = 1
@@ -517,7 +592,8 @@ final class StrokeExperienceState: ObservableObject {
                 guard !Task.isCancelled else { return }
                 try? await Task.sleep(for: .milliseconds(28))
                 let linear = Double(frame) / Double(frames)
-                // A familiar, gentle zip/peel rhythm with no cutting motion.
+                // A gentle transparency reveal. This is a visual study control,
+                // not a literal peel, incision, or tissue-removal simulation.
                 self.layerRevealProgress = 1 - pow(1 - linear, 3)
             }
         }
@@ -553,12 +629,17 @@ final class StrokeExperienceState: ObservableObject {
         procedureStep = .chooseCase
         audienceLens = .family
         isCaseSelected = false
+        spatialCaseDocked = false
+        spatialCaseFilePosition = [-0.58, 1.45, -0.82]
         selectedCareDiscussion = nil
         reportIsVisible = false
         requestedPause = false
         clarificationRequested = false
         clearQuestionMarker()
         pointField = .regions
+        anatomyPresentation = .assembled
+        cortexOpacity = 0.34
+        clearPointSelection()
         selectedEvidenceID = StrokeEvidenceSource.library[0].id
         pinnedEvidenceIDs = []
         sourceBoundDraftVisible = false
@@ -579,6 +660,8 @@ final class StrokeExperienceState: ObservableObject {
 
     func prepareProof(step: StrokeProcedureStep) {
         reset()
+        spatialCaseDocked = true
+        spatialCaseFilePosition = [0, 1.43, -0.82]
         switch step {
         case .chooseCase:
             break
@@ -597,6 +680,7 @@ final class StrokeExperienceState: ObservableObject {
             reportIsVisible = false
             careViewPermissionGranted = true
             layerRevealProgress = 1
+            anatomyPresentation = .transparent
         }
     }
 
@@ -611,6 +695,42 @@ final class StrokeExperienceState: ObservableObject {
         pinnedEvidenceIDs = Array(StrokeEvidenceSource.library.prefix(2).map(\.id))
         selectedEvidenceID = StrokeEvidenceSource.library[0].id
         sourceBoundDraftVisible = true
+    }
+
+    func prepareLayerStudyProof() {
+        prepareClinicianProof(step: .discussCare)
+        anatomyPresentation = .exploded
+        cortexOpacity = 0.30
+        pointField = .regions
+        selectedPointEntityName = "clinician-region-point-field-point-3"
+        selectedPointLabel = "Right parietal teaching anchor"
+    }
+
+    func prepareProcedureFieldProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        pointField = .procedure
+        selectedPointEntityName = "clinician-procedure-point-field-point-5"
+        selectedPointLabel = "Occlusion focus"
+    }
+
+    func prepareTransparentLayerProof() {
+        prepareClinicianProof(step: .discussCare)
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.32
+        pointField = .regions
+        selectedPointEntityName = "clinician-region-point-field-point-3"
+        selectedPointLabel = "Right parietal teaching anchor"
+    }
+
+    func prepareSpatialDockedCaseProof() {
+        reset()
+        audienceLens = .clinician
+        spatialCaseDocked = true
+        spatialCaseFilePosition = [0, 1.43, -0.82]
+        isCaseSelected = true
+        procedureStep = .chooseCase
+        brainRevealProgress = 0.34
+        pointField = .regions
     }
 
     func prepareFamilyQuestionProof() {
