@@ -99,3 +99,14 @@ Current proof debt is tracked openly: the side-parked files, concise rails, and
 spatial drawer/reticle compile in Simulator, but the newest immersive-room
 capture still needs a user-initiated launch on an unlocked Mac. XCAT wearer and
 clinical review remain separate gates.
+
+When XCAT is powered on, worn, unlocked, and reachable, run the guarded physical
+deployment receipt:
+
+```bash
+Scripts/deploy_xcat.zsh
+```
+
+The command refuses to build or install while XCAT is unavailable. The machine
+receipt and the separate 90-second wearer protocol are documented in
+`Proof/XCAT_ACCEPTANCE.md`.

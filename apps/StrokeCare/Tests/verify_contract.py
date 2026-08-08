@@ -24,6 +24,8 @@ readme = (ROOT / "README.md").read_text()
 houdini = (ROOT / "Docs" / "HOUDINI_STROKE_PIPELINE.md").read_text()
 clinical_packet = (ROOT / "Docs" / "ISCHEMIC_STROKE_CLINICAL_REVIEW.md").read_text()
 houdini_builder = (ROOT / "Scripts" / "build_houdini_stroke_graph.py").read_text()
+xcat_deploy = (ROOT / "Scripts" / "deploy_xcat.zsh").read_text()
+xcat_acceptance = (ROOT / "Proof" / "XCAT_ACCEPTANCE.md").read_text()
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
@@ -86,6 +88,9 @@ require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app ve
 require("determine eligibility" in clinical_packet and "No treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
 require("BRAIN_REVEAL_RIG" in houdini_builder and "OCCLUSION_RADIUS_PROFILE" in houdini_builder, "stroke Houdini graph builder is missing")
+require("XCAT_DEPLOY=BLOCKED" in xcat_deploy and "XCAT_DEPLOY=PASS" in xcat_deploy, "guarded XCAT deployment receipt is missing")
+require("Install command: PASS" in xcat_deploy and "Running-process query: PASS" in xcat_deploy, "XCAT machine evidence ladder is incomplete")
+require("LEGIBILITY" in xcat_acceptance and "GESTURE" in xcat_acceptance and "COMFORT" in xcat_acceptance and "COMPREHENSION" in xcat_acceptance, "XCAT wearer acceptance protocol is incomplete")
 
 if failures:
     for failure in failures:
