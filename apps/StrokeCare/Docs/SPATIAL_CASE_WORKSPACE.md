@@ -31,15 +31,34 @@ There is no permanent catalog of unrelated anatomy parts.
 
 ## Spatial intent
 
-- The case drawer stays left of the anatomy and carries only three visual facts.
+- The case drawer stays at the quieter side edge and carries only three visual
+  facts; the role surface occupies the opposite readable edge.
 - The brain owns the centre and largest visual mass.
 - The presenter rail stays outside the patient's shared focal field.
 - The family surface stays compact and offers only pause, clarification, and
   point-on-brain actions.
-- Paper Shader motion remains an atmospheric horizon. It never represents
-  blood, perfusion, pressure, or simulation output.
+- Native, transparent RealityKit ribbons inspired by Paper Shader provide an
+  atmospheric horizon without placing WebKit or a flat texture in the room. They never
+  represents blood, perfusion, pressure, or simulation output.
 - Vessel flow is qualitative teaching motion, not CFD, velocity, collateral
   flow, or patient measurement.
+
+## Visual-field rule of three
+
+The composition is organised by attention, not by a flat dashboard grid:
+
+1. **Primary / foveal centre:** the brain, current vessel focus, and a question
+   marker. This layer demonstrates and carries no paragraph-length copy.
+2. **Secondary / peripheral edges:** the pinned case drawer and the current
+   role surface. They remain low-motion, glanceable, and subordinate to anatomy.
+3. **Tertiary / top and depth:** one short meaning cue plus the calm ambient
+   flow field. It provides orientation and atmosphere without competing for
+   diagnosis-level attention.
+
+The same hierarchy reads vertically: **top explains, middle demonstrates,
+lower acts**. Emergency accountability, consent, exit, and clinical boundaries
+always remain foveally readable; they are never communicated by peripheral
+colour, motion, or audio alone.
 
 ## Safety and proof boundaries
 

@@ -56,8 +56,8 @@ xcodebuild ... -destination 'platform=visionOS Simulator,name=Apple Vision Pro' 
 ** BUILD SUCCEEDED **
 ```
 
-The `0.5 (5)` physical-device product also built and signed successfully at
-21:46 SGT on 2026-08-08:
+The current `0.5 (5)` physical-device product built and signed successfully at
+22:17 SGT on 2026-08-08 after the visual-field and transparent-geometry fixes:
 
 ```text
 destination=generic/platform=visionOS
@@ -84,24 +84,29 @@ or launch on XCAT.
 | PR2 three-act sheet | `progressive-story/11-pr2-three-act-contact-sheet.png` | `fa53ed44543e2e6ce2dda07814e36192b1339b296986e7f8e1b3ddbd61600697` |
 | Spatial case threshold | `14-spatial-case-unfold-simulator.png` | `748da0c08360ef8e5726b82bc6cab152e4c2397308aa9bf103b0c9e4d8d84cde` |
 | Presenter side rail | `15-presenter-side-rail-simulator.png` | `8bb6420f8d8c5462f8ca60fe437640bd01fa8b3b0488aa73ec6da5b31b563437` |
-| Family question surface | `16-family-question-surface-simulator.png` | `b6a10b4a3397a05ffacbddc01791b5ade718a37c8486bbd99ff391873213cf66` |
+| Family visual-field composition | `16-family-question-surface-simulator.png` | `80feac40810e1e5957078ea2523c39047396e8119e0002ccde4036416a2d4a14` |
 
 These artifacts prove Simulator-visible UI, model presence, deterministic
 teaching states, and the configured visual hierarchy. They do not prove anatomy
 validity, physical comfort, clinical value, or perception of spatial audio.
 
+The latest family frame specifically demonstrates the intended Simulator
+composition: central anatomy/question focus, opposite peripheral case and role
+surfaces, a short top meaning cue, and non-occluding RealityKit flow ribbons.
+It does not establish foveal comfort or peripheral legibility for a wearer.
+
 ## XCAT state
 
-`xcrun devicectl list devices` currently reports XCAT as
-`available (paired)` with identifier
+`xcrun devicectl list devices` at 22:18 SGT currently reports XCAT as
+`unavailable` with identifier
 `613CC48C-A6AD-5170-A238-D518B6012491`.
 
-Current user-built apps reported on XCAT:
+The last reachable device inventory reported these historical installations:
 
 | App | Bundle | Version/build | Evidence |
 | --- | --- | --- | --- |
 | Ashfall Vision | `com.arnav.AshfallVision` | `0.1 (1)` | Installed listing |
-| Stroke Care | `com.arnav.StrokeTime` | `0.3 (3)` | Current signed build installed; foreground launch pending |
+| Stroke Care | `com.arnav.StrokeTime` | `0.3 (3)` | Older signed build installed; foreground launch pending |
 
 The earlier presenter-mode source was signed, built for the physical visionOS
 destination, and installed over `com.arnav.StrokeTime`. A fresh device query at

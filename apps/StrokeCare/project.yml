@@ -18,7 +18,6 @@ targets:
     sources:
       - path: Resources/Assets.xcassets
       - path: Resources/Audio
-      - path: Resources/PaperShader
       - path: Sources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_anatomy_realistic_v2.usdz
         buildPhase: resources

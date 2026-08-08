@@ -1,129 +1,72 @@
-import SwiftUI
-import WebKit
+import Foundation
+import RealityKit
+import UIKit
 
-/// A low-motion environmental horizon borrowed from the Paper Shader
-/// experiment in Ashfall Vision. It is deliberately separated from the
-/// anatomical model: this layer conveys calm and continuity, not blood,
-/// perfusion, pressure, emotion, or any patient measurement.
-struct CalmPaperFlowView: UIViewRepresentable {
-    var isPaused = false
+/// Native RealityKit ribbons inspired by the earlier Paper Shader experiment.
+/// They communicate calm continuity—not blood, perfusion, pressure, emotion,
+/// or any patient measurement. Geometry keeps the horizon transparent in an
+/// immersive space; a large SwiftUI attachment would render as an occluding
+/// rectangular texture in Simulator and on device.
+@MainActor
+enum CalmFlowFieldFactory {
+    static func makeHorizon() -> Entity {
+        let root = Entity()
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(owner: self)
-    }
-
-    func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        configuration.preferences.javaScriptCanOpenWindowsAutomatically = false
-        configuration.setURLSchemeHandler(CalmPaperFlowSchemeHandler(), forURLScheme: "strokeflow")
-
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = context.coordinator
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.isScrollEnabled = false
-        webView.scrollView.bounces = false
-        webView.isUserInteractionEnabled = false
-        context.coordinator.webView = webView
-        webView.load(URLRequest(url: URL(string: "strokeflow://bundle/index.html")!))
-        return webView
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        context.coordinator.owner = self
-        context.coordinator.applySettings()
-    }
-
-    final class Coordinator: NSObject, WKNavigationDelegate {
-        var owner: CalmPaperFlowView
-        weak var webView: WKWebView?
-        private var pageIsReady = false
-
-        init(owner: CalmPaperFlowView) {
-            self.owner = owner
-        }
-
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            pageIsReady = true
-            applySettings()
-        }
-
-        func applySettings() {
-            guard pageIsReady, let webView else { return }
-            let payload: [String: Any] = [
-                "colors": ["#0B1E23", "#245C61", "#69B8AD", "#E8B9A5", "#FFF2DF"],
-                "speed": owner.isPaused ? 0.0 : 0.14,
-                "distortion": 0.30,
-                "swirl": 0.34,
-                "grain": 0.055,
-                "scale": 1.08,
-                "rotation": -4.0,
-                "originX": 0.48,
-                "originY": 0.52,
-                "wandMode": false,
-                "soundMode": false,
-                "depthMode": false,
-                "displayText": "",
-                "displayFont": "rounded"
+        for index in 0..<6 {
+            let progress = Float(index) / 5
+            let ribbon = ModelEntity(
+                mesh: .generateBox(
+                    width: 1.22 + progress * 0.26,
+                    height: 0.026 + progress * 0.008,
+                    depth: 0.008,
+                    cornerRadius: 0.014
+                ),
+                materials: [ribbonMaterial(index: index, opacity: 0.07 + CGFloat(progress) * 0.025)]
+            )
+            ribbon.name = "calm-flow-ribbon-\(index)"
+            ribbon.position = [
+                index.isMultiple(of: 2) ? -0.10 : 0.08,
+                -0.24 + progress * 0.48,
+                -0.02 - progress * 0.018
             ]
-            guard
-                JSONSerialization.isValidJSONObject(payload),
-                let data = try? JSONSerialization.data(withJSONObject: payload),
-                let json = String(data: data, encoding: .utf8)
-            else { return }
-
-            webView.evaluateJavaScript("window.paperShaderUpdate && window.paperShaderUpdate(\(json));")
-        }
-    }
-}
-
-private final class CalmPaperFlowSchemeHandler: NSObject, WKURLSchemeHandler {
-    func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        guard
-            let requestURL = urlSchemeTask.request.url,
-            let resourceRoot = Bundle.main.resourceURL?.appendingPathComponent("PaperShader", isDirectory: true)
-        else {
-            fail(urlSchemeTask)
-            return
+            ribbon.orientation = simd_quatf(
+                angle: -0.08 + progress * 0.14,
+                axis: [0, 0, 1]
+            )
+            root.addChild(ribbon)
         }
 
-        let relativePath = requestURL.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        let safePath = relativePath.isEmpty ? "index.html" : relativePath
-        let fileURL = resourceRoot.appendingPathComponent(safePath)
-
-        guard
-            fileURL.standardizedFileURL.path.hasPrefix(resourceRoot.standardizedFileURL.path),
-            let data = try? Data(contentsOf: fileURL)
-        else {
-            fail(urlSchemeTask)
-            return
-        }
-
-        let response = URLResponse(
-            url: requestURL,
-            mimeType: mimeType(for: fileURL.pathExtension),
-            expectedContentLength: data.count,
-            textEncodingName: "utf-8"
-        )
-        urlSchemeTask.didReceive(response)
-        urlSchemeTask.didReceive(data)
-        urlSchemeTask.didFinish()
+        return root
     }
 
-    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
+    static func update(_ root: Entity, time: TimeInterval, isPaused: Bool, reduceMotion: Bool) {
+        let phase = isPaused || reduceMotion ? 0 : Float(time * 0.16)
 
-    private func fail(_ urlSchemeTask: WKURLSchemeTask) {
-        urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
+        for (index, ribbon) in root.children.enumerated() {
+            let progress = Float(index) / Float(max(root.children.count - 1, 1))
+            let baseY = -0.24 + progress * 0.48
+            let drift = sin(phase + progress * 4.2) * (reduceMotion ? 0 : 0.014)
+            ribbon.position.y = baseY + drift
+            ribbon.orientation = simd_quatf(
+                angle: -0.08 + progress * 0.14 + drift * 0.9,
+                axis: [0, 0, 1]
+            )
+        }
     }
 
-    private func mimeType(for pathExtension: String) -> String {
-        switch pathExtension.lowercased() {
-        case "html": "text/html"
-        case "css": "text/css"
-        case "js": "application/javascript"
-        case "json", "map": "application/json"
-        default: "application/octet-stream"
-        }
+    private static func ribbonMaterial(index: Int, opacity: CGFloat) -> RealityKit.Material {
+        let palette: [UIColor] = [
+            UIColor(red: 0.28, green: 0.69, blue: 0.67, alpha: opacity),
+            UIColor(red: 0.77, green: 0.54, blue: 0.48, alpha: opacity),
+            UIColor(red: 0.45, green: 0.72, blue: 0.64, alpha: opacity),
+            UIColor(red: 0.82, green: 0.71, blue: 0.60, alpha: opacity)
+        ]
+
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: palette[index % palette.count])
+        material.roughness = 1.0
+        material.metallic = 0.0
+        material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
+        return material
     }
 }

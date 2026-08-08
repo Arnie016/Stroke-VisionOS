@@ -134,10 +134,10 @@ enum StrokeSceneFactory {
 
         // Stable hand/gaze targeting without generating collisions from the
         // 236k-triangle cortical mesh.
-        let interactionProxy = ModelEntity(
-            mesh: .generateBox(size: [0.16, 0.19, 0.18], cornerRadius: 0.025),
-            materials: [contextMaterial(opacity: 0.001)]
-        )
+        // Collision-only: a nearly-transparent ModelEntity still composites as
+        // a dark rounded panel in immersive space. InputTarget + Collision do
+        // not need render geometry, so the anatomy stays visually unobstructed.
+        let interactionProxy = Entity()
         interactionProxy.name = "imported-anatomy-interaction-proxy"
         interactionProxy.components.set(InputTargetComponent())
         interactionProxy.components.set(CollisionComponent(shapes: [

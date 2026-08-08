@@ -1,6 +1,27 @@
 import RealityKit
 import SwiftUI
 
+/// The room follows a visual-field rule of three.
+///
+/// PRIMARY_FOVEAL: anatomy, the active vessel focus, and a placed question.
+/// SECONDARY_PERIPHERAL: case context and role controls that remain glanceable.
+/// TERTIARY_ATMOSPHERE: a quiet meaning cue and low-motion horizon in depth.
+///
+/// The vertical grammar is equally stable: top explains, middle demonstrates,
+/// and the lower companion surface acts. Safety, consent, and exit controls
+/// remain on the readable companion surface, never in peripheral vision alone.
+private enum SpatialVisualField {
+    static let primaryAnatomy: SIMD3<Float> = [0.12, 1.82, -1.08]
+    static let primaryVesselFocus: SIMD3<Float> = [0.12, 1.79, -0.69]
+    static let secondaryCaseDrawer: SIMD3<Float> = [0.54, 1.55, -0.82]
+    static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
+
+    static let primaryScale: Float = 2.46
+    static let orientScale: Float = 2.25
+    static let secondaryScale: Float = 0.62
+    static let tertiaryScale: Float = 0.92
+}
+
 struct StrokeImmersiveView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -23,6 +44,12 @@ struct StrokeImmersiveView: View {
                     content.add(root)
                     await installSpatialAudio(on: root)
 
+                    let horizon = CalmFlowFieldFactory.makeHorizon()
+                    horizon.name = calmHorizonID
+                    horizon.position = SpatialVisualField.tertiaryHorizon
+                    horizon.scale = [SpatialVisualField.tertiaryScale, SpatialVisualField.tertiaryScale, 1]
+                    content.add(horizon)
+
                     if let annotation = attachments.entity(for: annotationID) {
                         annotation.name = annotationID
                         annotation.components.set(BillboardComponent())
@@ -30,13 +57,6 @@ struct StrokeImmersiveView: View {
                         annotationAnchor.name = annotationAnchorName
                         annotationAnchor.addChild(annotation)
                         content.add(annotationAnchor)
-                    }
-
-                    if let horizon = attachments.entity(for: calmHorizonID) {
-                        horizon.name = calmHorizonID
-                        horizon.position = [0, 1.62, -1.88]
-                        horizon.scale = [1.48, 1.48, 1]
-                        content.add(horizon)
                     }
 
                     if let marker = attachments.entity(for: questionMarkerID) {
@@ -76,8 +96,10 @@ struct StrokeImmersiveView: View {
                     // The anatomy owns the centre of the room. The progressive
                     // immersion style lets the Digital Crown expand or soften
                     // the surroundings without another app-specific control.
-                    root.position = [0, 1.82, -1.02]
-                    let emphasis: Float = experience.procedureStep == .chooseCase ? 2.45 : 2.72
+                    root.position = SpatialVisualField.primaryAnatomy
+                    let emphasis: Float = experience.procedureStep == .chooseCase
+                        ? SpatialVisualField.orientScale
+                        : SpatialVisualField.primaryScale
                     let displayScale = emphasis * smoothedZoom
                     root.scale = [displayScale, displayScale, displayScale]
                     root.orientation = simd_quatf(angle: smoothedOrbit.x, axis: [0, 1, 0])
@@ -94,14 +116,17 @@ struct StrokeImmersiveView: View {
                         annotation.scale = [0.78, 0.78, 0.78]
                         annotation.components.set(BillboardComponent())
                     }
-                    if let horizon = attachments.entity(for: calmHorizonID) {
-                        if horizon.parent == nil {
-                            content.add(horizon)
-                        }
+                    if let horizon = content.entities.first(where: { $0.name == calmHorizonID }) {
                         // Environmental mood stays behind the anatomy and is
                         // never attached to a vessel or pathology state.
-                        horizon.position = [0, 1.62, -1.88]
-                        horizon.scale = [1.48, 1.48, 1]
+                        horizon.position = SpatialVisualField.tertiaryHorizon
+                        horizon.scale = [SpatialVisualField.tertiaryScale, SpatialVisualField.tertiaryScale, 1]
+                        CalmFlowFieldFactory.update(
+                            horizon,
+                            time: now,
+                            isPaused: experience.requestedPause,
+                            reduceMotion: reduceMotion
+                        )
                     }
                     if let marker = attachments.entity(for: questionMarkerID) {
                         if marker.parent == nil {
@@ -116,15 +141,19 @@ struct StrokeImmersiveView: View {
                         if drawer.parent == nil {
                             content.add(drawer)
                         }
-                        drawer.position = [-0.56, 1.58, -0.76]
-                        drawer.scale = [0.68, 0.68, 0.68]
+                        drawer.position = SpatialVisualField.secondaryCaseDrawer
+                        drawer.scale = [
+                            SpatialVisualField.secondaryScale,
+                            SpatialVisualField.secondaryScale,
+                            SpatialVisualField.secondaryScale
+                        ]
                         drawer.components.set(BillboardComponent())
                     }
                     if let focus = attachments.entity(for: vesselFocusID) {
                         if focus.parent == nil {
                             content.add(focus)
                         }
-                        focus.position = [0.12, 1.79, -0.69]
+                        focus.position = SpatialVisualField.primaryVesselFocus
                         focus.scale = [0.52, 0.52, 0.52]
                         focus.isEnabled = experience.procedureStep != .chooseCase
                         focus.components.set(BillboardComponent())
@@ -135,21 +164,6 @@ struct StrokeImmersiveView: View {
                         StrokeIntentionAnnotation()
                             .environmentObject(experience)
                             .frame(width: 255)
-                    }
-                    Attachment(id: calmHorizonID) {
-                        CalmPaperFlowView(isPaused: reduceMotion || experience.requestedPause)
-                            .frame(width: 1540, height: 920)
-                            .opacity(0.82)
-                            .mask {
-                                RadialGradient(
-                                    colors: [.black, .black.opacity(0.92), .clear],
-                                    center: .center,
-                                    startRadius: 90,
-                                    endRadius: 740
-                                )
-                            }
-                            .allowsHitTesting(false)
-                            .accessibilityHidden(true)
                     }
                     Attachment(id: questionMarkerID) {
                         FamilyQuestionMarker()

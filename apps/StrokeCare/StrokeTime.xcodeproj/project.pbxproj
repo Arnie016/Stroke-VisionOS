@@ -7,291 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		031D9136AC2F7AAD63672A7B /* grain-gradient.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 83F5735F9D245B0B41179926 /* grain-gradient.d.ts */; };
-		052CA070D8F05ADA63E4AC19 /* shader-sizing.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 0B4CE024E4585AA31D48FE5F /* shader-sizing.js.map */; };
 		0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */; };
-		070084BC01674AB6323CDA0C /* dithering.js in Resources */ = {isa = PBXBuildFile; fileRef = 4EF49A57A0727C074CC5E7F4 /* dithering.js */; };
-		0A16938C6AFE600D827E9C52 /* dithering.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 2169CE8B47ECC3ECAEB615DD /* dithering.d.ts */; };
-		0A510582BDBAD4F8C8702524 /* fluted-glass.js in Resources */ = {isa = PBXBuildFile; fileRef = 3641B2C007651147706F5742 /* fluted-glass.js */; };
-		0AC5338B3DFD777AF4773A72 /* paper-shader.css in Resources */ = {isa = PBXBuildFile; fileRef = 842516720678A4254FC3AC9E /* paper-shader.css */; };
-		0B5904901E4F16E44C391638 /* empty-pixel.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 5E73FA7EFDF3AC94514D7C19 /* empty-pixel.js.map */; };
-		0D26BB051ECB51CBB346907D /* dot-grid.js.map in Resources */ = {isa = PBXBuildFile; fileRef = B1DE550821F7B9809E1DDC3E /* dot-grid.js.map */; };
-		12D9B388B974F61F86B27C70 /* static-mesh-gradient.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 7F57181F49BAF540AF33C5B1 /* static-mesh-gradient.d.ts */; };
 		13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A581FC5A619BE9E342C7BD /* Assets.xcassets */; };
-		13FF0BC8853A68004DE36356 /* dithering.js.map in Resources */ = {isa = PBXBuildFile; fileRef = E44B39D9EC30522FE0F1C1A0 /* dithering.js.map */; };
 		16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = F64750DC74A14E49DFEDF063 /* FlowBed.wav */; };
-		1875A0450DE4E97628114F29 /* halftone-dots.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 10850801C88EA071AAE92F94 /* halftone-dots.d.ts */; };
-		1C59E6F5425A79CE3FBFE2AE /* smoke-ring.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 66C0AAD5300B7E5CF76B8B3D /* smoke-ring.js.map */; };
-		1DBAAD98DAAA65B0959DA41F /* perlin-noise.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 0177EFD7468698693AF7DAF8 /* perlin-noise.d.ts */; };
 		1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C144C17AB279CA643242E29B /* StrokeControlDeck.swift */; };
-		205D10B402991A6E7C150F31 /* vertex-shader.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 5A4D0DA27BE17D780493F71F /* vertex-shader.js.map */; };
-		20AF50DF090783196574724D /* liquid-metal.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 3305F62B09C53054842361EC /* liquid-metal.d.ts */; };
 		21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */; };
-		238BD4C037766D61A7C40708 /* shader-mount.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 9554EC80BE44F8A4F03C60AD /* shader-mount.js.map */; };
-		23A12611339D0CF2096B7C67 /* swirl.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 3ACEFBDFE64534F5E55F3071 /* swirl.js.map */; };
-		2527639870D04F1A7B0CF398 /* warp.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C1B2087A4C70E32FDB7086B /* warp.js */; };
-		26005F9EC5CEE820B5233115 /* image-dithering.js.map in Resources */ = {isa = PBXBuildFile; fileRef = B8BF99E96ED06371448BB53F /* image-dithering.js.map */; };
-		267C6E78CCF17DB374F9102A /* shader-utils.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = DFDEF3B9F95417FCAFFD675C /* shader-utils.d.ts */; };
-		294107335DF41D794C21F48E /* paper-texture.js in Resources */ = {isa = PBXBuildFile; fileRef = AF8DBC69457053D1BD06817B /* paper-texture.js */; };
-		299403BBB483676C2470FDC1 /* get-shader-noise-texture.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = B42F67CDB6D4AD2E28E7CCED /* get-shader-noise-texture.d.ts */; };
-		2B062593874B5D19AABE6C78 /* voronoi.js in Resources */ = {isa = PBXBuildFile; fileRef = B8BFAE2865B5DDBD19C30B74 /* voronoi.js */; };
-		2C3ED865B22E6E42F3728662 /* simplex-noise.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 29F08EF6653DAC72E915DA9B /* simplex-noise.d.ts */; };
-		2C4220004B8D676D93426AF7 /* neuro-noise.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 22E5C4F4369232697721FD29 /* neuro-noise.js.map */; };
-		2EAF1A9ADAE9BD4880E0DED9 /* empty-pixel.js in Resources */ = {isa = PBXBuildFile; fileRef = 65008BC4CDF8D0ABB7CDCE64 /* empty-pixel.js */; };
-		2ED820D6E9A4B16E25E14265 /* pulsing-border.js.map in Resources */ = {isa = PBXBuildFile; fileRef = D39450C0A0737331EA044013 /* pulsing-border.js.map */; };
-		304B725E6CB9B7E843719FF1 /* vertex-shader.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 8AB6BE34B13D288F4BB39B11 /* vertex-shader.d.ts */; };
-		3305119827E31B1EA17B0CA4 /* grain-gradient.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 26CE2BE4C95F207C67591CFC /* grain-gradient.js.map */; };
-		336212CE893323659BE82BE7 /* shader-color-spaces.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 7E5B4B307D68EF27506B2C30 /* shader-color-spaces.js.map */; };
-		345D1FA7BA1CF595E38C7127 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = F5C9C989A8B0488919F76DE0 /* index.html */; };
-		358068737D9E9B6E9E566D73 /* mesh-gradient.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 4D7AFC2FF156EC603EF70461 /* mesh-gradient.d.ts */; };
-		36420A3A1629FD8F4B5EA532 /* paper-texture.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 2CE084B0513E3A9304E9FEA2 /* paper-texture.d.ts */; };
 		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
-		3803334E36457CE64AB4D374 /* liquid-metal.js in Resources */ = {isa = PBXBuildFile; fileRef = 59BE1675C857121B01B7F4E1 /* liquid-metal.js */; };
-		3FAA0875DDD80469876B26BD /* halftone-cmyk.js in Resources */ = {isa = PBXBuildFile; fileRef = 2D7A7F9277522F58A8D1EAAD /* halftone-cmyk.js */; };
-		43350532641AD456213FA048 /* metaballs.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 8C7F01CEFD3AFC72C48B6B28 /* metaballs.js.map */; };
-		44F96CDE3D7BC2EF38998BED /* waves.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 465573C735DF9AB5D0EC6B70 /* waves.js.map */; };
 		46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */; };
-		4AEC750C2EA3174EA6DF633F /* liquid-metal.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 764B912CEAF592F0636D701A /* liquid-metal.js.map */; };
-		4C8AF732C897E0461CECFD76 /* get-shader-color-from-string.js.map in Resources */ = {isa = PBXBuildFile; fileRef = F8477F007E6D0C87C253F722 /* get-shader-color-from-string.js.map */; };
-		4DC634735323501246BFE954 /* god-rays.js in Resources */ = {isa = PBXBuildFile; fileRef = FD9D76E1FA251AFAF9A357BD /* god-rays.js */; };
-		4E5B035934E3FBB2F0F7CA76 /* water.js in Resources */ = {isa = PBXBuildFile; fileRef = 104ED4638782075AD3737041 /* water.js */; };
 		4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */; };
-		4F951D2467E2648042D4C66F /* pulsing-border.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = E909584C33329916BEA25835 /* pulsing-border.d.ts */; };
-		521E9A974E76825E8C74E010 /* metaballs.js in Resources */ = {isa = PBXBuildFile; fileRef = BFD75876735A6A7E3A39A0EE /* metaballs.js */; };
-		5866D70FB9ADCDE86AC6D47D /* dot-orbit.js in Resources */ = {isa = PBXBuildFile; fileRef = CF9319A6262BFB6CEA49683F /* dot-orbit.js */; };
-		5929C2F0051292B0CA72267E /* dot-orbit.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = D2599394FE97480834F6C079 /* dot-orbit.d.ts */; };
-		5CBB232E663DA44A03088A3E /* image-dithering.js in Resources */ = {isa = PBXBuildFile; fileRef = 58956A3EDA989A817AC7C9A9 /* image-dithering.js */; };
-		5DE5699FADB78D79C36EE1A5 /* vertex-shader.js in Resources */ = {isa = PBXBuildFile; fileRef = E5101CDB1FB3E2AB73C7A498 /* vertex-shader.js */; };
-		616E4F1E4B40C2EF2818571C /* get-shader-color-from-string.js in Resources */ = {isa = PBXBuildFile; fileRef = 03CE410A1A5EEAEA25F3E411 /* get-shader-color-from-string.js */; };
-		68183638AE621F9F304D28B8 /* color-panels.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 081CB3C9FEC66046EF3B786A /* color-panels.js.map */; };
-		694060BF6EC6783C40929F93 /* warp.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 6D8F89B8AA46DF01A3D62318 /* warp.js.map */; };
-		6A63D1C93EDDE47E9D458D0B /* types.js in Resources */ = {isa = PBXBuildFile; fileRef = 2481313426D351B4D39D1F78 /* types.js */; };
 		6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */; };
-		6B8BC7EA0A8B17CAB9853B12 /* halftone-cmyk.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = C5C8B791A51A52801D51C0F4 /* halftone-cmyk.d.ts */; };
-		6E413F06D0CF1734031D3726 /* perlin-noise.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 472388FACB35452A52625FB2 /* perlin-noise.js.map */; };
-		71DEC83C01AEDB24BF60954E /* simplex-noise.js in Resources */ = {isa = PBXBuildFile; fileRef = B8376763126474086D8FCE9F /* simplex-noise.js */; };
-		742929324FCBF6F8B38EA0AC /* halftone-dots.js in Resources */ = {isa = PBXBuildFile; fileRef = A412C1324C862E3BCE8F07B4 /* halftone-dots.js */; };
-		75A3963D87ECE22C4A0F58F6 /* mesh-gradient.js in Resources */ = {isa = PBXBuildFile; fileRef = F0531B2505DB4A605FC6FFB9 /* mesh-gradient.js */; };
 		76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */; };
 		7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 38684AD7663E54E8E55A7C3F /* dural_patch.usdz */; };
-		7980E3EA82EF75AC1C619B3B /* waves.js in Resources */ = {isa = PBXBuildFile; fileRef = 3A1C81110237459E92C178A6 /* waves.js */; };
-		7B2B2E8799728A0109029117 /* mesh-gradient.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 1C354F39F2321094390D7FFC /* mesh-gradient.js.map */; };
-		7C954DFA35D54408478CBD84 /* static-mesh-gradient.js in Resources */ = {isa = PBXBuildFile; fileRef = EF184851C2086A21CA3E60DD /* static-mesh-gradient.js */; };
 		7F98B5090691342A2B4E810F /* StrokeImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */; };
-		814FACC1556C8492FEDAEF8D /* perlin-noise.js in Resources */ = {isa = PBXBuildFile; fileRef = 2CF7C5DFA152DCBEB830DB24 /* perlin-noise.js */; };
-		822915A17E6798FE9FA84444 /* shader-mount.js in Resources */ = {isa = PBXBuildFile; fileRef = A32A1A1946CB063282708EB1 /* shader-mount.js */; };
-		8522DFF9949F6783A12CD851 /* shader-color-spaces.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 59BAD0F34561B098EC43F038 /* shader-color-spaces.d.ts */; };
 		858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */; };
-		86FFFD6111AEABE5E397833D /* gem-smoke.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = D917D8A4053C231D9BFB14B0 /* gem-smoke.d.ts */; };
-		885BADC638721EBBADEC108E /* get-shader-color-from-string.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = A9BE353C4D625BE70758A353 /* get-shader-color-from-string.d.ts */; };
-		89243A7520229345EE6F3823 /* swirl.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = C382BA37189DB9B3F4AA7C72 /* swirl.d.ts */; };
-		895CAC980BB54DEF4B228D1E /* static-mesh-gradient.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 8547034B28F58222BE01FB1B /* static-mesh-gradient.js.map */; };
-		8A7E98039EB78343E07BDD23 /* voronoi.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = D339665BB45D43CE4AD3101A /* voronoi.d.ts */; };
-		8AB39B818BDC08E27A6C73A9 /* spiral.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 3B9A87B69B40CBF21E97F8C6 /* spiral.d.ts */; };
-		8AEFCE46C45AD3A8224E730E /* metaballs.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = B281BBBDE6D21487C3EB87C6 /* metaballs.d.ts */; };
-		8C275FDE980FA6A5A9F55A02 /* gem-smoke.js in Resources */ = {isa = PBXBuildFile; fileRef = 2464415BE5930E46EFFE7D84 /* gem-smoke.js */; };
-		8EBC4704F1893B9F1DC60188 /* gem-smoke.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 34A66DA9B2AA300D77F54A54 /* gem-smoke.js.map */; };
-		8F5E353942AEA5857556AE7F /* smoke-ring.js in Resources */ = {isa = PBXBuildFile; fileRef = 6B3C7E013117C1171A64E15C /* smoke-ring.js */; };
-		9DA98F91A5712D3CDC1C1889 /* heatmap.js in Resources */ = {isa = PBXBuildFile; fileRef = 82B12FDC7CA2C38AE8758033 /* heatmap.js */; };
-		9E6F68C5323D11E6E6A3FEE9 /* grain-gradient.js in Resources */ = {isa = PBXBuildFile; fileRef = AF2E85E9342DCD20F8C4FC16 /* grain-gradient.js */; };
-		9EF5769706E5645828403F5C /* dot-grid.js in Resources */ = {isa = PBXBuildFile; fileRef = 5EEF8614E882BF7C85AD00E6 /* dot-grid.js */; };
 		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
-		A0236DEF5196804F11405B19 /* spiral.js in Resources */ = {isa = PBXBuildFile; fileRef = 7E2AF578FB074B8452EA4DD1 /* spiral.js */; };
-		A2A168F3655BB23C21A141AE /* static-radial-gradient.js in Resources */ = {isa = PBXBuildFile; fileRef = 2BF3DBA8031539640AC68256 /* static-radial-gradient.js */; };
-		A350DB669BA89AE08A9E156C /* shader-mount.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = EA99502C6990E77C4B1B44FF /* shader-mount.d.ts */; };
-		A399073BABD39EA78D29151C /* shader-sizing.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 55FE385C3A7FA6A5163F9A33 /* shader-sizing.d.ts */; };
-		A6C90F1D319F4CFAA3307DCB /* NOTICE.md in Resources */ = {isa = PBXBuildFile; fileRef = 726D80B66818A02456BB31F5 /* NOTICE.md */; };
-		A71D107994CD37424641D7EB /* halftone-dots.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 9A1DC415FF801957D1EE3919 /* halftone-dots.js.map */; };
-		AB66E705F911DCB1EDBA85FB /* types.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = BB80ECE3001FA6F0489A312A /* types.d.ts */; };
-		ADB5F7855CBDCBA3785A84A6 /* shader-utils.js in Resources */ = {isa = PBXBuildFile; fileRef = 0BEE09F9A702BBE5E616EDF2 /* shader-utils.js */; };
-		AE65BC537AC9492D64948104 /* neuro-noise.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 751D5DF2F560EC4E23126C61 /* neuro-noise.d.ts */; };
-		AF4F071A1E68B17313054770 /* pulsing-border.js in Resources */ = {isa = PBXBuildFile; fileRef = F8F1BDFA00DCE43A8475807F /* pulsing-border.js */; };
-		AFB4241EBA2CBD162B276FF1 /* empty-pixel.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 4DA86BF8553B73238447A6FA /* empty-pixel.d.ts */; };
-		B1178DFF108373F7B971CEDF /* god-rays.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 24675AE33EFAAD7B0726183D /* god-rays.d.ts */; };
-		B536FA2FE05964823AEF2CE3 /* heatmap.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 0B8EA215669D6A5EC1E934F3 /* heatmap.js.map */; };
-		B933201ED3C494D7F2FEF259 /* waves.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 4D5E6A1621BB78BBCE5453B1 /* waves.d.ts */; };
 		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
-		BAB194CDA809AE0AB34B3F8B /* index.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 32F3370EB9C6692D84D27CA5 /* index.d.ts */; };
-		BAB3283AB3406FEF28108AF0 /* warp.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 74E09CB550E582EC68281A84 /* warp.d.ts */; };
-		BCB725652BB2DF8C27C5132D /* shader-sizing.js in Resources */ = {isa = PBXBuildFile; fileRef = E2C09667EC9019663020F523 /* shader-sizing.js */; };
-		BDEB38782E907E0940A317E1 /* shader-utils.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 836FA0709EA7471B7A33A547 /* shader-utils.js.map */; };
-		C06F45E79EE8406B73456EA2 /* image-dithering.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 9DB7DE72AD8BE1FDA307C37D /* image-dithering.d.ts */; };
-		C49EC7D23110E5A76349EF9C /* color-panels.js in Resources */ = {isa = PBXBuildFile; fileRef = F79C2108B36FC048724EA8EF /* color-panels.js */; };
-		C573426DC5603269DAFC828B /* types.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 5D3F5558A280B1FF60A6AE95 /* types.js.map */; };
-		C7C75B162609F00F3E62EFB5 /* color-panels.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 680FB5FF2AFC2B3CC3CFAFA3 /* color-panels.d.ts */; };
-		CDD0817D75AE3975EB408486 /* shader-color-spaces.js in Resources */ = {isa = PBXBuildFile; fileRef = 4002C3E9AA0C833E54CB3B76 /* shader-color-spaces.js */; };
-		CDEB46773AD4F61DFCB7F9CD /* index.js in Resources */ = {isa = PBXBuildFile; fileRef = E4D389C37146418929AB7109 /* index.js */; };
-		CEC5112E00D9BB68910FCF5D /* smoke-ring.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 47FB992ADBE92A759959F2E4 /* smoke-ring.d.ts */; };
-		CFC16201FE68FF714C0B2D0A /* neuro-noise.js in Resources */ = {isa = PBXBuildFile; fileRef = 519DD88E423E8DE4B4FCD300 /* neuro-noise.js */; };
-		D16AF320716FA7C9A2C29FED /* get-shader-noise-texture.js in Resources */ = {isa = PBXBuildFile; fileRef = EA743B006B51B3369ADF5547 /* get-shader-noise-texture.js */; };
-		D2387546C9F0F89E4A16E069 /* paper-texture.js.map in Resources */ = {isa = PBXBuildFile; fileRef = B9CE9A33B0C13DE40663A93F /* paper-texture.js.map */; };
-		D246AB0A1B8B6F285876C2AC /* fluted-glass.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 5A884F8B2C3E23DEE70C8A9E /* fluted-glass.js.map */; };
-		D2D63AC85F9D47D9CAB16837 /* heatmap.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = CAE4CCB7A12FDA175720F434 /* heatmap.d.ts */; };
-		D3824EE799F092637B68D31A /* halftone-cmyk.js.map in Resources */ = {isa = PBXBuildFile; fileRef = B71E4D357C19079BA26584C6 /* halftone-cmyk.js.map */; };
-		D4A8E6CB29E72F57E6C308D0 /* index.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 7863918C97FA02D4FDA0700F /* index.js.map */; };
-		D508392C852E8B8CC167F1A6 /* paper-shader.js in Resources */ = {isa = PBXBuildFile; fileRef = B456A24A7B56082191441E90 /* paper-shader.js */; };
-		D6F0FE69E40401CC4525D4E7 /* swirl.js in Resources */ = {isa = PBXBuildFile; fileRef = CB4DCB7631C5FDDD44B8DE39 /* swirl.js */; };
-		D84DBA926AED295BB729B183 /* god-rays.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 7C6F3516B5B587ADB3230911 /* god-rays.js.map */; };
-		D85DEA3F1D69633BCF6C0FA3 /* fluted-glass.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 937C5BE9312D760C6F67A2D1 /* fluted-glass.d.ts */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
-		DD5E5D0E27024D5553F4594D /* dot-grid.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 4C6C06140AC33A809BF4CC57 /* dot-grid.d.ts */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
-		E9D7E67F76708793A5E625A4 /* voronoi.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 9CC49DA987A2F7C94E0A1026 /* voronoi.js.map */; };
-		ECD280561E275451684ADA5F /* water.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 2B8CF8C311DEE10A9A75E3F2 /* water.d.ts */; };
-		ED46D2FE2C69CC41A25E7EEA /* water.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 2905C02EB56E428E36804596 /* water.js.map */; };
-		EE55315AC1FD35AF8E58FD34 /* static-radial-gradient.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 2CD78CCDC7DB065C3FFAE928 /* static-radial-gradient.js.map */; };
-		F08C036E95843CC3C59656EE /* dot-orbit.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 1B13861D86BD45ED834C4900 /* dot-orbit.js.map */; };
-		F2B1A1979EB58FC1DD7FB405 /* simplex-noise.js.map in Resources */ = {isa = PBXBuildFile; fileRef = 25A34BA9BFA30928B1EEFF00 /* simplex-noise.js.map */; };
 		F35080EB0A3184483D874359 /* PressureBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = AD36F9CDA16675FE73F438E6 /* PressureBed.wav */; };
 		F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */; };
-		FBC9100046432635964DA668 /* spiral.js.map in Resources */ = {isa = PBXBuildFile; fileRef = C91C77E11520A339529FBE1A /* spiral.js.map */; };
-		FC9258F4B995F0E261F971E6 /* static-radial-gradient.d.ts in Resources */ = {isa = PBXBuildFile; fileRef = 2C294BEDD97E6FCFE03605AC /* static-radial-gradient.d.ts */; };
-		FDE7322552752CDDECCAED59 /* get-shader-noise-texture.js.map in Resources */ = {isa = PBXBuildFile; fileRef = B39D8750D6E43037D3BCAF36 /* get-shader-noise-texture.js.map */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0177EFD7468698693AF7DAF8 /* perlin-noise.d.ts */ = {isa = PBXFileReference; path = "perlin-noise.d.ts"; sourceTree = "<group>"; };
-		03CE410A1A5EEAEA25F3E411 /* get-shader-color-from-string.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "get-shader-color-from-string.js"; sourceTree = "<group>"; };
-		081CB3C9FEC66046EF3B786A /* color-panels.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "color-panels.js.map"; sourceTree = "<group>"; };
-		0B4CE024E4585AA31D48FE5F /* shader-sizing.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "shader-sizing.js.map"; sourceTree = "<group>"; };
-		0B8EA215669D6A5EC1E934F3 /* heatmap.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = heatmap.js.map; sourceTree = "<group>"; };
-		0BEE09F9A702BBE5E616EDF2 /* shader-utils.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "shader-utils.js"; sourceTree = "<group>"; };
-		104ED4638782075AD3737041 /* water.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = water.js; sourceTree = "<group>"; };
-		10850801C88EA071AAE92F94 /* halftone-dots.d.ts */ = {isa = PBXFileReference; path = "halftone-dots.d.ts"; sourceTree = "<group>"; };
 		1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = ischemic_mca_clot_v2.usdz; sourceTree = "<group>"; };
-		1B13861D86BD45ED834C4900 /* dot-orbit.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "dot-orbit.js.map"; sourceTree = "<group>"; };
-		1C354F39F2321094390D7FFC /* mesh-gradient.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "mesh-gradient.js.map"; sourceTree = "<group>"; };
-		2169CE8B47ECC3ECAEB615DD /* dithering.d.ts */ = {isa = PBXFileReference; path = dithering.d.ts; sourceTree = "<group>"; };
-		22E5C4F4369232697721FD29 /* neuro-noise.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "neuro-noise.js.map"; sourceTree = "<group>"; };
-		2464415BE5930E46EFFE7D84 /* gem-smoke.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gem-smoke.js"; sourceTree = "<group>"; };
-		24675AE33EFAAD7B0726183D /* god-rays.d.ts */ = {isa = PBXFileReference; path = "god-rays.d.ts"; sourceTree = "<group>"; };
-		2481313426D351B4D39D1F78 /* types.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = types.js; sourceTree = "<group>"; };
-		25A34BA9BFA30928B1EEFF00 /* simplex-noise.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "simplex-noise.js.map"; sourceTree = "<group>"; };
-		26CE2BE4C95F207C67591CFC /* grain-gradient.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "grain-gradient.js.map"; sourceTree = "<group>"; };
-		2905C02EB56E428E36804596 /* water.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = water.js.map; sourceTree = "<group>"; };
-		29F08EF6653DAC72E915DA9B /* simplex-noise.d.ts */ = {isa = PBXFileReference; path = "simplex-noise.d.ts"; sourceTree = "<group>"; };
-		2B8CF8C311DEE10A9A75E3F2 /* water.d.ts */ = {isa = PBXFileReference; path = water.d.ts; sourceTree = "<group>"; };
-		2BF3DBA8031539640AC68256 /* static-radial-gradient.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "static-radial-gradient.js"; sourceTree = "<group>"; };
-		2C294BEDD97E6FCFE03605AC /* static-radial-gradient.d.ts */ = {isa = PBXFileReference; path = "static-radial-gradient.d.ts"; sourceTree = "<group>"; };
-		2CD78CCDC7DB065C3FFAE928 /* static-radial-gradient.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "static-radial-gradient.js.map"; sourceTree = "<group>"; };
-		2CE084B0513E3A9304E9FEA2 /* paper-texture.d.ts */ = {isa = PBXFileReference; path = "paper-texture.d.ts"; sourceTree = "<group>"; };
-		2CF7C5DFA152DCBEB830DB24 /* perlin-noise.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "perlin-noise.js"; sourceTree = "<group>"; };
-		2D7A7F9277522F58A8D1EAAD /* halftone-cmyk.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "halftone-cmyk.js"; sourceTree = "<group>"; };
-		32F3370EB9C6692D84D27CA5 /* index.d.ts */ = {isa = PBXFileReference; path = index.d.ts; sourceTree = "<group>"; };
-		3305F62B09C53054842361EC /* liquid-metal.d.ts */ = {isa = PBXFileReference; path = "liquid-metal.d.ts"; sourceTree = "<group>"; };
-		34A66DA9B2AA300D77F54A54 /* gem-smoke.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "gem-smoke.js.map"; sourceTree = "<group>"; };
-		3641B2C007651147706F5742 /* fluted-glass.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "fluted-glass.js"; sourceTree = "<group>"; };
 		38684AD7663E54E8E55A7C3F /* dural_patch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_patch.usdz; sourceTree = "<group>"; };
-		3A1C81110237459E92C178A6 /* waves.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = waves.js; sourceTree = "<group>"; };
-		3A4949DB6D62E7C6DBDD5833 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
-		3ACEFBDFE64534F5E55F3071 /* swirl.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = swirl.js.map; sourceTree = "<group>"; };
-		3B9A87B69B40CBF21E97F8C6 /* spiral.d.ts */ = {isa = PBXFileReference; path = spiral.d.ts; sourceTree = "<group>"; };
-		4002C3E9AA0C833E54CB3B76 /* shader-color-spaces.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "shader-color-spaces.js"; sourceTree = "<group>"; };
-		465573C735DF9AB5D0EC6B70 /* waves.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = waves.js.map; sourceTree = "<group>"; };
-		472388FACB35452A52625FB2 /* perlin-noise.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "perlin-noise.js.map"; sourceTree = "<group>"; };
-		47FB992ADBE92A759959F2E4 /* smoke-ring.d.ts */ = {isa = PBXFileReference; path = "smoke-ring.d.ts"; sourceTree = "<group>"; };
 		4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dura_mater_cutaway_conceptual_v2.usdz; sourceTree = "<group>"; };
-		4C1B2087A4C70E32FDB7086B /* warp.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = warp.js; sourceTree = "<group>"; };
-		4C6C06140AC33A809BF4CC57 /* dot-grid.d.ts */ = {isa = PBXFileReference; path = "dot-grid.d.ts"; sourceTree = "<group>"; };
 		4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalmPaperFlowView.swift; sourceTree = "<group>"; };
-		4D5E6A1621BB78BBCE5453B1 /* waves.d.ts */ = {isa = PBXFileReference; path = waves.d.ts; sourceTree = "<group>"; };
-		4D7AFC2FF156EC603EF70461 /* mesh-gradient.d.ts */ = {isa = PBXFileReference; path = "mesh-gradient.d.ts"; sourceTree = "<group>"; };
-		4DA86BF8553B73238447A6FA /* empty-pixel.d.ts */ = {isa = PBXFileReference; path = "empty-pixel.d.ts"; sourceTree = "<group>"; };
-		4EF49A57A0727C074CC5E7F4 /* dithering.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = dithering.js; sourceTree = "<group>"; };
 		50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = edema_swelling.usdz; sourceTree = "<group>"; };
-		519DD88E423E8DE4B4FCD300 /* neuro-noise.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "neuro-noise.js"; sourceTree = "<group>"; };
-		55FE385C3A7FA6A5163F9A33 /* shader-sizing.d.ts */ = {isa = PBXFileReference; path = "shader-sizing.d.ts"; sourceTree = "<group>"; };
-		58956A3EDA989A817AC7C9A9 /* image-dithering.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "image-dithering.js"; sourceTree = "<group>"; };
-		59BAD0F34561B098EC43F038 /* shader-color-spaces.d.ts */ = {isa = PBXFileReference; path = "shader-color-spaces.d.ts"; sourceTree = "<group>"; };
-		59BE1675C857121B01B7F4E1 /* liquid-metal.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "liquid-metal.js"; sourceTree = "<group>"; };
-		5A4D0DA27BE17D780493F71F /* vertex-shader.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "vertex-shader.js.map"; sourceTree = "<group>"; };
-		5A884F8B2C3E23DEE70C8A9E /* fluted-glass.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "fluted-glass.js.map"; sourceTree = "<group>"; };
 		5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeSceneFactory.swift; sourceTree = "<group>"; };
-		5D3F5558A280B1FF60A6AE95 /* types.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = types.js.map; sourceTree = "<group>"; };
 		5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeExperienceState.swift; sourceTree = "<group>"; };
-		5E73FA7EFDF3AC94514D7C19 /* empty-pixel.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "empty-pixel.js.map"; sourceTree = "<group>"; };
-		5EEF8614E882BF7C85AD00E6 /* dot-grid.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "dot-grid.js"; sourceTree = "<group>"; };
 		61FC44E51C2EC58E8E04E60E /* StrokeTime.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StrokeTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		65008BC4CDF8D0ABB7CDCE64 /* empty-pixel.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "empty-pixel.js"; sourceTree = "<group>"; };
 		65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTimeApp.swift; sourceTree = "<group>"; };
-		66C0AAD5300B7E5CF76B8B3D /* smoke-ring.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "smoke-ring.js.map"; sourceTree = "<group>"; };
-		680FB5FF2AFC2B3CC3CFAFA3 /* color-panels.d.ts */ = {isa = PBXFileReference; path = "color-panels.d.ts"; sourceTree = "<group>"; };
-		6B3C7E013117C1171A64E15C /* smoke-ring.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "smoke-ring.js"; sourceTree = "<group>"; };
-		6D8F89B8AA46DF01A3D62318 /* warp.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = warp.js.map; sourceTree = "<group>"; };
 		70A581FC5A619BE9E342C7BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		726D80B66818A02456BB31F5 /* NOTICE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = NOTICE.md; sourceTree = "<group>"; };
-		74E09CB550E582EC68281A84 /* warp.d.ts */ = {isa = PBXFileReference; path = warp.d.ts; sourceTree = "<group>"; };
 		7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_arteries_realistic_v2.usdz; sourceTree = "<group>"; };
-		751D5DF2F560EC4E23126C61 /* neuro-noise.d.ts */ = {isa = PBXFileReference; path = "neuro-noise.d.ts"; sourceTree = "<group>"; };
-		764B912CEAF592F0636D701A /* liquid-metal.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "liquid-metal.js.map"; sourceTree = "<group>"; };
-		7863918C97FA02D4FDA0700F /* index.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = index.js.map; sourceTree = "<group>"; };
-		7C6F3516B5B587ADB3230911 /* god-rays.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "god-rays.js.map"; sourceTree = "<group>"; };
-		7E2AF578FB074B8452EA4DD1 /* spiral.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = spiral.js; sourceTree = "<group>"; };
-		7E5B4B307D68EF27506B2C30 /* shader-color-spaces.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "shader-color-spaces.js.map"; sourceTree = "<group>"; };
-		7F57181F49BAF540AF33C5B1 /* static-mesh-gradient.d.ts */ = {isa = PBXFileReference; path = "static-mesh-gradient.d.ts"; sourceTree = "<group>"; };
-		82B12FDC7CA2C38AE8758033 /* heatmap.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = heatmap.js; sourceTree = "<group>"; };
-		836FA0709EA7471B7A33A547 /* shader-utils.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "shader-utils.js.map"; sourceTree = "<group>"; };
-		83F5735F9D245B0B41179926 /* grain-gradient.d.ts */ = {isa = PBXFileReference; path = "grain-gradient.d.ts"; sourceTree = "<group>"; };
-		842516720678A4254FC3AC9E /* paper-shader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "paper-shader.css"; sourceTree = "<group>"; };
-		8547034B28F58222BE01FB1B /* static-mesh-gradient.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "static-mesh-gradient.js.map"; sourceTree = "<group>"; };
-		8AB6BE34B13D288F4BB39B11 /* vertex-shader.d.ts */ = {isa = PBXFileReference; path = "vertex-shader.d.ts"; sourceTree = "<group>"; };
-		8C7F01CEFD3AFC72C48B6B28 /* metaballs.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = metaballs.js.map; sourceTree = "<group>"; };
 		8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
-		937C5BE9312D760C6F67A2D1 /* fluted-glass.d.ts */ = {isa = PBXFileReference; path = "fluted-glass.d.ts"; sourceTree = "<group>"; };
-		9554EC80BE44F8A4F03C60AD /* shader-mount.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "shader-mount.js.map"; sourceTree = "<group>"; };
-		9A1DC415FF801957D1EE3919 /* halftone-dots.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "halftone-dots.js.map"; sourceTree = "<group>"; };
-		9CC49DA987A2F7C94E0A1026 /* voronoi.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = voronoi.js.map; sourceTree = "<group>"; };
-		9DB7DE72AD8BE1FDA307C37D /* image-dithering.d.ts */ = {isa = PBXFileReference; path = "image-dithering.d.ts"; sourceTree = "<group>"; };
-		A32A1A1946CB063282708EB1 /* shader-mount.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "shader-mount.js"; sourceTree = "<group>"; };
-		A412C1324C862E3BCE8F07B4 /* halftone-dots.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "halftone-dots.js"; sourceTree = "<group>"; };
-		A9BE353C4D625BE70758A353 /* get-shader-color-from-string.d.ts */ = {isa = PBXFileReference; path = "get-shader-color-from-string.d.ts"; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
-		AF2E85E9342DCD20F8C4FC16 /* grain-gradient.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "grain-gradient.js"; sourceTree = "<group>"; };
-		AF8DBC69457053D1BD06817B /* paper-texture.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "paper-texture.js"; sourceTree = "<group>"; };
-		B1DE550821F7B9809E1DDC3E /* dot-grid.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "dot-grid.js.map"; sourceTree = "<group>"; };
-		B281BBBDE6D21487C3EB87C6 /* metaballs.d.ts */ = {isa = PBXFileReference; path = metaballs.d.ts; sourceTree = "<group>"; };
-		B39D8750D6E43037D3BCAF36 /* get-shader-noise-texture.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "get-shader-noise-texture.js.map"; sourceTree = "<group>"; };
-		B42F67CDB6D4AD2E28E7CCED /* get-shader-noise-texture.d.ts */ = {isa = PBXFileReference; path = "get-shader-noise-texture.d.ts"; sourceTree = "<group>"; };
-		B456A24A7B56082191441E90 /* paper-shader.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "paper-shader.js"; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
-		B71E4D357C19079BA26584C6 /* halftone-cmyk.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "halftone-cmyk.js.map"; sourceTree = "<group>"; };
-		B8376763126474086D8FCE9F /* simplex-noise.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "simplex-noise.js"; sourceTree = "<group>"; };
-		B8BF99E96ED06371448BB53F /* image-dithering.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "image-dithering.js.map"; sourceTree = "<group>"; };
-		B8BFAE2865B5DDBD19C30B74 /* voronoi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = voronoi.js; sourceTree = "<group>"; };
-		B9CE9A33B0C13DE40663A93F /* paper-texture.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "paper-texture.js.map"; sourceTree = "<group>"; };
-		BB80ECE3001FA6F0489A312A /* types.d.ts */ = {isa = PBXFileReference; path = types.d.ts; sourceTree = "<group>"; };
-		BFD75876735A6A7E3A39A0EE /* metaballs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = metaballs.js; sourceTree = "<group>"; };
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
-		C382BA37189DB9B3F4AA7C72 /* swirl.d.ts */ = {isa = PBXFileReference; path = swirl.d.ts; sourceTree = "<group>"; };
-		C5C8B791A51A52801D51C0F4 /* halftone-cmyk.d.ts */ = {isa = PBXFileReference; path = "halftone-cmyk.d.ts"; sourceTree = "<group>"; };
-		C91C77E11520A339529FBE1A /* spiral.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = spiral.js.map; sourceTree = "<group>"; };
-		CAE4CCB7A12FDA175720F434 /* heatmap.d.ts */ = {isa = PBXFileReference; path = heatmap.d.ts; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
-		CB4DCB7631C5FDDD44B8DE39 /* swirl.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = swirl.js; sourceTree = "<group>"; };
-		CF9319A6262BFB6CEA49683F /* dot-orbit.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "dot-orbit.js"; sourceTree = "<group>"; };
-		D2599394FE97480834F6C079 /* dot-orbit.d.ts */ = {isa = PBXFileReference; path = "dot-orbit.d.ts"; sourceTree = "<group>"; };
-		D339665BB45D43CE4AD3101A /* voronoi.d.ts */ = {isa = PBXFileReference; path = voronoi.d.ts; sourceTree = "<group>"; };
-		D39450C0A0737331EA044013 /* pulsing-border.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "pulsing-border.js.map"; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
-		D917D8A4053C231D9BFB14B0 /* gem-smoke.d.ts */ = {isa = PBXFileReference; path = "gem-smoke.d.ts"; sourceTree = "<group>"; };
-		DFDEF3B9F95417FCAFFD675C /* shader-utils.d.ts */ = {isa = PBXFileReference; path = "shader-utils.d.ts"; sourceTree = "<group>"; };
-		E2C09667EC9019663020F523 /* shader-sizing.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "shader-sizing.js"; sourceTree = "<group>"; };
-		E44B39D9EC30522FE0F1C1A0 /* dithering.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = dithering.js.map; sourceTree = "<group>"; };
-		E4D389C37146418929AB7109 /* index.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = index.js; sourceTree = "<group>"; };
-		E5101CDB1FB3E2AB73C7A498 /* vertex-shader.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "vertex-shader.js"; sourceTree = "<group>"; };
-		E909584C33329916BEA25835 /* pulsing-border.d.ts */ = {isa = PBXFileReference; path = "pulsing-border.d.ts"; sourceTree = "<group>"; };
 		EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeJourneyLaunchView.swift; sourceTree = "<group>"; };
-		EA743B006B51B3369ADF5547 /* get-shader-noise-texture.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "get-shader-noise-texture.js"; sourceTree = "<group>"; };
-		EA99502C6990E77C4B1B44FF /* shader-mount.d.ts */ = {isa = PBXFileReference; path = "shader-mount.d.ts"; sourceTree = "<group>"; };
-		EF184851C2086A21CA3E60DD /* static-mesh-gradient.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "static-mesh-gradient.js"; sourceTree = "<group>"; };
-		F0531B2505DB4A605FC6FFB9 /* mesh-gradient.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "mesh-gradient.js"; sourceTree = "<group>"; };
-		F5C9C989A8B0488919F76DE0 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		F64750DC74A14E49DFEDF063 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
-		F79C2108B36FC048724EA8EF /* color-panels.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "color-panels.js"; sourceTree = "<group>"; };
-		F8477F007E6D0C87C253F722 /* get-shader-color-from-string.js.map */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = "get-shader-color-from-string.js.map"; sourceTree = "<group>"; };
-		F8F1BDFA00DCE43A8475807F /* pulsing-border.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "pulsing-border.js"; sourceTree = "<group>"; };
-		FD9D76E1FA251AFAF9A357BD /* god-rays.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "god-rays.js"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -306,19 +63,6 @@
 			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz;
 			sourceTree = "<group>";
 		};
-		8AA6DE513A88F98CB3ED8C24 /* PaperShader */ = {
-			isa = PBXGroup;
-			children = (
-				F5C9C989A8B0488919F76DE0 /* index.html */,
-				726D80B66818A02456BB31F5 /* NOTICE.md */,
-				842516720678A4254FC3AC9E /* paper-shader.css */,
-				B456A24A7B56082191441E90 /* paper-shader.js */,
-				E29C8575EC66D0EB62AC62C5 /* vendor */,
-			);
-			name = PaperShader;
-			path = Resources/PaperShader;
-			sourceTree = "<group>";
-		};
 		93BD8CC6E16F4FD9D1D28BE9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -331,7 +75,6 @@
 			isa = PBXGroup;
 			children = (
 				B6A8B1824ABF106BD38149C0 /* Audio */,
-				8AA6DE513A88F98CB3ED8C24 /* PaperShader */,
 				AE09F0E5E7835807FA968CB8 /* Resources */,
 				9DD278786D9ADEFB4C872605 /* Sources */,
 				F232DE35F4303E0EB1034FBA /* usdz */,
@@ -371,147 +114,6 @@
 			);
 			name = Audio;
 			path = Resources/Audio;
-			sourceTree = "<group>";
-		};
-		CC15D8C48093388668934314 /* paper-shaders */ = {
-			isa = PBXGroup;
-			children = (
-				4DA86BF8553B73238447A6FA /* empty-pixel.d.ts */,
-				65008BC4CDF8D0ABB7CDCE64 /* empty-pixel.js */,
-				5E73FA7EFDF3AC94514D7C19 /* empty-pixel.js.map */,
-				A9BE353C4D625BE70758A353 /* get-shader-color-from-string.d.ts */,
-				03CE410A1A5EEAEA25F3E411 /* get-shader-color-from-string.js */,
-				F8477F007E6D0C87C253F722 /* get-shader-color-from-string.js.map */,
-				B42F67CDB6D4AD2E28E7CCED /* get-shader-noise-texture.d.ts */,
-				EA743B006B51B3369ADF5547 /* get-shader-noise-texture.js */,
-				B39D8750D6E43037D3BCAF36 /* get-shader-noise-texture.js.map */,
-				32F3370EB9C6692D84D27CA5 /* index.d.ts */,
-				E4D389C37146418929AB7109 /* index.js */,
-				7863918C97FA02D4FDA0700F /* index.js.map */,
-				3A4949DB6D62E7C6DBDD5833 /* LICENSE */,
-				59BAD0F34561B098EC43F038 /* shader-color-spaces.d.ts */,
-				4002C3E9AA0C833E54CB3B76 /* shader-color-spaces.js */,
-				7E5B4B307D68EF27506B2C30 /* shader-color-spaces.js.map */,
-				EA99502C6990E77C4B1B44FF /* shader-mount.d.ts */,
-				A32A1A1946CB063282708EB1 /* shader-mount.js */,
-				9554EC80BE44F8A4F03C60AD /* shader-mount.js.map */,
-				55FE385C3A7FA6A5163F9A33 /* shader-sizing.d.ts */,
-				E2C09667EC9019663020F523 /* shader-sizing.js */,
-				0B4CE024E4585AA31D48FE5F /* shader-sizing.js.map */,
-				DFDEF3B9F95417FCAFFD675C /* shader-utils.d.ts */,
-				0BEE09F9A702BBE5E616EDF2 /* shader-utils.js */,
-				836FA0709EA7471B7A33A547 /* shader-utils.js.map */,
-				BB80ECE3001FA6F0489A312A /* types.d.ts */,
-				2481313426D351B4D39D1F78 /* types.js */,
-				5D3F5558A280B1FF60A6AE95 /* types.js.map */,
-				8AB6BE34B13D288F4BB39B11 /* vertex-shader.d.ts */,
-				E5101CDB1FB3E2AB73C7A498 /* vertex-shader.js */,
-				5A4D0DA27BE17D780493F71F /* vertex-shader.js.map */,
-				CF8DBCD7F55F9C594CF5643A /* shaders */,
-			);
-			path = "paper-shaders";
-			sourceTree = "<group>";
-		};
-		CF8DBCD7F55F9C594CF5643A /* shaders */ = {
-			isa = PBXGroup;
-			children = (
-				680FB5FF2AFC2B3CC3CFAFA3 /* color-panels.d.ts */,
-				F79C2108B36FC048724EA8EF /* color-panels.js */,
-				081CB3C9FEC66046EF3B786A /* color-panels.js.map */,
-				2169CE8B47ECC3ECAEB615DD /* dithering.d.ts */,
-				4EF49A57A0727C074CC5E7F4 /* dithering.js */,
-				E44B39D9EC30522FE0F1C1A0 /* dithering.js.map */,
-				4C6C06140AC33A809BF4CC57 /* dot-grid.d.ts */,
-				5EEF8614E882BF7C85AD00E6 /* dot-grid.js */,
-				B1DE550821F7B9809E1DDC3E /* dot-grid.js.map */,
-				D2599394FE97480834F6C079 /* dot-orbit.d.ts */,
-				CF9319A6262BFB6CEA49683F /* dot-orbit.js */,
-				1B13861D86BD45ED834C4900 /* dot-orbit.js.map */,
-				937C5BE9312D760C6F67A2D1 /* fluted-glass.d.ts */,
-				3641B2C007651147706F5742 /* fluted-glass.js */,
-				5A884F8B2C3E23DEE70C8A9E /* fluted-glass.js.map */,
-				D917D8A4053C231D9BFB14B0 /* gem-smoke.d.ts */,
-				2464415BE5930E46EFFE7D84 /* gem-smoke.js */,
-				34A66DA9B2AA300D77F54A54 /* gem-smoke.js.map */,
-				24675AE33EFAAD7B0726183D /* god-rays.d.ts */,
-				FD9D76E1FA251AFAF9A357BD /* god-rays.js */,
-				7C6F3516B5B587ADB3230911 /* god-rays.js.map */,
-				83F5735F9D245B0B41179926 /* grain-gradient.d.ts */,
-				AF2E85E9342DCD20F8C4FC16 /* grain-gradient.js */,
-				26CE2BE4C95F207C67591CFC /* grain-gradient.js.map */,
-				C5C8B791A51A52801D51C0F4 /* halftone-cmyk.d.ts */,
-				2D7A7F9277522F58A8D1EAAD /* halftone-cmyk.js */,
-				B71E4D357C19079BA26584C6 /* halftone-cmyk.js.map */,
-				10850801C88EA071AAE92F94 /* halftone-dots.d.ts */,
-				A412C1324C862E3BCE8F07B4 /* halftone-dots.js */,
-				9A1DC415FF801957D1EE3919 /* halftone-dots.js.map */,
-				CAE4CCB7A12FDA175720F434 /* heatmap.d.ts */,
-				82B12FDC7CA2C38AE8758033 /* heatmap.js */,
-				0B8EA215669D6A5EC1E934F3 /* heatmap.js.map */,
-				9DB7DE72AD8BE1FDA307C37D /* image-dithering.d.ts */,
-				58956A3EDA989A817AC7C9A9 /* image-dithering.js */,
-				B8BF99E96ED06371448BB53F /* image-dithering.js.map */,
-				3305F62B09C53054842361EC /* liquid-metal.d.ts */,
-				59BE1675C857121B01B7F4E1 /* liquid-metal.js */,
-				764B912CEAF592F0636D701A /* liquid-metal.js.map */,
-				4D7AFC2FF156EC603EF70461 /* mesh-gradient.d.ts */,
-				F0531B2505DB4A605FC6FFB9 /* mesh-gradient.js */,
-				1C354F39F2321094390D7FFC /* mesh-gradient.js.map */,
-				B281BBBDE6D21487C3EB87C6 /* metaballs.d.ts */,
-				BFD75876735A6A7E3A39A0EE /* metaballs.js */,
-				8C7F01CEFD3AFC72C48B6B28 /* metaballs.js.map */,
-				751D5DF2F560EC4E23126C61 /* neuro-noise.d.ts */,
-				519DD88E423E8DE4B4FCD300 /* neuro-noise.js */,
-				22E5C4F4369232697721FD29 /* neuro-noise.js.map */,
-				2CE084B0513E3A9304E9FEA2 /* paper-texture.d.ts */,
-				AF8DBC69457053D1BD06817B /* paper-texture.js */,
-				B9CE9A33B0C13DE40663A93F /* paper-texture.js.map */,
-				0177EFD7468698693AF7DAF8 /* perlin-noise.d.ts */,
-				2CF7C5DFA152DCBEB830DB24 /* perlin-noise.js */,
-				472388FACB35452A52625FB2 /* perlin-noise.js.map */,
-				E909584C33329916BEA25835 /* pulsing-border.d.ts */,
-				F8F1BDFA00DCE43A8475807F /* pulsing-border.js */,
-				D39450C0A0737331EA044013 /* pulsing-border.js.map */,
-				29F08EF6653DAC72E915DA9B /* simplex-noise.d.ts */,
-				B8376763126474086D8FCE9F /* simplex-noise.js */,
-				25A34BA9BFA30928B1EEFF00 /* simplex-noise.js.map */,
-				47FB992ADBE92A759959F2E4 /* smoke-ring.d.ts */,
-				6B3C7E013117C1171A64E15C /* smoke-ring.js */,
-				66C0AAD5300B7E5CF76B8B3D /* smoke-ring.js.map */,
-				3B9A87B69B40CBF21E97F8C6 /* spiral.d.ts */,
-				7E2AF578FB074B8452EA4DD1 /* spiral.js */,
-				C91C77E11520A339529FBE1A /* spiral.js.map */,
-				7F57181F49BAF540AF33C5B1 /* static-mesh-gradient.d.ts */,
-				EF184851C2086A21CA3E60DD /* static-mesh-gradient.js */,
-				8547034B28F58222BE01FB1B /* static-mesh-gradient.js.map */,
-				2C294BEDD97E6FCFE03605AC /* static-radial-gradient.d.ts */,
-				2BF3DBA8031539640AC68256 /* static-radial-gradient.js */,
-				2CD78CCDC7DB065C3FFAE928 /* static-radial-gradient.js.map */,
-				C382BA37189DB9B3F4AA7C72 /* swirl.d.ts */,
-				CB4DCB7631C5FDDD44B8DE39 /* swirl.js */,
-				3ACEFBDFE64534F5E55F3071 /* swirl.js.map */,
-				D339665BB45D43CE4AD3101A /* voronoi.d.ts */,
-				B8BFAE2865B5DDBD19C30B74 /* voronoi.js */,
-				9CC49DA987A2F7C94E0A1026 /* voronoi.js.map */,
-				74E09CB550E582EC68281A84 /* warp.d.ts */,
-				4C1B2087A4C70E32FDB7086B /* warp.js */,
-				6D8F89B8AA46DF01A3D62318 /* warp.js.map */,
-				2B8CF8C311DEE10A9A75E3F2 /* water.d.ts */,
-				104ED4638782075AD3737041 /* water.js */,
-				2905C02EB56E428E36804596 /* water.js.map */,
-				4D5E6A1621BB78BBCE5453B1 /* waves.d.ts */,
-				3A1C81110237459E92C178A6 /* waves.js */,
-				465573C735DF9AB5D0EC6B70 /* waves.js.map */,
-			);
-			path = shaders;
-			sourceTree = "<group>";
-		};
-		E29C8575EC66D0EB62AC62C5 /* vendor */ = {
-			isa = PBXGroup;
-			children = (
-				CC15D8C48093388668934314 /* paper-shaders */,
-			);
-			path = vendor;
 			sourceTree = "<group>";
 		};
 		F232DE35F4303E0EB1034FBA /* usdz */ = {
@@ -589,136 +191,15 @@
 			files = (
 				13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */,
 				16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */,
-				A6C90F1D319F4CFAA3307DCB /* NOTICE.md in Resources */,
 				F35080EB0A3184483D874359 /* PressureBed.wav in Resources */,
 				4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */,
 				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
-				C7C75B162609F00F3E62EFB5 /* color-panels.d.ts in Resources */,
-				C49EC7D23110E5A76349EF9C /* color-panels.js in Resources */,
-				68183638AE621F9F304D28B8 /* color-panels.js.map in Resources */,
 				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
-				0A16938C6AFE600D827E9C52 /* dithering.d.ts in Resources */,
-				070084BC01674AB6323CDA0C /* dithering.js in Resources */,
-				13FF0BC8853A68004DE36356 /* dithering.js.map in Resources */,
-				DD5E5D0E27024D5553F4594D /* dot-grid.d.ts in Resources */,
-				9EF5769706E5645828403F5C /* dot-grid.js in Resources */,
-				0D26BB051ECB51CBB346907D /* dot-grid.js.map in Resources */,
-				5929C2F0051292B0CA72267E /* dot-orbit.d.ts in Resources */,
-				5866D70FB9ADCDE86AC6D47D /* dot-orbit.js in Resources */,
-				F08C036E95843CC3C59656EE /* dot-orbit.js.map in Resources */,
 				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
 				7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */,
 				6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */,
-				AFB4241EBA2CBD162B276FF1 /* empty-pixel.d.ts in Resources */,
-				2EAF1A9ADAE9BD4880E0DED9 /* empty-pixel.js in Resources */,
-				0B5904901E4F16E44C391638 /* empty-pixel.js.map in Resources */,
-				D85DEA3F1D69633BCF6C0FA3 /* fluted-glass.d.ts in Resources */,
-				0A510582BDBAD4F8C8702524 /* fluted-glass.js in Resources */,
-				D246AB0A1B8B6F285876C2AC /* fluted-glass.js.map in Resources */,
-				86FFFD6111AEABE5E397833D /* gem-smoke.d.ts in Resources */,
-				8C275FDE980FA6A5A9F55A02 /* gem-smoke.js in Resources */,
-				8EBC4704F1893B9F1DC60188 /* gem-smoke.js.map in Resources */,
-				885BADC638721EBBADEC108E /* get-shader-color-from-string.d.ts in Resources */,
-				616E4F1E4B40C2EF2818571C /* get-shader-color-from-string.js in Resources */,
-				4C8AF732C897E0461CECFD76 /* get-shader-color-from-string.js.map in Resources */,
-				299403BBB483676C2470FDC1 /* get-shader-noise-texture.d.ts in Resources */,
-				D16AF320716FA7C9A2C29FED /* get-shader-noise-texture.js in Resources */,
-				FDE7322552752CDDECCAED59 /* get-shader-noise-texture.js.map in Resources */,
-				B1178DFF108373F7B971CEDF /* god-rays.d.ts in Resources */,
-				4DC634735323501246BFE954 /* god-rays.js in Resources */,
-				D84DBA926AED295BB729B183 /* god-rays.js.map in Resources */,
-				031D9136AC2F7AAD63672A7B /* grain-gradient.d.ts in Resources */,
-				9E6F68C5323D11E6E6A3FEE9 /* grain-gradient.js in Resources */,
-				3305119827E31B1EA17B0CA4 /* grain-gradient.js.map in Resources */,
-				6B8BC7EA0A8B17CAB9853B12 /* halftone-cmyk.d.ts in Resources */,
-				3FAA0875DDD80469876B26BD /* halftone-cmyk.js in Resources */,
-				D3824EE799F092637B68D31A /* halftone-cmyk.js.map in Resources */,
-				1875A0450DE4E97628114F29 /* halftone-dots.d.ts in Resources */,
-				742929324FCBF6F8B38EA0AC /* halftone-dots.js in Resources */,
-				A71D107994CD37424641D7EB /* halftone-dots.js.map in Resources */,
-				D2D63AC85F9D47D9CAB16837 /* heatmap.d.ts in Resources */,
-				9DA98F91A5712D3CDC1C1889 /* heatmap.js in Resources */,
-				B536FA2FE05964823AEF2CE3 /* heatmap.js.map in Resources */,
-				C06F45E79EE8406B73456EA2 /* image-dithering.d.ts in Resources */,
-				5CBB232E663DA44A03088A3E /* image-dithering.js in Resources */,
-				26005F9EC5CEE820B5233115 /* image-dithering.js.map in Resources */,
-				BAB194CDA809AE0AB34B3F8B /* index.d.ts in Resources */,
-				345D1FA7BA1CF595E38C7127 /* index.html in Resources */,
-				CDEB46773AD4F61DFCB7F9CD /* index.js in Resources */,
-				D4A8E6CB29E72F57E6C308D0 /* index.js.map in Resources */,
 				9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */,
-				20AF50DF090783196574724D /* liquid-metal.d.ts in Resources */,
-				3803334E36457CE64AB4D374 /* liquid-metal.js in Resources */,
-				4AEC750C2EA3174EA6DF633F /* liquid-metal.js.map in Resources */,
-				358068737D9E9B6E9E566D73 /* mesh-gradient.d.ts in Resources */,
-				75A3963D87ECE22C4A0F58F6 /* mesh-gradient.js in Resources */,
-				7B2B2E8799728A0109029117 /* mesh-gradient.js.map in Resources */,
-				8AEFCE46C45AD3A8224E730E /* metaballs.d.ts in Resources */,
-				521E9A974E76825E8C74E010 /* metaballs.js in Resources */,
-				43350532641AD456213FA048 /* metaballs.js.map in Resources */,
-				AE65BC537AC9492D64948104 /* neuro-noise.d.ts in Resources */,
-				CFC16201FE68FF714C0B2D0A /* neuro-noise.js in Resources */,
-				2C4220004B8D676D93426AF7 /* neuro-noise.js.map in Resources */,
-				0AC5338B3DFD777AF4773A72 /* paper-shader.css in Resources */,
-				D508392C852E8B8CC167F1A6 /* paper-shader.js in Resources */,
-				36420A3A1629FD8F4B5EA532 /* paper-texture.d.ts in Resources */,
-				294107335DF41D794C21F48E /* paper-texture.js in Resources */,
-				D2387546C9F0F89E4A16E069 /* paper-texture.js.map in Resources */,
-				1DBAAD98DAAA65B0959DA41F /* perlin-noise.d.ts in Resources */,
-				814FACC1556C8492FEDAEF8D /* perlin-noise.js in Resources */,
-				6E413F06D0CF1734031D3726 /* perlin-noise.js.map in Resources */,
-				4F951D2467E2648042D4C66F /* pulsing-border.d.ts in Resources */,
-				AF4F071A1E68B17313054770 /* pulsing-border.js in Resources */,
-				2ED820D6E9A4B16E25E14265 /* pulsing-border.js.map in Resources */,
-				8522DFF9949F6783A12CD851 /* shader-color-spaces.d.ts in Resources */,
-				CDD0817D75AE3975EB408486 /* shader-color-spaces.js in Resources */,
-				336212CE893323659BE82BE7 /* shader-color-spaces.js.map in Resources */,
-				A350DB669BA89AE08A9E156C /* shader-mount.d.ts in Resources */,
-				822915A17E6798FE9FA84444 /* shader-mount.js in Resources */,
-				238BD4C037766D61A7C40708 /* shader-mount.js.map in Resources */,
-				A399073BABD39EA78D29151C /* shader-sizing.d.ts in Resources */,
-				BCB725652BB2DF8C27C5132D /* shader-sizing.js in Resources */,
-				052CA070D8F05ADA63E4AC19 /* shader-sizing.js.map in Resources */,
-				267C6E78CCF17DB374F9102A /* shader-utils.d.ts in Resources */,
-				ADB5F7855CBDCBA3785A84A6 /* shader-utils.js in Resources */,
-				BDEB38782E907E0940A317E1 /* shader-utils.js.map in Resources */,
-				2C3ED865B22E6E42F3728662 /* simplex-noise.d.ts in Resources */,
-				71DEC83C01AEDB24BF60954E /* simplex-noise.js in Resources */,
-				F2B1A1979EB58FC1DD7FB405 /* simplex-noise.js.map in Resources */,
 				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,
-				CEC5112E00D9BB68910FCF5D /* smoke-ring.d.ts in Resources */,
-				8F5E353942AEA5857556AE7F /* smoke-ring.js in Resources */,
-				1C59E6F5425A79CE3FBFE2AE /* smoke-ring.js.map in Resources */,
-				8AB39B818BDC08E27A6C73A9 /* spiral.d.ts in Resources */,
-				A0236DEF5196804F11405B19 /* spiral.js in Resources */,
-				FBC9100046432635964DA668 /* spiral.js.map in Resources */,
-				12D9B388B974F61F86B27C70 /* static-mesh-gradient.d.ts in Resources */,
-				7C954DFA35D54408478CBD84 /* static-mesh-gradient.js in Resources */,
-				895CAC980BB54DEF4B228D1E /* static-mesh-gradient.js.map in Resources */,
-				FC9258F4B995F0E261F971E6 /* static-radial-gradient.d.ts in Resources */,
-				A2A168F3655BB23C21A141AE /* static-radial-gradient.js in Resources */,
-				EE55315AC1FD35AF8E58FD34 /* static-radial-gradient.js.map in Resources */,
-				89243A7520229345EE6F3823 /* swirl.d.ts in Resources */,
-				D6F0FE69E40401CC4525D4E7 /* swirl.js in Resources */,
-				23A12611339D0CF2096B7C67 /* swirl.js.map in Resources */,
-				AB66E705F911DCB1EDBA85FB /* types.d.ts in Resources */,
-				6A63D1C93EDDE47E9D458D0B /* types.js in Resources */,
-				C573426DC5603269DAFC828B /* types.js.map in Resources */,
-				304B725E6CB9B7E843719FF1 /* vertex-shader.d.ts in Resources */,
-				5DE5699FADB78D79C36EE1A5 /* vertex-shader.js in Resources */,
-				205D10B402991A6E7C150F31 /* vertex-shader.js.map in Resources */,
-				8A7E98039EB78343E07BDD23 /* voronoi.d.ts in Resources */,
-				2B062593874B5D19AABE6C78 /* voronoi.js in Resources */,
-				E9D7E67F76708793A5E625A4 /* voronoi.js.map in Resources */,
-				BAB3283AB3406FEF28108AF0 /* warp.d.ts in Resources */,
-				2527639870D04F1A7B0CF398 /* warp.js in Resources */,
-				694060BF6EC6783C40929F93 /* warp.js.map in Resources */,
-				ECD280561E275451684ADA5F /* water.d.ts in Resources */,
-				4E5B035934E3FBB2F0F7CA76 /* water.js in Resources */,
-				ED46D2FE2C69CC41A25E7EEA /* water.js.map in Resources */,
-				B933201ED3C494D7F2FEF259 /* waves.d.ts in Resources */,
-				7980E3EA82EF75AC1C619B3B /* waves.js in Resources */,
-				44F96CDE3D7BC2EF38998BED /* waves.js.map in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
