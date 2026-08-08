@@ -24,6 +24,12 @@ The companion window has two views over the same spatial state:
   concise wording boundary. It never bypasses the permission gate or supplies a
   treatment script.
 
+Presenter mode can switch between two sparse ten-point spatial reference fields
+(`Regions` and `Procedure`) and open a separate upper evidence window. The
+evidence window exposes full citations, stable source links, support/limitation
+context, pinning, and a deterministic source-bound teaching draft. It is hidden
+from family mode and remains **clinical review pending**.
+
 ## Spatial rig
 
 - The default immersive path loads the exact PR #2 registered-v2 brain,
@@ -66,6 +72,8 @@ appropriate for a person.
 
 - [2026 AHA/ASA acute ischemic stroke guideline hub](https://professional.heart.org/en/science-news/2026-guideline-for-the-early-management-of-patients-with-acute-ischemic-stroke)
 - [AHA key patient messages](https://professional.heart.org/en/-/media/PHD-Files-2/Science-News/k/Key-Patient-Messages-The-2026-Acute-Ischemic-Stroke-Guideline.pdf)
+- [NICE NG128 recommendations](https://www.nice.org.uk/guidance/ng128/chapter/recommendations)
+- [NICE decompressive hemicraniectomy decision-aid guide](https://www.nice.org.uk/guidance/ng128/resources/decompressive-hemicraniectomy-surgery-patient-decision-aid-user-guide-pdf-6775901391)
 
 ## Build and proof
 
@@ -110,3 +118,7 @@ Scripts/deploy_xcat.zsh
 The command refuses to build or install while XCAT is unavailable. The machine
 receipt and the separate 90-second wearer protocol are documented in
 `Proof/XCAT_ACCEPTANCE.md`.
+
+The product promise, museum-like patient-file discovery, 3D case-bust safety
+contract, point-field behavior, role separation, and 90-second judging script
+are maintained in `Docs/PRESENTATION_DESIGN_CANON.md`.

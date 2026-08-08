@@ -11,8 +11,8 @@ import SwiftUI
 /// and the lower companion surface acts. Safety, consent, and exit controls
 /// remain on the readable companion surface, never in peripheral vision alone.
 private enum SpatialVisualField {
-    static let primaryAnatomy: SIMD3<Float> = [0.12, 1.82, -1.08]
-    static let primaryVesselFocus: SIMD3<Float> = [0.12, 1.79, -0.69]
+    static let primaryAnatomy: SIMD3<Float> = [0.00, 1.82, -1.08]
+    static let primaryVesselFocus: SIMD3<Float> = [0.00, 1.79, -0.69]
     static let secondaryCaseDrawer: SIMD3<Float> = [0.54, 1.55, -0.82]
     static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
 
@@ -132,7 +132,7 @@ struct StrokeImmersiveView: View {
                         if marker.parent == nil {
                             content.add(marker)
                         }
-                        marker.position = questionMarkerPosition
+                        marker.position = questionMarkerPosition(in: root)
                         marker.scale = [0.72, 0.72, 0.72]
                         marker.isEnabled = experience.questionMarkerVisible
                         marker.components.set(BillboardComponent())
@@ -185,6 +185,7 @@ struct StrokeImmersiveView: View {
                     DragGesture(minimumDistance: 3)
                         .targetedToAnyEntity()
                         .onChanged { value in
+                            guard StrokeSceneFactory.isAnatomyInteractionTarget(value.entity) else { return }
                             let translation = value.gestureValue.translation
                             let delta = CGSize(
                                 width: translation.width - previousDragTranslation.width,
@@ -199,6 +200,7 @@ struct StrokeImmersiveView: View {
                     MagnifyGesture()
                         .targetedToAnyEntity()
                         .onChanged { value in
+                            guard StrokeSceneFactory.isAnatomyInteractionTarget(value.entity) else { return }
                             let ratio = value.magnification / previousMagnification
                             experience.magnifySpatialView(ratio: ratio)
                             previousMagnification = value.magnification
@@ -210,9 +212,25 @@ struct StrokeImmersiveView: View {
                         .targetedToAnyEntity()
                         .onEnded { value in
                             if experience.questionPlacementArmed {
-                                experience.placeQuestionMarker()
-                            } else if value.entity.name == "vessel-blockage" ||
-                                value.entity.name == "penumbra-shell" {
+                                guard
+                                    StrokeSceneFactory.isAnatomyInteractionTarget(value.entity),
+                                    let root = sceneRoot(for: value.entity)
+                                else { return }
+                                // Standard visionOS gaze selects the entity;
+                                // pinch confirms. The app receives the targeted
+                                // 3D hit, not a raw eye-tracking coordinate.
+                                let scenePoint = value.convert(
+                                    value.location3D,
+                                    from: .local,
+                                    to: .scene
+                                )
+                                let rootLocalPoint = root.convert(position: scenePoint, from: nil)
+                                experience.placeQuestionMarker(
+                                    at: rootLocalPoint,
+                                    target: StrokeSceneFactory.semanticTarget(for: value.entity)
+                                )
+                            } else if StrokeSceneFactory.semanticTarget(for: value.entity) == "blocked vessel" ||
+                                StrokeSceneFactory.semanticTarget(for: value.entity) == "affected brain region" {
                                 experience.focusOcclusion()
                             }
                         }
@@ -235,12 +253,26 @@ struct StrokeImmersiveView: View {
         }
     }
 
-    private var questionMarkerPosition: SIMD3<Float> {
-        switch experience.procedureStep {
+    private func questionMarkerPosition(in root: Entity) -> SIMD3<Float> {
+        if let placement = experience.placedQuestion {
+            return root.convert(position: placement.rootLocalPosition, to: nil)
+        }
+        return switch experience.procedureStep {
         case .chooseCase: [-0.18, 1.73, -0.75]
         case .inspectOcclusion: [0.19, 1.82, -0.72]
         case .discussCare: [0.24, 1.76, -0.74]
         }
+    }
+
+    private func sceneRoot(for entity: Entity) -> Entity? {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.name == StrokeSceneFactory.rootName {
+                return current
+            }
+            candidate = current.parent
+        }
+        return nil
     }
 
     /// Two quiet mono beds are attached to what they explain. Flow originates
@@ -340,7 +372,7 @@ private struct StrokeIntentionAnnotation: View {
     private var annotationMeaning: String {
         switch experience.procedureStep {
         case .chooseCase: "Skull surrounds brain."
-        case .inspectOcclusion: "Swelling crowds fixed space."
+        case .inspectOcclusion: "The swelling has nowhere to go."
         case .discussCare: "More room; injury remains."
         }
     }
@@ -482,11 +514,11 @@ struct StrokeJourneyCompanionView: View {
 
     var body: some View {
         JourneyCaption()
-            .frame(width: experience.audienceLens == .clinician ? 500 : 560)
-            .padding(18)
+            .frame(width: experience.audienceLens == .clinician ? 500 : 424)
+            .padding(experience.audienceLens == .clinician ? 18 : 14)
             .frame(
-                width: experience.audienceLens == .clinician ? 540 : 600,
-                height: experience.audienceLens == .clinician ? 660 : 360
+                width: experience.audienceLens == .clinician ? 540 : 460,
+                height: experience.audienceLens == .clinician ? 660 : 310
             )
             .animation(.easeInOut(duration: 0.28), value: experience.audienceLens)
     }
@@ -500,7 +532,7 @@ private struct JourneyCaption: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: experience.audienceLens == .clinician ? 16 : 12) {
             HStack(alignment: .center) {
                 Text("\(experience.procedureStep.number) / 3")
                     .font(.caption.monospacedDigit().weight(.bold))
@@ -554,7 +586,7 @@ private struct JourneyCaption: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }
-        .padding(22)
+        .padding(experience.audienceLens == .clinician ? 22 : 18)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 26))
         .overlay(RoundedRectangle(cornerRadius: 26).stroke(Color.white.opacity(0.12)))
     }
@@ -562,7 +594,7 @@ private struct JourneyCaption: View {
     private var patientExplanation: some View {
         VStack(spacing: 10) {
             Text(experience.journeyCaption)
-                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                .font(.system(size: 25, weight: .semibold, design: .rounded))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -597,6 +629,34 @@ private struct JourneyCaption: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("Present act \(step.number), \(presenterTitle(for: step))")
                 }
+            }
+
+            HStack(alignment: .bottom, spacing: 10) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(experience.pointField == .regions ? "BRAIN REGIONS" : "PROCEDURE PATH")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.1)
+                        .foregroundStyle(.cyan)
+
+                    Picker("Spatial points", selection: $experience.pointField) {
+                        ForEach(StrokePointField.allCases) { field in
+                            Label(field.rawValue, systemImage: field.systemImage)
+                                .tag(field)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityHint("Changes the clinician-only point field around the brain")
+                }
+                .frame(maxWidth: .infinity)
+
+                Button {
+                    openWindow(id: StrokeSpace.evidence)
+                } label: {
+                    Image(systemName: "text.book.closed.fill")
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                .accessibilityLabel("Open clinical evidence space")
             }
 
             if experience.clarificationRequested {
@@ -752,6 +812,7 @@ private struct JourneyCaption: View {
         await dismissImmersiveSpace()
         experience.isImmersivePresented = false
         openWindow(id: StrokeSpace.window)
+        dismissWindow(id: StrokeSpace.evidence)
         dismissWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
     }
 

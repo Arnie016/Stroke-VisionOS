@@ -320,6 +320,12 @@ struct StrokeJourneyLaunchView: View {
             CommandLine.arguments.contains("--proof-cabinet-selected") {
             caseRevealProgress = 1
             casePlaced = true
+        } else if CommandLine.arguments.contains("--proof-evidence-window") {
+            experience.prepareEvidenceProof()
+            Task { await openEvidenceProofWindow() }
+        } else if CommandLine.arguments.contains("--proof-evidence") {
+            experience.prepareEvidenceProof()
+            Task { await openProofSpace(opensEvidence: true) }
         } else if CommandLine.arguments.contains("--proof-clinician-pressure") {
             experience.prepareClinicianProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
@@ -341,13 +347,27 @@ struct StrokeJourneyLaunchView: View {
     }
 
     @MainActor
-    private func openProofSpace() async {
+    private func openProofSpace(opensEvidence: Bool = false) async {
         try? await Task.sleep(for: .milliseconds(700))
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
         print("PROOF_IMMERSIVE_RESULT=\(result)")
         guard result == .opened else { return }
         experience.isImmersivePresented = true
         openWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+        if opensEvidence {
+            // In normal use the presenter taps the evidence button after this
+            // window exists. The deterministic proof waits for the same
+            // hierarchy so the evidence space can resolve `.above(presenter)`.
+            try? await Task.sleep(for: .milliseconds(650))
+            openWindow(id: StrokeSpace.evidence)
+        }
+        dismissWindow(id: StrokeSpace.window)
+    }
+
+    @MainActor
+    private func openEvidenceProofWindow() async {
+        try? await Task.sleep(for: .milliseconds(500))
+        openWindow(id: StrokeSpace.evidence)
         dismissWindow(id: StrokeSpace.window)
     }
 }

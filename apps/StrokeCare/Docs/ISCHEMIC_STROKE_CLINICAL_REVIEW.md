@@ -37,9 +37,9 @@ approval alone is not sufficient.
 
 | Act | Family wording | Spatial claim | Presenter boundary | Decision |
 | --- | --- | --- | --- | --- |
-| 1 — Orient | “The skull is fixed. Vessels feed the brain.” | A generic cortex and arterial map sit inside a fixed-space boundary. | Generic anatomy—not this patient's scan. | Pending |
-| 2 — Pressure | “Here, a clot blocks flow. Swelling crowds fixed space.” | A teaching clot interrupts qualitative vessel motion; affected tissue and swelling remain distinct cues. | No pressure value, prognosis, or eligibility claim. | Pending |
-| 3 — Make space | “Making room can reduce pressure—not repair injury.” | After permission, skull, dura, and brain separate with a non-graphic zip-like motion; the injury cue remains visible. | Not a recommendation or outcome promise. | Pending |
+| 1 — Orient | “This is the space the brain lives in.” | A generic cortex and arterial map sit inside a fixed-space boundary. | Generic anatomy—not this patient's scan. | Pending |
+| 2 — Pressure | “The artery closes. The brain begins to swell.” | A teaching clot interrupts qualitative vessel motion; affected tissue and swelling remain distinct cues. | No pressure value, prognosis, or eligibility claim. | Pending |
+| 3 — Make space | “The operation gives the swelling somewhere safe to go.” | After permission, skull, dura, and brain separate with a non-graphic zip-like motion; the injury cue remains visible. | Making room may reduce pressure; it does not restore injured tissue or promise an outcome. | Pending |
 
 ### Required reviewer questions
 
