@@ -1,6 +1,6 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.2`
+- Content version: `SC-AIS-001.3`
 - App version: `0.6 (6)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
@@ -41,7 +41,7 @@ approval alone is not sufficient.
 | Act | Family wording | Spatial claim | Presenter boundary | Decision |
 | --- | --- | --- | --- | --- |
 | 1 — Orient | “This model shows one severe stroke affecting one side of the brain.” | Generic cortex and arterial anatomy appear inside a fixed-space boundary. | Generic anatomy; the scenario is not inferred from reported signs and is not this person's scan. | Pending |
-| 2 — Pressure | “Here, a large stroke causes swelling inside the fixed skull.” | Blocked flow, affected tissue, swelling, and fixed skull remain distinct cues. | This is the selected fictional scenario; it is not a claim that every ischemic stroke causes dangerous swelling. | Pending |
+| 2 — Pressure | “In this severe stroke, swelling builds inside the fixed skull.” | Blocked flow, affected tissue, swelling, and fixed skull remain distinct cues. | This is the selected fictional scenario; it is not a claim that every ischemic stroke causes dangerous swelling. | Pending |
 | 3 — Make space | “Surgery makes room for swelling. It cannot undo the stroke injury.” | After permission, one protective layer fades and a small reversible offset shows the mechanical purpose without cutting, peeling, or exposed blood. | Making room may ease pressure; this is not a recommendation, consent discussion, or outcome promise. | Pending |
 
 ### Required reviewer questions

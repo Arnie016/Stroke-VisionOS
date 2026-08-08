@@ -8,7 +8,7 @@
   separately evidenced `0.3 (3)` install.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.1`; clinician review pending.
+- Clinical content version: `SC-AIS-001.3`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
