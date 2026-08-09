@@ -225,6 +225,8 @@ struct StrokeImmersiveView: View {
     private let timeFactID = "spatial-case-fact-time"
     private let questionFactID = "spatial-case-fact-question"
     private let caseReviewActionsID = "spatial-case-review-actions"
+    private let teachingTimelineID = "spatial-teaching-timeline"
+    private let roleMicroCuesID = "spatial-role-micro-cues"
     private let familyControlsID = "spatial-family-controls"
     private let presenterControlsID = "spatial-presenter-controls"
     private let clinicianToolWheelID = "clinician-hand-tool-wheel"
@@ -326,6 +328,7 @@ struct StrokeImmersiveView: View {
                     for id in [
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
+                        teachingTimelineID, roleMicroCuesID,
                         familyControlsID, presenterControlsID
                     ] {
                         if let attachment = attachments.entity(for: id) {
@@ -452,6 +455,7 @@ struct StrokeImmersiveView: View {
                         rail.components.set(BillboardComponent())
                     }
                     updateSpatialIntakeAttachments(attachments)
+                    updateSpatialTeachingAttachments(attachments)
                     updateSpatialRoleControls(attachments, stageRoot: stageRoot)
                     updateClinicianHandToolKit(content: content, attachments: attachments)
                     updateAudioMix()
@@ -502,6 +506,16 @@ struct StrokeImmersiveView: View {
                         SpatialCaseReviewActions()
                             .environmentObject(experience)
                             .frame(width: 350)
+                    }
+                    Attachment(id: teachingTimelineID) {
+                        SpatialTeachingTimeline()
+                            .environmentObject(experience)
+                            .frame(width: 560, height: 106)
+                    }
+                    Attachment(id: roleMicroCuesID) {
+                        SpatialRoleMicroCues()
+                            .environmentObject(experience)
+                            .frame(width: 310)
                     }
                     Attachment(id: familyControlsID) {
                         SpatialRoleControls(role: .family)
@@ -655,6 +669,22 @@ struct StrokeImmersiveView: View {
             entity.scale = [scale, scale, scale]
             entity.isEnabled = visible
             entity.components.set(BillboardComponent())
+        }
+    }
+
+    private func updateSpatialTeachingAttachments(_ attachments: RealityViewAttachments) {
+        let visible = experience.spatialPhase == .explanation
+        let placements: [(String, SIMD3<Float>, Float)] = [
+            (teachingTimelineID, [0, 2.08, -0.96], 0.66),
+            (roleMicroCuesID, [-0.72, 1.72, -0.96], 0.62)
+        ]
+
+        for (id, position, scale) in placements {
+            guard let attachment = attachments.entity(for: id) else { continue }
+            attachment.position = position
+            attachment.scale = [scale, scale, scale]
+            attachment.isEnabled = visible
+            attachment.components.set(BillboardComponent())
         }
     }
 
@@ -1069,23 +1099,6 @@ private struct SpatialRoleControls: View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
                 Menu {
-                    ForEach(StrokeProcedureStep.allCases) { step in
-                        Button("\(step.number)  \(stepTitle(step))") {
-                            experience.present(step: step)
-                        }
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: "Act \(experience.procedureStep.number)",
-                        systemImage: "circle.grid.3x3.fill",
-                        accent: .mint,
-                        selected: true
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Teaching act \(experience.procedureStep.number): \(stepTitle(experience.procedureStep))")
-
-                Menu {
                     Section("Perspective") {
                         ForEach(StrokeAnatomyViewpoint.allCases) { viewpoint in
                             Button(viewpoint.rawValue, systemImage: viewpoint.systemImage) {
@@ -1246,14 +1259,6 @@ private struct SpatialRoleControls: View {
         .accessibilityLabel(title)
     }
 
-    private func stepTitle(_ step: StrokeProcedureStep) -> String {
-        switch step {
-        case .chooseCase: "Orient"
-        case .inspectOcclusion: "Pressure"
-        case .discussCare: "Make space"
-        }
-    }
-
     private var anatomyBubbleTitle: String {
         if experience.anatomyViewpoint != .threeQuarter {
             return experience.anatomyViewpoint.shortTitle
@@ -1271,6 +1276,121 @@ private struct SpatialRoleControls: View {
         experience.isImmersivePresented = false
         experience.reset()
         openWindow(id: StrokeSpace.window)
+    }
+}
+
+/// A centered, world-space chapter line. The active act opens enough to read
+/// at a glance while the other two remain quiet navigation targets.
+private struct SpatialTeachingTimeline: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ForEach(StrokeProcedureStep.allCases) { step in
+                let isActive = step == experience.procedureStep
+                Button {
+                    // `present` retains the existing Make-space consent gate.
+                    experience.present(step: step)
+                } label: {
+                    SpatialTeachingTimelineNode(
+                        number: step.number,
+                        title: title(for: step),
+                        isActive: isActive
+                    )
+                }
+                .buttonStyle(.plain)
+                .hoverEffect(.highlight)
+                .accessibilityLabel("Act \(step.number), \(title(for: step))")
+                .accessibilityValue(isActive ? "Current act" : "Inactive act")
+            }
+        }
+        .padding(8)
+    }
+
+    private func title(for step: StrokeProcedureStep) -> String {
+        switch step {
+        case .chooseCase: "Orient"
+        case .inspectOcclusion: "Pressure"
+        case .discussCare: "Make space"
+        }
+    }
+}
+
+private struct SpatialTeachingTimelineNode: View {
+    let number: Int
+    let title: String
+    let isActive: Bool
+
+    var body: some View {
+        HStack(spacing: isActive ? 10 : 6) {
+            Text(String(number))
+                .font(.caption.monospacedDigit().weight(.black))
+                .frame(width: 28, height: 28)
+                .background(isActive ? Color.cyan : Color.white.opacity(0.08), in: Circle())
+                .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.58))
+
+            Text(title)
+                .font(isActive ? .callout.weight(.bold) : .caption.weight(.semibold))
+                .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.52))
+                .lineLimit(1)
+        }
+        .padding(.horizontal, isActive ? 16 : 10)
+        .frame(width: isActive ? 190 : 118, height: 58)
+        .background(
+            isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
+            in: Capsule()
+        )
+        .overlay(
+            Capsule().stroke(
+                isActive ? Color.cyan.opacity(0.58) : Color.white.opacity(0.08),
+                lineWidth: isActive ? 1.5 : 1
+            )
+        )
+    }
+}
+
+/// A single left-peripheral cue surface whose density follows the audience:
+/// one current family question or exactly three presenter teaching beats.
+private struct SpatialRoleMicroCues: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Label(
+                experience.audienceLens == .family ? "CURRENT QUESTION" : "PRESENTER KEYS",
+                systemImage: experience.audienceLens == .family ? "questionmark.bubble.fill" : "list.bullet"
+            )
+            .font(.caption2.weight(.black))
+            .tracking(1.0)
+            .foregroundStyle(accent)
+
+            if experience.audienceLens == .family {
+                Text(experience.familyTimelineQuestion)
+                    .font(.callout.weight(.semibold))
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                ForEach(Array(experience.presenterTimelineKeyPoints.enumerated()), id: \.offset) { index, point in
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text("\(index + 1)")
+                            .font(.caption2.monospacedDigit().weight(.bold))
+                            .foregroundStyle(accent)
+                        Text(point)
+                            .font(.caption.weight(.semibold))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+        }
+        .foregroundStyle(.white.opacity(0.92))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var accent: Color {
+        experience.audienceLens == .family ? .orange : .mint
     }
 }
 
@@ -1622,16 +1742,6 @@ private struct JourneyCaption: View {
         VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 8) {
                 Menu {
-                    ForEach(StrokeProcedureStep.allCases) { step in
-                        Button("\(step.number)  \(presenterTitle(for: step))") {
-                            experience.present(step: step)
-                        }
-                    }
-                } label: {
-                    compactControl("Act \(experience.procedureStep.number)", systemImage: "play.circle.fill")
-                }
-
-                Menu {
                     ForEach(StrokeAnatomyPresentation.allCases) { presentation in
                         Button(presentation.rawValue) {
                             experience.setAnatomyPresentation(presentation)
@@ -1739,14 +1849,6 @@ private struct JourneyCaption: View {
             "Separate blockage, injury, swelling."
         case .discussCare:
             "Fade one layer. Room, not repair."
-        }
-    }
-
-    private func presenterTitle(for step: StrokeProcedureStep) -> String {
-        switch step {
-        case .chooseCase: "Orient"
-        case .inspectOcclusion: "Pressure"
-        case .discussCare: "Make space"
         }
     }
 
