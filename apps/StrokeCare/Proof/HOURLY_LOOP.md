@@ -32,6 +32,29 @@
 - Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
   rerun `Scripts/deploy_xcat.zsh` once.
 
+## 2026-08-09 11:32 SGT — role-aware anatomical magnifier
+
+- Target: replace modal-heavy explanation chrome with one calm, spatially
+  anchored anatomy-focus interaction for Brief 6.
+- Bounded action: converted the top act annotation into free-standing spatial
+  typography, replaced the presenter panel with gaze-sized control bubbles,
+  added act-driven horizon modulation, and made the single affected-region
+  aperture read as `LOOK WITHIN` for families and `MAGNIFY` for clinicians.
+  Pinch focus is reversible, fades context through the existing transparency
+  engine, and switches to the qualitative blood-flow point field.
+- Evidence: `python3 Tests/verify_contract.py` passed; the narrow visionOS
+  Simulator build exited `0`; Simulator process `47220` launched after stale
+  `CathSenseVision` and `SpatialPropertiesLab` scenes were terminated; visual
+  receipt: `Proof/39-clinician-magnify-portal-simulator.png`.
+- Verdict: `IMPROVED` — the anatomy is again primary, the magnifier is
+  role-aware, and essential safety/evidence actions remain legible without a
+  surrounding modal panel.
+- Blocker: Simulator imagery does not prove gaze comfort, pinch precision,
+  wearer perception, liquid-flow comprehension, XCAT visibility, or clinical
+  validity.
+- Next safe action: run the same magnifier path on XCAT when it is awake,
+  unlocked, paired, and reachable.
+
 ## 2026-08-09 10:38 SGT — durable unavailable-device receipt
 
 - Target: preserve an authoritative machine record when XCAT is unreachable

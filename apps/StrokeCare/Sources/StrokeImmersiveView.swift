@@ -218,6 +218,7 @@ struct StrokeImmersiveView: View {
                         CalmFlowFieldFactory.update(
                             horizon,
                             time: now,
+                            act: experience.procedureStep,
                             isPaused: experience.requestedPause,
                             reduceMotion: reduceMotion
                         )
@@ -400,9 +401,9 @@ struct StrokeImmersiveView: View {
 
     private var annotationPosition: SIMD3<Float> {
         return switch experience.procedureStep {
-        case .chooseCase: [-0.40, 1.85, -0.88]
-        case .inspectOcclusion: [0.40, 1.84, -0.88]
-        case .discussCare: [0.41, 1.84, -0.90]
+        case .chooseCase: [0.25, 1.91, -0.84]
+        case .inspectOcclusion: [0.27, 1.91, -0.84]
+        case .discussCare: [0.27, 1.91, -0.84]
         }
     }
 
@@ -695,8 +696,9 @@ private struct ClinicianHandToolWheel: View {
 }
 
 /// Role controls live inside the immersive room instead of opening another
-/// desktop-like window. Family controls stay left and low; presenter controls
-/// stay right. The shared anatomy remains the only foveal object.
+/// desktop-like window. They read as a small constellation of gaze-sized
+/// bubbles: family controls stay left and low; presenter controls stay right.
+/// The shared anatomy remains the only foveal object.
 private struct SpatialRoleControls: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
@@ -705,22 +707,23 @@ private struct SpatialRoleControls: View {
     let role: StrokeAudienceLens
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
+        VStack(alignment: role == .family ? .leading : .trailing, spacing: 9) {
+            HStack(spacing: 8) {
                 Label(
-                    role == .family ? "FAMILY CONTROLS" : "PRESENTER ONLY",
+                    role == .family ? "FAMILY" : "PRESENTER",
                     systemImage: role == .family ? "person.2.fill" : "stethoscope"
                 )
-                .font(.caption.weight(.bold))
+                .font(.caption2.weight(.black))
                 .tracking(1.0)
                 .foregroundStyle(role == .family ? .orange : .mint)
 
-                Spacer()
-
-                Text("\(experience.procedureStep.number) / 3")
-                    .font(.caption.monospacedDigit().weight(.bold))
-                    .foregroundStyle(.secondary)
+                Text("ACT \(experience.procedureStep.number) OF 3")
+                    .font(.caption2.monospacedDigit().weight(.bold))
+                    .foregroundStyle(.secondary.opacity(0.82))
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .background(.regularMaterial, in: Capsule())
 
             if role == .family {
                 familyControls
@@ -732,15 +735,13 @@ private struct SpatialRoleControls: View {
                 consentControls
             }
         }
-        .padding(16)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 22))
-        .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white.opacity(0.13)))
+        .padding(4)
     }
 
     private var familyControls: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack(spacing: 9) {
-                Menu("Lesson · \(experience.pointField.rawValue)") {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Menu {
                     ForEach(StrokePointField.allCases) { field in
                         Button(field.rawValue, systemImage: field.systemImage) {
                             experience.selectLessonFamily(field)
@@ -750,38 +751,64 @@ private struct SpatialRoleControls: View {
                     Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
                         experience.toggleLessonPoints()
                     }
+                } label: {
+                    SpatialControlBubbleLabel(
+                        title: experience.pointField == .regions ? "Regions" : "Flow",
+                        systemImage: experience.pointField.systemImage,
+                        accent: .orange,
+                        selected: experience.lessonPointsVisible
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
 
-                Button(experience.narrationEnabled ? "Voice off" : "Narrate", systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform") {
+                bubbleButton(
+                    experience.narrationEnabled ? "Voice off" : "Voice",
+                    systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform",
+                    accent: .orange,
+                    selected: experience.narrationEnabled
+                ) {
                     experience.narrationEnabled.toggle()
                 }
-                .buttonStyle(.bordered)
 
-                Spacer()
-
-                Button(experience.closingReflectionVisible ? "Cases" : "Next", systemImage: "arrow.right") {
+                bubbleButton(
+                    experience.closingReflectionVisible ? "Cases" : "Next",
+                    systemImage: "arrow.right",
+                    accent: .orange,
+                    selected: true
+                ) {
                     experience.advanceJourney()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
             }
 
-            HStack(spacing: 9) {
-                Button(experience.requestedPause ? "Resume" : "Pause", systemImage: experience.requestedPause ? "play.fill" : "pause.fill") {
+            HStack(spacing: 8) {
+                bubbleButton(
+                    experience.requestedPause ? "Resume" : "Pause",
+                    systemImage: experience.requestedPause ? "play.fill" : "pause.fill",
+                    accent: .orange,
+                    selected: experience.requestedPause
+                ) {
                     experience.togglePause()
                 }
-                .buttonStyle(.bordered)
 
-                Button(experience.clarificationRequested ? "Marked" : "Clarify", systemImage: "questionmark.bubble") {
+                bubbleButton(
+                    experience.clarificationRequested ? "Marked" : "Clarify",
+                    systemImage: "questionmark.bubble",
+                    accent: .orange,
+                    selected: experience.clarificationRequested
+                ) {
                     experience.requestClarification()
                 }
-                .buttonStyle(.bordered)
                 .disabled(experience.clarificationRequested)
 
-                Button(experience.questionPlacementArmed ? "Tap brain" : "Point", systemImage: "mappin.and.ellipse") {
+                bubbleButton(
+                    experience.questionPlacementArmed ? "Tap brain" : "Point",
+                    systemImage: "mappin.and.ellipse",
+                    accent: .orange,
+                    selected: experience.questionPlacementArmed
+                ) {
                     experience.toggleQuestionPlacement()
                 }
-                .buttonStyle(.bordered)
 
                 exitButton
             }
@@ -789,25 +816,43 @@ private struct SpatialRoleControls: View {
     }
 
     private var presenterControls: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
-                Menu("Act \(experience.procedureStep.number)") {
+                Menu {
                     ForEach(StrokeProcedureStep.allCases) { step in
                         Button("\(step.number)  \(stepTitle(step))") {
                             experience.present(step: step)
                         }
                     }
+                } label: {
+                    SpatialControlBubbleLabel(
+                        title: "Act \(experience.procedureStep.number)",
+                        systemImage: "circle.grid.3x3.fill",
+                        accent: .mint,
+                        selected: true
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Teaching act \(experience.procedureStep.number): \(stepTitle(experience.procedureStep))")
 
-                Menu(experience.anatomyPresentation.rawValue) {
+                Menu {
                     ForEach(StrokeAnatomyPresentation.allCases) { presentation in
                         Button(presentation.rawValue) {
                             experience.setAnatomyPresentation(presentation)
                         }
                     }
+                } label: {
+                    SpatialControlBubbleLabel(
+                        title: anatomyBubbleTitle,
+                        systemImage: "circle.lefthalf.filled",
+                        accent: .mint,
+                        selected: experience.anatomyPresentation != .assembled
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Anatomy view: \(experience.anatomyPresentation.rawValue)")
 
-                Menu("Lesson · \(experience.pointField.rawValue)") {
+                Menu {
                     ForEach(StrokePointField.allCases) { field in
                         Button(field.rawValue, systemImage: field.systemImage) {
                             experience.selectLessonFamily(field)
@@ -817,43 +862,64 @@ private struct SpatialRoleControls: View {
                     Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
                         experience.toggleLessonPoints()
                     }
+                } label: {
+                    SpatialControlBubbleLabel(
+                        title: experience.pointField == .regions ? "Regions" : "Flow",
+                        systemImage: experience.pointField.systemImage,
+                        accent: .mint,
+                        selected: experience.lessonPointsVisible
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
 
-                Button("Evidence", systemImage: "text.book.closed.fill") {
+                bubbleButton("Evidence", systemImage: "text.book.closed.fill", accent: .mint) {
                     openWindow(id: StrokeSpace.evidence)
                 }
-                .buttonStyle(.bordered)
             }
 
             HStack(spacing: 8) {
-                Button(experience.requestedPause ? "Resume" : "Pause", systemImage: experience.requestedPause ? "play.fill" : "pause.fill") {
+                bubbleButton(
+                    experience.requestedPause ? "Resume" : "Pause",
+                    systemImage: experience.requestedPause ? "play.fill" : "pause.fill",
+                    accent: .mint,
+                    selected: experience.requestedPause
+                ) {
                     experience.togglePause()
                 }
-                .buttonStyle(.bordered)
 
-                Button("Reset", systemImage: "arrow.counterclockwise") {
+                bubbleButton("Reset", systemImage: "arrow.counterclockwise", accent: .mint) {
                     experience.resetSpatialView()
                 }
-                .buttonStyle(.bordered)
 
-                Button(experience.narrationEnabled ? "Voice off" : "Narrate", systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform") {
+                bubbleButton(
+                    experience.narrationEnabled ? "Voice off" : "Voice",
+                    systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform",
+                    accent: .mint,
+                    selected: experience.narrationEnabled
+                ) {
                     experience.narrationEnabled.toggle()
                 }
-                .buttonStyle(.bordered)
 
-                Button(experience.closingReflectionVisible ? "Cases" : "Next", systemImage: "arrow.right") {
+                bubbleButton(
+                    experience.closingReflectionVisible ? "Cases" : "Next",
+                    systemImage: "arrow.right",
+                    accent: .mint,
+                    selected: true
+                ) {
                     experience.advanceJourney()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.mint)
 
                 exitButton
             }
 
-            Text(experience.presenterBoundary)
-                .font(.caption.weight(.medium))
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
+            Label("Teaching view · not a recommendation", systemImage: "checkmark.shield")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary.opacity(0.82))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(.regularMaterial, in: Capsule())
+                .accessibilityLabel(experience.presenterBoundary)
         }
     }
 
@@ -876,10 +942,28 @@ private struct SpatialRoleControls: View {
     }
 
     private var exitButton: some View {
-        Button("Exit", systemImage: "xmark") {
+        bubbleButton("Exit", systemImage: "xmark", accent: role == .family ? .orange : .mint) {
             Task { await exitRoom() }
         }
-        .buttonStyle(.bordered)
+    }
+
+    private func bubbleButton(
+        _ title: String,
+        systemImage: String,
+        accent: Color,
+        selected: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            SpatialControlBubbleLabel(
+                title: title,
+                systemImage: systemImage,
+                accent: accent,
+                selected: selected
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 
     private func stepTitle(_ step: StrokeProcedureStep) -> String {
@@ -887,6 +971,14 @@ private struct SpatialRoleControls: View {
         case .chooseCase: "Orient"
         case .inspectOcclusion: "Pressure"
         case .discussCare: "Make space"
+        }
+    }
+
+    private var anatomyBubbleTitle: String {
+        switch experience.anatomyPresentation {
+        case .assembled: "Layers"
+        case .transparent: "Clear"
+        case .exploded: "Apart"
         }
     }
 
@@ -899,33 +991,83 @@ private struct SpatialRoleControls: View {
     }
 }
 
+/// A single spatial affordance rather than a miniature desktop toolbar.
+/// The visible word is intentionally short; VoiceOver carries the full label.
+private struct SpatialControlBubbleLabel: View {
+    let title: String
+    let systemImage: String
+    let accent: Color
+    let selected: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(.regularMaterial)
+            if selected {
+                Circle()
+                    .fill(accent.opacity(0.84))
+            }
+
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.headline.weight(.semibold))
+                Text(title)
+                    .font(.caption2.weight(.bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+            .padding(7)
+        }
+        .frame(width: 66, height: 66)
+        .foregroundStyle(selected ? Color.black.opacity(0.82) : Color.white)
+        .overlay(Circle().stroke(selected ? accent : Color.white.opacity(0.16), lineWidth: selected ? 2 : 1))
+        .contentShape(Circle())
+        .hoverEffect(.highlight)
+    }
+}
+
 private struct StrokeIntentionAnnotation: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Label(annotationTitle, systemImage: annotationIcon)
-                .font(.headline.weight(.bold))
-                .foregroundStyle(annotationTint)
+        HStack(alignment: .top, spacing: 11) {
+            VStack(spacing: 5) {
+                Image(systemName: annotationIcon)
+                    .font(.caption.weight(.black))
+                    .foregroundStyle(annotationTint)
+                    .frame(width: 25, height: 25)
+                    .background(annotationTint.opacity(0.15), in: Circle())
+                    .overlay(Circle().stroke(annotationTint.opacity(0.72), lineWidth: 1.5))
 
-            Text(annotationMeaning)
-                .font(.callout.weight(.medium))
-                .foregroundStyle(.primary.opacity(0.88))
-                .fixedSize(horizontal: false, vertical: true)
+                Capsule()
+                    .fill(annotationTint.opacity(0.52))
+                    .frame(width: 2, height: 42)
+            }
 
+            VStack(alignment: .leading, spacing: 5) {
+                Text(annotationTitle)
+                    .font(.headline.weight(.black))
+                    .tracking(0.35)
+                    .foregroundStyle(annotationTint)
+
+                Text(annotationMeaning)
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .padding(15)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(annotationTint.opacity(0.28)))
+        .padding(.vertical, 8)
+        .padding(.horizontal, 4)
+        .shadow(color: .black.opacity(0.72), radius: 8, y: 2)
         .accessibilityElement(children: .combine)
     }
 
     private var annotationTitle: String {
         if experience.closingReflectionVisible { return "YOU DO NOT HAVE TO HOLD EVERY ANSWER AT ONCE" }
         return switch experience.procedureStep {
-        case .chooseCase: "ONE TEACHING SCENARIO"
-        case .inspectOcclusion: "PRESSURE"
-        case .discussCare: "ROOM ≠ REPAIR"
+        case .chooseCase: "WHAT CHANGED?"
+        case .inspectOcclusion: "WHY DOES PRESSURE BUILD?"
+        case .discussCare: "WHAT CAN MAKING SPACE DO?"
         }
     }
 
@@ -934,9 +1076,9 @@ private struct StrokeIntentionAnnotation: View {
             return "A clear next step can make uncertainty feel smaller. Your care team will guide what comes next."
         }
         return switch experience.procedureStep {
-        case .chooseCase: "Generic anatomy, not a patient scan."
-        case .inspectOcclusion: "Swelling presses inside a fixed skull."
-        case .discussCare: "Surgery can ease pressure; injury remains."
+        case .chooseCase: "Start with the blockage in this generic teaching model."
+        case .inspectOcclusion: "Swelling presses inside the fixed skull."
+        case .discussCare: "The procedure can make room; it cannot undo stroke injury."
         }
     }
 
@@ -1051,26 +1193,43 @@ private struct VesselFocusReticle: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.orange.opacity(0.26), lineWidth: 2)
-            Circle()
-                .trim(from: 0.08, to: 0.72)
-                .stroke(Color.orange, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                .rotationEffect(.degrees(experience.procedureStep == .discussCare ? 28 : -18))
-            Circle()
-                .fill(Color.orange)
-                .frame(width: 14, height: 14)
-            Text("CLOT")
-                .font(.caption2.weight(.black))
-                .tracking(1.1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.regularMaterial, in: Capsule())
-                .offset(y: 52)
+        Button {
+            experience.toggleRegionPortal()
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(experience.regionPortalActive ? 0.12 : 0.035))
+                Circle()
+                    .stroke(Color.orange.opacity(0.30), lineWidth: 2)
+                Circle()
+                    .trim(from: 0.08, to: experience.regionPortalActive ? 0.96 : 0.72)
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .rotationEffect(.degrees(experience.regionPortalActive ? 42 : -18))
+                Circle()
+                    .stroke(Color.orange.opacity(0.44), lineWidth: 1)
+                    .frame(width: 104, height: 104)
+                Image(systemName: experience.regionPortalActive ? "arrow.uturn.backward" : "arrow.down.right.and.arrow.up.left")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.orange)
+
+                Text(portalTitle)
+                    .font(.caption2.weight(.black))
+                    .tracking(1.0)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(.regularMaterial, in: Capsule())
+                    .offset(y: 58)
+            }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Illustrative clot focus marker")
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .accessibilityLabel(experience.regionPortalActive ? "Return to the full brain" : "Enter the illustrative affected-region flow lesson")
+        .accessibilityHint("Changes the teaching viewpoint only")
+    }
+
+    private var portalTitle: String {
+        if experience.regionPortalActive { return "RETURN" }
+        return experience.audienceLens == .clinician ? "MAGNIFY" : "LOOK WITHIN"
     }
 }
 
