@@ -150,11 +150,14 @@ wearer receipt.
 
 At 16:36 SGT, build `0.6 (8)` also completed a signed arm64 physical-visionOS
 build and passed deep code-sign and designated-requirement verification. Its
-install did not complete: XCAT disconnected immediately after the CoreDevice
-tunnel opened, and the next lock-state query reported `passcodeRequired: true`.
-The machine gate is recorded at
-`Proof/xcat/20260809-163625/BLOCKED.md`. XCAT therefore still contains build 7;
-build 8 is **not** claimed installed or running.
+first install did not complete: XCAT disconnected immediately after the
+CoreDevice tunnel opened. At 16:43 SGT, a guarded retry installed build 8, and a
+fresh installed-app query confirmed `Stroke Care 0.6 (8)`. Foreground launch
+still timed out while the lock-state query reported `passcodeRequired: true`,
+and the process query was empty. The machine receipts are
+`Proof/xcat/20260809-163625/BLOCKED.md` and
+`Proof/xcat/20260809-164319/INSTALL_ONLY.md`. Build 8 is therefore installed but
+is **not** claimed foregrounded, running, or visible.
 
 ## Clinical and procedural gates
 
