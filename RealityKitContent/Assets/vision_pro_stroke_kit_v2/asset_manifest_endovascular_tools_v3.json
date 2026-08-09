@@ -1,0 +1,773 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit",
+  "module": "Generic endovascular stroke-intervention support tools",
+  "module_id": "endovascular_tools_v3",
+  "version": "0.3.0-endovascular-tools",
+  "generated_with": "5.2.0 LTS",
+  "generator": "source/build_endovascular_tools_v3.py",
+  "editable_source": "blender/endovascular_tools_educational_v3.blend",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "independent_asset_count": 10,
+  "review_assembly_count": 2,
+  "asset_count": 12,
+  "intended_use": "Generic patient education prototype only",
+  "patient_specific": false,
+  "device_specific": false,
+  "manufacturer_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "workflow_branch": "endovascular_intervention_only",
+  "physics_contract": "Static presentation geometry by default; optional app transforms may be kinematic only. No fluid, pressure, puncture, insertion, deployment, tissue, vessel, device-vessel, or radiation physics are encoded.",
+  "prohibited_cross_branch_contexts": [
+    "open_cranial_surgery",
+    "craniotomy",
+    "post_craniotomy_head_dressing"
+  ],
+  "source_provenance": "All geometry and materials are project-authored procedurally in Blender; no third-party models, textures, or product designs are used.",
+  "descriptive_workflow_stage_order_not_required_sequence": [
+    "sterile_setup_conditional",
+    "vascular_access_conditional",
+    "guide_catheter_navigation_conditional",
+    "angiography_contrast_flush_conditional",
+    "wire_catheter_manipulation_conditional",
+    "aspiration_thrombectomy_conditional",
+    "puncture_site_hemostasis_conditional",
+    "angiography_suite_control_conditional"
+  ],
+  "conditionality_rules": [
+    "Femoral, radial, or another access route is a clinician-selected option; the catalog does not prescribe one.",
+    "Aspiration, stent-retriever, combined, or another reperfusion strategy is clinician-selected; no tool category is universally required.",
+    "Contrast, flush, anesthesia/sedation, imaging controls, access-site hemostasis, and closure options depend on patient factors, local protocol, and clinician judgment.",
+    "Puncture-site compression, band, closure-applicator, and dressing representations are alternatives or adjuncts, not a simultaneous required combination."
+  ],
+  "aggregate_exclusion_groups": [
+    {
+      "aggregate_id": "vascular_access_setup_review_assembly_v3",
+      "exclude_when_loaded": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3"
+      ]
+    },
+    {
+      "aggregate_id": "endovascular_tools_workflow_review_assembly_v3",
+      "exclude_when_loaded": [
+        "vascular_access_setup_review_assembly_v3",
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "guide_catheter_hemostatic_valve_educational_v3",
+        "aspiration_pump_canister_tubing_educational_v3",
+        "contrast_manifold_syringe_flush_educational_v3",
+        "torque_device_y_connector_accessories_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3",
+        "sterile_endovascular_instrument_tray_educational_v3",
+        "angiography_suite_controls_educational_v3"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "vascular_access_needle_educational_v3",
+      "title": "Generic vascular-access needle concept",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic access needle with metallic cannula, visual tip opening, molded hub, connector collar, and finger wings.",
+      "clinical_note": "Access technique, puncture site, needle choice, angle, and route are deliberately not represented; femoral, radial, or another route remains a clinician-selected option.",
+      "stage_tags": [
+        "vascular_access",
+        "conditional_route"
+      ],
+      "workflow_role": "Illustrates one possible access-tool category before wire and sheath placement.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [
+        "vascular_access_wire_educational_v3"
+      ],
+      "narrative_may_follow_asset_ids": [],
+      "related_asset_ids": [
+        "introducer_sheath_dilator_set_educational_v3"
+      ],
+      "conditional_use": "Only when percutaneous vascular access is part of the selected clinical approach.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_setup_review_assembly_v3",
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 6380,
+      "dimensions_m": [
+        0.1271,
+        0.034,
+        0.015
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/vascular_access_needle_educational_v3.usdc",
+      "usdz": "exports/usdz/vascular_access_needle_educational_v3.usdz",
+      "usdz_bytes": 118892,
+      "usdz_sha256": "8f081d4418d4aaf64f15dd26f91c3a9cecd9ee8de51b4841b0262eaeb26ea145",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/01_vascular_access_needle_educational_v3.png"
+    },
+    {
+      "id": "vascular_access_wire_educational_v3",
+      "title": "Generic vascular-access wire concept",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic abbreviated access wire with curved distal concept, loading straightener, and dispensing-loop context.",
+      "clinical_note": "Wire profile, coating, length, diameter, motion, fluoroscopic visibility, and vessel interaction are not specifications or navigation guidance.",
+      "stage_tags": [
+        "vascular_access",
+        "conditional_route"
+      ],
+      "workflow_role": "Illustrates the transition from access needle to introducer sheath at a high level.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [
+        "introducer_sheath_dilator_set_educational_v3"
+      ],
+      "narrative_may_follow_asset_ids": [
+        "vascular_access_needle_educational_v3"
+      ],
+      "related_asset_ids": [
+        "torque_device_y_connector_accessories_educational_v3"
+      ],
+      "conditional_use": "Access-wire type and use depend on the selected access route and clinician plan.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_setup_review_assembly_v3",
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 2500,
+      "dimensions_m": [
+        0.265476,
+        0.05412,
+        0.0628
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/vascular_access_wire_educational_v3.usdc",
+      "usdz": "exports/usdz/vascular_access_wire_educational_v3.usdz",
+      "usdz_bytes": 128172,
+      "usdz_sha256": "50453ce07f6f767b31d1eca52a75f805b2f83c92f816fd8a431d721c6c78b1b1",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/02_vascular_access_wire_educational_v3.png"
+    },
+    {
+      "id": "introducer_sheath_dilator_set_educational_v3",
+      "title": "Generic introducer sheath and dilator set",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Parallel educational display of a generic introducer sheath with valve/sidearm and a separate tapered dilator.",
+      "clinical_note": "Sheath and dilator diameter, length, taper, sidearm, valve, insertion depth, and sequence are not authoritative.",
+      "stage_tags": [
+        "vascular_access",
+        "conditional_route"
+      ],
+      "workflow_role": "Shows the access conduit category used before guide-catheter work in some approaches.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [
+        "guide_catheter_hemostatic_valve_educational_v3"
+      ],
+      "narrative_may_follow_asset_ids": [
+        "vascular_access_wire_educational_v3"
+      ],
+      "related_asset_ids": [
+        "puncture_site_hemostasis_options_educational_v3"
+      ],
+      "conditional_use": "Configuration depends on femoral, radial, or other access strategy and local protocol.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_setup_review_assembly_v3",
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 18284,
+      "dimensions_m": [
+        0.226,
+        0.067337,
+        0.03047
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/introducer_sheath_dilator_set_educational_v3.usdc",
+      "usdz": "exports/usdz/introducer_sheath_dilator_set_educational_v3.usdz",
+      "usdz_bytes": 244844,
+      "usdz_sha256": "22fa743e25d2b56f617776fa23affeea819133293f98c540e9b9725beec0464b",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/03_introducer_sheath_dilator_set_educational_v3.png"
+    },
+    {
+      "id": "guide_catheter_hemostatic_valve_educational_v3",
+      "title": "Generic guide catheter and rotating hemostatic valve",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic curved guide-catheter display segment attached to a rotating hemostatic valve and capped sidearm.",
+      "clinical_note": "Catheter shape, support, route, valve adjustment, sidearm connections, placement, and navigation are not simulated.",
+      "stage_tags": [
+        "catheter_navigation",
+        "device_delivery",
+        "conditional_technique"
+      ],
+      "workflow_role": "Explains proximal access/support and a closed working port without showing navigation technique.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [
+        "torque_device_y_connector_accessories_educational_v3"
+      ],
+      "narrative_may_follow_asset_ids": [
+        "introducer_sheath_dilator_set_educational_v3"
+      ],
+      "related_asset_ids": [
+        "contrast_manifold_syringe_flush_educational_v3"
+      ],
+      "conditional_use": "Guide-catheter and valve configuration depends on clinician-selected technique and device system.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 19632,
+      "dimensions_m": [
+        0.313014,
+        0.057564,
+        0.031564
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/guide_catheter_hemostatic_valve_educational_v3.usdc",
+      "usdz": "exports/usdz/guide_catheter_hemostatic_valve_educational_v3.usdz",
+      "usdz_bytes": 236332,
+      "usdz_sha256": "e984cb7c7a7a531431745221028f7965b904973e95c2678b0861ce4afa15759e",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/04_guide_catheter_hemostatic_valve_educational_v3.png"
+    },
+    {
+      "id": "aspiration_pump_canister_tubing_educational_v3",
+      "title": "Generic aspiration pump, canister, and tubing",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic compact aspiration pump, abstract display/controls, collection canister, illustrative contents, capped ports, and tubing.",
+      "clinical_note": "No vacuum setting, pressure, duration, connection order, aspirate volume, alarm state, or operating instruction is encoded.",
+      "stage_tags": [
+        "reperfusion",
+        "aspiration_thrombectomy",
+        "conditional_technique"
+      ],
+      "workflow_role": "Explains the external suction pathway when aspiration is part of the selected strategy.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [
+        "guide_catheter_hemostatic_valve_educational_v3"
+      ],
+      "related_asset_ids": [
+        "aspiration_catheter_educational_v2"
+      ],
+      "conditional_use": "Shown only for aspiration-based or aspiration-assisted approaches; not every intervention uses this equipment.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 9928,
+      "dimensions_m": [
+        0.283,
+        0.0945,
+        0.129516
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/aspiration_pump_canister_tubing_educational_v3.usdc",
+      "usdz": "exports/usdz/aspiration_pump_canister_tubing_educational_v3.usdz",
+      "usdz_bytes": 255062,
+      "usdz_sha256": "8eca2d303e7f9f9ae4e79785a4cc88176a7f4440bff0a5b4b361a8f4844c9748",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/05_aspiration_pump_canister_tubing_educational_v3.png"
+    },
+    {
+      "id": "contrast_manifold_syringe_flush_educational_v3",
+      "title": "Generic contrast manifold, syringe, and flush system",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic multi-port manifold with abstract stopcocks, a larger illustrative contrast syringe, a smaller flush syringe, and disconnected lines.",
+      "clinical_note": "Fluid identity, preparation, dose, pressure, route, connection order, stopcock position, and injection protocol are intentionally absent.",
+      "stage_tags": [
+        "angiography",
+        "contrast",
+        "flush",
+        "conditional_protocol"
+      ],
+      "workflow_role": "Shows external fluid-routing categories used around angiographic imaging.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [
+        "sterile_endovascular_instrument_tray_educational_v3"
+      ],
+      "related_asset_ids": [
+        "guide_catheter_hemostatic_valve_educational_v3"
+      ],
+      "conditional_use": "Contrast and flush systems depend on imaging need, renal/allergy considerations, local protocol, and clinician order.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 14712,
+      "dimensions_m": [
+        0.188043,
+        0.179,
+        0.0455
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/contrast_manifold_syringe_flush_educational_v3.usdc",
+      "usdz": "exports/usdz/contrast_manifold_syringe_flush_educational_v3.usdz",
+      "usdz_bytes": 332780,
+      "usdz_sha256": "734924e487c4c7c32b257be9832454cd98ed8f49bf9741faf3499a47a1d39249",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/06_contrast_manifold_syringe_flush_educational_v3.png"
+    },
+    {
+      "id": "torque_device_y_connector_accessories_educational_v3",
+      "title": "Generic torque device, Y-connector, and accessories",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic wire torque-clamp concept, Y-connector with rotating seal and branch, short wire context, and capped accessories.",
+      "clinical_note": "No torque magnitude, seal setting, connection order, wire motion, device compatibility, or manipulation technique is represented.",
+      "stage_tags": [
+        "catheter_navigation",
+        "device_delivery",
+        "accessories",
+        "conditional_technique"
+      ],
+      "workflow_role": "Explains accessory categories used to control a working port and handle a wire.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [
+        "guide_catheter_hemostatic_valve_educational_v3"
+      ],
+      "related_asset_ids": [
+        "vascular_access_wire_educational_v3",
+        "microcatheter_educational_v2"
+      ],
+      "conditional_use": "Accessories and compatibility depend on the selected wire/catheter system and clinician technique.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 33352,
+      "dimensions_m": [
+        0.260021,
+        0.09905,
+        0.034338
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/torque_device_y_connector_accessories_educational_v3.usdc",
+      "usdz": "exports/usdz/torque_device_y_connector_accessories_educational_v3.usdz",
+      "usdz_bytes": 318849,
+      "usdz_sha256": "b94e43ff505a2257c313bf25b2538c1ff3400aab29de875421d017484e32729c",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/07_torque_device_y_connector_accessories_educational_v3.png"
+    },
+    {
+      "id": "puncture_site_hemostasis_options_educational_v3",
+      "title": "Generic puncture-site hemostasis options",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Side-by-side alternatives showing generic manual compression/gauze, an external compression-band concept, an adhesive dressing, and an abstract closure applicator.",
+      "clinical_note": "These are mutually alternative examples, not a combined setup; choice, pressure, timing, route, deployment, monitoring, and aftercare are not modeled.",
+      "stage_tags": [
+        "access_site_hemostasis",
+        "post_intervention",
+        "conditional_route"
+      ],
+      "workflow_role": "Explains that the access site is closed or compressed after catheter removal using a clinician-selected method.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [
+        "introducer_sheath_dilator_set_educational_v3"
+      ],
+      "related_asset_ids": [
+        "vascular_access_needle_educational_v3"
+      ],
+      "conditional_use": "Method depends on access route, anatomy, anticoagulation, device availability, local protocol, and clinician judgment.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_setup_review_assembly_v3",
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 16988,
+      "dimensions_m": [
+        0.286376,
+        0.096445,
+        0.04505
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/puncture_site_hemostasis_options_educational_v3.usdc",
+      "usdz": "exports/usdz/puncture_site_hemostasis_options_educational_v3.usdz",
+      "usdz_bytes": 282390,
+      "usdz_sha256": "83798a963dab5d983be8dc1eb7afa19eefa6f9e14645f11fb9d32b73e1269dd2",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "internal_prohibited_combinations": [
+        "Do not present manual compression, an external band, and a closure applicator as simultaneous required steps.",
+        "Do not imply the external-band concept applies to every access route."
+      ],
+      "preview": "previews/endovascular_tools_v3/08_puncture_site_hemostasis_options_educational_v3.png"
+    },
+    {
+      "id": "sterile_endovascular_instrument_tray_educational_v3",
+      "title": "Generic sterile endovascular instrument tray",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic draped tray with bowls, forceps, clamp silhouette, syringe, gauze, coiled tubing, and other preparation context.",
+      "clinical_note": "Tray contents, counts, packaging, medication preparation, sterility assurance, sharps handling, and local checklist requirements are not authoritative.",
+      "stage_tags": [
+        "sterile_setup",
+        "pre_intervention",
+        "conditional_local_protocol"
+      ],
+      "workflow_role": "Provides a visual anchor for sterile-field preparation before endovascular work.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [
+        "vascular_access_needle_educational_v3"
+      ],
+      "narrative_may_follow_asset_ids": [],
+      "related_asset_ids": [
+        "contrast_manifold_syringe_flush_educational_v3"
+      ],
+      "conditional_use": "Exact setup is institution-, procedure-, operator-, and anesthesia-dependent.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 10492,
+      "dimensions_m": [
+        0.3,
+        0.205,
+        0.04325
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/sterile_endovascular_instrument_tray_educational_v3.usdc",
+      "usdz": "exports/usdz/sterile_endovascular_instrument_tray_educational_v3.usdz",
+      "usdz_bytes": 296056,
+      "usdz_sha256": "d5aa8497a8d0f8bc0d890deee11d5463e86580ec55742e789b17236a1f904fa2",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/09_sterile_endovascular_instrument_tray_educational_v3.png"
+    },
+    {
+      "id": "angiography_suite_controls_educational_v3",
+      "title": "Generic angiography suite foot and hand controls",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "independent_tool_package",
+      "description": "Generic dual-pedal foot-control silhouette, cable, and abstract three-button hand control without functional labels.",
+      "clinical_note": "Control mapping, radiation exposure, table motion, injector operation, emergency functions, and operator workflow are deliberately not represented.",
+      "stage_tags": [
+        "angiography_suite",
+        "imaging_control",
+        "conditional_equipment"
+      ],
+      "workflow_role": "Shows that imaging-suite controls exist outside the sterile patient field.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [],
+      "related_asset_ids": [
+        "contrast_manifold_syringe_flush_educational_v3"
+      ],
+      "conditional_use": "Control hardware and responsibilities are suite-, system-, and institution-specific.",
+      "prohibited_co_load_asset_ids": [
+        "endovascular_tools_workflow_review_assembly_v3"
+      ],
+      "triangle_count": 3592,
+      "dimensions_m": [
+        0.338806,
+        0.133369,
+        0.085
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/angiography_suite_controls_educational_v3.usdc",
+      "usdz": "exports/usdz/angiography_suite_controls_educational_v3.usdz",
+      "usdz_bytes": 77649,
+      "usdz_sha256": "cf5971a2e99191a2f94313aacdac47b7be60832594012761bd30427fe890de3c",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "preview": "previews/endovascular_tools_v3/10_angiography_suite_controls_educational_v3.png"
+    },
+    {
+      "id": "vascular_access_setup_review_assembly_v3",
+      "title": "Vascular-access setup review assembly",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "review_assembly",
+      "description": "Review-only spatial grouping of access needle, access wire, sheath/dilator, and access-site hemostasis alternatives.",
+      "clinical_note": "This is a non-registered teaching layout, not a sterile setup or chronological operating sequence. It must not be co-loaded with any contained component.",
+      "stage_tags": [
+        "vascular_access",
+        "access_site_hemostasis",
+        "review_assembly"
+      ],
+      "workflow_role": "High-level access-to-closure review layout.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [],
+      "related_asset_ids": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3"
+      ],
+      "conditional_use": "Review only; access route and closure method remain conditional.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3"
+      ],
+      "triangle_count": 44152,
+      "dimensions_m": [
+        0.28384,
+        0.2182,
+        0.051444
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/vascular_access_setup_review_assembly_v3.usdc",
+      "usdz": "exports/usdz/vascular_access_setup_review_assembly_v3.usdz",
+      "usdz_bytes": 722963,
+      "usdz_sha256": "00b47c24bb0b2ab15e6790695e213489ba7346b874be86f07fb80ee5380ac492",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "contained_asset_ids": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3"
+      ],
+      "transitive_excludes": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3"
+      ],
+      "preview": "previews/endovascular_tools_v3/11_vascular_access_setup_review_assembly_v3.png"
+    },
+    {
+      "id": "endovascular_tools_workflow_review_assembly_v3",
+      "title": "Endovascular tools workflow review assembly",
+      "module": "endovascular_tools_v3",
+      "asset_kind": "review_assembly",
+      "description": "Review-only gallery grouping all ten independent endovascular support-tool packages by broad workflow stage.",
+      "clinical_note": "This is not a procedure room setup, device list, sterile field, required sequence, or patient-specific plan. It must not be co-loaded with either the access assembly or any independent component.",
+      "stage_tags": [
+        "multi_stage_review",
+        "review_assembly"
+      ],
+      "workflow_role": "Single-view orientation to optional tool categories across the procedure.",
+      "relationship_semantics": "Descriptive patient-education association only; not a required procedural sequence.",
+      "narrative_may_precede_asset_ids": [],
+      "narrative_may_follow_asset_ids": [],
+      "related_asset_ids": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "guide_catheter_hemostatic_valve_educational_v3",
+        "aspiration_pump_canister_tubing_educational_v3",
+        "contrast_manifold_syringe_flush_educational_v3",
+        "torque_device_y_connector_accessories_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3",
+        "sterile_endovascular_instrument_tray_educational_v3",
+        "angiography_suite_controls_educational_v3"
+      ],
+      "conditional_use": "Review only; no displayed category is universally required.",
+      "prohibited_co_load_asset_ids": [
+        "vascular_access_setup_review_assembly_v3",
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "guide_catheter_hemostatic_valve_educational_v3",
+        "aspiration_pump_canister_tubing_educational_v3",
+        "contrast_manifold_syringe_flush_educational_v3",
+        "torque_device_y_connector_accessories_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3",
+        "sterile_endovascular_instrument_tray_educational_v3",
+        "angiography_suite_controls_educational_v3"
+      ],
+      "triangle_count": 135860,
+      "dimensions_m": [
+        0.789139,
+        0.482192,
+        0.083676
+      ],
+      "units": "meters",
+      "usd_up_axis": "Y",
+      "usdc": "exports/usdc/endovascular_tools_workflow_review_assembly_v3.usdc",
+      "usdz": "exports/usdz/endovascular_tools_workflow_review_assembly_v3.usdz",
+      "usdz_bytes": 2091183,
+      "usdz_sha256": "624602f7429d77e4b6768b67bc308b5890a8a1dd8193957f506662a89c80ab76",
+      "patient_specific": false,
+      "device_specific": false,
+      "manufacturer_specific": false,
+      "registered_to_patient": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "training_status": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+      "not_for_device_selection": true,
+      "not_for_device_sizing": true,
+      "not_for_navigation": true,
+      "not_for_treatment_planning": true,
+      "anesthesia_dependency": "No anesthesia technique is encoded; any anesthesia/sedation choice is external and conditional.",
+      "source_provenance": "Project-authored procedural Blender geometry; no external geometry or texture dependency.",
+      "scale_note": "Displayed at plausible macroscopic scale for explanation only; dimensions are not manufacturer specifications.",
+      "contained_asset_ids": [
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "guide_catheter_hemostatic_valve_educational_v3",
+        "aspiration_pump_canister_tubing_educational_v3",
+        "contrast_manifold_syringe_flush_educational_v3",
+        "torque_device_y_connector_accessories_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3",
+        "sterile_endovascular_instrument_tray_educational_v3",
+        "angiography_suite_controls_educational_v3"
+      ],
+      "transitive_excludes": [
+        "vascular_access_setup_review_assembly_v3",
+        "vascular_access_needle_educational_v3",
+        "vascular_access_wire_educational_v3",
+        "introducer_sheath_dilator_set_educational_v3",
+        "guide_catheter_hemostatic_valve_educational_v3",
+        "aspiration_pump_canister_tubing_educational_v3",
+        "contrast_manifold_syringe_flush_educational_v3",
+        "torque_device_y_connector_accessories_educational_v3",
+        "puncture_site_hemostasis_options_educational_v3",
+        "sterile_endovascular_instrument_tray_educational_v3",
+        "angiography_suite_controls_educational_v3"
+      ],
+      "preview": "previews/endovascular_tools_v3/12_endovascular_tools_workflow_review_assembly_v3.png"
+    }
+  ],
+  "warnings": [
+    "Generic, non-branded educational representations; not cleared or marketed devices and not a complete procedure inventory.",
+    "Geometry, dimensions, control layouts, materials, colors, connections, and relative placement are visually plausible concepts only, not specifications.",
+    "Do not use for device selection, compatibility decisions, sizing, navigation, procedural training, sterile-field setup, medication/contrast preparation, treatment planning, or outcome prediction.",
+    "Do not infer an access route, anesthesia plan, procedural sequence, closure method, contrast protocol, radiation-control mapping, or institutional workflow from these models.",
+    "Keep this module in an endovascular-only branch; do not activate it as part of craniotomy, open cranial surgery, or post-craniotomy head-dressing scenes.",
+    "Interventional neuroradiology, nursing, radiography, anesthesia, infection-control, human-factors, and regulatory review are required before any patient-facing deployment."
+  ]
+}

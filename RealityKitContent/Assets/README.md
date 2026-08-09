@@ -1,11 +1,12 @@
 # Stroke VisionOS asset catalog
 
-This directory contains **108 unique, manifest-backed runtime USDZ assets**:
+This directory contains **134 unique, manifest-backed runtime USDZ assets**:
 
-- **43 release-eligible v3 assets** across three manifests.
+- **69 release-eligible v3 assets** across five manifests: 43 anatomy/detail
+  packages and 26 representative surgical-tool packages.
 - **36 higher-detail v2 assets** across five manifests.
 - **29 prototype-v1 assets** in one manifest.
-- **262,040,610 bytes** of runtime USDZ payload.
+- **270,376,845 bytes** of runtime USDZ payload.
 
 “Release-eligible” here means only that a package is not on the known
 inner-ear licence hold and is present in the publishing catalog. It does not
@@ -18,13 +19,13 @@ not counted as additional runtime assets. Composite assemblies are counted
 because they are separately loadable packages, although they duplicate geometry
 from their component layers.
 
-The complete source build has **110 unique package records**: 65 original plus
-45 v3. The two inner-ear-containing v3 packages are licence-held and their
-binaries are deliberately absent here, so the release catalog remains 108.
+The complete source build has **136 unique package records**: 65 original plus
+71 v3. The two inner-ear-containing v3 packages are licence-held and their
+binaries are deliberately absent here, so the release catalog remains 134.
 
 The historical review-only `stroke_kit_asset_gallery.usdz` is deliberately not
-included. It is an unmanifested composite of prototype geometry, not a 109th
-release asset or a 111th source-build package.
+included. It is an unmanifested composite of prototype geometry, not a 135th
+release asset or a 137th source-build package.
 
 For the canonical scene hierarchy, all component/assembly relationships,
 procedure state logic, interaction physics, and Houdini/RealityKit handoff, see
@@ -59,7 +60,9 @@ Assets/
     ├── asset_manifest_neural_detail_v3.json
     ├── asset_manifest_cranial_detail_v3.json  # release-safe, held records omitted
     ├── asset_manifest_intracranial_micro_v3.json
-    ├── exports/usdz/                 # 36 v2 + 43 release-eligible v3 packages
+    ├── asset_manifest_endovascular_tools_v3.json
+    ├── asset_manifest_open_cranial_tools_v3.json
+    ├── exports/usdz/                 # 36 v2 + 69 release-eligible v3 packages
     ├── previews/                     # supporting v2/v3 renders
     └── textures/source/              # supporting material maps
 ```
@@ -273,6 +276,68 @@ Every package below is magnified, non-histologic, non-quantitative, non-patient-
 | 107 | [ischemic_tissue_zones_conceptual_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/ischemic_tissue_zones_conceptual_v3.usdz) | **Conceptual ischemic tissue-zone teaching model.** Opaque layered surrounding, at-risk, and core teaching regions with non-quantitative microvessel context. Use only in the separate micro teaching stage. |
 | 108 | [intracranial_micro_teaching_set_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/intracranial_micro_teaching_set_v3.usdz) | **Intracranial microanatomy teaching-set review assembly.** Review-only gallery of all eleven scale-separated microanatomy vignettes; use individual packages at runtime. Use only in the separate micro teaching stage. |
 
+## Representative surgical-tool v3 assets (26 release packages)
+
+These original, unbranded packages are recognition props for two mutually
+exclusive educational branches. They are **representative, not exhaustive**:
+they do not define a complete tray, required order, access route, device system,
+sterile setup, or appropriate procedure for a patient. Stage labels mean only
+where a clinician-reviewed lesson may introduce a category. All geometry is
+static, with optional qualitative kinematic pickup/rotation; there is no force,
+depth, trajectory, pressure, flow, energy, device sizing, compatibility,
+navigation, tissue interaction, or training model.
+
+The release-number column continues the 134-file publishing index. The same
+packages are full-build records 111–136 in [`MASTER.md`](../../MASTER.md), which
+retains held records 92 and 98 in the build sequence.
+
+### Endovascular support tools (12)
+
+These packages belong only under the endovascular branch and the applicable
+`EVT-*` stage root. Route, technique, contrast/flush, anesthesia, aspiration,
+suite-control, and access-hemostasis choices remain conditional. Review
+assemblies replace their components and must never be co-loaded with them.
+
+| Release # | Runtime file | Description and stage/use rule |
+|---:|---|---|
+| 109 | [vascular_access_needle_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/vascular_access_needle_educational_v3.usdz) | **Generic vascular-access needle concept.** Optional `EVT-02_ARTERIAL_ACCESS` recognition prop. It does not select femoral, radial, or another route and encodes no gauge, angle, depth, or puncture technique. |
+| 110 | [vascular_access_wire_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/vascular_access_wire_educational_v3.usdz) | **Generic vascular-access wire concept.** Optional `EVT-02` transition cue, separate from the intracranial v2 guidewire inspection model. No coating, diameter, length, motion, or vessel-interaction meaning. |
+| 111 | [introducer_sheath_dilator_set_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/introducer_sheath_dilator_set_educational_v3.usdz) | **Generic introducer sheath and dilator set.** Optional `EVT-02` access-support view. Dimensions, taper, valve, sidearm, insertion depth, compatibility, and sequence are illustrative. |
+| 112 | [guide_catheter_hemostatic_valve_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/guide_catheter_hemostatic_valve_educational_v3.usdz) | **Generic guide catheter and rotating hemostatic valve.** Optional `EVT-03_GUIDE_ACCESS`/`EVT-05_DISTAL_DELIVERY` proximal-support category. It is not a navigation path, named catheter curve, valve setting, or connector specification. |
+| 113 | [aspiration_pump_canister_tubing_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/aspiration_pump_canister_tubing_educational_v3.usdz) | **Generic aspiration pump, canister, and tubing.** Show only for clinician-selected `EVT-06B_CONTACT_ASPIRATION` or `EVT-06C_COMBINED`. No vacuum, pressure, duration, aspirate volume, alarm, connection, or efficacy is encoded. |
+| 114 | [contrast_manifold_syringe_flush_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/contrast_manifold_syringe_flush_educational_v3.usdz) | **Generic contrast manifold, syringe, and flush system.** Conditional `EVT-04_BASELINE_ANGIOGRAPHY`/`EVT-07_VERIFICATION` support. It contains no fluid identity, dose, route, stopcock position, pressure, timing, renal/allergy decision, or protocol. |
+| 115 | [torque_device_y_connector_accessories_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/torque_device_y_connector_accessories_educational_v3.usdz) | **Generic torque device, Y-connector, and accessories.** Optional `EVT-03`/`EVT-05` accessory-recognition view. No torque magnitude, seal setting, connection order, wire manipulation, or compatibility claim. |
+| 116 | [puncture_site_hemostasis_options_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/puncture_site_hemostasis_options_educational_v3.usdz) | **Generic puncture-site hemostasis options.** `EVT-08_WITHDRAWAL_HEMOSTASIS` alternatives/adjuncts, not a simultaneous setup. Route, method, pressure, deployment, timing, monitoring, and aftercare remain clinician/local-protocol decisions. |
+| 117 | [sterile_endovascular_instrument_tray_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/sterile_endovascular_instrument_tray_educational_v3.usdz) | **Generic sterile endovascular instrument tray.** Optional `EVT-01_SUITE_SETUP` visual anchor. It is deliberately incomplete and does not establish counts, packaging, medications, sterility assurance, sharps handling, or an institutional checklist. |
+| 118 | [angiography_suite_controls_educational_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/angiography_suite_controls_educational_v3.usdz) | **Generic angiography-suite controls.** External equipment context for `EVT-01`, `EVT-04`, or `EVT-07`. Button/pedal mapping, radiation, table motion, injector operation, emergency functions, and operator workflow are absent. |
+| 119 | [vascular_access_setup_review_assembly_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/vascular_access_setup_review_assembly_v3.usdz) | **Vascular-access review assembly.** Review-table replacement for the needle, access wire, sheath/dilator, and hemostasis-option packages. It is non-registered, non-sterile, non-chronological, and transitively excludes all four components. |
+| 120 | [endovascular_tools_workflow_review_assembly_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/endovascular_tools_workflow_review_assembly_v3.usdz) | **Endovascular support-tool workflow review assembly.** Non-chronological gallery replacing all ten components and the nested access assembly. It is not a procedure-room setup, required device list, sequence, or patient plan. |
+
+### Open-cranial tools (14)
+
+Every package below is `open_neurosurgery_only`, prohibited from ordinary EVT,
+and hidden until
+`clinician_selected_hemorrhage_or_decompression_only` is confirmed. Open
+evacuation, minimally invasive evacuation, decompression, closure, and optional
+CSF access are conditional branches rather than one inevitable sequence.
+
+| Release # | Runtime file | Description and stage/use rule |
+|---:|---|---|
+| 121 | [surface_marking_ruler_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/surface_marking_ruler_set_open_neurosurgery_v3.usdz) | **Generic surface marker and flexible ruler set.** `OPEN-01_POSITION_PREP` orientation context only. Markings are non-calibrated and define no incision, coordinate, measurement, or plan. |
+| 122 | [scalpel_dissector_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/scalpel_dissector_set_open_neurosurgery_v3.usdz) | **Generic scalpel and blunt dissector set.** Non-graphic `OPEN-02_SCALP_EXPOSURE` recognition prop. It encodes no blade choice, incision, tissue plane, depth, force, or technique. |
+| 123 | [scalp_retractor_hemostat_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/scalp_retractor_hemostat_set_open_neurosurgery_v3.usdz) | **Generic scalp retractor and hemostat set.** Optional `OPEN-02` exposure/hemostasis category. Do not animate tissue contact or infer retraction force, clamp pressure, duration, or efficacy. |
+| 124 | [perforator_craniotome_system_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/perforator_craniotome_system_open_neurosurgery_v3.usdz) | **Generic perforator and craniotome system concepts.** `OPEN-03_BONE_ACCESS` detail replacing/supplementing the overlapping prototype drill view. No speed, torque, trajectory, cutting, heat, protective-stop, or safety behavior. |
+| 125 | [bone_flap_fixation_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/bone_flap_fixation_set_open_neurosurgery_v3.usdz) | **Generic bone-flap fixation plates and screws.** `OPEN-07A_CRANIOTOMY_CLOSURE` only when the reviewed branch replaces the flap. Prohibited for decompressive-craniectomy leave-off; no implant material, dimensions, compatibility, placement, or torque. |
+| 126 | [dural_scissors_hooks_forceps_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/dural_scissors_hooks_forceps_set_open_neurosurgery_v3.usdz) | **Generic dural scissors, hook, and forceps set.** `OPEN-04_DURAL_ACCESS` recognition view. It does not define an opening pattern, corridor, clearance, trajectory, or technique. |
+| 127 | [bipolar_forceps_irrigation_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/bipolar_forceps_irrigation_set_open_neurosurgery_v3.usdz) | **Generic bipolar forceps and irrigation set.** Optional `OPEN-05A_OPEN_EVACUATION`/`OPEN-06_HEMOSTASIS_INSPECTION` context. No electrical/thermal energy, fluid identity/rate, temperature, sealing, or efficacy. |
+| 128 | [suction_microdissector_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/suction_microdissector_set_open_neurosurgery_v3.usdz) | **Generic suction and microdissector set.** Optional `OPEN-05A`/`OPEN-06` view that replaces the overlapping prototype `suction_and_forceps` close-up. No pressure, flow, tissue removal, manipulation, bleeding, or completion metric. |
+| 129 | [brain_spatula_retractor_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/brain_spatula_retractor_set_open_neurosurgery_v3.usdz) | **Generic brain spatula and retractor set.** Conditional `OPEN-05A` recognition only. Placement, corridor, tissue contact, width choice, pressure, duration, deformation, and safety are deliberately absent. |
+| 130 | [microscope_microinstrument_tray_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/microscope_microinstrument_tray_open_neurosurgery_v3.usdz) | **Generic microscope-compatible microinstrument tray.** Optional detached `OPEN-04`/`OPEN-05A` comparison layout. It is not a microscope model, complete tray, sterile configuration, optical specification, or operative setup. |
+| 131 | [dural_closure_suture_patch_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/dural_closure_suture_patch_set_open_neurosurgery_v3.usdz) | **Generic dural closure needle, suture, and patch set.** Branch-appropriate `OPEN-07A`/`OPEN-07B` material-category explanation. It encodes no suture/patch selection, closure pattern, tension, watertightness, compatibility, or result. |
+| 132 | [conditional_csf_access_instrument_set_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/conditional_csf_access_instrument_set_open_neurosurgery_v3.usdz) | **Conditional generic CSF-access instrument set.** Hidden by default; available only at `OPEN-EVD_OPTIONAL` after a separate specialist gate, replacing the detailed view of `optional_evd_system`. No target, trajectory, depth, placement, drainage height, pressure, waveform, or management instruction. |
+| 133 | [cranial_access_tools_review_assembly_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/cranial_access_tools_review_assembly_open_neurosurgery_v3.usdz) | **Cranial-access tools review assembly.** Review-table replacement for the five surface/exposure/bone-access component sets. Transitive exclusions are mandatory; layout is not a sterile tray, patient registration, or procedure sequence. |
+| 134 | [intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdz](vision_pro_stroke_kit_v2/exports/usdz/intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdz) | **Intradural and closure tools review assembly.** Review-table replacement for six dural/microsurgical/protection/tray/closure sets. It intentionally excludes conditional CSF access and encodes no required order or operative arrangement. |
+
 ### Full-build records excluded from release (2)
 
 | Build-record ID | Status | Publishing-tree rule |
@@ -281,6 +346,20 @@ Every package below is magnified, non-histologic, non-quantitative, non-patient-
 | `cranial_support_registered_assembly_v3` | `HOLD_FOR_INNER_EAR_LICENSE_REVIEW` | Binary and runtime-manifest record omitted because the assembly contains the held ear geometry. |
 
 Preview renders that visibly contain either held package are omitted as well.
+
+### Known tool-catalog gaps
+
+The 26 tool packages intentionally do not complete every stage. The current
+release has no dedicated access-ultrasound model, diagnostic or balloon-guide
+catheter variant, radiation-shielding set, neurosurgical head holder, manual
+rongeur/periosteal-elevator set, operating microscope/illumination model,
+generator console, patties/hemostatic-material set, external surgical
+suction/irrigation console, skin-stapler/navigation-pointer concept, or complete
+external EVD leveling/drainage system. Reuse the existing generic context where
+appropriate or omit the concept; never infer that an absent prop is clinically
+unnecessary. See the
+[stage audit](../../docs/assets/research/SURGICAL_TOOL_STAGE_AUDIT_V3.md) for the
+full gap and duplication analysis.
 
 ## Manifests
 
@@ -293,6 +372,8 @@ Preview renders that visibly contain either held package are omitted as well.
 - [Neural-detail-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_neural_detail_v3.json)
 - [Release-safe cranial-detail-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_cranial_detail_v3.json)
 - [Intracranial-micro-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_intracranial_micro_v3.json)
+- [Endovascular-support-tools-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_endovascular_tools_v3.json)
+- [Open-cranial-tools-v3 manifest](vision_pro_stroke_kit_v2/asset_manifest_open_cranial_tools_v3.json)
 
 Manifest `usdz` paths are relative to the corresponding kit directory. Keep
 the package layout intact or rewrite paths intentionally in the app's catalog
@@ -317,6 +398,14 @@ and metres. Center inspection views using visual bounds. Load combined hero
 assemblies lazily, and use the separate opaque layers for reveal/toggle flows.
 Filter or reject any future record whose `license_review_status` starts with
 `HOLD_`; the current release-safe cranial manifest omits both held records.
+
+Route every `endovascular_tools_v3` record only to the gated endovascular stage
+specified by the tool-stage audit. Route every `open_cranial_tools_v3` record
+only to `OpenCranialRoot` after the explicit clinician-selected
+hemorrhage/decompression gate; fail closed in ordinary EVT. Treat
+`stage_tags`, narrative adjacency, and review-gallery layout as descriptive
+education metadata rather than operating instructions or a required sequence.
+Recursively enforce each assembly's component/exclusion list before loading.
 
 Never center, fit, or register a `microscopic_conceptual_separate` package
 inside `HeadRegisteredRoot`. Open it in a separate teaching stage and keep the

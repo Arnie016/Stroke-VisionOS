@@ -2,10 +2,10 @@
 
 ## Scope
 
-The committed release catalog contains 108 unique, manifest-backed runtime USDZ
-packages: the original 65 (36 higher-detail v2 and 29 prototype-v1) plus 43
-non-held v3 detail packages. The complete source build produced 45 v3
-packages, for 110 unique build records, but the two inner-ear-containing
+The committed release catalog contains 134 unique, manifest-backed runtime USDZ
+packages: the original 65 (36 higher-detail v2 and 29 prototype-v1), 43
+non-held v3 detail packages, and 26 v3 surgical-tool packages. The complete
+source build produced 71 v3 packages, for 136 unique build records, but the two inner-ear-containing
 packages are on a licence hold and are deliberately absent from this publishing
 tree. The unmanifested `stroke_kit_asset_gallery.usdz` review composite remains
 excluded because it duplicates prototype geometry.
@@ -97,6 +97,39 @@ Three project-owned ImageGen base-colour references support appearance only;
 they are not microscopy, histology, anatomy, pathology, or clinical evidence.
 The exact prompts, refinement record, output paths, and hashes are retained in
 [`source-notes/IMAGEGEN_INTRACRANIAL_MICRO_V3.md`](source-notes/IMAGEGEN_INTRACRANIAL_MICRO_V3.md).
+
+## Surgical-tool v3
+
+The 12 endovascular-support packages and 14 open-cranial packages are original,
+unbranded procedural project work. No third-party mesh, CAD, product scan,
+online model, catalogue image, texture, logo, trademark, packaging, or ImageGen
+output is used. Generic category references were consulted only to audit broad
+terminology and conditional stage context; no product dimensions, controls,
+connector standards, proprietary geometry, instructions, or performance data
+were copied.
+
+The endovascular module contains ten independent category packages and two
+review assemblies. It supports conditional educational associations spanning
+suite setup, vascular access, guide support, angiography, distal delivery,
+aspiration-based variants, and access-site hemostasis. The open module contains
+twelve independent packages and two review assemblies, is
+`open_neurosurgery_only`, and requires the
+`clinician_selected_hemorrhage_or_decompression_only` gate. The review
+assemblies duplicate their component geometry and must replace, never augment,
+those components.
+
+Canonical release records:
+
+- [Endovascular asset notes](source-notes/ENDOVASCULAR_TOOLS_ASSET_NOTES_V3.md)
+- [Endovascular provenance](research/ENDOVASCULAR_TOOLS_PROVENANCE_V3.md)
+- [Open-cranial asset notes](source-notes/OPEN_CRANIAL_TOOLS_ASSET_NOTES_V3.md)
+- [Open-cranial provenance](research/OPEN_CRANIAL_TOOLS_SOURCE_PROVENANCE_V3.md)
+- [Stage, duplication, gap, and handoff audit](research/SURGICAL_TOOL_STAGE_AUDIT_V3.md)
+
+These are representative recognition props, not exhaustive trays, marketed
+devices, operative sequences, sterile configurations, planning/navigation data,
+or training simulators. Mesh dimensions are display bounds, not product
+measurements; all allowed behavior is static or qualitatively kinematic.
 
 ## Clinical meaning boundary
 

@@ -1,0 +1,432 @@
+{
+  "module": "Generic open-cranial neurosurgery instrument concepts",
+  "manifest": "asset_manifest_open_cranial_tools_v3.json",
+  "generated_at_utc": "2026-08-08T15:05:50.108112+00:00",
+  "asset_count": 14,
+  "pass_count": 14,
+  "fail_count": 0,
+  "strict_command": "/usr/bin/usdchecker --arkit --strict <package.usdz>",
+  "realitykit_probe_source": "research/realitykit_load_probe.swift",
+  "records": [
+    {
+      "id": "surface_marking_ruler_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 7592,
+      "manifest_dimensions_m_source_xyz": [
+        0.165606,
+        0.0805,
+        0.014
+      ],
+      "usdz": "exports/usdz/surface_marking_ruler_set_open_neurosurgery_v3.usdz",
+      "bytes": 111024,
+      "sha256": "2f7aefb347a3eb87c4fe921eca8d00ca418ebe65d8a2b3ca6f4847cfc55043d6",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 80,
+      "realitykit_models": 39,
+      "realitykit_materials": 39,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.165606,
+        0.014,
+        0.0805
+      ],
+      "realitykit_load_ms_observed": 122.7,
+      "pass": true
+    },
+    {
+      "id": "scalpel_dissector_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 6956,
+      "manifest_dimensions_m_source_xyz": [
+        0.180397,
+        0.063,
+        0.005825
+      ],
+      "usdz": "exports/usdz/scalpel_dissector_set_open_neurosurgery_v3.usdz",
+      "bytes": 77294,
+      "sha256": "456df6dae1e5241c4535e4f6bcb4ac3e5c193974ec2496b592bb47abef03900a",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 76,
+      "realitykit_models": 37,
+      "realitykit_materials": 37,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.180397,
+        0.005825,
+        0.063
+      ],
+      "realitykit_load_ms_observed": 181.3,
+      "pass": true
+    },
+    {
+      "id": "scalp_retractor_hemostat_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 12004,
+      "manifest_dimensions_m_source_xyz": [
+        0.158718,
+        0.106574,
+        0.004535
+      ],
+      "usdz": "exports/usdz/scalp_retractor_hemostat_set_open_neurosurgery_v3.usdz",
+      "bytes": 211467,
+      "sha256": "efb8e92c00b788969c5239a214c57e8d0626bda530aefc9f79a9d31a1d1bed38",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 60,
+      "realitykit_models": 29,
+      "realitykit_materials": 29,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.158718,
+        0.004535,
+        0.106574
+      ],
+      "realitykit_load_ms_observed": 275.2,
+      "pass": true
+    },
+    {
+      "id": "perforator_craniotome_system_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 10460,
+      "manifest_dimensions_m_source_xyz": [
+        0.203174,
+        0.086779,
+        0.032
+      ],
+      "usdz": "exports/usdz/perforator_craniotome_system_open_neurosurgery_v3.usdz",
+      "bytes": 230127,
+      "sha256": "14407122ef78a7f5a3b37908140de71f9022a880bd9c5dca98ff74a63357077e",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 36,
+      "realitykit_models": 17,
+      "realitykit_materials": 17,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.203174,
+        0.032,
+        0.086779
+      ],
+      "realitykit_load_ms_observed": 127.0,
+      "pass": true
+    },
+    {
+      "id": "bone_flap_fixation_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 11796,
+      "manifest_dimensions_m_source_xyz": [
+        0.148463,
+        0.080916,
+        0.004875
+      ],
+      "usdz": "exports/usdz/bone_flap_fixation_set_open_neurosurgery_v3.usdz",
+      "bytes": 101911,
+      "sha256": "217c36a70010bc4afb9df40d70c8a36dfae01c1f02160f788b9d3a9a20ac97b9",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 68,
+      "realitykit_models": 33,
+      "realitykit_materials": 33,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.148463,
+        0.004875,
+        0.080916
+      ],
+      "realitykit_load_ms_observed": 201.4,
+      "pass": true
+    },
+    {
+      "id": "dural_scissors_hooks_forceps_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 3936,
+      "manifest_dimensions_m_source_xyz": [
+        0.160296,
+        0.106369,
+        0.005797
+      ],
+      "usdz": "exports/usdz/dural_scissors_hooks_forceps_set_open_neurosurgery_v3.usdz",
+      "bytes": 137957,
+      "sha256": "4a076849cf44ca737ba53ca2093d8df793129b0a11b003c448e1f809434f1b8d",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 26,
+      "realitykit_models": 12,
+      "realitykit_materials": 12,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.160296,
+        0.005797,
+        0.106369
+      ],
+      "realitykit_load_ms_observed": 60.4,
+      "pass": true
+    },
+    {
+      "id": "bipolar_forceps_irrigation_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 1192,
+      "manifest_dimensions_m_source_xyz": [
+        0.18836,
+        0.083312,
+        0.014761
+      ],
+      "usdz": "exports/usdz/bipolar_forceps_irrigation_set_open_neurosurgery_v3.usdz",
+      "bytes": 67468,
+      "sha256": "66a0bf8cd1209e9903cd1689a42caa70b30832b910f2f2f80823c2a0fda367bf",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 14,
+      "realitykit_models": 6,
+      "realitykit_materials": 6,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.18836,
+        0.014761,
+        0.083312
+      ],
+      "realitykit_load_ms_observed": 741.0,
+      "pass": true
+    },
+    {
+      "id": "suction_microdissector_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 4288,
+      "manifest_dimensions_m_source_xyz": [
+        0.171899,
+        0.066192,
+        0.013648
+      ],
+      "usdz": "exports/usdz/suction_microdissector_set_open_neurosurgery_v3.usdz",
+      "bytes": 109288,
+      "sha256": "07bebc78c548b9e7971cfe6c250b6280414d3de23fe80915a58f5192bc0302d3",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 38,
+      "realitykit_models": 18,
+      "realitykit_materials": 18,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.171899,
+        0.013648,
+        0.066192
+      ],
+      "realitykit_load_ms_observed": 72.4,
+      "pass": true
+    },
+    {
+      "id": "brain_spatula_retractor_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 8616,
+      "manifest_dimensions_m_source_xyz": [
+        0.179399,
+        0.08478,
+        0.006097
+      ],
+      "usdz": "exports/usdz/brain_spatula_retractor_set_open_neurosurgery_v3.usdz",
+      "bytes": 73239,
+      "sha256": "261c2b6880d256686776b83c4393520d372d3c320d763d286829130e977ced84",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 32,
+      "realitykit_models": 15,
+      "realitykit_materials": 15,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.179399,
+        0.006097,
+        0.08478
+      ],
+      "realitykit_load_ms_observed": 119.4,
+      "pass": true
+    },
+    {
+      "id": "microscope_microinstrument_tray_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 5888,
+      "manifest_dimensions_m_source_xyz": [
+        0.19,
+        0.108,
+        0.0127
+      ],
+      "usdz": "exports/usdz/microscope_microinstrument_tray_open_neurosurgery_v3.usdz",
+      "bytes": 216537,
+      "sha256": "2702a95c5211fb74d733ad0d174811b87ac7125e64c90b6843919e40914ec85c",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 36,
+      "realitykit_models": 17,
+      "realitykit_materials": 17,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.19,
+        0.0127,
+        0.108
+      ],
+      "realitykit_load_ms_observed": 112.4,
+      "pass": true
+    },
+    {
+      "id": "dural_closure_suture_patch_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 7464,
+      "manifest_dimensions_m_source_xyz": [
+        0.147586,
+        0.108998,
+        0.004806
+      ],
+      "usdz": "exports/usdz/dural_closure_suture_patch_set_open_neurosurgery_v3.usdz",
+      "bytes": 249623,
+      "sha256": "63ce6d2930de6b05658e6b748058d4a2a7e71c0488e72139d3ab6213497e907c",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 28,
+      "realitykit_models": 13,
+      "realitykit_materials": 13,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.147586,
+        0.004806,
+        0.108998
+      ],
+      "realitykit_load_ms_observed": 74.2,
+      "pass": true
+    },
+    {
+      "id": "conditional_csf_access_instrument_set_open_neurosurgery_v3",
+      "asset_kind": "independent_instrument_set",
+      "triangle_count": 6976,
+      "manifest_dimensions_m_source_xyz": [
+        0.164,
+        0.096364,
+        0.011
+      ],
+      "usdz": "exports/usdz/conditional_csf_access_instrument_set_open_neurosurgery_v3.usdz",
+      "bytes": 231598,
+      "sha256": "b5bdb73b68a4bc182b33b82a7eabae66d694255cd938cd176affbc1bca171d68",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 24,
+      "realitykit_models": 11,
+      "realitykit_materials": 11,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.164,
+        0.011,
+        0.096364
+      ],
+      "realitykit_load_ms_observed": 92.5,
+      "pass": true
+    },
+    {
+      "id": "cranial_access_tools_review_assembly_open_neurosurgery_v3",
+      "asset_kind": "review_assembly",
+      "triangle_count": 48808,
+      "manifest_dimensions_m_source_xyz": [
+        0.642017,
+        0.248,
+        0.032
+      ],
+      "usdz": "exports/usdz/cranial_access_tools_review_assembly_open_neurosurgery_v3.usdz",
+      "bytes": 718226,
+      "sha256": "6226e220345561f40990920846912ae4516bc2ce426c97d069613aeec943bc3c",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 312,
+      "realitykit_models": 155,
+      "realitykit_materials": 155,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.642017,
+        0.032,
+        0.248
+      ],
+      "realitykit_load_ms_observed": 696.0,
+      "pass": true
+    },
+    {
+      "id": "intradural_closure_tools_review_assembly_open_neurosurgery_v3",
+      "asset_kind": "review_assembly",
+      "triangle_count": 31384,
+      "manifest_dimensions_m_source_xyz": [
+        0.629399,
+        0.279698,
+        0.0158
+      ],
+      "usdz": "exports/usdz/intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdz",
+      "bytes": 695304,
+      "sha256": "769e3dff8befa9b8c774df8f860258db977f943c46ec14c7f107785e298cbbae",
+      "manifest_bytes_match": true,
+      "manifest_sha256_match": true,
+      "strict_usd_pass": true,
+      "meters_per_unit_1": true,
+      "up_axis_y": true,
+      "embedded_stage_count": 1,
+      "realitykit_status": "PASS",
+      "realitykit_entities": 164,
+      "realitykit_models": 81,
+      "realitykit_materials": 81,
+      "realitykit_dimensions_runtime_xyz_m": [
+        0.629399,
+        0.0158,
+        0.279698
+      ],
+      "realitykit_load_ms_observed": 422.9,
+      "pass": true
+    }
+  ]
+}

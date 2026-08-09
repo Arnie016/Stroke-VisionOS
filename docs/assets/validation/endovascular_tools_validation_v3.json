@@ -1,0 +1,145 @@
+{
+  "module_id": "endovascular_tools_v3",
+  "validated_at": "2026-08-09 SGT",
+  "manifest": "asset_manifest_endovascular_tools_v3.json",
+  "manifest_sha256": "b692a80eb7d6685e86656a7d5265c04cc67bfc2303445aa79d61dd84985ca4da",
+  "asset_count": 12,
+  "independent_asset_count": 10,
+  "review_assembly_count": 2,
+  "strict_usd_pass_count": 12,
+  "realitykit_pass_count": 12,
+  "manifest_integrity_pass_count": 12,
+  "technical_gate": "PASS",
+  "visual_gate": "PASS",
+  "clinical_gate": "NOT_PASSED_REQUIRES_SPECIALIST_REVIEW",
+  "training_gate": "NOT_VALIDATED_FOR_PROCEDURAL_TRAINING",
+  "workflow_branch": "endovascular_intervention_only",
+  "assets": [
+    {
+      "id": "vascular_access_needle_educational_v3",
+      "triangles": 6380,
+      "usdz_bytes": 118892,
+      "usdz_sha256": "8f081d4418d4aaf64f15dd26f91c3a9cecd9ee8de51b4841b0262eaeb26ea145",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 28, "models": 13, "materials": 13, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/01_vascular_access_needle_educational_v3.png"
+    },
+    {
+      "id": "vascular_access_wire_educational_v3",
+      "triangles": 2500,
+      "usdz_bytes": 128172,
+      "usdz_sha256": "50453ce07f6f767b31d1eca52a75f805b2f83c92f816fd8a431d721c6c78b1b1",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 10, "models": 4, "materials": 4, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/02_vascular_access_wire_educational_v3.png"
+    },
+    {
+      "id": "introducer_sheath_dilator_set_educational_v3",
+      "triangles": 18284,
+      "usdz_bytes": 244844,
+      "usdz_sha256": "22fa743e25d2b56f617776fa23affeea819133293f98c540e9b9725beec0464b",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 58, "models": 28, "materials": 28, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/03_introducer_sheath_dilator_set_educational_v3.png"
+    },
+    {
+      "id": "guide_catheter_hemostatic_valve_educational_v3",
+      "triangles": 19632,
+      "usdz_bytes": 236332,
+      "usdz_sha256": "e984cb7c7a7a531431745221028f7965b904973e95c2678b0861ce4afa15759e",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 58, "models": 28, "materials": 28, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/04_guide_catheter_hemostatic_valve_educational_v3.png"
+    },
+    {
+      "id": "aspiration_pump_canister_tubing_educational_v3",
+      "triangles": 9928,
+      "usdz_bytes": 255062,
+      "usdz_sha256": "8eca2d303e7f9f9ae4e79785a4cc88176a7f4440bff0a5b4b361a8f4844c9748",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 50, "models": 24, "materials": 24, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/05_aspiration_pump_canister_tubing_educational_v3.png"
+    },
+    {
+      "id": "contrast_manifold_syringe_flush_educational_v3",
+      "triangles": 14712,
+      "usdz_bytes": 332780,
+      "usdz_sha256": "734924e487c4c7c32b257be9832454cd98ed8f49bf9741faf3499a47a1d39249",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 66, "models": 32, "materials": 32, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/06_contrast_manifold_syringe_flush_educational_v3.png"
+    },
+    {
+      "id": "torque_device_y_connector_accessories_educational_v3",
+      "triangles": 33352,
+      "usdz_bytes": 318849,
+      "usdz_sha256": "b94e43ff505a2257c313bf25b2538c1ff3400aab29de875421d017484e32729c",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 96, "models": 47, "materials": 47, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/07_torque_device_y_connector_accessories_educational_v3.png"
+    },
+    {
+      "id": "puncture_site_hemostasis_options_educational_v3",
+      "triangles": 16988,
+      "usdz_bytes": 282390,
+      "usdz_sha256": "83798a963dab5d983be8dc1eb7afa19eefa6f9e14645f11fb9d32b73e1269dd2",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 56, "models": 27, "materials": 27, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/08_puncture_site_hemostasis_options_educational_v3.png"
+    },
+    {
+      "id": "sterile_endovascular_instrument_tray_educational_v3",
+      "triangles": 10492,
+      "usdz_bytes": 296056,
+      "usdz_sha256": "d5aa8497a8d0f8bc0d890deee11d5463e86580ec55742e789b17236a1f904fa2",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 52, "models": 25, "materials": 25, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/09_sterile_endovascular_instrument_tray_educational_v3.png"
+    },
+    {
+      "id": "angiography_suite_controls_educational_v3",
+      "triangles": 3592,
+      "usdz_bytes": 77649,
+      "usdz_sha256": "cf5971a2e99191a2f94313aacdac47b7be60832594012761bd30427fe890de3c",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 34, "models": 16, "materials": 16, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/10_angiography_suite_controls_educational_v3.png"
+    },
+    {
+      "id": "vascular_access_setup_review_assembly_v3",
+      "triangles": 44152,
+      "usdz_bytes": 722963,
+      "usdz_sha256": "00b47c24bb0b2ab15e6790695e213489ba7346b874be86f07fb80ee5380ac492",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 146, "models": 72, "materials": 72, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/11_vascular_access_setup_review_assembly_v3.png"
+    },
+    {
+      "id": "endovascular_tools_workflow_review_assembly_v3",
+      "triangles": 135860,
+      "usdz_bytes": 2091183,
+      "usdz_sha256": "624602f7429d77e4b6768b67bc308b5890a8a1dd8193957f506662a89c80ab76",
+      "usdchecker_arkit_strict": "PASS",
+      "realitykit": {"status": "PASS", "entities": 490, "models": 244, "materials": 244, "positive_finite_bounds": true},
+      "preview": "previews/endovascular_tools_v3/12_endovascular_tools_workflow_review_assembly_v3.png"
+    }
+  ],
+  "totals": {
+    "all_packages_usdz_bytes": 5105172,
+    "independent_packages_usdz_bytes": 2291026,
+    "all_packages_triangles_counting_aggregate_duplicates": 315872,
+    "independent_unique_presentation_triangles": 135860
+  },
+  "validation_tools": {
+    "usd": "/usr/bin/usdchecker --arkit --strict",
+    "runtime": "RealityKit Entity.load(contentsOf:) via research/realitykit_load_probe.swift",
+    "manifest_integrity": "stat byte count plus SHA-256 comparison",
+    "visual": "Manual inspection of all twelve 1400x950 rendered-material previews"
+  },
+  "warnings": [
+    "Technical and visual PASS does not establish clinical correctness, training validity, completeness, regulatory readiness, or patient safety.",
+    "Relationships and stage order are descriptive only, not a prescribed procedure.",
+    "Use the module only within an endovascular branch; do not activate it in open-cranial or post-craniotomy scenes.",
+    "Do not co-load either review assembly with its contained independent packages."
+  ]
+}

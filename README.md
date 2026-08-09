@@ -63,7 +63,7 @@ Not part of the first slice: accounts, cloud sync, clinical decision support, pa
 
 ## Current 3D asset catalog
 
-The repository includes **108 uniquely named, manifest-backed USDZ runtime
+The repository includes **134 uniquely named, manifest-backed USDZ runtime
 assets**:
 
 - 65 original packages: 36 higher-detail v2 assets and 29 clearly labelled
@@ -71,7 +71,9 @@ assets**:
 - 43 release-eligible v3 detail packages: 15 HRA neural-detail assets, 16
   non-held cranial-support assets, and 12 scale-separated conceptual
   microanatomy teaching assets;
-- 110 total build records: the v3 source build produced 45 packages, but
+- 26 release-eligible v3 surgical-tool packages: 12 endovascular support-tool
+  packages and 14 open-cranial tool packages;
+- 136 total build records: the v3 source build produced 71 packages, but
   `middle_inner_ear_bilateral_v3` and
   `cranial_support_registered_assembly_v3` are on an inner-ear licence hold,
   and their binaries are deliberately absent from this publishing tree.
@@ -84,7 +86,10 @@ vasculature, cerebral blood-flow teaching views, and generic thrombectomy
 devices, plus cortical parcellations, deep nuclei, white-matter regions,
 cranial nerves, orbital/airway/muscle context, blood-brain-barrier teaching,
 blood elements, thrombus microstructure, neurons, glia, myelin, synapse, CSF
-interface, and conceptual ischemic-tissue zones.
+interface, and conceptual ischemic-tissue zones. It also includes representative,
+unbranded tool-recognition sets for gated endovascular and open-cranial lesson
+branches. The tool sets are not exhaustive trays, clinical sequences,
+instructions, device specifications, or training simulators.
 
 The complete one-by-one catalog, paths, descriptions, runtime notes, manifests,
 and loading guidance are in
@@ -105,11 +110,24 @@ cataloged one by one in
 
 ![Blood-brain barrier conceptual teaching model](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/intracranial_micro_v3/40_blood_brain_barrier_neurovascular_unit_v3.png)
 
+![Endovascular support-tool review gallery](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/endovascular_tools_v3/12_endovascular_tools_workflow_review_assembly_v3.png)
+
+![Open-cranial access-tool review gallery](RealityKitContent/Assets/vision_pro_stroke_kit_v2/previews/open_cranial_tools_v3/01_cranial_access_tools_review_assembly_v3.png)
+
 These models are generic educational material—not patient-specific anatomy,
 histology, quantitative flow simulation, or clinical decision support. The
 micro-detail packages must always appear in a separate magnified teaching stage
 with persistent “not to anatomical scale,” conceptual/nonquantitative, and
 non-patient-specific warnings.
+
+Endovascular tools may appear only under the selected `EVT-*` educational
+stage, with access route, imaging/flush, aspiration, hemostasis, and other
+categories treated as conditional options. Open-cranial tools are
+`open_neurosurgery_only`, prohibited from ordinary EVT, and require the explicit
+`clinician_selected_hemorrhage_or_decompression_only` gate. Every tool is
+static or qualitatively kinematic: no force, depth, trajectory, pressure,
+energy, device sizing, compatibility, navigation, tissue interaction, or
+training meaning is encoded.
 
 ## Intended Apple stack
 

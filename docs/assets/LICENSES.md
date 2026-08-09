@@ -6,14 +6,32 @@ source, attribution, and modification records when redistributing it.
 
 ## Original project assets
 
-Fifty-five of the 108 release-catalog USDZ packages are original project work:
-43 baseline packages plus the 12 conceptual micro-detail packages. No
+Eighty-one of the 134 release-catalog USDZ packages are original project work:
+43 baseline packages, 12 conceptual micro-detail packages, and 26 surgical-tool
+packages. No
 repository-wide licence has yet been selected for those files, so public access
 to the repository must not be interpreted as an additional licence grant.
 
 The generated material maps and preview images are supporting project artwork.
 They are generic educational visuals, not patient data, histology, diagnostic
 evidence, or clinically validated tissue measurements.
+
+### Surgical-tool v3 project work
+
+All 12 `endovascular_tools_v3` packages and all 14
+`open_cranial_tools_v3` packages are original, unbranded project geometry and
+materials. Their generators use no third-party mesh, CAD, product scan,
+catalogue image, texture, HDRI, logo, packaging, or ImageGen output. Category
+references in the audit/provenance documents are evidence for terminology only;
+they are not licences for copied product geometry and confer no medical-device
+clearance or clinical validity.
+
+The tool USDZs, previews, manifests, and project-authored documentation remain
+subject to the repository's unresolved licence decision. Preserve the source
+and modification records in
+[PROVENANCE.md](PROVENANCE.md), and do not imply a trademark, manufacturer
+association, freedom-to-operate determination, or permission beyond the rights
+actually granted by the project owner.
 
 ## NIH 3D and Human Reference Atlas derivatives — CC BY 4.0
 
