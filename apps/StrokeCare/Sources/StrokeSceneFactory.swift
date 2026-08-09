@@ -2007,6 +2007,7 @@ enum StrokeSceneFactory {
         // Family mode never receives it, and the exact Scholar inspection stays
         // a separate, isolated review state.
         let showsClinicianSkullContext = experience.audienceLens == .clinician &&
+            experience.detailLevel >= .guided &&
             presentation == .transparent &&
             experience.pointField == .regions &&
             !isolateScholarSkull

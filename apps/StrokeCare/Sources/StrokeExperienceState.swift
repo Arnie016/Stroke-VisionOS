@@ -1142,8 +1142,13 @@ final class StrokeExperienceState: ObservableObject {
            selectedPointEntityName?.hasPrefix("clinician-procedure-point-field-point-") == true {
             return "Flow overlay + authored markers · qualitative · not CFD"
         }
-        if anatomyPresentation == .transparent {
+        if anatomyPresentation == .transparent,
+           audienceLens == .clinician,
+           detailLevel >= .guided {
             return "Cortex · vessels · separated skull reference"
+        }
+        if anatomyPresentation == .transparent {
+            return "Cortex · vessels · selected teaching reference"
         }
         return switch procedureStep {
         case .chooseCase:

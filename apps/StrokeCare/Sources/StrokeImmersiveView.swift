@@ -1469,7 +1469,8 @@ private struct SpatialRoleControls: View {
                 .accessibilityLabel(experience.presenterBoundary)
 
             if experience.anatomyPresentation == .transparent,
-               experience.pointField == .regions {
+               experience.pointField == .regions,
+               experience.detailLevel >= .guided {
                 Label("Skull reference · separated · review pending", systemImage: "view.3d")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.secondary.opacity(0.86))

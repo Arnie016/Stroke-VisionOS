@@ -342,6 +342,7 @@ require(all(token in scene for token in (
     "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull",
     "imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull",
     "let showsClinicianSkullContext = experience.audienceLens == .clinician",
+    "experience.detailLevel >= .guided",
     "presentation == .transparent",
     "experience.pointField == .regions",
     "importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext",
@@ -353,6 +354,7 @@ require(all(token in immersive for token in (
     'case .transparent: "Skull"',
     '"Skull reference · separated · review pending"',
     '"Generic separated skull reference. Cross-source alignment requires specialist review."',
+    "experience.detailLevel >= .guided",
 )), "normal clinician layer cycle does not expose the reviewed skull-context boundary")
 require("REQUIRES_SPECIALIST_REVIEW" in state and "never presented as exact family anatomy" in state, "Scholar skull specialist/family safety boundary is missing")
 require(all(token in state for token in (

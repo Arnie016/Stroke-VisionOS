@@ -672,3 +672,40 @@ XCAT remained `unavailable`; the reachability receipt is
 `Proof/xcat/20260810-043035/BLOCKED.md` (ignored local machine evidence).
 Realtime proxy playback, interruption handling, hardware continuity, wearer
 perception, AirPlay audio, and clinical validity remain unproven.
+
+## 2026-08-10 05:08 SGT — progressive skull-reference depth
+
+Build `0.6 (20)` keeps the cross-source skull comparison out of Calm detail.
+The normal Calm selected-point state retains the central registered brain,
+arteries, attached region markers, six-beat presenter timeline, direct
+viewpoint controls, and point-sourced affected-vessel teaching reference. The
+separated skull and generic venous atlas appear only after an explicit Guided
+or Scholar depth choice, with their existing specialist-review and colour-
+convention boundaries. No asset transform, registration, lesson wording, or
+clinical claim changed.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-progressive-skull-20b` succeeded. The built app contains
+exactly 15 USDZ resources. Its executable SHA-256 is
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`.
+
+After terminating a concurrently running RBC Journey immersive app, two clean
+deterministic captures were visually inspected:
+
+- `Proof/84-calm-point-reference-build20-simulator.png`, 3840×2160, SHA-256
+  `b2555f6cc2e98b78201961aa61a389a1936be12a95173b3b18ab60ad52cddd98`:
+  Calm keeps one central anatomy assembly and the selected-point vessel
+  reference; the separated skull and its caption are absent.
+- `Proof/85-scholar-layer-hierarchy-build20-simulator.png`, 3840×2160,
+  SHA-256
+  `da8f8046d19b1c0dfdb4ec3d4fd244ffc580d0eab83f94727018d7bdf906b0b5`:
+  Scholar deliberately adds the separated skull, purple venous atlas,
+  peripheral Scholar reference rail, and visible review boundary.
+
+Two earlier build-20 screenshots were rejected because the concurrent RBC
+Journey process owned the Simulator immersive scene; they were moved out of
+the repository and are not evidence. XCAT remained exactly `unavailable` in
+CoreDevice. These captures prove Simulator composition only—not wearer
+legibility, depth comfort, targeting, AirPlay quality, registration accuracy,
+specialist approval, or clinical validity.

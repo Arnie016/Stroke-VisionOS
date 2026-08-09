@@ -725,3 +725,23 @@
 - Next safe action: on an awake XCAT with the existing Realtime proxy configured,
   run one family narration play → pause → resume → exit cycle and retain the
   device log plus wearer-observed continuity result.
+
+## 2026-08-10 05:08 SGT — progressive anatomy comparison
+
+- Target: simplify the doctor-presenter composition while preserving the
+  optional high-detail skull and venous references requested for anatomy study.
+- Bounded action: gated the separated cross-source skull geometry, status copy,
+  and review caption behind Guided/Scholar detail; raised the candidate to
+  `0.6 (20)` without changing authored transforms or clinical content.
+- Evidence: contract and diff checks passed; the OS 26.5 Simulator Debug build
+  succeeded with 15 USDZ resources; clean 3840×2160 Calm and Scholar captures
+  are Proof 84 (`b2555f6c…d98`) and Proof 85 (`da8f8046…b0b5`). Two contaminated
+  captures were explicitly rejected after a concurrent RBC Journey process was
+  detected and terminated. XCAT is exactly `unavailable` in CoreDevice.
+- Verdict: `IMPROVED` — Calm now presents one dominant anatomy story, while
+  Scholar deliberately reveals the skull/venous comparison and review limits.
+- Blocker: Simulator captures do not prove wearer legibility, stereo separation,
+  targetability, AirPlay quality, anatomical registration, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, compare Calm and Scholar from
+  the default presenter position and record whether the added skull remains a
+  clearly optional reference rather than competing with the brain.
