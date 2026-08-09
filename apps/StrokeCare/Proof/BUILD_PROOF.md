@@ -97,10 +97,17 @@ or launch on XCAT.
 | Angled case archive | `45-case-library-archive-simulator.png` | `86629c4cd58fe9ba4091e4727d94aebc39bf2b399761b86bf80802f6bfa4e510` |
 | Case constellation | `46-case-review-constellation-simulator.png` | `de36aa9b063c57f0de61201df9400c24ed843fbad9d8e9e280830b11211ce587` |
 | Upper-field Vessel Story | `47-vessel-story-upper-field-simulator.png` | `ab81e3b35b67dc23b14e92aaa6b27cb540b6b03d08f452803788bbcdddec4c98` |
+| Model-frame front | `48-model-front-points-simulator.png` | `ad58469d8f72aa21b984d1b2c574266fb6ad04c037631dcdf53af464f17a335c` |
+| Model-frame side A | `49-model-side-a-points-simulator.png` | `08301effcb261b85812b73cc348ca673c63531eb4046f3ddd567d041176dad8b` |
+| Model-frame top | `50-model-top-points-simulator.png` | `eec6a2a0ca9ce8c81812a31c46ce2336e5084e180a887b89f88adbbc23c8db89` |
 
 These artifacts prove Simulator-visible UI, model presence, deterministic
 teaching states, and the configured visual hierarchy. They do not prove anatomy
 validity, physical comfort, clinical value, or perception of spatial audio.
+
+The three model-frame captures show the complete registered assembly changing
+pose without visible child-layer detachment. They do not establish anatomical
+laterality; Side A/Side B remain neutral labels pending specialist review.
 
 The latest frames demonstrate the 0.6 Simulator composition: a purpose-first
 threshold, one face-angled archive, case review without anatomy, and a separate
