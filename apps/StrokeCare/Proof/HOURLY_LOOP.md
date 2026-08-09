@@ -32,6 +32,32 @@
 - Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
   rerun `Scripts/deploy_xcat.zsh` once.
 
+## 2026-08-09 12:04 SGT — GPT-Realtime-2.1-only narration transport
+
+- Target: remove the default Mac voice and make the requested Realtime model an
+  executable, key-safe narration path.
+- Bounded action: added a loopback-only narration proxy that locks
+  `gpt-realtime-2.1`, loads the permanent key through `apikey`, receives
+  Base64 PCM deltas, returns app-playable WAV, and rejects every other model.
+  The visionOS client remains silent when the proxy is absent; it has no system
+  speech fallback.
+- Evidence: the guarded XCAT pass created
+  `Proof/xcat/20260809-115427/BLOCKED.md` because the paired device remains
+  unavailable. A generic, non-patient caption then returned HTTP `200` as a
+  24 kHz mono PCM WAV (147,080 bytes; SHA-256
+  `870eb70237acb28b0519087f451c78b08f6391221ce02f19e7f90a6933345d18`).
+  The deterministic Simulator route launched as process `87231`; its visionOS
+  client triggered a second successful Realtime request (220,152 audio bytes),
+  and `Proof/41-gpt-realtime-narration-simulator.png` shows the active
+  `Voice off` state. The contract and narrow Simulator build both passed.
+  `Proof/REALTIME_NARRATION_PROOF.md` records the exact machine boundary.
+- Verdict: `IMPROVED` — narration is now Realtime-only and executable without
+  embedding a permanent API key in visionOS.
+- Blocker: wearer-audible quality, spatial placement, comfort, comprehension,
+  XCAT playback, and the clinical content packet remain unproven.
+- Next safe action: have one human listen to the Simulator output and record a
+  concise cadence/clarity verdict before changing the locked Realtime voice.
+
 ## 2026-08-09 11:32 SGT — role-aware anatomical magnifier
 
 - Target: replace modal-heavy explanation chrome with one calm, spatially

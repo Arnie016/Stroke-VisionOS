@@ -63,6 +63,12 @@ tear away from the brain.
   developer-controlled proxy for `gpt-realtime-2.1`. The permanent OpenAI key
   remains server-side. There is no system-speech fallback, patient data, or
   generative medical answer in the client.
+- For Simulator development, start the loopback-only proxy with
+  `Scripts/run_realtime_proxy.zsh`, then launch with
+  `STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate`. The proxy rejects
+  every other model, converts the Realtime API's 24 kHz PCM stream to WAV, and
+  never returns the API key to visionOS. `marin` is the locked output voice
+  inside `gpt-realtime-2.1`; it is not a macOS system voice.
 - A warm low-contrast ground and horizon replace the simulator's ominous black
   void. This is an unvalidated comfort hypothesis, not a therapeutic claim.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
@@ -107,6 +113,12 @@ Deterministic Simulator routes:
 xcrun simctl launch --terminate-running-process \
   F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777 \
   com.arnav.StrokeTime --hackathon-demo
+
+# With Scripts/run_realtime_proxy.zsh already running:
+SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
+  xcrun simctl launch --terminate-running-process \
+  F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777 \
+  com.arnav.StrokeTime --proof-realtime-narration
 
 # Patient pressure/care states and clinician presentation state
 ... com.arnav.StrokeTime --proof-pressure
