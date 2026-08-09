@@ -4,12 +4,12 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (18)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (23)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.7`; clinician review pending.
+- Clinical content version: `SC-AIS-001.8`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
@@ -817,3 +817,37 @@ The injected failure is Simulator evidence for state/render behavior only. It
 does not prove a spontaneous production load failure, XCAT legibility,
 gaze-and-pinch quality, anatomical registration, specialist approval, or
 clinical validity. XCAT remained unavailable.
+
+## 2026-08-10 06:39 SGT — six distinct presenter compositions
+
+Build `0.6 (23)` keeps the family story at three acts while giving the doctor's
+six checkpoints distinct reversible scene states. Access offsets the generic
+skull reference; Protective covering offsets the conceptual dura only after
+permission; Purpose alone reveals the room-making aperture; Checks adds no
+result state; and Closure returns skull and covering references to an assembled
+teaching view. No incision, drill, access plan, surgical mechanics, suturing,
+fixation, or success animation was added.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the generic OS 26.5 visionOS Simulator Debug
+build at `/tmp/strokecare-build23` ended `** BUILD SUCCEEDED **`. The app reports
+`0.6 (23)`, contains exactly 15 USDZ resources, and its debug implementation
+dylib has SHA-256
+`777d395a76b0f943334c260fbe6986c91b40c18fc67e11a093761219133b56bd`.
+
+`Proof/89-clinician-protective-covering-build23-simulator.png`, 3840×2160,
+SHA-256
+`b83cd123c49fb6ba80f5fd83ca381df205add0ba9d78ef6728ad634f896ee7e1`,
+was captured from the installed build on route
+`--proof-clinician-protective-covering`. The Simulator process remained listed
+after capture, and no competing RBC journey app was running. The receipt shows
+the six-stop timeline, direct viewpoints, Guided detail, left presenter cues,
+four attached anatomy points, central registered anatomy, and the offset
+protective-covering composition.
+
+The supplied Page 2 screenshots informed the composition, but Figma structured
+context could not be refreshed because the authenticated Starter plan had
+reached its MCP call limit. XCAT was also still `unavailable`. This therefore
+proves Simulator build, process, resource count, and composition only—not
+physical targeting, stereo depth, wearer comfort, AirPlay legibility,
+anatomical registration, specialist approval, or clinical validity.

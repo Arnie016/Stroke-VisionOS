@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.7`
-- App version: `0.6 (18)` review candidate
+- Content version: `SC-AIS-001.8`
+- App version: `0.6 (23)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -17,7 +17,7 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.7`, the Pressure scene uses three deliberately
+In content version `SC-AIS-001.8`, the Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
 affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
 positions come from the loaded registered-v2 brain and clot bounds, not a
@@ -30,6 +30,15 @@ cover that moves outward, and a wider dashed room boundary. It is a reversible
 purpose explanation, not an access-site plan, bone segmentation, incision,
 patient-specific surgical step, or claim that pressure was relieved. The
 prototype-v1 bone flap and dural patch remain disabled.
+
+The doctor-presenter sequence now gives its six checkpoints distinct, reversible
+compositions over that same bounded anatomy. The access checkpoint separates a
+generic skull reference without defining an opening; the covering checkpoint
+offsets the conceptual dura only after permission; the purpose checkpoint alone
+reveals the room-making aperture; checks remain authored discussion prompts; and
+closure reassembles the teaching layers without suturing, fixation, or a success
+state. All six checkpoints and their transitions return to Pending review in
+this content version.
 
 The shipped spatial path explains one mechanical purpose: why a stroke team may
 discuss making room when a severe large-territory infarction causes dangerous

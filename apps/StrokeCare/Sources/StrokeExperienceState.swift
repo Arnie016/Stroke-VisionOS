@@ -1715,6 +1715,17 @@ final class StrokeExperienceState: ObservableObject {
         spatialZoom = 1.18
     }
 
+    func prepareClinicianProtectiveCoveringProof() {
+        prepareClinicianProof(step: .discussCare)
+        environmentMode = .surroundings
+        selectDetailLevel(.guided)
+        pointField = .regions
+        lessonPointsVisible = true
+        clearPointSelection()
+        selectPresenterTeachingBeat(.protectiveCovering, reduceMotion: true)
+        spatialZoom = 1.28
+    }
+
     func prepareClinicianLayerHierarchyProof() {
         prepareMainOverviewProof()
         // Scholar keeps the generic registered-v2 venous reference visible and

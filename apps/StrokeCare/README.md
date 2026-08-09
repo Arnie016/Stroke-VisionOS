@@ -23,6 +23,20 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (23)` turns the doctor-presenter's six checkpoints into six distinct
+spatial compositions over the same bounded anatomy. **Access** separates the
+generic skull reference; **Protective covering** offsets the conceptual dura
+after explicit permission; **Purpose** alone reveals the reversible room-making
+aperture; **Checks** remains a discussion boundary; and **Closure** returns the
+teaching layers to an assembled state. No drill, cut, patient-specific opening,
+operative result, suturing, or fixation is simulated.
+
+![Clinician protective-covering composition in visionOS Simulator](Proof/89-clinician-protective-covering-build23-simulator.png)
+
+This is a Simulator composition receipt. The six states, their registration,
+their spoken explanation, and their transitions remain pending physical XCAT
+and clinician/neuroanatomy review.
+
 Build `0.6 (21)` adds a clinician-only anatomy-focus hierarchy without adding
 another window: **Whole** preserves the registered teaching assembly,
 **Vessels** isolates the arterial and purple venous atlases, and Scholar-only

@@ -2317,6 +2317,16 @@ private struct StrokeIntentionAnnotation: View {
         if experience.closingReflectionVisible { return "YOU DO NOT HAVE TO HOLD EVERY ANSWER AT ONCE" }
         if experience.isClinicianScholarSkullInspectionActive { return "SKULL · REGISTRATION REVIEW" }
         if let selected = experience.selectedPointLabel { return selected.uppercased() }
+        if experience.audienceLens == .clinician {
+            return switch experience.presenterTeachingBeat {
+            case .confirmContext: "GENERIC TEACHING ANATOMY"
+            case .discussAccess: "SKULL REFERENCE"
+            case .protectiveCovering: "PROTECTIVE COVERING"
+            case .explainPurpose: "MAKING ROOM"
+            case .teamChecks: "WHAT THE TEAM REASSESSES"
+            case .explainClosure: "ASSEMBLED TEACHING VIEW"
+            }
+        }
         return switch experience.procedureStep {
         case .chooseCase: "WHAT CHANGED?"
         case .inspectOcclusion: "WHY DOES PRESSURE BUILD?"
@@ -2330,6 +2340,16 @@ private struct StrokeIntentionAnnotation: View {
         }
         if experience.isClinicianScholarSkullInspectionActive {
             return "Generic cross-source teaching skull. Inspect shape only; alignment and landmarks still require specialist review."
+        }
+        if experience.audienceLens == .clinician {
+            return switch experience.presenterTeachingBeat {
+            case .confirmContext: "Generic anatomy only—not this person's scan."
+            case .discussAccess: "A separated skull reference shows the fixed boundary; it does not plan an opening."
+            case .protectiveCovering: "The conceptual dura is offset only to explain its protective role."
+            case .explainPurpose: "The reversible aperture shows room, not repaired tissue."
+            case .teamChecks: "Discuss pressure, bleeding, imaging, and monitoring—no result is inferred."
+            case .explainClosure: "Layers return together; suturing and fixation are not shown."
+            }
         }
         return switch experience.procedureStep {
         case .chooseCase: "Start with the blockage in this generic teaching model."

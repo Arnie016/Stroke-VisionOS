@@ -1,7 +1,7 @@
 # Craniotomy teaching sequence
 
 Status: **PENDING CLINICIAN AND NEUROANATOMY REVIEW**
-Content version: `SC-AIS-001.5`
+Content version: `SC-AIS-001.8`
 Audience: clinician-led discussion with a patient or family; generic teaching
 anatomy only.
 
@@ -26,6 +26,12 @@ recommendation, consent flow, patient scan, or surgical-training SOP.
 This implementation is derived from the user-supplied Page 2 screenshots.
 Figma MCP structured context was unavailable because the authenticated Starter
 plan had reached its tool-call limit, so 1:1 Figma validation remains pending.
+
+Build `0.6 (23)` makes the six rows below actual scene states rather than six
+labels over the same three-act composition. Access separates the generic skull
+reference, Covering offsets the conceptual dura after permission, Purpose alone
+reveals the reversible aperture, and Closure returns the references to an
+assembled teaching view. These remain explanation states, not operative steps.
 
 | Beat | Spatial teaching state | Presenter language boundary |
 | --- | --- | --- |

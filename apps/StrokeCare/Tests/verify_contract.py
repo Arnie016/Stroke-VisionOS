@@ -224,7 +224,8 @@ require(all(name in scene for name in (
     "registered-care-purpose-expanding-room",
 )), "registered family-safe Make-space purpose cues are missing")
 require(
-    "carePurposeStory?.isEnabled = showsPurpose && !isolateScholarSkull" in scene
+    "let showsPurposeReference = showsPurpose" in scene
+    and "carePurposeStory?.isEnabled = showsPurposeReference && !isolateScholarSkull" in scene
     and "0.026 * reveal" in scene
     and "0.72 + 0.28 * reveal" in scene,
     "Make-space opening and expansion cues are not permission-controlled",
@@ -346,14 +347,12 @@ require(all(token in scene for token in (
     "imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull",
     "imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull",
     "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull",
-    "imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull",
-    "let showsClinicianSkullContext = experience.audienceLens == .clinician",
-    "experience.detailLevel >= .guided",
-    "presentation == .transparent",
-    "experience.pointField == .regions",
+    "let showsConceptualDura = !isolateScholarSkull && showsPurpose",
+    "let showsClinicianSkullContext = isClinicianExplanation",
+    "showsAccessReference || showsClosureReference",
     "importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext",
-    "showsClinicianSkullContext ? [0.16, 0, 0] : .zero",
-    "showsClinicianSkullContext ? 0.42 : 0",
+    "showsClinicianSkullContext ? skullOffset : .zero",
+    "showsAccessReference ? 0.42 : (showsClosureReference ? 0.18 : 0)",
     "no transform or exact",
 )), "Scholar skull isolation does not restore the registered assembly or preserve the authored frame")
 require(all(token in immersive for token in (
@@ -479,7 +478,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.7" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.8" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -673,6 +672,23 @@ require(all(copy in state for copy in ("Generic scenario", "Whole brain first", 
 require('title: "Act \\(experience.procedureStep.number)"' not in immersive and 'compactControl("Act \\(experience.procedureStep.number)"' not in immersive, "redundant presenter act menu remains after adding the teaching timeline")
 require("--proof-clinician-pressure" in launch, "deterministic presenter proof route is missing")
 require("--proof-clinician-six-beat-timeline" in launch and "prepareClinicianSixBeatTimelineProof" in state and "selectPresenterTeachingBeat(.teamChecks" in state, "deterministic six-beat presenter timeline proof is missing")
+require("--proof-clinician-protective-covering" in launch and "prepareClinicianProtectiveCoveringProof" in state and "selectPresenterTeachingBeat(.protectiveCovering" in state, "deterministic protective-covering composition proof is missing")
+require(all(token in scene for token in (
+    "let showsAccessReference",
+    "let showsProtectiveCovering",
+    "let showsPurposeReference",
+    "let showsClosureReference",
+    "showsAccessReference ? [0.16, 0, 0] : .zero",
+    "showsProtectiveCovering\n            ? [0.055, 0, 0.012]",
+    "carePurposeStory?.isEnabled = showsPurposeReference",
+)), "six presenter beats still change labels without distinct skull, dura, purpose, and closure compositions")
+require(all(copy in immersive for copy in (
+    'case .discussAccess: "SKULL REFERENCE"',
+    'case .protectiveCovering: "PROTECTIVE COVERING"',
+    'case .explainPurpose: "MAKING ROOM"',
+    'case .teamChecks: "WHAT THE TEAM REASSESSES"',
+    'case .explainClosure: "ASSEMBLED TEACHING VIEW"',
+)), "presenter checkpoint annotation does not identify the active spatial explanation")
 require("isImmersivePresented = false\n        advanceJourney()" not in state, "permission incorrectly resets the companion window")
 require("pendingConsentStep" in state and "present(step: .discussCare" in state, "presenter direct-jump consent continuation is missing")
 require("StrokeModelBoardView()" in deck, "the dominant embedded 3D model is missing from the case board")
@@ -682,7 +698,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.7" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.8" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")

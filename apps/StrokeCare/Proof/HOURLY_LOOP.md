@@ -830,3 +830,27 @@
 - Next safe action: on an awake and unlocked XCAT, select Whole, Vessels, and
   Internal once each and record both the loaded layer and presenter-visible
   boundary before any further anatomy expansion.
+
+## 2026-08-10 06:39 SGT — presenter checkpoints become scene states
+
+- Target: make the six doctor-presenter checkpoints visually distinct instead
+  of relabelling the same three-act anatomy composition.
+- Bounded action: mapped Access to the separated generic skull reference,
+  Protective covering to a permission-gated conceptual-dura offset, Purpose to
+  the reversible room-making aperture, Checks to a no-result discussion state,
+  and Closure to reassembled teaching layers; added concise beat-specific copy
+  and a deterministic Protective-covering proof route.
+- Evidence: contract and diff checks passed; the generic OS 26.5 visionOS
+  Simulator Debug build succeeded as `0.6 (23)` with exactly 15 USDZs; the
+  installed route remained listed after capture; Proof 89 is 3840×2160 with
+  SHA-256 `b83cd123…ee7e1` and visibly shows the six-stop timeline, direct
+  viewpoints, Guided depth, four attached points, and offset covering state.
+- Verdict: `IMPROVED` — the presenter sequence now communicates change through
+  anatomy composition rather than copy alone while retaining the family-safe
+  three-act boundary.
+- Blocker: XCAT is unavailable, Figma MCP is Starter-plan rate-limited, and
+  Simulator evidence does not establish targeting, depth, comfort, AirPlay
+  legibility, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, traverse all six checkpoints
+  once and record whether skull, covering, purpose, and reassembly remain
+  spatially distinct and legible in the mirrored three-minute demo.

@@ -1992,11 +1992,32 @@ enum StrokeSceneFactory {
         let pressureStory = imported.findEntity(named: registeredPressureStoryName)
         let carePurposeStory = imported.findEntity(named: registeredCarePurposeStoryName)
 
+        // The doctor's six checkpoints are nested inside the same three-act
+        // family story, but each checkpoint must still produce a distinct
+        // spatial composition. These flags never select treatment, place an
+        // access site, or simulate an operation; they only reveal an authored
+        // teaching reference for the presenter's current explanation.
+        let isClinicianExplanation = experience.audienceLens == .clinician &&
+            experience.spatialPhase == .explanation
+        let showsAccessReference = isClinicianExplanation &&
+            experience.presenterTeachingBeat == .discussAccess
+        let showsProtectiveCovering = isClinicianExplanation &&
+            experience.presenterTeachingBeat == .protectiveCovering &&
+            experience.careViewPermissionGranted
+        let showsPurposeReference = showsPurpose &&
+            (!isClinicianExplanation || experience.presenterTeachingBeat == .explainPurpose)
+        let showsClosureReference = isClinicianExplanation &&
+            experience.presenterTeachingBeat == .explainClosure &&
+            experience.careViewPermissionGranted
+
         approach(cortexLayer, [-0.050 * separation, 0, 0])
         approach(regionPointAnchor, [-0.050 * separation, 0, 0])
         approach(arteriesLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(blockageLayer, [0.014 * separation, 0, 0.004 * separation])
-        approach(duraLayer, [0.050 * separation, 0, 0])
+        let duraOffset: SIMD3<Float> = showsProtectiveCovering
+            ? [0.055, 0, 0.012]
+            : [0.050 * separation, 0, 0]
+        approach(duraLayer, duraOffset)
 
         let anatomyFocus = experience.anatomyFocus
         let focusedCortexOpacity: Float = switch anatomyFocus {
@@ -2008,7 +2029,10 @@ enum StrokeSceneFactory {
         arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
         venousLayer?.components.set(OpacityComponent(opacity: 0.88))
         blockageLayer?.components.set(OpacityComponent(opacity: 1))
-        duraLayer?.components.set(OpacityComponent(opacity: presentation == .exploded ? 0.20 : 0.14))
+        let duraOpacity: Float = showsProtectiveCovering
+            ? 0.34
+            : (showsClosureReference ? 0.18 : (presentation == .exploded ? 0.20 : 0.14))
+        duraLayer?.components.set(OpacityComponent(opacity: duraOpacity))
 
         // Once the hero brain exists, procedural anatomy becomes an explicit
         // fallback rather than a competing visible model. The transparent
@@ -2037,13 +2061,12 @@ enum StrokeSceneFactory {
         // adding another panel or loading the entire catalog into the hero.
         // Family mode never receives it, and the exact Scholar inspection stays
         // a separate, isolated review state.
-        let showsClinicianSkullContext = experience.audienceLens == .clinician &&
-            experience.detailLevel >= .guided &&
-            presentation == .transparent &&
+        let showsClinicianSkullContext = isClinicianExplanation &&
             anatomyFocus == .whole &&
-            experience.pointField == .regions &&
+            (showsAccessReference || showsClosureReference) &&
             !isolateScholarSkull
-        approach(fixedSpaceLayer, showsClinicianSkullContext ? [0.16, 0, 0] : .zero)
+        let skullOffset: SIMD3<Float> = showsAccessReference ? [0.16, 0, 0] : .zero
+        approach(fixedSpaceLayer, showsClinicianSkullContext ? skullOffset : .zero)
         imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
         imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull &&
             anatomyFocus != .internalStructures
@@ -2062,7 +2085,9 @@ enum StrokeSceneFactory {
         imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
             anatomyFocus != .internalStructures &&
             (experience.procedureStep != .chooseCase || presentation == .exploded)
-        imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull && showsPurpose
+        let showsConceptualDura = !isolateScholarSkull && showsPurpose &&
+            (!isClinicianExplanation || showsProtectiveCovering || showsClosureReference)
+        imported.findEntity(named: importedDuraName)?.isEnabled = showsConceptualDura
 
         // Deep structures and ventricles are real registered-v2 geometry, but
         // remain a clinician-only, explicit Study-apart reference. They do not
@@ -2119,7 +2144,9 @@ enum StrokeSceneFactory {
         // cannot steal gaze-and-pinch selection from anatomy-attached points.
         importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext
         fixedSpaceLayer?.components.set(OpacityComponent(
-            opacity: isolateScholarSkull ? 1 : (showsClinicianSkullContext ? 0.42 : 0)
+            opacity: isolateScholarSkull
+                ? 1
+                : (showsAccessReference ? 0.42 : (showsClosureReference ? 0.18 : 0))
         ))
 
         // This small beacon marks the exact registered clot-derived target. It
@@ -2146,8 +2173,8 @@ enum StrokeSceneFactory {
         // dashed boundary communicates additional room. All motion is derived
         // from the permission-controlled reveal state; no cut, result, or
         // patient-specific access site is shown.
-        carePurposeStory?.isEnabled = showsPurpose && !isolateScholarSkull
-        if showsPurpose, let carePurposeStory {
+        carePurposeStory?.isEnabled = showsPurposeReference && !isolateScholarSkull
+        if showsPurposeReference, let carePurposeStory {
             let reveal = Float(experience.layerRevealProgress)
             let breath = Float(1 + sin(motionTime * 0.72) * 0.010)
             if let aperture = carePurposeStory.findEntity(named: registeredCarePurposeApertureName) {
