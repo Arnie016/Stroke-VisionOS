@@ -267,3 +267,28 @@
   the wearer unlocks XCAT; wearer and clinical observations remain separate.
 - Next safe action: wear and unlock XCAT, then foreground-launch build 8 once
   and query the running `StrokeTime` process.
+
+## 2026-08-09 17:04 SGT — isolate lesson-point gaze and pinch
+
+- Target: make Vessel Story lesson points receive gaze-and-pinch selection
+  without the larger invisible anatomy interaction proxies intercepting them.
+- Bounded action: added and registered a dedicated RealityKit component for
+  lesson-point targets, attached it to every sparse cue, and routed a filtered
+  high-priority spatial tap into the existing shared selection state. Kept the
+  precise 6 mm collision radius so adjacent registered flow cues do not gain
+  overlapping hit volumes; disabled lesson selection while question placement
+  is armed so annotation retains its distinct intent.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the generic physical
+  visionOS build succeeded; the signed build, deep code-sign verification,
+  install, installed-app query, deterministic launch, and process query passed
+  for `0.6 (9)` in `Proof/xcat/20260809-165957/RECEIPT.md`. A separate normal
+  no-argument launch and process query passed at 17:04 SGT with PID 761, recorded
+  in `Proof/xcat/20260809-170430-main-route/RECEIPT.md`.
+- Verdict: `IMPROVED` — the source now gives lesson points their own registered
+  query family and build 9 is foregrounded on XCAT through the actual main-app
+  route.
+- Blocker: a machine process receipt cannot prove point hover, pinch selection,
+  question-marker separation, comfort, comprehension, or clinical meaning.
+- Next safe action: record one XCAT wearer pass confirming point hover, point
+  selection, and annotation-mode question placement on build 9.

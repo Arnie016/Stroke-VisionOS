@@ -5,6 +5,10 @@ struct StrokeTimeApp: App {
     @StateObject private var experience = StrokeExperienceState()
     @State private var immersionStyle: ImmersionStyle = .progressive
 
+    init() {
+        StrokeSceneFactory.registerCustomComponents()
+    }
+
     var body: some Scene {
         WindowGroup(id: StrokeSpace.window) {
             if CommandLine.arguments.contains("--proof-evidence-window") {

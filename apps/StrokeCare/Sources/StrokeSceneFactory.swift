@@ -2,6 +2,11 @@ import Foundation
 import RealityKit
 import SwiftUI
 
+/// Marks the sparse lesson cues as their own gaze-and-pinch target family.
+/// A filtered gesture can therefore ignore the much larger anatomy collision
+/// proxy that otherwise wins the indirect hit test in front of these points.
+struct StrokeLessonPointTargetComponent: Component {}
+
 /// Procedural, deliberately schematic geometry. No patient scan, no licensed
 /// anatomical specimen, and no claim of clinical accuracy.
 ///
@@ -9,6 +14,10 @@ import SwiftUI
 /// from a background executor.
 @MainActor
 enum StrokeSceneFactory {
+    static func registerCustomComponents() {
+        StrokeLessonPointTargetComponent.registerComponent()
+    }
+
     static let rootName = "stroke-time-root"
     private static let importedRootName = "imported-stroke-anatomy"
     private static let proceduralRootName = "procedural-stroke-fallback"
@@ -1257,7 +1266,11 @@ enum StrokeSceneFactory {
             let point = ModelEntity(mesh: mesh, materials: [material])
             point.name = "\(name)-point-\(index)"
             point.position = position
+            point.components.set(StrokeLessonPointTargetComponent())
             point.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
+            // Preserve the precise 6 mm selection radius: two registered flow
+            // cues are only about 15 mm apart. The filtered gesture below fixes
+            // anatomy-proxy occlusion without making adjacent targets overlap.
             point.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.006)]))
             point.components.set(HoverEffectComponent())
             field.addChild(point)
