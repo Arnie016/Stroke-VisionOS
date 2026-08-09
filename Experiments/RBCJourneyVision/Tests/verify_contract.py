@@ -163,6 +163,14 @@ checks = {
         "response.output_audio.delta", "pcm16MonoToWAV",
         "rbc-journey-reviewed-family-caption", "apikey get OPENAI_API_KEY",
     ]) and "AVSpeechSynthesizer" not in narrator + realtime_proxy,
+    "inhabited_branching_flow_corridor": all(token in model + scene + hud + immersive for token in [
+        "enum RBCFlowRideRoute", "native-inward-facing-arterial-corridor",
+        "makeInwardFacingTubeMesh", "flowRideJourneyCells",
+        "frontal-route-constellation-outline-not-segmentation",
+        "neighbor-route-tissue-point-field-not-segmentation",
+        "Both paths", "Frontal route", "Neighbor route",
+        "--proof-flow-route-frontal", "--proof-flow-route-neighbor",
+    ]),
 }
 
 failed = [name for name, passed in checks.items() if not passed]

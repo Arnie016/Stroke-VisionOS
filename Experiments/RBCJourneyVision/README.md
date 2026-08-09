@@ -74,18 +74,25 @@ capacity, infarct territory, tissue outcome, or treatment response.
 ## Travel with the flow — arterial branch ride
 
 Frontal **Flow** now offers one opt-in **Enter this branch** action. The wearer
-does not become a camera projectile. The camera and observation origin remain
-still while a 9.2-metre authored arterial cutaway opens around the viewing
-direction. Its near mouth remains outside the one-metre comfort boundary.
+does not become a camera projectile. A native inward-facing arterial corridor
+extends behind the observation origin, surrounds the stationary wearer, and
+divides into two visible paths. The imported straight cutaway remains an
+authored reference, but its wall, opaque volume, yellow arrows, and streamlines
+are hidden in this composition because Simulator review showed them as a sealed
+model and oversized streaks.
 
-The cutaway preserves separate adventitia, media, and intima layers with
-restrained transparency. The imported yellow arrows and streamlines are hidden.
-In their place, three narrow continuous intraluminal ribbons carry travelling
-luminance fronts through the branch while authored disc-shaped cells translate,
-tumble, and deform mildly beside them. The asset's opaque
-`Combined_Blood_Volume` is deliberately hidden because it sealed the cutaway
-and obscured the lesson in Simulator review. This direction field is procedural
-teaching geometry, not CFD or a measurement of cell density or speed.
+One thin continuous route mesh and sparse chevrons establish direction without
+forming a bead chain. Eighteen clones of an authored biconcave cell translate,
+tumble, and deform mildly as they divide between the two paths. **Both paths**
+keeps the fork legible. **Frontal route** and **Neighbor route** are explicit,
+user-triggered spatial transfers: RealityKit recomposes the chosen branch around
+the fixed wearer and suppresses the unselected path. There is no app camera or
+forced locomotion.
+
+The frontal destination ends in an irregular constellation-like outline plus a
+sparse coral tissue field. The neighboring destination uses a separate teal
+field so route selection changes the spatial relationship, not only a label.
+These fields are orientation metaphors, not clinical segmentation.
 
 **Pause ride** freezes the local flow clock without jumping on resume.
 **Leave branch** returns directly to the frontal Flow observatory. **Exit** is
@@ -94,8 +101,9 @@ clear choice at a time.
 
 This is a qualitative direction lesson, not a CFD solve, red-cell-density
 measurement, pressure map, velocity field, patient vessel, or outcome model.
-The current visual is a stylized cutaway. More natural wall optics, non-Newtonian
-rheology, branching collisions, and patient-derived geometry remain later
+The current visual is a stylized branching interior. More natural endothelial
+wall optics and microtexture, non-Newtonian rheology, cell collisions,
+patient-derived geometry, and physical-device comfort remain later
 asset-authoring and scientific-validation gates.
 
 ### Optional family guide
@@ -110,7 +118,7 @@ The visionOS app never receives a permanent OpenAI key. It sends the visible
 caption to a developer-controlled loopback proxy, then verifies the returned
 model name and SHA-256 of that caption before playing the WAV. There is no
 system-voice fallback: if the proxy is absent, the caption remains visible and
-the interface says that the guide is not connected.
+the voice control stays disabled with a short setup explanation.
 
 Start the local proxy without printing the key:
 
@@ -245,7 +253,10 @@ view. Add `--proof-frontal-clot` to hold the bounded illustrative obstruction
 state. The entry ritual uses `--proof-prelude-0` through `--proof-prelude-3` for
 Threshold, Anatomy, Problem, and Invitation.
 Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
-`--proof-paused` to render the exact held-flow and **Resume ride** state.
+`--proof-flow-route-frontal` or `--proof-flow-route-neighbor` for deterministic
+user-selected transfers. Combine any ride state with `--proof-paused` to render
+the exact held-flow and **Resume ride** state. The optional guide state is
+`--proof-flow-ride --proof-family-guide`.
 
 ## Fluid R&D boundary
 

@@ -51,6 +51,7 @@ struct RBCJourneyImmersiveView: View {
                     regionVisualization: model.regionVisualization,
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
                     flowRideActive: model.isFlowRideActive,
+                    flowRideRoute: model.flowRideRoute,
                     time: timeline.date.timeIntervalSinceReferenceDate,
                     paused: model.isPaused,
                     reducedMotion: model.effectiveReducedMotion,

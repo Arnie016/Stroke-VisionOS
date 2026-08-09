@@ -383,6 +383,64 @@ enum RBCRegionVisualizationMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
+    case overview
+    case frontal
+    case neighboring
+
+    var id: String { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .overview: "Both paths"
+        case .frontal: "Frontal route"
+        case .neighboring: "Neighbor route"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .overview: "arrow.triangle.branch"
+        case .frontal: "brain.head.profile.fill"
+        case .neighboring: "arrow.up.right"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .overview: "A fork inside the brain"
+        case .frontal: "Follow the frontal route"
+        case .neighboring: "Compare the neighboring route"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .overview:
+            "The vessel surrounds you and divides ahead. Red cells and traveling light reveal both downstream directions while you remain physically still."
+        case .frontal:
+            "The coral branch leads toward a constellation-like frontal-region guide. It connects vessel direction to a place in the surrounding brain without claiming patient segmentation."
+        case .neighboring:
+            "The second branch stays visible to show that a vascular journey belongs to a network, not a single isolated tube. This route is illustrative rather than patient anatomy."
+        }
+    }
+
+    var fact: String {
+        switch self {
+        case .overview:
+            "Cerebral arteries branch repeatedly as they distribute blood through different territories."
+        case .frontal:
+            "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement; the constellation is only an orientation guide."
+        case .neighboring:
+            "Neighboring arterial routes and collateral connections vary between people, so this scene does not predict individual blood supply."
+        }
+    }
+
+    var narration: String {
+        "\(title). \(subtitle) \(fact)"
+    }
+}
+
 enum RBCExhibitBeat: Int, CaseIterable, Identifiable {
     case route
     case blockage
@@ -458,6 +516,7 @@ final class RBCJourneyModel {
     var entryPreludeChapter: RBCEntryPreludeChapter
     var activeRegionDestination: RBCBrainRegionDestination?
     var regionVisualization: RBCRegionVisualizationMode
+    var flowRideRoute: RBCFlowRideRoute = .overview
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
     var motionMode: RBCJourneyMotionMode
@@ -521,6 +580,13 @@ final class RBCJourneyModel {
         }
         isFrontalClotScenarioActive = arguments.contains("--proof-frontal-clot")
         isFlowRideActive = flowRideProofRequested
+        flowRideRoute = if arguments.contains("--proof-flow-route-frontal") {
+            .frontal
+        } else if arguments.contains("--proof-flow-route-neighbor") {
+            .neighboring
+        } else {
+            .overview
+        }
         familyNarrationEnabled = familyGuideProofRequested
         familyNarrationConfigured = familyGuideProofRequested
         var initialOpenPortals = Set(0..<min(max(portalCount, 0), 3))
@@ -595,7 +661,7 @@ final class RBCJourneyModel {
     /// read this exact text and may not add medical interpretation.
     var familyNarrationText: String {
         guard isFlowRideActive else { return "" }
-        return "You are looking into a cerebral artery, one of the vessels that carries oxygen-rich blood through the brain. The red discs are simplified blood cells. Their motion shows direction, not measured speed. Pause here to notice the vessel wall, or leave the branch whenever you are ready."
+        return flowRideRoute.narration
     }
 
     func toggleFamilyNarration() {
@@ -772,6 +838,7 @@ final class RBCJourneyModel {
         regionVisualization = .flow
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
+        flowRideRoute = .overview
         isPaused = false
         isExhibitFactExpanded = false
     }

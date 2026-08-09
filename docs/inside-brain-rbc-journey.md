@@ -14,8 +14,9 @@ a window. The short judge path is:
 2. The surrounding cortex becomes the room.
 3. A maximum of three user-controlled portals reveal local lessons.
 4. The frontal observatory can shift between Locate, X-ray, and Flow.
-5. One optional branch ride surrounds a stationary wearer with an arterial
-   cutaway, continuous direction ribbons, and moving disc-shaped cells.
+5. One optional branch ride surrounds a stationary wearer with a native
+   inward-facing fork, a continuous direction mesh, sparse chevrons, and moving
+   biconcave cells. The wearer can explicitly transfer into either path.
 6. An optional family guide may read the exact visible caption through a local
    GPT Realtime proxy. It is off by default and is not clinician tooling.
 
@@ -39,13 +40,16 @@ xcodebuild -project RBCJourneyVision.xcodeproj \
 The deterministic arterial-ride UI is launched with:
 
 ```text
+--proof-flow-ride
+--proof-flow-ride --proof-flow-route-frontal
+--proof-flow-ride --proof-flow-route-neighbor
 --proof-flow-ride --proof-family-guide
 ```
 
 That launch flag proves only the selected interface state. It does not prove a
 provider call, audio playback, physical-device comfort, hand interaction, or
 clinical accuracy. See
-`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_RIDE_V2_REALTIME_RECEIPT.md`
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V3_BRANCHING_CORRIDOR_RECEIPT.md`
 for the current evidence boundary.
 
 ## Optional family narration
@@ -80,7 +84,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 49-check contract and generic Simulator build before publishing.
+5. Run the 50-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.

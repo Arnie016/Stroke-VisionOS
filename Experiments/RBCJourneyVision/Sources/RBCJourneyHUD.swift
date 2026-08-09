@@ -267,12 +267,12 @@ struct RBCRegionInfoHUD: View {
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
 
                 Text(flowRideActive
-                    ? "Travel with the flow"
+                    ? model.flowRideRoute.title
                     : (exampleClotActive ? "One branch, interrupted" : region.title))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive
-                    ? "Remain physically still while the vessel surrounds you. Disc-shaped red cells tumble beside traveling light fronts; pause whenever you want to inspect the wall."
+                    ? model.flowRideRoute.subtitle
                     : (exampleClotActive
                         ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
                         : region.subtitle))
@@ -281,7 +281,7 @@ struct RBCRegionInfoHUD: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 Label(flowRideActive
-                    ? "You are riding a qualitative direction field—not a measured cell density, velocity, pressure, or patient-specific simulation."
+                    ? model.flowRideRoute.fact
                     : (exampleClotActive
                         ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
                         : region.fact),
@@ -355,22 +355,41 @@ struct RBCRegionInfoHUD: View {
                         .buttonBorderShape(.capsule)
 
                         if model.isFlowRideActive {
+                            HStack(spacing: 7) {
+                                ForEach(RBCFlowRideRoute.allCases) { route in
+                                    let selected = model.flowRideRoute == route
+                                    Button(route.shortTitle, systemImage: route.systemImage) {
+                                        model.flowRideRoute = route
+                                    }
+                                    .font(.caption.weight(.semibold))
+                                    .buttonStyle(.bordered)
+                                    .tint(selected
+                                        ? (route == .frontal
+                                            ? Color(red: 0.92, green: 0.20, blue: 0.28)
+                                            : Color(red: 0.23, green: 0.67, blue: 0.60))
+                                        : .white.opacity(0.30))
+                                    .accessibilityLabel("Show \(route.shortTitle.lowercased()) inside the arterial fork")
+                                }
+                            }
+                            .buttonBorderShape(.capsule)
+
                             HStack(spacing: 8) {
                                 Button(
-                                    model.familyNarrationEnabled ? "Guide off" : "Family guide",
+                                    model.familyNarrationEnabled ? "Stop guide" : "Family guide",
                                     systemImage: model.familyNarrationEnabled ? "waveform.slash" : "waveform"
                                 ) {
                                     model.toggleFamilyNarration()
                                 }
                                 .buttonStyle(.bordered)
                                 .tint(model.familyNarrationEnabled ? Color.indigo : nil)
+                                .disabled(!model.familyNarrationConfigured)
                                 .accessibilityLabel(model.familyNarrationEnabled
                                     ? "Turn off the optional family narration"
                                     : "Turn on optional family narration of the visible caption")
 
                                 Text(model.familyNarrationConfigured
-                                    ? "Reads the caption shown above."
-                                    : "Local Realtime guide is not connected.")
+                                    ? "Optional voice; the caption stays visible."
+                                    : "Optional voice; connect the local guide to listen.")
                                     .font(.caption2)
                                     .foregroundStyle(.white.opacity(0.62))
                             }

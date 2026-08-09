@@ -14,8 +14,9 @@ video cannot.
 - Exploration: a lower region reel with exactly three visible destinations at
   once and one active transfer.
 - Frontal observatory: Locate → X-ray → Flow → optional example clot.
-- Arterial ride: fixed wearer, surrounding cutaway, continuous directional
-  ribbons, tumbling/deforming authored cells, Pause, Leave, and Exit.
+- Arterial ride: fixed wearer, native inward-facing fork, continuous route
+  meshes, sparse directional chevrons, tumbling/deforming authored cells,
+  user-selected branch transfers, Pause, Leave, and Exit.
 - Family guide: optional exact-caption narration through a loopback proxy; off
   by default and never a clinician default.
 

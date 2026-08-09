@@ -21,6 +21,10 @@ final class RBCJourneyScene {
     private let regionGuideRoot = Entity()
     private let flowRideRoot = Entity()
     private let flowRideDirectionFieldRoot = Entity()
+    private let flowRideInteriorShellRoot = Entity()
+    private let flowRideForkFieldRoot = Entity()
+    private let flowRideFrontalDestinationRoot = Entity()
+    private let flowRideNeighborDestinationRoot = Entity()
 
     private var cortexLayer: Entity?
     private var deepLayer: Entity?
@@ -56,6 +60,20 @@ final class RBCJourneyScene {
         progress: Float,
         laneOffset: Float
     )] = []
+    private var flowRideForkSegments: [(
+        entity: ModelEntity,
+        progress: Float,
+        route: RBCFlowRideRoute
+    )] = []
+    private var flowRideJourneyCells: [(
+        entity: Entity,
+        path: [SIMD3<Float>],
+        baseScale: SIMD3<Float>,
+        radialOffset: SIMD2<Float>,
+        phase: Float,
+        route: RBCFlowRideRoute
+    )] = []
+    private var flowRideRuntimeRoute: RBCFlowRideRoute = .overview
     private var flowRideElapsed: Float = 0
     private var flowRideWasActive = false
     private var flowRideRuntimeActive = false
@@ -94,6 +112,10 @@ final class RBCJourneyScene {
         regionGuideRoot.name = "surrounding-brain-orientation-guides"
         flowRideRoot.name = "inside-arterial-lumen-flow-ride"
         flowRideDirectionFieldRoot.name = "continuous-intraluminal-direction-field-not-cfd"
+        flowRideInteriorShellRoot.name = "native-inward-facing-arterial-corridor"
+        flowRideForkFieldRoot.name = "user-selected-branching-flow-field-not-cfd"
+        flowRideFrontalDestinationRoot.name = "frontal-route-constellation-outline-not-segmentation"
+        flowRideNeighborDestinationRoot.name = "neighbor-route-tissue-point-field-not-segmentation"
 
         root.addChild(worldRoot)
         root.addChild(hudRoot)
@@ -105,6 +127,10 @@ final class RBCJourneyScene {
         causalStoryRoot.addChild(downstreamTerritoryRoot)
         worldRoot.addChild(regionInteriorRoot)
         regionInteriorRoot.addChild(flowRideRoot)
+        flowRideRoot.addChild(flowRideInteriorShellRoot)
+        flowRideRoot.addChild(flowRideForkFieldRoot)
+        flowRideRoot.addChild(flowRideFrontalDestinationRoot)
+        flowRideRoot.addChild(flowRideNeighborDestinationRoot)
         worldRoot.addChild(portalRoot)
         worldRoot.addChild(regionGuideRoot)
         corticalVaultRoot.addChild(registeredContent)
@@ -144,6 +170,7 @@ final class RBCJourneyScene {
         regionVisualization: RBCRegionVisualizationMode,
         frontalClotScenarioActive: Bool,
         flowRideActive: Bool,
+        flowRideRoute: RBCFlowRideRoute,
         time: TimeInterval,
         paused: Bool,
         reducedMotion: Bool,
@@ -203,12 +230,13 @@ final class RBCJourneyScene {
         )
         updateFlowRide(
             active: lumenRideActive,
+            route: flowRideRoute,
             time: t,
             motionHeld: motionHeld
         )
         if let infoAttachment {
             let target: SIMD3<Float> = lumenRideActive
-                ? [0, 1.88, -0.64]
+                ? [0, 1.72, -0.70]
                 : [0, 2.08, -1.04]
             infoAttachment.position += (target - infoAttachment.position) * (reducedMotion ? 1 : 0.22)
         }
@@ -851,20 +879,22 @@ final class RBCJourneyScene {
                 flowRideRoot.addChild(rideHero)
 
                 for outerWall in descendants(in: rideHero, namePrefix: "Combined_Artery_Adventitia") {
-                    outerWall.components.set(OpacityComponent(opacity: 0.46))
+                    outerWall.isEnabled = false
                 }
                 for middleWall in descendants(in: rideHero, namePrefix: "Combined_Artery_Media") {
-                    middleWall.components.set(OpacityComponent(opacity: 0.58))
+                    middleWall.isEnabled = false
                 }
                 for innerWall in descendants(in: rideHero, namePrefix: "Combined_Artery_Intima") {
-                    innerWall.components.set(OpacityComponent(opacity: 0.78))
+                    innerWall.isEnabled = false
                 }
 
                 let cells = descendants(in: rideHero, namePrefix: "Combined_Blood_RBC_")
+                let authoredCellPrototype = cells.first?.clone(recursive: true)
                 let cellMaterial = bloodCellMaterial()
                 for cell in cells {
                     cell.scale *= 0.28
                     replaceMaterials(in: cell, with: cellMaterial)
+                    cell.isEnabled = false
                 }
                 flowRideCells = cells.enumerated().map { index, entity in
                     (
@@ -887,9 +917,14 @@ final class RBCJourneyScene {
                 for bloodVolume in descendants(in: rideHero, namePrefix: "Combined_Blood_Volume") {
                     bloodVolume.isEnabled = false
                 }
-                buildFlowRideDirectionField(in: rideHero)
+                // The imported straight-cutaway direction field is retained
+                // as an authored reference but hidden here. Its local scaling
+                // produced oversized lines after a route transfer; the native
+                // branching corridor now owns the visible continuous route.
+                flowRideDirectionFieldRoot.isEnabled = false
+                buildInhabitedArterialCorridor(cellPrototype: authoredCellPrototype)
                 flowRideRoot.isEnabled = false
-                print("RBC_FLOW_RIDE=READY cells=\(flowRideCells.count) ribbons=\(flowRideRibbonPaths.count) traveling_luminance_fronts=3 room_extent=9.20")
+                print("RBC_FLOW_RIDE=READY authored_cells=\(flowRideCells.count) journey_cells=\(flowRideJourneyCells.count) ribbons=\(flowRideRibbonPaths.count) fork_routes=2 inward_corridor=true")
             }
 
             normalize(preview, targetExtent: definition.id == 1 ? 0.32 : 0.31)
@@ -1245,6 +1280,354 @@ final class RBCJourneyScene {
         }
     }
 
+    private func buildInhabitedArterialCorridor(cellPrototype: Entity?) {
+        let mainShellPath = sampleCubicBezier(
+            [0.00, 1.49, 3.00],
+            [0.12, 1.54, 0.20],
+            [-0.10, 1.46, -1.80],
+            [0.00, 1.58, -2.72],
+            samples: 22
+        )
+        let frontalShellPath = sampleCubicBezier(
+            mainShellPath.last ?? [0, 1.58, -2.72],
+            [-0.38, 1.66, -3.22],
+            [-1.02, 1.80, -4.16],
+            [-1.50, 1.96, -5.02],
+            samples: 16
+        )
+        let neighboringShellPath = sampleCubicBezier(
+            mainShellPath.last ?? [0, 1.58, -2.72],
+            [0.36, 1.53, -3.22],
+            [1.00, 1.39, -4.16],
+            [1.50, 1.24, -5.02],
+            samples: 16
+        )
+
+        let intimaMaterial = vesselInteriorMaterial(
+            tint: UIColor(red: 0.50, green: 0.030, blue: 0.052, alpha: 1),
+            emissive: UIColor(red: 0.28, green: 0.010, blue: 0.024, alpha: 1),
+            opacity: 0.50,
+            roughness: 0.47
+        )
+        let mediaMaterial = vesselInteriorMaterial(
+            tint: UIColor(red: 0.26, green: 0.018, blue: 0.034, alpha: 1),
+            emissive: UIColor(red: 0.16, green: 0.006, blue: 0.018, alpha: 1),
+            opacity: 0.25,
+            roughness: 0.72
+        )
+
+        addInwardFacingTube(
+            path: mainShellPath,
+            startRadius: 2.62,
+            endRadius: 1.30,
+            material: intimaMaterial,
+            name: "inhabited-main-arterial-intima"
+        )
+        addInwardFacingTube(
+            path: mainShellPath,
+            startRadius: 2.78,
+            endRadius: 1.44,
+            material: mediaMaterial,
+            name: "inhabited-main-arterial-media"
+        )
+        addInwardFacingTube(
+            path: frontalShellPath,
+            startRadius: 1.31,
+            endRadius: 0.88,
+            material: intimaMaterial,
+            name: "inhabited-frontal-destination-branch"
+        )
+        addInwardFacingTube(
+            path: neighboringShellPath,
+            startRadius: 1.31,
+            endRadius: 0.88,
+            material: intimaMaterial,
+            name: "inhabited-neighboring-destination-branch"
+        )
+
+        let mainJourneyPath = sampleCubicBezier(
+            [0.00, 1.49, -0.72],
+            [0.08, 1.52, -1.28],
+            [-0.06, 1.52, -2.18],
+            [0.00, 1.58, -2.72],
+            samples: 20
+        )
+        let frontalJourneyPath = mainJourneyPath + frontalShellPath.dropFirst()
+        let neighboringJourneyPath = mainJourneyPath + neighboringShellPath.dropFirst()
+
+        let mainFlowMaterial = glowMaterial(
+            color: UIColor(red: 0.88, green: 0.055, blue: 0.080, alpha: 0.76),
+            intensity: 2.35
+        )
+        let frontalFlowMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.16, blue: 0.21, alpha: 0.90),
+            intensity: 3.0
+        )
+        let neighboringFlowMaterial = glowMaterial(
+            color: UIColor(red: 0.18, green: 0.80, blue: 0.72, alpha: 0.72),
+            intensity: 2.35
+        )
+        addRideRoutePath(
+            mainJourneyPath,
+            route: .overview,
+            radius: 0.004,
+            material: mainFlowMaterial,
+            name: "continuous-main-direction-ribbon"
+        )
+        addRideRoutePath(
+            frontalShellPath,
+            route: .frontal,
+            radius: 0.005,
+            material: frontalFlowMaterial,
+            name: "frontal-destination-direction-ribbon"
+        )
+        addRideRoutePath(
+            neighboringShellPath,
+            route: .neighboring,
+            radius: 0.004,
+            material: neighboringFlowMaterial,
+            name: "neighboring-destination-direction-ribbon"
+        )
+
+        if let cellPrototype {
+            for index in 0..<18 {
+                let route: RBCFlowRideRoute = index.isMultiple(of: 2) ? .frontal : .neighboring
+                let path = route == .frontal ? frontalJourneyPath : neighboringJourneyPath
+                let container = Entity()
+                container.name = "authored-biconcave-journey-cell-\(index)-route-\(route.rawValue)"
+                let visual = cellPrototype.clone(recursive: true)
+                visual.isEnabled = true
+                normalize(visual, targetExtent: 0.070 + Float(index % 3) * 0.006)
+                replaceMaterials(in: visual, with: bloodCellMaterial())
+                container.addChild(visual)
+                let angle = Float(index) * 2.399_963
+                let radialOffset = SIMD2<Float>(cos(angle), sin(angle)) * (0.11 + Float(index % 4) * 0.026)
+                flowRideInteriorShellRoot.addChild(container)
+                flowRideJourneyCells.append((
+                    container,
+                    path,
+                    container.scale,
+                    radialOffset,
+                    Float(index) / 18,
+                    route
+                ))
+            }
+        }
+
+        let frontalDestination = frontalShellPath.last ?? [-1.50, 1.96, -5.02]
+        let neighboringDestination = neighboringShellPath.last ?? [1.50, 1.24, -5.02]
+        buildFrontalRouteConstellation(center: frontalDestination)
+        buildDestinationPointField(
+            center: frontalDestination + SIMD3<Float>(-0.10, 0.04, -0.30),
+            color: UIColor(red: 1.0, green: 0.19, blue: 0.28, alpha: 0.48),
+            count: 48,
+            name: "frontal-route-cortical-point-field",
+            parent: flowRideFrontalDestinationRoot
+        )
+        buildDestinationPointField(
+            center: neighboringDestination + SIMD3<Float>(0.10, -0.03, -0.30),
+            color: UIColor(red: 0.16, green: 0.78, blue: 0.70, alpha: 0.42),
+            count: 40,
+            name: "neighbor-route-cortical-point-field",
+            parent: flowRideNeighborDestinationRoot
+        )
+    }
+
+    private func addInwardFacingTube(
+        path: [SIMD3<Float>],
+        startRadius: Float,
+        endRadius: Float,
+        material: RealityKit.Material,
+        name: String
+    ) {
+        guard let mesh = try? makeInwardFacingTubeMesh(
+            path: path,
+            startRadius: startRadius,
+            endRadius: endRadius,
+            radialSegments: 56,
+            name: name
+        ) else { return }
+        let tube = ModelEntity(mesh: mesh, materials: [material])
+        tube.name = name
+        flowRideInteriorShellRoot.addChild(tube)
+    }
+
+    private func makeInwardFacingTubeMesh(
+        path: [SIMD3<Float>],
+        startRadius: Float,
+        endRadius: Float,
+        radialSegments: Int,
+        name: String,
+        inwardFacing: Bool = true
+    ) throws -> MeshResource {
+        guard path.count > 1, radialSegments >= 8 else {
+            throw NSError(domain: "RBCJourneyTube", code: 1)
+        }
+
+        var positions: [SIMD3<Float>] = []
+        var normals: [SIMD3<Float>] = []
+        var indices: [UInt32] = []
+        positions.reserveCapacity(path.count * radialSegments)
+        normals.reserveCapacity(path.count * radialSegments)
+        indices.reserveCapacity((path.count - 1) * radialSegments * 6)
+
+        for ringIndex in path.indices {
+            let previous = path[max(0, ringIndex - 1)]
+            let next = path[min(path.count - 1, ringIndex + 1)]
+            let tangent = simd_normalize(next - previous)
+            var right = simd_cross(SIMD3<Float>(0, 1, 0), tangent)
+            if simd_length_squared(right) < 0.000_1 {
+                right = [1, 0, 0]
+            } else {
+                right = simd_normalize(right)
+            }
+            let up = simd_normalize(simd_cross(tangent, right))
+            let progress = Float(ringIndex) / Float(path.count - 1)
+            let baseRadius = simd_mix(startRadius, endRadius, progress)
+
+            for radialIndex in 0..<radialSegments {
+                let angle = Float(radialIndex) / Float(radialSegments) * 2 * .pi
+                let organicRipple = 1 + sin(angle * 5 + progress * 4.2) * 0.018
+                let radialDirection = right * cos(angle) + up * sin(angle)
+                positions.append(path[ringIndex] + radialDirection * baseRadius * organicRipple)
+                normals.append(inwardFacing ? -radialDirection : radialDirection)
+            }
+        }
+
+        for ringIndex in 0..<(path.count - 1) {
+            for radialIndex in 0..<radialSegments {
+                let nextRadial = (radialIndex + 1) % radialSegments
+                let a = UInt32(ringIndex * radialSegments + radialIndex)
+                let b = UInt32(ringIndex * radialSegments + nextRadial)
+                let c = UInt32((ringIndex + 1) * radialSegments + radialIndex)
+                let d = UInt32((ringIndex + 1) * radialSegments + nextRadial)
+                indices.append(contentsOf: [a, b, c, b, d, c])
+            }
+        }
+
+        var descriptor = MeshDescriptor(name: name)
+        descriptor.positions = MeshBuffers.Positions(positions)
+        descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.primitives = .triangles(indices)
+        return try MeshResource.generate(from: [descriptor])
+    }
+
+    private func addRideRoutePath(
+        _ points: [SIMD3<Float>],
+        route: RBCFlowRideRoute,
+        radius: Float,
+        material: RealityKit.Material,
+        name: String
+    ) {
+        guard points.count > 1 else { return }
+        if let routeMesh = try? makeInwardFacingTubeMesh(
+            path: points,
+            startRadius: radius,
+            endRadius: radius,
+            radialSegments: 8,
+            name: name,
+            inwardFacing: false
+        ) {
+            let routeLine = ModelEntity(mesh: routeMesh, materials: [material])
+            routeLine.name = "\(name)-continuous-mesh"
+            flowRideForkFieldRoot.addChild(routeLine)
+            flowRideForkSegments.append((routeLine, 0.5, route))
+        }
+
+        for index in stride(from: 4, to: points.count, by: 5) {
+            let tip = points[index]
+            let previous = points[index - 1]
+            let tangent = simd_normalize(tip - previous)
+            var side = simd_cross(tangent, SIMD3<Float>(0, 1, 0))
+            side = simd_length_squared(side) < 0.000_1
+                ? SIMD3<Float>(1, 0, 0)
+                : simd_normalize(side)
+            let back = tip - tangent * 0.082
+
+            for sideSign: Float in [-1, 1] {
+                let from = back + side * sideSign * 0.034
+                let delta = tip - from
+                let length = simd_length(delta)
+                let arm = ModelEntity(
+                    mesh: .generateCylinder(height: length * 1.04, radius: radius * 0.82),
+                    materials: [material]
+                )
+                arm.name = "\(name)-direction-chevron-\(index)-\(sideSign < 0 ? "left" : "right")"
+                arm.position = (from + tip) * 0.5
+                arm.orientation = simd_quatf(from: [0, 1, 0], to: delta / length)
+                flowRideForkFieldRoot.addChild(arm)
+                flowRideForkSegments.append((
+                    arm,
+                    Float(index) / Float(points.count - 1),
+                    route
+                ))
+            }
+        }
+    }
+
+    private func buildFrontalRouteConstellation(center: SIMD3<Float>) {
+        let material = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.24, blue: 0.32, alpha: 0.92),
+            intensity: 3.2
+        )
+        var outlinePoints: [SIMD3<Float>] = []
+        for index in 0..<28 {
+            let angle = Float(index) / 28 * 2 * .pi
+            let irregularity = 1 + sin(angle * 3.0) * 0.11 + cos(angle * 5.0) * 0.055
+            let point = center + SIMD3<Float>(
+                cos(angle) * 0.72 * irregularity,
+                sin(angle) * 0.49 * irregularity,
+                sin(angle * 2) * 0.055
+            )
+            outlinePoints.append(point)
+            let star = ModelEntity(mesh: .generateSphere(radius: index.isMultiple(of: 4) ? 0.017 : 0.010), materials: [material])
+            star.name = "frontal-route-constellation-star-\(index)"
+            star.position = point
+            flowRideFrontalDestinationRoot.addChild(star)
+        }
+        if let first = outlinePoints.first { outlinePoints.append(first) }
+        addTubePath(
+            outlinePoints,
+            to: flowRideFrontalDestinationRoot,
+            radius: 0.0035,
+            material: material,
+            name: "frontal-route-constellation-arc"
+        )
+    }
+
+    private func buildDestinationPointField(
+        center: SIMD3<Float>,
+        color: UIColor,
+        count: Int,
+        name: String,
+        parent: Entity
+    ) {
+        guard count > 0 else { return }
+        let pointMaterial = glowMaterial(color: color, intensity: 2.25)
+        let goldenAngle = Float.pi * (3 - sqrt(5 as Float))
+
+        for index in 0..<count {
+            let fraction = (Float(index) + 0.5) / Float(count)
+            let y = 1 - 2 * fraction
+            let radial = sqrt(max(0, 1 - y * y))
+            let angle = Float(index) * goldenAngle
+            let depthRipple = 0.70 + Float(index % 7) * 0.055
+            let position = center + SIMD3<Float>(
+                cos(angle) * radial * 0.88 * depthRipple,
+                y * 0.64,
+                sin(angle) * radial * 0.50 * depthRipple
+            )
+            let pointRadius = 0.010 + Float((index * 5) % 7) * 0.0017
+            let point = ModelEntity(
+                mesh: .generateSphere(radius: pointRadius),
+                materials: [pointMaterial]
+            )
+            point.name = "\(name)-point-\(index)"
+            point.position = position
+            parent.addChild(point)
+        }
+    }
+
     private func buildFlowRideDirectionField(in rideHero: Entity) {
         let laneSpecs: [(
             y: Float,
@@ -1306,11 +1689,13 @@ final class RBCJourneyScene {
 
     private func updateFlowRide(
         active: Bool,
+        route: RBCFlowRideRoute,
         time _: Float,
         motionHeld: Bool
     ) {
         flowRideRuntimeActive = active
         flowRideRuntimeHeld = motionHeld
+        flowRideRuntimeRoute = route
         flowRideRoot.isEnabled = active
         guard active else {
             flowRideWasActive = false
@@ -1370,6 +1755,93 @@ final class RBCJourneyScene {
             let wave = max(0, 1 - wrappedDistance / 0.16)
             item.entity.components.set(OpacityComponent(opacity: 0.08 + wave * wave * wave * 0.92))
         }
+
+        for item in flowRideJourneyCells {
+            let progress = (item.phase + flowRideElapsed * 0.042)
+                .truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: item.path, progress: progress)
+            let ahead = interpolatedPoint(on: item.path, progress: min(progress + 0.012, 1))
+            let drift = sin(flowRideElapsed * 1.3 + item.phase * 17) * 0.018
+            item.entity.position = point + SIMD3<Float>(
+                item.radialOffset.x,
+                item.radialOffset.y + drift,
+                0
+            )
+            let tangent = ahead - point
+            let routeOrientation = simd_length_squared(tangent) > 0.000_001
+                ? simd_quatf(from: SIMD3<Float>(0, 0, -1), to: simd_normalize(tangent))
+                : simd_quatf(angle: 0, axis: [0, 1, 0])
+            let tumble = simd_quatf(
+                angle: flowRideElapsed * 1.22 + item.phase * .pi * 2,
+                axis: simd_normalize(SIMD3<Float>(0.82, 0.28, 0.50))
+            )
+            item.entity.orientation = routeOrientation * tumble
+            let deformation = sin(flowRideElapsed * 1.7 + item.phase * 11)
+            item.entity.scale = item.baseScale * SIMD3<Float>(
+                1 + deformation * 0.10,
+                1 - deformation * 0.055,
+                1 - deformation * 0.045
+            )
+            let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
+            item.entity.components.set(OpacityComponent(opacity: selected ? 1 : 0.08))
+        }
+
+        for item in flowRideForkSegments {
+            let selectedWeight: Float = switch (flowRideRuntimeRoute, item.route) {
+                case (.overview, .overview): 0.92
+                case (.overview, _): 0.62
+                case let (selected, route) where selected == route: 1.0
+                default: 0
+            }
+            let travel = (flowRideElapsed * 0.20 + (item.route == .neighboring ? 0.46 : 0))
+                .truncatingRemainder(dividingBy: 1)
+            let rawDistance = abs(item.progress - travel)
+            let wrappedDistance = min(rawDistance, 1 - rawDistance)
+            let wave = max(0, 1 - wrappedDistance / 0.18)
+            item.entity.components.set(OpacityComponent(
+                opacity: selectedWeight * (0.18 + wave * wave * 0.38)
+            ))
+        }
+
+        let frontalOutlineOpacity: Float = switch flowRideRuntimeRoute {
+        case .overview: 0.72
+        case .frontal: 1.0
+        case .neighboring: 0.10
+        }
+        flowRideFrontalDestinationRoot.components.set(OpacityComponent(opacity: frontalOutlineOpacity))
+        let neighborFieldOpacity: Float = switch flowRideRuntimeRoute {
+        case .overview: 0.58
+        case .frontal: 0.08
+        case .neighboring: 1.0
+        }
+        flowRideNeighborDestinationRoot.components.set(OpacityComponent(opacity: neighborFieldOpacity))
+        let destinationPulse: Float = flowRideRuntimeHeld
+            ? 1
+            : 1 + sin(flowRideElapsed * 1.8) * 0.035
+        flowRideFrontalDestinationRoot.scale = [destinationPulse, destinationPulse, destinationPulse]
+        let neighborPulse: Float = flowRideRuntimeHeld
+            ? 1
+            : 1 + cos(flowRideElapsed * 1.65) * 0.028
+        flowRideNeighborDestinationRoot.scale = [neighborPulse, neighborPulse, neighborPulse]
+
+        // Route selection is an explicit user-triggered spatial transfer. The
+        // selected branch is recomposed around the stationary wearer instead
+        // of forcing a camera ride or silently moving the whole brain scene.
+        let routePosition: SIMD3<Float>
+        let routeOrientation: simd_quatf
+        switch flowRideRuntimeRoute {
+        case .overview:
+            routePosition = .zero
+            routeOrientation = simd_quatf(angle: 0, axis: [0, 1, 0])
+        case .frontal:
+            routePosition = [-1.09, -0.25, 1.50]
+            routeOrientation = simd_quatf(angle: -0.50, axis: [0, 1, 0])
+        case .neighboring:
+            routePosition = [1.09, 0.08, 1.50]
+            routeOrientation = simd_quatf(angle: 0.50, axis: [0, 1, 0])
+        }
+        flowRideRoot.position = routePosition
+        flowRideRoot.orientation = routeOrientation
 
         // The local clock stops while held, so the vessel, ribbons, and cells
         // retain their exact pose instead of snapping to a generic still pose.
@@ -1762,6 +2234,25 @@ final class RBCJourneyScene {
         material.emissiveIntensity = 0.14
         material.roughness = 0.22
         material.metallic = .init(floatLiteral: 0)
+        return material
+    }
+
+    private func vesselInteriorMaterial(
+        tint: UIColor,
+        emissive: UIColor,
+        opacity: Float,
+        roughness: Float
+    ) -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: tint)
+        material.emissiveColor = .init(color: emissive)
+        material.emissiveIntensity = 0.30
+        material.roughness = .init(floatLiteral: roughness)
+        material.metallic = .init(floatLiteral: 0)
+        material.blending = .transparent(opacity: .init(floatLiteral: opacity))
+        material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
         return material
     }
 
