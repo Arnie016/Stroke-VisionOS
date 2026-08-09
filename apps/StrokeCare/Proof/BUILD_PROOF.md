@@ -4,12 +4,12 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (16)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (17)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.5`; clinician review pending.
+- Clinical content version: `SC-AIS-001.6`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
@@ -580,3 +580,39 @@ placement, wearer visibility, gestures, comfort, AirPlay composition,
 comprehension, specialist registration, or clinical validity. XCAT remained
 `unavailable`; the current reachability receipt is
 `Proof/xcat/20260810-031333/BLOCKED.md` (ignored local machine evidence).
+
+## 2026-08-10 03:48 SGT — registered Pressure story cues
+
+Build `0.6 (17)` adds a registered-frame visual distinction for the Pressure
+story. The exact registered clot-derived target retains a compact coral pulse;
+a filled amber disc on the loaded cortical bounds represents affected tissue;
+and a wider 14-segment mint boundary represents constrained swelling. The two
+tissue cues use the loaded registered-v2 brain and clot bounds. They are
+qualitative teaching geometry—not a patient segmentation, edema measurement,
+diagnosis, prognosis, treatment recommendation, or success state. Prototype-v1
+edema, bone-flap, and dural-patch meshes remain disabled.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, XcodeGen regenerated the project, and the OS 26.5
+visionOS Simulator Debug build at `/tmp/strokecare-pressure-story-derived`
+exited successfully. The built app contains exactly 15 unique USDZ files. Its
+executable SHA-256 is
+`3d7b90ce9d439fdb9a26ad95ace44014ec2f213b20d2a7a1d9170e9921250b4c`.
+
+The committed source is
+`fdab9dd168392e6540a227041bcdcedd4763a3bd`. The deterministic
+`--proof-family-pressure-story` route produced
+`Proof/79-family-pressure-story-simulator.png`, 3840×2160, SHA-256
+`2935c0540a64a365e71eb7b20cf5e20d1003d0a9c70f23d676e78537ba6f07e3`.
+The `--proof-clinician-pressure-story` route produced
+`Proof/80-clinician-pressure-story-simulator.png`, 3840×2160, SHA-256
+`872a180ad555a32e267ad9f173e60f98d1e51e1064c3618fc2a1d5014424bf9b`.
+Both images passed the nonblank/centre/colour proof verifier and were visually
+inspected for the central anatomy, point field, role-specific timeline, and
+three distinct Pressure cues.
+
+This is Simulator render/process evidence only. XCAT was still `unavailable`;
+the exact reachability receipt is
+`Proof/xcat/20260810-035247/BLOCKED.md` (ignored local machine evidence).
+Wearer targetability, stereo depth, AirPlay legibility, comfort, comprehension,
+specialist registration review, and clinical validity remain unproven.

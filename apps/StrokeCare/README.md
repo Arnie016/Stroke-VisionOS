@@ -23,6 +23,21 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (17)` makes the Pressure story visually explicit without adding a
+diagnostic overlay. The registered clot keeps a compact pulse; a filled amber
+surface cue marks affected tissue; and a wider dashed mint boundary represents
+constrained swelling. All three cues are derived from the loaded registered-v2
+brain/clot bounds, remain qualitative, and disappear outside Pressure / Make
+space. The prototype-v1 edema, flap, and patch meshes remain quarantined.
+
+![Family Pressure story in visionOS Simulator](Proof/79-family-pressure-story-simulator.png)
+
+![Doctor-presenter Pressure story in visionOS Simulator](Proof/80-clinician-pressure-story-simulator.png)
+
+These captures prove the build-17 Simulator render/process state only. They do
+not prove anatomical meaning, clinical correctness, gaze-and-pinch quality,
+stereo depth, AirPlay legibility, wearer comfort, or family comprehension.
+
 The room-scale intake and Pressure scenes now have a fresh-build regression
 gate. The visionOS Simulator stays in the authored eye-height frame instead of
 accepting its unstable zero device pose. `Scripts/capture_simulator_route_proof.zsh`
@@ -39,7 +54,7 @@ These two captures prove current Simulator render/process state only. They do
 not prove physical placement, gaze-and-pinch quality, comfort, AirPlay
 legibility, comprehension, or clinical validity.
 
-Build `0.6 (16)` now treats brain, arteries, clot, and dura as one required
+Build `0.6 (17)` retains brain, arteries, clot, and dura as one required
 registered-v2 teaching set. If any required layer is missing or fails to load,
 Stroke Care logs the exact asset name and shows the complete procedural model
 with a visible **Simplified teaching view · Detailed anatomy unavailable**

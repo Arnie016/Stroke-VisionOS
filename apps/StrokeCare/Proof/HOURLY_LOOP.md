@@ -656,3 +656,25 @@
 - Next safe action: on an awake and unlocked XCAT, run build 16 once and verify
   that the patient-file archive and Pressure anatomy remain in the primary
   visual field after the sample-once room placement path.
+
+## 2026-08-10 03:48 SGT — distinct Pressure story in registered frame
+
+- Target: GitHub issue #25; make blockage, affected tissue, and constrained
+  swelling visibly distinct for both family and doctor-presenter roles without
+  loading unregistered prototype-v1 meshes.
+- Bounded action: derived one cortical cue anchor from the loaded registered-v2
+  brain/clot bounds; added a compact clot pulse, filled amber affected-tissue
+  cue, wider dashed mint swelling boundary, two deterministic proof routes, and
+  raised the app to `0.6 (17)`.
+- Evidence: contract and diff checks passed; XcodeGen and the OS 26.5 visionOS
+  Simulator build succeeded; the built app contains 15 unique USDZ files;
+  proofs 79 and 80 are 3840×2160, passed the image verifier, and have SHA-256
+  values `2935c054…6f07e3` and `872a180a…4bf9b`.
+- Verdict: `IMPROVED` — the two roles now share one registered Pressure visual
+  grammar while retaining their different timelines and guidance surfaces.
+- Blocker: XCAT is `unavailable`; wearer targetability, depth, AirPlay
+  readability, comfort, comprehension, specialist review, and clinical
+  validity are not proven.
+- Next safe action: when XCAT is awake and unlocked, launch build 17, select one
+  Pressure point, and verify that clot pulse, amber tissue cue, and mint swelling
+  boundary remain attached and distinguishable from front and side views.

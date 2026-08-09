@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.5`
-- App version: `0.6 (12)` review candidate
+- Content version: `SC-AIS-001.6`
+- App version: `0.6 (17)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -16,6 +16,13 @@ Stroke Care is a communication aid. It does not diagnose stroke, read imaging,
 determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
+
+In content version `SC-AIS-001.6`, the Pressure scene uses three deliberately
+different qualitative forms: a compact clot pulse, a filled amber
+affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
+positions come from the loaded registered-v2 brain and clot bounds, not a
+patient segmentation or edema measurement. The change remains pending the
+same clinician review required by the 3D-model and Act-2 rows below.
 
 The shipped spatial path explains one mechanical purpose: why a stroke team may
 discuss making room when a severe large-territory infarction causes dangerous
