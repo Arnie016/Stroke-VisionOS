@@ -4,8 +4,8 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (6)` in current source and Simulator; XCAT still has the
-  separately evidenced `0.3 (3)` install.
+- Version/build: `0.6 (7)` in current source; signed XCAT deployment and
+  placement-path receipts are recorded below.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
 - Clinical content version: `SC-AIS-001.4`; clinician review pending.
@@ -118,27 +118,35 @@ wearer.
 
 ## XCAT state
 
-At 15:53 SGT on 2026-08-09, XCAT was `available (paired)` with identifier
+At 16:08 SGT on 2026-08-09, XCAT was `available (paired)` with identifier
 `613CC48C-A6AD-5170-A238-D518B6012491`. The guarded deployment completed for
-Stroke Care `0.6 (6)`, bundle `com.arnav.StrokeTime`:
+Stroke Care `0.6 (7)`, bundle `com.arnav.StrokeTime`:
 
 - generic physical visionOS build: PASS
 - designated-requirement and deep signature verification: PASS
 - installation and installed-app query: PASS
 - deterministic `--hackathon-demo` foreground launch: PASS
-- running-process query: PASS (`StrokeTime`, PID 592)
+- running-process query: PASS (`StrokeTime`, PID 656 before the deterministic
+  placement route)
+- deterministic `--proof-view-anterior` physical-device launch: PASS
+- tracked `WorldTrackingProvider.queryDeviceAnchor` placement path: PASS on
+  sample attempt 3
+- stage mode and intended forward distance: `sample-once-room-fixed`, `1.16 m`
 
 The authoritative local machine receipt is
-`Proof/xcat/20260809-155324/RECEIPT.md`; its JSON and command logs remain beside
-it. The deployment script now queries the current `devicectl` executable URL
-field and permits a short bounded process-registration delay.
+`Proof/xcat/20260809-160742/RECEIPT.md`; its JSON and command logs remain beside
+it. The separate placement-path receipt is
+`Proof/xcat/20260809-160823-stage-placement/RECEIPT.md`, with JSON SHA-256
+`05a5bc6c093c670b97ef490c3f2de89770727bbaef5e6fdc8cc7cc0863ff7fec`.
+It stores no raw room transform, gaze, hands, or patient information.
 
-This proves that the current signed binary was installed, activated, and found
-running on XCAT. It does **not** prove what appeared in the wearer’s field of
-view, comfortable placement, gaze or pinch behavior, audio perception,
-comprehension, or clinical validity. The static source verifier therefore still
-prints `physical_device=NOT_PROVEN`; human device judgment must come from the
-separate wearer receipt.
+This proves that the current signed binary was installed, activated, found
+running on XCAT, and executed its tracked-device-anchor placement path. It does
+**not** prove what appeared in the wearer’s field of view, comfortable
+placement, gaze or pinch behavior, audio perception, comprehension, or clinical
+validity. The static source verifier therefore still prints
+`physical_device=NOT_PROVEN`; human device judgment must come from the separate
+wearer receipt.
 
 ## Clinical and procedural gates
 

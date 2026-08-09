@@ -199,3 +199,29 @@
   not established by the machine receipt.
 - Next safe action: complete one wearer pass from `Proof/XCAT_ACCEPTANCE.md` and
   record the four observations in the generated `WEARER_RESULT.md`.
+
+## 2026-08-09 16:08 SGT — physical stage-placement path receipt
+
+- Target: distinguish “the app process is running” from “the physical XCAT
+  placement code actually sampled a tracked device anchor.”
+- Bounded action: added a local privacy-bounded placement receipt and a guarded
+  collector. The app records only source, sample attempt, intended distance,
+  app build, and explicit machine/wearer/clinical proof states; it omits raw
+  room coordinates, gaze, hands, and patient data. The binary was advanced to
+  `0.6 (7)` so this receipt cannot be confused with build 6.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; the generic physical visionOS build exited `0`;
+  signed build, code-sign verification, install, installed-app query,
+  foreground launch, and process query passed in
+  `Proof/xcat/20260809-160742/RECEIPT.md`. Launching
+  `--proof-view-anterior` on XCAT produced
+  `Proof/xcat/20260809-160823-stage-placement/RECEIPT.md`: build 7, tracked
+  anchor `true`, sample attempt 3, sample-once room-fixed mode, intended
+  distance `1.16 m`, wearer and clinical evidence `NOT_RUN`.
+- Verdict: `IMPROVED` — physical execution now proves the actual placement path
+  rather than only installation and process existence.
+- Blocker: XCAT framebuffer capture is unsupported through `devicectl`, the Mac
+  remains locked for Xcode UI inspection, and no wearer or clinician result has
+  been recorded.
+- Next safe action: unlock the Mac, capture the XCAT frame through the supported
+  Xcode/device interface if available, and record the four wearer observations.

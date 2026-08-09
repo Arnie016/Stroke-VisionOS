@@ -18,6 +18,17 @@ receipt, and running-process query. It launches the deterministic
 complete 0.6 flow. It also creates `WEARER_RESULT.md` with every human field set
 to `NOT RUN`.
 
+After entering the immersive anatomy stage once, collect the separate
+privacy-bounded placement-path receipt:
+
+```bash
+Scripts/collect_xcat_stage_placement.zsh
+```
+
+This receipt records that a tracked device anchor was sampled and that the
+stage uses sample-once room-fixed placement. It does not store the raw room
+transform, gaze, hands, patient information, or any wearer judgment.
+
 ## Wearer gate
 
 The wearer completes one 90-second pass after the machine receipt succeeds:
