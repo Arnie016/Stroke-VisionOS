@@ -88,9 +88,17 @@ enum StrokeSceneFactory {
         "Brain surface", "Opposite-side context"
     ]
 
+    /// Exact registered-v2 arterial-mesh surface samples for technical marker
+    /// placement only. They are not specialist-approved anatomical landmarks;
+    /// reviewed FLOW_ANCHOR exports and clinical review remain required. Index
+    /// 2 is only a procedural-fallback position: registered anatomy replaces it
+    /// with a marker derived from the loaded clot bounds below.
     private static let procedurePointPositions: [SIMD3<Float>] = [
-        [-0.020, -0.090, 0.058], [-0.004, -0.022, 0.061],
-        [0.050, 0.052, 0.039], [0.076, 0.068, 0.025], [0.098, 0.066, 0.008]
+        [-0.028297, -0.142271, 0.010944],
+        [-0.012158, -0.059836, 0.030163],
+        [0.050, 0.052, 0.039],
+        [-0.043842, -0.014646, 0.029223],
+        [-0.053607, -0.011508, 0.017754]
     ]
 
     private static let procedurePointLabels = [
@@ -479,32 +487,24 @@ enum StrokeSceneFactory {
         let arteriesLayer = registered.findEntity(named: arteriesLayerName) ?? registered
         let blockageLayer = registered.findEntity(named: blockageLayerName) ?? registered
 
-        // The imported lesson points are derived from the actual registered
-        // artery/clot bounds rather than reusing procedural coordinates. They
-        // sit just in front of the vessels so all five remain discoverable.
+        // Point 2 is derived from the actual registered clot bounds. Points
+        // 0/1/3/4 use exact registered-v2 arterial-mesh surface samples. These
+        // are technical anchors, not specialist-approved anatomy; reviewed
+        // FLOW_ANCHOR exports and clinical review remain required.
         let arteryBounds = registered.findEntity(named: importedArteriesName)?.visualBounds(relativeTo: registered)
             ?? brainBounds
         let arteryCenter = (arteryBounds.min + arteryBounds.max) / 2
-        let arterySize = arteryBounds.max - arteryBounds.min
-        let frontZ = max(arteryBounds.max.z, brainBounds.max.z) + 0.010
         let clotBounds = registered.findEntity(named: importedClotName)?.visualBounds(relativeTo: registered)
         let clotCenter = clotBounds.map { ($0.min + $0.max) / 2 } ?? arteryCenter
         let clotSurfaceMarker = clotBounds.map { bounds in
             let center = (bounds.min + bounds.max) / 2
             return SIMD3<Float>(center.x, center.y, bounds.max.z + 0.003)
         } ?? clotCenter
-        let registeredFlowPoints: [SIMD3<Float>] = [
-            [arteryCenter.x - arterySize.x * 0.12, arteryBounds.min.y + arterySize.y * 0.14, frontZ],
-            [arteryCenter.x - arterySize.x * 0.08, arteryBounds.min.y + arterySize.y * 0.38, frontZ],
-            // Point 2 is the one coordinate we can bind to an authored
-            // registered object today: 3 mm beyond the actual clot surface.
-            // It stays visibly attached instead of being hidden inside it. The
-            // remaining flow-story points stay coarse discovery cues pending
-            // reviewed FLOW_ANCHOR exports; they are not anatomical landmarks.
-            clotSurfaceMarker,
-            [arteryCenter.x + arterySize.x * 0.10, arteryBounds.min.y + arterySize.y * 0.67, frontZ],
-            [brainCenter.x + brainRadii.x * 0.40, brainCenter.y + brainRadii.y * 0.24, frontZ]
-        ]
+        let registeredFlowPoints = procedurePointPositions.enumerated().map { index, position in
+            // Keep the blockage marker 3 mm beyond the loaded clot surface so
+            // it remains visibly attached instead of being hidden inside it.
+            index == 2 ? clotSurfaceMarker : position
+        }
 
         let regionPointAnchor = Entity()
         regionPointAnchor.name = regionPointAnchorName
@@ -1374,8 +1374,9 @@ enum StrokeSceneFactory {
         if let active {
             // All region anchors can be inspected through the transparent
             // cortex because they are bound to the registered brain envelope.
-            // Procedure points 0/1/3/4 remain single-focus only until reviewed
-            // FLOW_ANCHOR exports replace their coarse screen-plane positions.
+            // Procedure points 0/1/3/4 remain single-focus technical anchors
+            // until reviewed FLOW_ANCHOR exports and clinical review replace
+            // their unapproved registered-v2 mesh samples.
             let revealAll = experience.pointField == .regions && (
                 experience.anatomyPresentation == .transparent || (
                     experience.audienceLens == .family &&
@@ -1391,7 +1392,10 @@ enum StrokeSceneFactory {
                 // Opaque anatomy keeps one precise focus. See-through anatomy
                 // reveals the complete lesson family while retaining one
                 // dominant selected marker for gaze + pinch control agency.
-                child.isEnabled = revealAll || isSelected || (experience.selectedPointEntityName == nil && index == 0)
+                child.isEnabled = revealAll || isSelected || (
+                    experience.selectedPointEntityName == nil &&
+                    index == experience.pointField.defaultLessonPointIndex
+                )
                 let emphasis: Float = isSelected ? 1.85 : (revealAll ? 1.04 : 1)
                 child.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
                 point.model?.materials = [

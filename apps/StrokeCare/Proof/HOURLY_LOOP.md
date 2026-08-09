@@ -225,3 +225,26 @@
   been recorded.
 - Next safe action: unlock the Mac, capture the XCAT frame through the supported
   Xcode/device interface if available, and record the four wearer observations.
+
+## 2026-08-09 16:39 SGT — registered Vessel Story anchors and build 8 gate
+
+- Target: keep Vessel Story dots attached to the current registered-v2 anatomy
+  instead of projecting them onto a detached front-facing plane.
+- Bounded action: removed the shared `frontZ` projection, made the clot-bound
+  marker the default procedure focus, and placed the remaining four cues on
+  exact registered-v2 arterial-mesh technical samples. These samples remain
+  unapproved teaching anchors pending authored `FLOW_ANCHOR` exports and
+  specialist review.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; the generic visionOS build passed; build `0.6 (8)`
+  passed Apple Development signing plus deep and designated-requirement checks.
+  Installation stopped before completion when XCAT disconnected with
+  CoreDevice error `4000`; the next lock-state query reported
+  `passcodeRequired: true`. The gate is recorded in
+  `Proof/xcat/20260809-163625/BLOCKED.md`.
+- Verdict: `IMPROVED` — the source and signed binary now preserve registered
+  marker contact, without claiming that build 8 reached the headset.
+- Blocker: XCAT is paired but presently locked, and still has Stroke Care
+  `0.6 (7)` installed.
+- Next safe action: wear and unlock XCAT, then install and foreground-launch the
+  already signed build 8 and query its running process once.

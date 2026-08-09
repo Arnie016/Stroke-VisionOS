@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (7)` in current source; signed XCAT deployment and
+- Version/build: `0.6 (8)` in current source; signed XCAT deployment and
   placement-path receipts are recorded below.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -147,6 +147,14 @@ placement, gaze or pinch behavior, audio perception, comprehension, or clinical
 validity. The static source verifier therefore still prints
 `physical_device=NOT_PROVEN`; human device judgment must come from the separate
 wearer receipt.
+
+At 16:36 SGT, build `0.6 (8)` also completed a signed arm64 physical-visionOS
+build and passed deep code-sign and designated-requirement verification. Its
+install did not complete: XCAT disconnected immediately after the CoreDevice
+tunnel opened, and the next lock-state query reported `passcodeRequired: true`.
+The machine gate is recorded at
+`Proof/xcat/20260809-163625/BLOCKED.md`. XCAT therefore still contains build 7;
+build 8 is **not** claimed installed or running.
 
 ## Clinical and procedural gates
 
