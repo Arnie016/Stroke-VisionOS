@@ -2170,13 +2170,18 @@ private struct SpatialRoleMicroCues: View {
             }
 
             if experience.detailLevel >= .guided && experience.pointField == .regions {
-                Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")
-                    .font(.caption2.monospaced().weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.62))
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityLabel(
-                        "Generic venous atlas. Colour is a display convention. Specialist review pending."
-                    )
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")
+                    Text("ATLAS · Z-ANATOMY + BODYPARTS3D · CC BY-SA")
+                        .foregroundStyle(.white.opacity(0.48))
+                }
+                .font(.caption2.monospaced().weight(.semibold))
+                .foregroundStyle(.white.opacity(0.62))
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    "Generic venous atlas. Colour is a display convention. Specialist review pending. Atlas sources: Z-Anatomy and BodyParts3D, Creative Commons Attribution ShareAlike."
+                )
             }
         }
     }

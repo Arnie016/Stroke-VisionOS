@@ -764,3 +764,24 @@
   not proven.
 - Next safe action: repeat the archive, review, and Pressure routes with
   Instruments on an awake and unlocked XCAT before closing issue #30.
+
+## 2026-08-10 05:36 SGT — visible venous-atlas attribution
+
+- Target: make the optional clinician venous reference traceable without adding
+  another modal, tab, or family-facing burden.
+- Bounded action: added one compact app-facing Z-Anatomy + BodyParts3D CC BY-SA
+  line and an equivalent accessibility label beneath the existing generic-atlas,
+  colour-convention, and review-pending boundary; preserved the bundled full
+  third-party notice.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded; its app contains 15 USDZs plus the 1,515-byte notice;
+  clean Proof 86 is 3840×2160 with SHA-256 `0fc43e42…6298` and visibly shows the
+  attribution in the Scholar anatomy composition.
+- Verdict: `IMPROVED` — provenance is now visible at the point of presentation
+  and complete in the app bundle, while Calm and family views remain unchanged.
+- Blocker: Simulator does not prove wearer legibility, legal sufficiency,
+  anatomical registration, specialist approval, or clinical validity; XCAT is
+  unavailable.
+- Next safe action: on an awake and unlocked XCAT, verify the attribution and
+  review boundary remain legible beside the venous reference and record the
+  wearer observation separately from the machine receipt.

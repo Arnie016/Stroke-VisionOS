@@ -728,3 +728,30 @@ This materially improves on issue #30's historical 67.3–78.4% Simulator idle
 samples, but the historical command was not preserved and XCAT remains
 `unavailable`; this is therefore partial Simulator evidence, not a controlled
 hardware benchmark or release-performance proof.
+
+## 2026-08-10 05:36 SGT — app-facing venous-atlas provenance
+
+Build `0.6 (20)` now surfaces the optional clinician Guided/Scholar venous
+reference's provenance beside the existing generic-atlas, colour-convention,
+and specialist-review boundary. The compact second line names Z-Anatomy and
+BodyParts3D and states CC BY-SA; the complete source URLs, versions,
+attribution text, modification note, and ShareAlike terms remain bundled in
+`THIRD_PARTY_NOTICES.txt`. No patient-facing surface, anatomy transform,
+registration claim, clinical wording, or asset count changed.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build20-attribution` succeeded. The built app contains exactly
+15 USDZ resources and the 1,515-byte third-party notice. Its executable
+SHA-256 remains
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`.
+
+`Proof/86-scholar-attribution-build20-simulator.png`, 3840×2160, SHA-256
+`0fc43e4288b0962a675d7ee5ba1f01044e25b87b6eea66a82ab9278f8c976298`,
+was captured after terminating the competing RBC Journey immersive process.
+It visibly retains the central registered teaching anatomy, six-beat timeline,
+attached region points, direct viewpoint/detail controls, separated skull,
+venous reference, and the new atlas attribution. This is Simulator composition
+evidence only. It does not prove headset legibility, legal sufficiency,
+registration accuracy, specialist approval, or clinical validity; XCAT remains
+unavailable.

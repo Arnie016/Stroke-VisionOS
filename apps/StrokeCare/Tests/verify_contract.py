@@ -108,6 +108,11 @@ require(all(token in catalog for token in (
 )), "registered-v2 venous or qualitative flow reference is not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
 require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
+require(all(token in immersive for token in (
+    'Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")',
+    'Text("ATLAS · Z-ANATOMY + BODYPARTS3D · CC BY-SA")',
+    "Atlas sources: Z-Anatomy and BodyParts3D, Creative Commons Attribution ShareAlike.",
+)), "visible venous reference does not surface its review boundary and atlas attribution")
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
 require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
 require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
