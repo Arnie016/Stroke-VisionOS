@@ -199,6 +199,24 @@ schematics as the final visual direction; the branch is not merged to `main`.
 It does not prove Figma parity, realistic imaging, XCAT depth or legibility,
 wearer interaction, patient specificity, recovery, or clinical validity.
 
+At 20:20 SGT, the normal `--proof-pressure` Simulator route reproduced the
+reported near-black frame even though the process stayed alive and RealityKit
+resources loaded without a crash. The shared cause was the physical-device
+room-placement path relocating the whole authored stage when run under the
+Simulator. `StrokeStagePlacement.start()` now keeps Simulator proofs in the
+authored frame while preserving the single tracked-device-anchor sample on
+physical XCAT. The static contract and visionOS Simulator build pass. After a
+fresh install, the same route launched as PID 89225 and rendered the brain,
+three-act timeline, atlas rail, and attachments in
+`Proof/54-simulator-authored-frame-pressure.png`.
+
+This proves only that the authored Simulator scene renders after the bounded
+placement correction. It does not establish final art direction, point
+selection, brightness, stereo placement, XCAT behavior, wearer comfort,
+family-display mirroring, comprehension, or clinical validity. The brighter
+six-frame image in `Docs/Images/` remains explicitly labelled as visual
+direction rather than runtime evidence.
+
 ## Clinical and procedural gates
 
 - `Docs/ISCHEMIC_STROKE_CLINICAL_REVIEW.md` is a versioned review packet, not a

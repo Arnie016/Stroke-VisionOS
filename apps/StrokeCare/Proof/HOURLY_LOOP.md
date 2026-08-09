@@ -337,3 +337,39 @@
 - Next safe action: replace the two procedural plates with registered-v2
   RealityKit anatomy miniatures after the duplicate-surface and performance
   audit passes.
+
+## 2026-08-09 19:31 SGT — XCAT reachability gate
+
+- Target: deploy the current Stroke Care build to the paired XCAT before
+  continuing Simulator-only visual work.
+- Bounded action: ran the guarded `Scripts/deploy_xcat.zsh` lane once and
+  stopped before build, install, or launch when CoreDevice reported the paired
+  headset unavailable. Preserved the active dirty feature worktree.
+- Evidence: the command returned `XCAT_DEPLOY=BLOCKED`; dated machine receipt:
+  `Proof/xcat/20260809-193113/BLOCKED.md`.
+- Verdict: `BLOCKED` — no device build, install, launch, wearer, or clinical
+  evidence was created in this pass.
+- Blocker: CoreDevice reports
+  `613CC48C-A6AD-5170-A238-D518B6012491` as `unavailable`.
+- Next safe action: wear and unlock XCAT near this Mac, then rerun
+  `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-09 20:20 SGT — restore deterministic Simulator placement
+
+- Target: replace the near-black Simulator capture with an honest, visible
+  three-act scene without changing the physical XCAT placement path.
+- Bounded action: reproduced the failure on the normal Pressure route, then
+  kept Simulator runs in the authored coordinate frame while leaving the
+  tracked device-anchor room placement enabled for physical builds.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; the OS 26.5 visionOS Simulator build ended
+  `** BUILD SUCCEEDED **`; a fresh install launched PID 89225; and
+  `Proof/54-simulator-authored-frame-pressure.png` shows the brain, timeline,
+  atlas rail, and attachments instead of an empty black field.
+- Verdict: `IMPROVED` — the scene is visible and falsifiable again, though its
+  lighting, scale, point behavior, and final composition remain unfinished.
+- Blocker: the semantic v2 skull is an approximate cross-source fit and still
+  requires specialist registration review before it can overlay the family
+  anatomy as if exact.
+- Next safe action: build one isolated, clearly labelled skull inspection state
+  for registration review before enabling any skull overlay in the family path.

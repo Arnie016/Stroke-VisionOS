@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Static product-contract checks; not device, wearer, or clinical proof."""
 
+import hashlib
 from pathlib import Path
+import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +15,16 @@ def require(condition: bool, message: str) -> None:
         failures.append(message)
 
 
+def swift_string_array(source: str, name: str) -> list[str]:
+    match = re.search(
+        rf"private static let {name}: \[String\] = \[(.*?)\n    \]",
+        source,
+        re.DOTALL,
+    )
+    require(match is not None, f"catalog array {name} is missing")
+    return re.findall(r'"([^\"]+)"', match.group(1)) if match else []
+
+
 state = (ROOT / "Sources" / "StrokeExperienceState.swift").read_text()
 deck = (ROOT / "Sources" / "StrokeControlDeck.swift").read_text()
 app = (ROOT / "Sources" / "StrokeTimeApp.swift").read_text()
@@ -20,6 +32,8 @@ launch = (ROOT / "Sources" / "StrokeJourneyLaunchView.swift").read_text()
 scene = (ROOT / "Sources" / "StrokeSceneFactory.swift").read_text()
 immersive = (ROOT / "Sources" / "StrokeImmersiveView.swift").read_text()
 model_board = (ROOT / "Sources" / "StrokeModelBoardView.swift").read_text()
+catalog = (ROOT / "Sources" / "StrokeAssetCatalog.swift").read_text()
+project_yml = (ROOT / "project.yml").read_text()
 readme = (ROOT / "README.md").read_text()
 houdini = (ROOT / "Docs" / "HOUDINI_STROKE_PIPELINE.md").read_text()
 clinical_packet = (ROOT / "Docs" / "ISCHEMIC_STROKE_CLINICAL_REVIEW.md").read_text()
@@ -31,6 +45,41 @@ xcat_acceptance = (ROOT / "Proof" / "XCAT_ACCEPTANCE.md").read_text()
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
 require(step_contract.count("\n    case ") == 3, "procedure must remain exactly three steps")
+detail_contract = catalog.split("enum StrokeDetailLevel", 1)[1].split("enum StrokeAssetFamily", 1)[0]
+require(all(case in detail_contract for case in ("case calm", "case guided", "case scholar")), "presentation detail levels are incomplete")
+require(detail_contract.count("\n    case ") == 3, "detail level must remain a three-state presentation filter")
+catalog_groups = {
+    "v1": swift_string_array(catalog, "v1PrototypeIDs"),
+    "v2_core": swift_string_array(catalog, "v2CoreIDs"),
+    "v2_head": swift_string_array(catalog, "v2HeadDetailIDs"),
+    "v2_vascular": swift_string_array(catalog, "v2CranialVascularIDs"),
+    "v2_flow": swift_string_array(catalog, "v2BloodFlowIDs"),
+    "v2_devices": swift_string_array(catalog, "v2DeviceIDs"),
+    "v3_cranial": swift_string_array(catalog, "v3CranialDetailIDs"),
+    "v3_neural": swift_string_array(catalog, "v3NeuralDetailIDs"),
+    "v3_micro": swift_string_array(catalog, "v3MicroTeachingIDs"),
+    "v3_endovascular": swift_string_array(catalog, "v3EndovascularToolIDs"),
+    "v3_open_cranial": swift_string_array(catalog, "v3OpenCranialToolIDs"),
+}
+v1_catalog_ids = catalog_groups["v1"]
+v2_catalog_ids = sum((ids for key, ids in catalog_groups.items() if key.startswith("v2_")), [])
+v3_catalog_ids = sum((ids for key, ids in catalog_groups.items() if key.startswith("v3_")), [])
+release_catalog_ids = v1_catalog_ids + v2_catalog_ids + v3_catalog_ids
+release_catalog_digest = hashlib.sha256(
+    ("\n".join(sorted(release_catalog_ids)) + "\n").encode()
+).hexdigest()
+held_catalog_ids = swift_string_array(catalog, "heldSourceBuildIDs")
+require((len(v1_catalog_ids), len(v2_catalog_ids), len(v3_catalog_ids)) == (29, 36, 69), "PR #8 family counts are not 29/36/69")
+require(len(release_catalog_ids) == len(set(release_catalog_ids)) == 134, "release catalog must contain exactly 134 unique IDs")
+require(release_catalog_digest == "92db33954c08e9a2f6879072a92e7f969a66beddbcf3f848a7cf79147b37271a", "release catalog IDs drifted from audited PR #8 head")
+require(set(held_catalog_ids) == {"middle_inner_ear_bilateral_v3", "cranial_support_registered_assembly_v3"}, "two held source-build IDs are not kept separate")
+require(not set(held_catalog_ids).intersection(release_catalog_ids), "held source-build IDs leaked into the 134 release records")
+require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e856897a44df2bbfbe01236f8b142303\"", "nonV1CandidateCount = 105", "candidateMetadata", "quarantinedPrototype", "heldSourceBuildRecords")), "catalog provenance or release gates are incomplete")
+require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
+require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
+require(project_yml.count("buildPhase: resources") == 10 and "asset_manifest" not in project_yml, "catalog change bundled new asset payloads or manifests")
+require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
+require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
 require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
 require("ImmersionStyle = .progressive" in app, "progressive immersion is not the default")
 require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixed, .progressive, .full" in app, "three deliberate system immersion styles are not wired")
@@ -66,7 +115,7 @@ require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior")), "named registered model-frame viewpoints are missing")
-require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and 'Section("Perspective")' in immersive, "named views and free-orbit handoff are not wired into the existing anatomy control")
+require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)" in immersive and '.accessibilityLabel("Anatomy viewpoint")' in immersive, "named views and direct free-orbit handoff are not wired into the anatomy control")
 require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior")), "deterministic anatomy-viewpoint proof routes are missing")
 require("true medial view is intentionally not" in state, "single-surface anatomy is mislabeled as a medial view")
 require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
@@ -134,6 +183,10 @@ require("spatial-case-archive" in scene and "archive-dossier-bay" in scene and "
 require("spatial-case-constellation" in scene and scene.count("case-constellation-filament-") == 4, "selected case does not unfold as a four-signal spatial constellation")
 require("StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary" in immersive and "StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview" in immersive, "archive and case constellation do not hand off by phase")
 require("SpatialCaseReviewActions" in immersive and "beginExplanation" in state, "selected-case review lacks an explicit explanation threshold")
+patient_history = (ROOT / "Sources" / "PatientHistoryTimelineView.swift").read_text()
+require("PatientHistoryTimelineView" in immersive and 'caseHistoryTimelineID = "spatial-case-history-timeline"' in immersive, "case review lacks a distinct spatial patient-history timeline")
+require("StrokeCaseHistoryMilestone" in patient_history and "selectedCaseHistoryMilestone" in state and "selectCaseHistoryMilestone" in state, "case-history milestones are not interactive state")
+require(all(copy in patient_history for copy in ("WHAT WE KNOW SO FAR", "CASE HISTORY · FICTIONAL", "SOURCE SLOT", "NOT A MEDICAL RECORD")), "case-history timeline lacks role-aware copy or fictional-record boundaries")
 require("calm-flow-direction-arrows" in scene and "updateFlowArrows" in scene, "calm directional flow lesson is missing")
 require("gpt-realtime-2.1" in immersive and "STROKE_REALTIME_PROXY_URL" in immersive and "AVSpeechSynthesizer" not in immersive and "narrationEnabled" in state, "GPT-Realtime-2.1-only narrator boundary is missing")
 realtime_proxy = (ROOT / "Scripts" / "realtime_narration_proxy.mjs").read_text()
@@ -146,7 +199,8 @@ require("spatial-family-controls" in immersive and "spatial-presenter-controls" 
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
 require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PRESSURE BUILD?", "WHAT CAN MAKING SPACE DO?")), "top intention questions are missing")
 require("LessonSpecimenRail" in immersive and "lesson-specimen-rail" in immersive and "selectLessonPoint" in state and "Native two-hand magnification remains the only zoom" in state, "role-aware specimen focus rail is missing")
-require("rail.position = [-0.44, 1.82, -0.86]" in immersive and 'title: "More"' in immersive, "lesson title is not upper-field or presenter controls remain over-expanded")
+require("rail.position = [-0.44, 1.82, -0.86]" in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "lesson rail or direct presenter cycle controls are incomplete")
+require(not re.search(r"\bMenu\s*\{", immersive), "immersive controls must not use SwiftUI Menu presentation")
 require("[-0.58, 1.34, -0.92]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
 require("openWindow(id: companion)" not in immersive, "immersive case docking still opens a desktop-like companion window")
 require("StrokeClinicianTool" in state and "clinicianToolKitVisible" in state and "selectClinicianTool" in state, "clinician tool-kit state is missing")
@@ -189,8 +243,11 @@ require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatia
 require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 190 : 118" in immersive, "three-act gaze timeline lacks active expansion or quiet inactive nodes")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyTimelineQuestion" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
-require(all(copy in immersive for copy in ("Stroke effect", "Making-room purpose", "CASE-078 · FICTIONAL TEACHING IMAGE", "Not CT/MRI · not patient imaging · no recovery shown", "Clinician review pending")), "teaching imaging boundaries or two-state sequence are missing")
-require("teachingImagingDrawerVisible = false" in state and "toggleTeachingImagingDrawer" in state and "spatialPhase == .explanation" in state, "teaching imaging drawer is not closed and explanation-gated")
+require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not CT/MRI · no recovery shown", "Clinician review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
+require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
+require("Canvas" not in immersive and "StrokeTeachingImagingSchematic" not in immersive, "rejected procedural imaging plates remain in the runtime UI")
+require("teachingImagingDrawerVisible = false" in state and "teachingImagingLens" in state and "selectTeachingImagingLens" in state and "careViewPermissionGranted" in state and "present(step: .discussCare" in state, "teaching lens is not explanation-gated or consent-aware")
+require("updateRegisteredTeachingImaging" in scene and "miniature.parent !== stageRoot" in immersive and "registeredTeachingImagingSuggestedStagePosition" in immersive, "registered teaching lens is not mutually selected and world-locked")
 require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" in state, "deterministic teaching imaging proof route is missing")
 require(all(copy in state for copy in ("Which layer is this?", "Is this blockage, injury, or swelling?", "What can this surgery change—and not change?")), "family act questions are incomplete")
 require(all(copy in state for copy in ("Generic scenario", "Whole brain first", "Not a patient scan", "Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred", "Ask before transparency", "Room, not repair", "No outcome promise")), "presenter three-point act cues are incomplete")

@@ -33,6 +33,14 @@ private final class StrokeStagePlacement: ObservableObject {
     private var placementTask: Task<Void, Never>?
 
     func start() {
+#if targetEnvironment(simulator)
+        // The visionOS Simulator does not provide a stable wearer-origin for
+        // this room-fixed placement path. Keep deterministic proof routes in
+        // the authored frame; physical XCAT builds still sample one tracked
+        // device anchor and then leave the stage fixed in the room.
+        transform = nil
+        return
+#endif
         placementTask?.cancel()
         placementTask = Task { [weak self] in
             guard let self, WorldTrackingProvider.isSupported else { return }
@@ -188,7 +196,7 @@ private enum SpatialVisualField {
     static let eyePlaneHeight: Float = 1.62
     static let primaryAnatomy: SIMD3<Float> = [0.00, 1.62, -1.16]
     static let primaryVesselFocus: SIMD3<Float> = [0.00, 1.61, -0.76]
-    static let secondaryCaseDrawer: SIMD3<Float> = [0.54, 1.55, -0.82]
+    static let secondaryCaseDrawer: SIMD3<Float> = [0.38, 1.48, -0.80]
     static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
 
     static let primaryScale: Float = 2.12
@@ -225,6 +233,7 @@ struct StrokeImmersiveView: View {
     private let timeFactID = "spatial-case-fact-time"
     private let questionFactID = "spatial-case-fact-question"
     private let caseReviewActionsID = "spatial-case-review-actions"
+    private let caseHistoryTimelineID = "spatial-case-history-timeline"
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let roleMicroCuesID = "spatial-role-micro-cues"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
@@ -329,6 +338,7 @@ struct StrokeImmersiveView: View {
                     for id in [
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
+                        caseHistoryTimelineID,
                         teachingTimelineID, roleMicroCuesID, teachingImagingDrawerID,
                         familyControlsID, presenterControlsID
                     ] {
@@ -351,6 +361,29 @@ struct StrokeImmersiveView: View {
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
                     StrokeSceneFactory.update(root: root, experience: experience, time: now)
+
+                    // Keep the secondary registered teaching object world-
+                    // locked. Reparenting it out of the hero root prevents the
+                    // user's anatomy orbit/zoom gesture from dragging the
+                    // reference lens through the room. Only one leaf-only lens
+                    // is enabled, so the full head assembly is never doubled.
+                    if let miniature = root.findEntity(
+                        named: StrokeSceneFactory.registeredTeachingImagingRootName
+                    ) {
+                        if miniature.parent !== stageRoot {
+                            miniature.removeFromParent()
+                            stageRoot.addChild(miniature)
+                        }
+                        miniature.position = StrokeSceneFactory.registeredTeachingImagingSuggestedStagePosition
+                        let miniatureScale = StrokeSceneFactory.registeredTeachingImagingSuggestedStageScale
+                        miniature.scale = [miniatureScale, miniatureScale, miniatureScale]
+                        StrokeSceneFactory.updateRegisteredTeachingImaging(
+                            root: stageRoot,
+                            isVisible: experience.spatialPhase == .explanation
+                                && experience.teachingImagingDrawerVisible,
+                            lens: experience.teachingImagingLens
+                        )
+                    }
 
                     // Ported from the proven Heart Field interaction engine:
                     // state-owned orbit/zoom, smoothed presentation, entity-
@@ -507,6 +540,11 @@ struct StrokeImmersiveView: View {
                         SpatialCaseReviewActions()
                             .environmentObject(experience)
                             .frame(width: 350)
+                    }
+                    Attachment(id: caseHistoryTimelineID) {
+                        PatientHistoryTimelineView()
+                            .environmentObject(experience)
+                            .frame(width: 600, height: 188)
                     }
                     Attachment(id: teachingTimelineID) {
                         SpatialTeachingTimeline()
@@ -667,7 +705,8 @@ struct StrokeImmersiveView: View {
             (armFactID, [-0.32, 1.49, -0.66], 0.64, inReview),
             (timeFactID, [0.30, 1.49, -0.66], 0.64, inReview),
             (questionFactID, [0.30, 1.80, -0.66], 0.64, inReview),
-            (caseReviewActionsID, [-0.40, 1.28, -0.62], 0.62, inReview)
+            (caseHistoryTimelineID, [0, 1.08, -0.64], 0.62, inReview),
+            (caseReviewActionsID, [0, 0.88, -0.62], 0.58, inReview)
         ]
         for (id, position, scale, visible) in positions {
             guard let entity = attachments.entity(for: id) else { continue }
@@ -1034,26 +1073,27 @@ private struct SpatialRoleControls: View {
     private var familyControls: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Menu {
-                    ForEach(StrokePointField.allCases) { field in
-                        Button(field.rawValue, systemImage: field.systemImage) {
-                            experience.selectLessonFamily(field)
-                        }
-                    }
-                    Divider()
-                    Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
-                        experience.toggleLessonPoints()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: experience.pointField == .regions ? "Regions" : "Flow",
-                        systemImage: experience.pointField.systemImage,
-                        accent: .orange,
-                        selected: experience.lessonPointsVisible
-                    )
+                bubbleButton(
+                    lessonFamilyBubbleTitle,
+                    systemImage: experience.pointField.systemImage,
+                    accent: .orange,
+                    selected: experience.pointField == .procedure
+                ) {
+                    cycleLessonFamily()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
+                .accessibilityLabel("Lesson family")
+                .accessibilityValue(experience.pointField.rawValue)
+                .accessibilityHint("Pinch to show the next lesson family")
+
+                bubbleButton(
+                    "Points",
+                    systemImage: experience.lessonPointsVisible ? "eye.fill" : "eye.slash",
+                    accent: .orange,
+                    selected: experience.lessonPointsVisible
+                ) {
+                    experience.toggleLessonPoints()
+                }
+                .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
 
                 bubbleButton(
                     experience.narrationEnabled ? "Voice off" : "Voice",
@@ -1121,84 +1161,85 @@ private struct SpatialRoleControls: View {
     private var presenterControls: some View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
-                Menu {
-                    Section("Perspective") {
-                        ForEach(StrokeAnatomyViewpoint.allCases) { viewpoint in
-                            Button(viewpoint.rawValue, systemImage: viewpoint.systemImage) {
-                                experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)
-                            }
-                        }
-                    }
-                    Divider()
-                    Section("Layers") {
-                    ForEach(StrokeAnatomyPresentation.allCases) { presentation in
-                        Button(presentation.rawValue) {
-                            experience.setAnatomyPresentation(presentation)
-                        }
-                    }
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: anatomyBubbleTitle,
-                        systemImage: experience.anatomyViewpoint.systemImage,
-                        accent: .mint,
-                        selected: experience.anatomyPresentation != .assembled || experience.anatomyViewpoint != .threeQuarter
-                    )
-                } primaryAction: {
+                bubbleButton(
+                    experience.anatomyViewpoint.shortTitle,
+                    systemImage: experience.anatomyViewpoint.systemImage,
+                    accent: .mint,
+                    selected: experience.anatomyViewpoint != .threeQuarter
+                ) {
                     experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
                 }
-                .buttonStyle(.plain)
                 .accessibilityLabel("Anatomy viewpoint")
-                .accessibilityValue("\(experience.anatomyViewpoint.rawValue), \(experience.anatomyPresentation.rawValue)")
-                .accessibilityHint("Pinch to move to the next view. Open the menu for an exact view or layer style.")
+                .accessibilityValue(experience.anatomyViewpoint.rawValue)
+                .accessibilityHint("Pinch to move to the next viewpoint")
 
-                Menu {
-                    ForEach(StrokePointField.allCases) { field in
-                        Button(field.rawValue, systemImage: field.systemImage) {
-                            experience.selectLessonFamily(field)
-                        }
-                    }
-                    Divider()
-                    Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
-                        experience.toggleLessonPoints()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: experience.pointField == .regions ? "Regions" : "Flow",
-                        systemImage: experience.pointField.systemImage,
-                        accent: .mint,
-                        selected: experience.lessonPointsVisible
-                    )
+                bubbleButton(
+                    layerBubbleTitle,
+                    systemImage: "square.3.layers.3d",
+                    accent: .mint,
+                    selected: experience.anatomyPresentation != .assembled
+                ) {
+                    cycleAnatomyPresentation()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
+                .accessibilityLabel("Layer style")
+                .accessibilityValue(experience.anatomyPresentation.rawValue)
+                .accessibilityHint("Pinch to show the next layer style")
 
-                Menu {
-                    ForEach(StrokeEnvironmentMode.allCases) { mode in
-                        Button(mode.rawValue, systemImage: mode.systemImage) {
-                            experience.setEnvironmentMode(mode)
-                        }
-                    }
-                    Divider()
-                    Button("Evidence", systemImage: "text.book.closed.fill") {
-                        openWindow(id: StrokeSpace.evidence)
-                    }
-                    Button("Reset view", systemImage: "arrow.counterclockwise") {
-                        experience.resetSpatialView()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: "More",
-                        systemImage: "ellipsis.circle.fill",
-                        accent: .mint,
-                        selected: experience.environmentMode != .surroundings
-                    )
+                bubbleButton(
+                    lessonFamilyBubbleTitle,
+                    systemImage: experience.pointField.systemImage,
+                    accent: .mint,
+                    selected: experience.pointField == .procedure
+                ) {
+                    cycleLessonFamily()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Environment, evidence, and view options")
+                .accessibilityLabel("Lesson family")
+                .accessibilityValue(experience.pointField.rawValue)
+                .accessibilityHint("Pinch to show the next lesson family")
+
+                bubbleButton(
+                    "Points",
+                    systemImage: experience.lessonPointsVisible ? "eye.fill" : "eye.slash",
+                    accent: .mint,
+                    selected: experience.lessonPointsVisible
+                ) {
+                    experience.toggleLessonPoints()
+                }
+                .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
+
+                bubbleButton(
+                    environmentBubbleTitle,
+                    systemImage: experience.environmentMode.systemImage,
+                    accent: .mint,
+                    selected: experience.environmentMode != .surroundings
+                ) {
+                    cycleEnvironment()
+                }
+                .accessibilityLabel("Environment")
+                .accessibilityValue(experience.environmentMode.rawValue)
+                .accessibilityHint("Pinch to show the next environment")
+
+                bubbleButton(
+                    "Evidence",
+                    systemImage: "text.book.closed.fill",
+                    accent: .mint
+                ) {
+                    openWindow(id: StrokeSpace.evidence)
+                }
+                .accessibilityLabel("Open clinical evidence")
             }
 
             HStack(spacing: 8) {
+                bubbleButton(
+                    "Reset",
+                    systemImage: "arrow.counterclockwise",
+                    accent: .mint
+                ) {
+                    experience.resetSpatialView()
+                }
+                .accessibilityLabel("Reset view")
+                .accessibilityHint("Restores the original model rotation and scale")
+
                 bubbleButton(
                     experience.requestedPause ? "Resume" : "Pause",
                     systemImage: experience.requestedPause ? "play.fill" : "pause.fill",
@@ -1291,14 +1332,49 @@ private struct SpatialRoleControls: View {
         .accessibilityLabel(title)
     }
 
-    private var anatomyBubbleTitle: String {
-        if experience.anatomyViewpoint != .threeQuarter {
-            return experience.anatomyViewpoint.shortTitle
-        }
-        return switch experience.anatomyPresentation {
+    private var layerBubbleTitle: String {
+        switch experience.anatomyPresentation {
         case .assembled: "Layers"
         case .transparent: "Clear"
         case .exploded: "Apart"
+        }
+    }
+
+    private var lessonFamilyBubbleTitle: String {
+        experience.pointField == .regions ? "Regions" : "Flow"
+    }
+
+    private var environmentBubbleTitle: String {
+        switch experience.environmentMode {
+        case .surroundings: "Room"
+        case .warmHorizon: "Horizon"
+        case .focusField: "Focus"
+        }
+    }
+
+    private func cycleAnatomyPresentation() {
+        switch experience.anatomyPresentation {
+        case .assembled:
+            experience.setAnatomyPresentation(.transparent)
+        case .transparent:
+            experience.setAnatomyPresentation(.exploded)
+        case .exploded:
+            experience.setAnatomyPresentation(.assembled)
+        }
+    }
+
+    private func cycleLessonFamily() {
+        experience.selectLessonFamily(experience.pointField == .regions ? .procedure : .regions)
+    }
+
+    private func cycleEnvironment() {
+        switch experience.environmentMode {
+        case .surroundings:
+            experience.setEnvironmentMode(.warmHorizon)
+        case .warmHorizon:
+            experience.setEnvironmentMode(.focusField)
+        case .focusField:
+            experience.setEnvironmentMode(.surroundings)
         }
     }
 
@@ -1311,140 +1387,64 @@ private struct SpatialRoleControls: View {
     }
 }
 
-/// Two compact teaching plates derived from the team's Figma before/purpose
-/// sequence. They are explicitly generic artwork—not a patient scan or an
-/// outcome comparison—and stay peripheral to the registered anatomy.
+/// Compact labels for the real registered-v2 teaching object beside them.
+/// Geometry lives in RealityKit; this view only selects one lens and preserves
+/// the explicit generic/non-scan boundary without another image panel.
 private struct StrokeTeachingImagingDrawer: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text("CASE-078 · FICTIONAL TEACHING IMAGE")
-                .font(.caption2.monospaced().weight(.bold))
-                .foregroundStyle(.secondary)
+    @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-            HStack(alignment: .bottom, spacing: -8) {
-                teachingPlate(.strokeEffect)
-                    .rotationEffect(.degrees(-2.5))
-                    .rotation3DEffect(.degrees(5), axis: (x: 0, y: 1, z: 0), perspective: 0.22)
-                teachingPlate(.makingRoomPurpose)
-                    .rotationEffect(.degrees(2.5))
-                    .rotation3DEffect(.degrees(-5), axis: (x: 0, y: 1, z: 0), perspective: 0.22)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("REGISTERED TEACHING LENS")
+                .font(.caption2.monospaced().weight(.black))
+                .tracking(0.8)
+                .foregroundStyle(.white.opacity(0.58))
+
+            HStack(spacing: 8) {
+                lensButton(.affectedVessel, accent: .orange)
+                lensButton(.makingRoomPurpose, accent: .mint)
             }
 
-            Text("Not CT/MRI · not patient imaging · no recovery shown")
+            Text("Generic anatomy · not CT/MRI · no recovery shown")
                 .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.54))
             Text("Clinician review pending")
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.orange)
         }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
     }
 
-    private func teachingPlate(_ kind: StrokeTeachingImagingPlateKind) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(kind.title)
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.white.opacity(0.92))
-            StrokeTeachingImagingSchematic(kind: kind)
-                .frame(width: 132, height: 92)
-        }
-        .padding(10)
-        .background(Color.black.opacity(0.42), in: RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(kind.accent.opacity(0.42), lineWidth: 1))
-        .shadow(color: kind.accent.opacity(0.14), radius: 12, y: 4)
-    }
-}
+    private func lensButton(_ lens: StrokeTeachingImagingLens, accent: Color) -> some View {
+        let selected = experience.teachingImagingLens == lens
+        let gated = lens == .makingRoomPurpose
+            && (experience.procedureStep != .discussCare || !experience.careViewPermissionGranted)
 
-private enum StrokeTeachingImagingPlateKind {
-    case strokeEffect
-    case makingRoomPurpose
-
-    var title: String {
-        switch self {
-        case .strokeEffect: "Stroke effect"
-        case .makingRoomPurpose: "Making-room purpose"
-        }
-    }
-
-    var accent: Color {
-        switch self {
-        case .strokeEffect: .orange
-        case .makingRoomPurpose: .mint
-        }
-    }
-}
-
-private struct StrokeTeachingImagingSchematic: View {
-    let kind: StrokeTeachingImagingPlateKind
-
-    var body: some View {
-        Canvas { context, size in
-            let w = size.width
-            let h = size.height
-
-            var head = Path()
-            head.move(to: CGPoint(x: 0.24 * w, y: 0.10 * h))
-            head.addCurve(
-                to: CGPoint(x: 0.80 * w, y: 0.18 * h),
-                control1: CGPoint(x: 0.46 * w, y: -0.02 * h),
-                control2: CGPoint(x: 0.72 * w, y: 0.02 * h)
-            )
-            head.addCurve(
-                to: CGPoint(x: 0.77 * w, y: 0.76 * h),
-                control1: CGPoint(x: 0.94 * w, y: 0.35 * h),
-                control2: CGPoint(x: 0.89 * w, y: 0.65 * h)
-            )
-            head.addCurve(
-                to: CGPoint(x: 0.40 * w, y: 0.88 * h),
-                control1: CGPoint(x: 0.66 * w, y: 0.88 * h),
-                control2: CGPoint(x: 0.51 * w, y: 0.91 * h)
-            )
-            head.addLine(to: CGPoint(x: 0.33 * w, y: 0.72 * h))
-            head.addCurve(
-                to: CGPoint(x: 0.18 * w, y: 0.51 * h),
-                control1: CGPoint(x: 0.18 * w, y: 0.69 * h),
-                control2: CGPoint(x: 0.15 * w, y: 0.59 * h)
-            )
-            head.addLine(to: CGPoint(x: 0.27 * w, y: 0.39 * h))
-            head.addCurve(
-                to: CGPoint(x: 0.24 * w, y: 0.10 * h),
-                control1: CGPoint(x: 0.18 * w, y: 0.30 * h),
-                control2: CGPoint(x: 0.18 * w, y: 0.18 * h)
-            )
-            context.fill(head, with: .color(Color.cyan.opacity(0.08)))
-            context.stroke(head, with: .color(Color.white.opacity(0.62)), lineWidth: 1.2)
-
-            let brainRect = CGRect(x: 0.31 * w, y: 0.16 * h, width: 0.50 * w, height: 0.48 * h)
-            context.fill(Path(ellipseIn: brainRect), with: .color(Color.cyan.opacity(0.14)))
-            context.stroke(Path(ellipseIn: brainRect), with: .color(Color.cyan.opacity(0.46)), lineWidth: 1)
-
-            var vessel = Path()
-            vessel.move(to: CGPoint(x: 0.50 * w, y: 0.72 * h))
-            vessel.addCurve(
-                to: CGPoint(x: 0.62 * w, y: 0.30 * h),
-                control1: CGPoint(x: 0.50 * w, y: 0.58 * h),
-                control2: CGPoint(x: 0.55 * w, y: 0.41 * h)
-            )
-            vessel.addLine(to: CGPoint(x: 0.72 * w, y: 0.23 * h))
-            context.stroke(vessel, with: .color(Color.red.opacity(0.72)), lineWidth: 2)
-
-            let affected = CGRect(x: 0.52 * w, y: 0.22 * h, width: 0.24 * w, height: 0.25 * h)
-            context.fill(Path(ellipseIn: affected), with: .color(Color.orange.opacity(kind == .strokeEffect ? 0.58 : 0.36)))
-            context.stroke(Path(ellipseIn: affected), with: .color(Color.orange.opacity(0.86)), lineWidth: 1.2)
-
-            if kind == .strokeEffect {
-                let blockage = CGRect(x: 0.56 * w, y: 0.42 * h, width: 0.07 * w, height: 0.07 * w)
-                context.fill(Path(ellipseIn: blockage), with: .color(Color.red.opacity(0.88)))
-            } else {
-                var roomCue = Path()
-                roomCue.move(to: CGPoint(x: 0.47 * w, y: 0.14 * h))
-                roomCue.addLine(to: CGPoint(x: 0.34 * w, y: 0.08 * h))
-                roomCue.move(to: CGPoint(x: 0.77 * w, y: 0.16 * h))
-                roomCue.addLine(to: CGPoint(x: 0.89 * w, y: 0.09 * h))
-                context.stroke(roomCue, with: .color(Color.mint.opacity(0.90)), lineWidth: 2.2)
+        return Button {
+            experience.selectTeachingImagingLens(lens, reduceMotion: reduceMotion)
+        } label: {
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(selected ? accent : Color.white.opacity(0.18))
+                    .frame(width: 9, height: 9)
+                Text(lens.title)
+                    .font(.caption.weight(.bold))
+                if gated {
+                    Image(systemName: "hand.raised.fill")
+                        .font(.caption2)
+                }
             }
+            .foregroundStyle(selected ? Color.white : Color.white.opacity(0.64))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(selected ? accent.opacity(0.18) : Color.clear, in: Capsule())
+            .overlay(Capsule().stroke(selected ? accent.opacity(0.52) : Color.white.opacity(0.15)))
         }
-        .accessibilityHidden(true)
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .accessibilityLabel(lens.title)
+        .accessibilityHint(gated ? "Requests permission before the non-graphic making-room view" : "Shows the selected registered teaching lens")
     }
 }
 
@@ -1910,26 +1910,29 @@ private struct JourneyCaption: View {
     private var clinicianPresenter: some View {
         VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 8) {
-                Menu {
-                    ForEach(StrokeAnatomyPresentation.allCases) { presentation in
-                        Button(presentation.rawValue) {
-                            experience.setAnatomyPresentation(presentation)
-                        }
-                    }
+                Button {
+                    cycleAnatomyPresentation()
                 } label: {
                     compactControl(experience.anatomyPresentation.rawValue, systemImage: "circle.lefthalf.filled")
                 }
+                .buttonStyle(.plain)
+                .contentShape(Capsule())
+                .hoverEffect(.highlight)
+                .accessibilityLabel("Layer style")
+                .accessibilityValue(experience.anatomyPresentation.rawValue)
+                .accessibilityHint("Pinch to show the next layer style")
 
-                Menu {
-                    ForEach(StrokePointField.allCases) { field in
-                        Button(field.rawValue) {
-                            experience.pointField = field
-                            experience.clearPointSelection()
-                        }
-                    }
+                Button {
+                    cycleLessonFamily()
                 } label: {
                     compactControl(experience.pointField.rawValue, systemImage: experience.pointField.systemImage)
                 }
+                .buttonStyle(.plain)
+                .contentShape(Capsule())
+                .hoverEffect(.highlight)
+                .accessibilityLabel("Lesson family")
+                .accessibilityValue(experience.pointField.rawValue)
+                .accessibilityHint("Pinch to show the next lesson family")
 
                 Button {
                     openWindow(id: StrokeSpace.evidence)
@@ -2006,8 +2009,24 @@ private struct JourneyCaption: View {
             .font(.caption.weight(.semibold))
             .lineLimit(1)
             .padding(.horizontal, 8)
-            .frame(height: 34)
+            .frame(minHeight: 44)
             .background(Color.white.opacity(0.08), in: Capsule())
+    }
+
+    private func cycleAnatomyPresentation() {
+        switch experience.anatomyPresentation {
+        case .assembled:
+            experience.setAnatomyPresentation(.transparent)
+        case .transparent:
+            experience.setAnatomyPresentation(.exploded)
+        case .exploded:
+            experience.setAnatomyPresentation(.assembled)
+        }
+    }
+
+    private func cycleLessonFamily() {
+        experience.pointField = experience.pointField == .regions ? .procedure : .regions
+        experience.clearPointSelection()
     }
 
     private var clinicianFocusCue: String {

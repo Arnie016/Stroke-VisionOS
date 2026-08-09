@@ -335,7 +335,17 @@ final class StrokeExperienceState: ObservableObject {
     let teachingCase = TeachingStrokeCase.case78
 
     @Published var procedureStep: StrokeProcedureStep = .chooseCase
-    @Published var audienceLens: StrokeAudienceLens = .family
+    @Published var audienceLens: StrokeAudienceLens = .family {
+        didSet {
+            guard audienceLens == .family else { return }
+            detailLevel = .calm
+            selectedCatalogAssetID = nil
+            clinicianToolKitVisible = false
+            selectedClinicianTool = .focus
+        }
+    }
+    @Published private(set) var detailLevel: StrokeDetailLevel = .calm
+    @Published private(set) var selectedCatalogAssetID: String?
     @Published var isCaseSelected = false
     @Published var selectedCareDiscussion: StrokeCareDiscussion?
     @Published var reportIsVisible = false
@@ -350,6 +360,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var pointField: StrokePointField = .regions
     @Published var lessonPointsVisible = true
     @Published var teachingImagingDrawerVisible = false
+    @Published var teachingImagingLens: StrokeTeachingImagingLens = .affectedVessel
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
@@ -368,6 +379,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var spatialPhase: StrokeSpatialPhase = .caseLibrary
     @Published var spatialCaseDocked = false
     @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
+    @Published var selectedCaseHistoryMilestone: StrokeCaseHistoryMilestone = .reportedChange
     @Published private(set) var pendingConsentStep: StrokeProcedureStep?
     /// Spatial interaction state follows the proven Heart Field ownership
     /// pattern: the app state owns pose, while RealityKit only renders it.
@@ -386,7 +398,48 @@ final class StrokeExperienceState: ObservableObject {
         spatialCaseDocked = true
         isCaseSelected = true
         spatialPhase = .caseReview
+        selectedCaseHistoryMilestone = .reportedChange
         procedureStep = .chooseCase
+    }
+
+    func selectCaseHistoryMilestone(_ milestone: StrokeCaseHistoryMilestone) {
+        guard spatialPhase == .caseReview else { return }
+        selectedCaseHistoryMilestone = milestone
+    }
+
+    /// Detail is a presentation filter, never a fourth teaching act. Family
+    /// mode is fixed to calm; a presenter may deliberately opt into more depth.
+    func selectDetailLevel(_ level: StrokeDetailLevel) {
+        guard audienceLens == .clinician || level == .calm else {
+            resetCatalogPresentation()
+            return
+        }
+
+        detailLevel = level
+        if let selectedCatalogAssetID,
+           !visibleCatalogRecords.contains(where: { $0.id == selectedCatalogAssetID }) {
+            self.selectedCatalogAssetID = nil
+        }
+    }
+
+    /// Selects catalog metadata only. Scene loading is intentionally absent.
+    func selectCatalogAsset(id: String?) {
+        guard let id,
+              let record = StrokeAssetCatalog.record(id: id),
+              record.isVisible(to: audienceLens, detailLevel: detailLevel) else {
+            selectedCatalogAssetID = nil
+            return
+        }
+        selectedCatalogAssetID = record.id
+    }
+
+    var visibleCatalogRecords: [StrokeAssetRecord] {
+        StrokeAssetCatalog.visibleRecords(for: audienceLens, detailLevel: detailLevel)
+    }
+
+    func resetCatalogPresentation() {
+        detailLevel = .calm
+        selectedCatalogAssetID = nil
     }
 
     func moveSpatialCaseFile(to position: SIMD3<Float>) {
@@ -475,6 +528,23 @@ final class StrokeExperienceState: ObservableObject {
             return
         }
         teachingImagingDrawerVisible.toggle()
+    }
+
+    /// Chooses one real registered teaching lens. The making-room purpose view
+    /// remains behind the same explicit non-graphic care-view permission as
+    /// layer separation; selecting it early opens that existing consent gate.
+    func selectTeachingImagingLens(
+        _ lens: StrokeTeachingImagingLens,
+        reduceMotion: Bool = false
+    ) {
+        guard spatialPhase == .explanation else { return }
+        if lens == .makingRoomPurpose,
+           (procedureStep != .discussCare || !careViewPermissionGranted) {
+            present(step: .discussCare, reduceMotion: reduceMotion)
+            return
+        }
+        teachingImagingLens = lens
+        teachingImagingDrawerVisible = true
     }
 
     /// Advances a clinician-paced spatial explanation. It never infers emotion,
@@ -984,10 +1054,12 @@ final class StrokeExperienceState: ObservableObject {
         cancelLayerReveal()
         procedureStep = .chooseCase
         audienceLens = .family
+        resetCatalogPresentation()
         isCaseSelected = false
         spatialPhase = .caseLibrary
         spatialCaseDocked = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
+        selectedCaseHistoryMilestone = .reportedChange
         selectedCareDiscussion = nil
         reportIsVisible = false
         requestedPause = false
@@ -998,6 +1070,7 @@ final class StrokeExperienceState: ObservableObject {
         pointField = .regions
         lessonPointsVisible = true
         teachingImagingDrawerVisible = false
+        teachingImagingLens = .affectedVessel
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
@@ -1059,6 +1132,7 @@ final class StrokeExperienceState: ObservableObject {
     func prepareTeachingImagingProof() {
         prepareClinicianProof(step: .inspectOcclusion)
         teachingImagingDrawerVisible = true
+        teachingImagingLens = .affectedVessel
         anatomyPresentation = .transparent
         pointField = .regions
         selectedPointEntityName = "clinician-region-point-field-point-0"
@@ -1136,6 +1210,7 @@ final class StrokeExperienceState: ObservableObject {
         spatialCaseDocked = true
         spatialCaseFilePosition = [0, 1.43, -0.82]
         isCaseSelected = true
+        selectedCaseHistoryMilestone = .reportedChange
         procedureStep = .chooseCase
         brainRevealProgress = 0
         pointField = .regions

@@ -12,6 +12,7 @@
 		13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A581FC5A619BE9E342C7BD /* Assets.xcassets */; };
 		16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = F64750DC74A14E49DFEDF063 /* FlowBed.wav */; };
 		1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C144C17AB279CA643242E29B /* StrokeControlDeck.swift */; };
+		2123AE673EDD66EB6548837A /* PatientHistoryTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */; };
 		21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */; };
 		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
 		3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */; };
@@ -24,6 +25,7 @@
 		7F98B5090691342A2B4E810F /* StrokeImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */; };
 		858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */; };
 		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
+		B082C5DFC240F4CE817288FA /* StrokeAssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */; };
 		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
@@ -48,11 +50,13 @@
 		8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = suction_and_forceps.usdz; sourceTree = "<group>"; };
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
+		B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoryTimelineView.swift; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
 		D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeEvidenceWorkspaceView.swift; sourceTree = "<group>"; };
+		E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeAssetCatalog.swift; sourceTree = "<group>"; };
 		EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeJourneyLaunchView.swift; sourceTree = "<group>"; };
 		F64750DC74A14E49DFEDF063 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,6 +99,8 @@
 			isa = PBXGroup;
 			children = (
 				4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */,
+				B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */,
+				E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */,
 				C144C17AB279CA643242E29B /* StrokeControlDeck.swift */,
 				D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */,
 				5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */,
@@ -222,6 +228,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */,
+				2123AE673EDD66EB6548837A /* PatientHistoryTimelineView.swift in Sources */,
+				B082C5DFC240F4CE817288FA /* StrokeAssetCatalog.swift in Sources */,
 				1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */,
 				74B29CCB7E4546879D77D3F4 /* StrokeEvidenceWorkspaceView.swift in Sources */,
 				DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */,

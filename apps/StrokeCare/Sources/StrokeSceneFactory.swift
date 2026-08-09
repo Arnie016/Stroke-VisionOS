@@ -38,6 +38,13 @@ enum StrokeSceneFactory {
     static let spatialCaseDockName = "spatial-case-dock"
     static let spatialCaseFigureName = "spatial-case-review-figure"
     static let clinicianHeldToolRootName = "clinician-held-tool-root"
+    static let registeredTeachingImagingRootName = TeachingImagingMiniatureFactory.rootName
+    static let registeredTeachingImagingAffectedName = TeachingImagingMiniatureFactory.affectedRootName
+    static let registeredTeachingImagingPurposeName = TeachingImagingMiniatureFactory.purposeRootName
+    static let registeredTeachingImagingSuggestedStagePosition =
+        TeachingImagingMiniatureFactory.suggestedStagePosition
+    static let registeredTeachingImagingSuggestedStageScale =
+        TeachingImagingMiniatureFactory.suggestedStageScale
 
     private static let coreName = "infarct-core"
     private static let penumbraName = "penumbra-shell"
@@ -132,8 +139,10 @@ enum StrokeSceneFactory {
         fallback.addChild(makeCarePreview(compact: compact))
         root.addChild(fallback)
 
+        var importedForMiniature: Entity?
         if !compact, let imported = await makeImportedAnatomy() {
             root.addChild(imported)
+            importedForMiniature = imported
         } else if !compact {
             // Fallback points share the procedural teaching frame.
             fallback.addChild(makePointField(
@@ -150,7 +159,24 @@ enum StrokeSceneFactory {
             ))
         }
 
+        if !compact {
+            // The registered teaching miniature is a dormant secondary object.
+            // The parent view decides when to present one mutually exclusive
+            // lens; it never competes with the central hero anatomy by default.
+            root.addChild(TeachingImagingMiniatureFactory.make(from: importedForMiniature))
+        }
+
         return root
+    }
+
+    /// Wires the registered miniature to a view-owned disclosure state without
+    /// exposing its internal entity hierarchy.
+    static func updateRegisteredTeachingImaging(
+        root: Entity,
+        isVisible: Bool,
+        lens: StrokeTeachingImagingLens
+    ) {
+        TeachingImagingMiniatureFactory.update(in: root, isVisible: isVisible, lens: lens)
     }
 
     /// A clinician-only presentation kit. The imported open-cranial tools are
@@ -1808,5 +1834,211 @@ enum StrokeSceneFactory {
             return simd_quatf(angle: 0, axis: up)
         }
         return simd_quatf(from: up, to: direction)
+    }
+}
+
+/// The two clinically bounded teaching lenses supported by the registered
+/// miniature. They are alternate explanations of the same authored anatomy,
+/// never a before/after or outcome comparison.
+enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
+    case affectedVessel
+    case makingRoomPurpose
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .affectedVessel: "Stroke effect"
+        case .makingRoomPurpose: "Making-room purpose"
+        }
+    }
+}
+
+/// Builds a compact, noninteractive registered-v2 teaching object for the
+/// right peripheral field. Only rendered leaf entities are cloned, so the
+/// hero anatomy's lesson points, collision proxies, hover effects, and input
+/// targets cannot leak into this secondary view.
+///
+/// This is generic teaching anatomy, not CT/MRI or patient-specific imaging.
+/// Registration and clinical review remain required before anatomical claims.
+@MainActor
+enum TeachingImagingMiniatureFactory {
+    static let rootName = "registered-teaching-imaging-root"
+    static let affectedRootName = "registered-teaching-imaging-affected-vessel"
+    static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
+    static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
+
+    /// Suggested stage-space placement for the parent view. The miniature is
+    /// initially attached to the anatomy scene for deterministic loading; the
+    /// parent may reparent it to the world-locked stage at this position so it
+    /// does not inherit the hero's orbit gesture.
+    static let suggestedStagePosition: SIMD3<Float> = [0.35, 1.72, -0.90]
+    static let suggestedStageScale: Float = 0.90
+
+    private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
+    private static let clotAssetName = "ischemic_mca_clot_v2"
+    private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
+
+    static func make(from importedAnatomy: Entity?) -> Entity {
+        let root = Entity()
+        root.name = rootName
+        root.isEnabled = false
+
+        let affected = Entity()
+        affected.name = affectedRootName
+        affected.orientation = wearerFacingTilt
+        affected.isEnabled = false
+        root.addChild(affected)
+
+        let purpose = Entity()
+        purpose.name = purposeRootName
+        purpose.orientation = wearerFacingTilt
+        purpose.isEnabled = false
+        root.addChild(purpose)
+
+        // Reuse the already-loaded registered hero sources. Leaf clones share
+        // MeshResource/material storage with that authored assembly and avoid
+        // a second Entity(contentsOf:) load. When the registered anatomy is
+        // unavailable the named root remains empty and disabled; procedural
+        // fallback geometry is never presented as registered imaging.
+        let arteriesSource = importedAnatomy?.findEntity(named: arteriesAssetName)
+        let clotSource = importedAnatomy?.findEntity(named: clotAssetName)
+        let duraSource = importedAnatomy?.findEntity(named: duraAssetName)
+
+        if let arteriesSource {
+            addRenderedLeaves(
+                from: arteriesSource,
+                to: affected,
+                namePrefix: "affected-arteries"
+            )
+        }
+        if let clotSource {
+            addRenderedLeaves(
+                from: clotSource,
+                to: affected,
+                namePrefix: "affected-clot"
+            )
+        }
+        if let duraSource {
+            let dura = Entity()
+            dura.name = "purpose-dura-layer"
+            addRenderedLeaves(from: duraSource, to: dura, namePrefix: "purpose-dura")
+            dura.components.set(OpacityComponent(opacity: 0.30))
+            purpose.addChild(dura)
+        }
+        if let clotSource {
+            let unchangedClot = Entity()
+            unchangedClot.name = "purpose-unchanged-clot-layer"
+            addRenderedLeaves(from: clotSource, to: unchangedClot, namePrefix: "purpose-clot")
+            unchangedClot.components.set(OpacityComponent(opacity: 1.0))
+            purpose.addChild(unchangedClot)
+
+            let bounds = unchangedClot.visualBounds(relativeTo: purpose)
+            purpose.addChild(makePurposeBoundaryCue(around: bounds))
+        }
+        stripInteractionComponentsRecursively(from: root)
+        return root
+    }
+
+    /// Stable hook for the parent view's existing image-drawer state. Only one
+    /// miniature can be visible at a time, and hiding the root disables both.
+    static func update(
+        in sceneRoot: Entity,
+        isVisible: Bool,
+        lens: StrokeTeachingImagingLens
+    ) {
+        guard let root = sceneRoot.findEntity(named: rootName) else { return }
+        let affected = root.findEntity(named: affectedRootName)
+        let purpose = root.findEntity(named: purposeRootName)
+
+        root.isEnabled = isVisible
+        affected?.isEnabled = isVisible && lens == .affectedVessel
+        purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
+    }
+
+    private static var wearerFacingTilt: simd_quatf {
+        simd_quatf(angle: -0.18, axis: [0, 1, 0])
+            * simd_quatf(angle: 0.05, axis: [1, 0, 0])
+    }
+
+    /// Flattens only model-bearing leaves into the destination while retaining
+    /// each leaf's complete authored-frame transform relative to the USDZ root.
+    private static func addRenderedLeaves(
+        from sourceRoot: Entity,
+        to destination: Entity,
+        namePrefix: String
+    ) {
+        var leaves: [Entity] = []
+        collectRenderedLeaves(from: sourceRoot, into: &leaves)
+
+        for (index, sourceLeaf) in leaves.enumerated() {
+            let authoredTransform = sourceLeaf.transformMatrix(relativeTo: sourceRoot)
+            let clone = sourceLeaf.clone(recursive: false)
+            let sourceName = sourceLeaf.name.isEmpty ? "leaf" : sourceLeaf.name
+            clone.name = "\(namePrefix)-\(index)-\(sourceName)"
+            stripInteractionComponents(from: clone)
+            destination.addChild(clone)
+            clone.setTransformMatrix(authoredTransform, relativeTo: destination)
+        }
+    }
+
+    private static func collectRenderedLeaves(from entity: Entity, into leaves: inout [Entity]) {
+        if entity.components[ModelComponent.self] != nil {
+            leaves.append(entity)
+        }
+        for child in entity.children {
+            collectRenderedLeaves(from: child, into: &leaves)
+        }
+    }
+
+    private static func stripInteractionComponentsRecursively(from entity: Entity) {
+        stripInteractionComponents(from: entity)
+        for child in entity.children {
+            stripInteractionComponentsRecursively(from: child)
+        }
+    }
+
+    private static func stripInteractionComponents(from entity: Entity) {
+        entity.components.remove(InputTargetComponent.self)
+        entity.components.remove(CollisionComponent.self)
+        entity.components.remove(HoverEffectComponent.self)
+        entity.components.remove(StrokeLessonPointTargetComponent.self)
+    }
+
+    /// A quiet boundary cue around the unchanged clot. It communicates the
+    /// purpose of making room without depicting an incision, removed tissue,
+    /// clinical measurement, treatment success, or a recovered state.
+    private static func makePurposeBoundaryCue(around bounds: BoundingBox) -> Entity {
+        let cue = Entity()
+        cue.name = purposeCueName
+
+        let center = (bounds.min + bounds.max) / 2
+        let extent = bounds.max - bounds.min
+        let radius = max(0.018, max(extent.x, extent.y) * 0.85)
+        let segmentCount = 24
+        let material = SimpleMaterial(
+            color: UIColor(red: 0.96, green: 0.72, blue: 0.36, alpha: 0.72),
+            roughness: 0.42,
+            isMetallic: false
+        )
+
+        for index in 0..<segmentCount {
+            let angle = Float(index) / Float(segmentCount) * 2 * .pi
+            let segment = ModelEntity(
+                mesh: .generateBox(size: [radius * 0.20, 0.0012, 0.0012], cornerRadius: 0.0005),
+                materials: [material]
+            )
+            segment.name = "\(purposeCueName)-segment-\(index)"
+            segment.position = [
+                center.x + cos(angle) * radius,
+                center.y + sin(angle) * radius,
+                bounds.max.z + 0.004
+            ]
+            segment.orientation = simd_quatf(angle: angle + .pi / 2, axis: [0, 0, 1])
+            cue.addChild(segment)
+        }
+
+        cue.components.set(OpacityComponent(opacity: 0.78))
+        return cue
     }
 }
