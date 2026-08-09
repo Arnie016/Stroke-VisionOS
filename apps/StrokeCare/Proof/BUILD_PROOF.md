@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (10)` in current source; signed XCAT deployment and
+- Version/build: `0.6 (11)` on the current feature branch; signed XCAT deployment and
   placement-path receipts are recorded below.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -184,6 +184,20 @@ generic physical visionOS build pass. The first guarded deployment attempt at
 17:19 SGT stopped before building because XCAT changed to `unavailable`; that
 gate is recorded in `Proof/xcat/20260809-171918/BLOCKED.md`. No build-10 device
 install or wearer result is claimed yet.
+
+Build `0.6 (11)` is a feature-branch teaching-imaging scaffold derived from the
+team's Page 2 Figma screenshots. It adds an explicit right-peripheral toggle
+and two small spatial plates, `Stroke effect` and `Making-room purpose`, while
+retaining the same affected-region marker and explicitly stating that the
+artwork is not CT/MRI, patient imaging, or recovery evidence. The static
+contract, generic physical visionOS build, visionOS Simulator build, install,
+and deterministic `--proof-teaching-imaging` launch pass. The layout capture is
+`Proof/52-teaching-imaging-drawer-simulator.png`.
+
+This is Simulator layout proof only. The user has rejected the procedural
+schematics as the final visual direction; the branch is not merged to `main`.
+It does not prove Figma parity, realistic imaging, XCAT depth or legibility,
+wearer interaction, patient specificity, recovery, or clinical validity.
 
 ## Clinical and procedural gates
 

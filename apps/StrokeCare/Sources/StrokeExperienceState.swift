@@ -349,6 +349,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var closingReflectionVisible = false
     @Published var pointField: StrokePointField = .regions
     @Published var lessonPointsVisible = true
+    @Published var teachingImagingDrawerVisible = false
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
@@ -426,6 +427,7 @@ final class StrokeExperienceState: ObservableObject {
     func beginExplanation() {
         guard spatialCaseDocked, isCaseSelected else { return }
         spatialPhase = .explanation
+        teachingImagingDrawerVisible = false
         procedureStep = .chooseCase
         lessonPointsVisible = true
         requestedPause = false
@@ -437,6 +439,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func returnCaseToLibrary() {
         spatialPhase = .caseLibrary
+        teachingImagingDrawerVisible = false
         spatialCaseDocked = false
         isCaseSelected = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
@@ -464,6 +467,14 @@ final class StrokeExperienceState: ObservableObject {
     func toggleLessonPoints() {
         lessonPointsVisible.toggle()
         if !lessonPointsVisible { clearPointSelection() }
+    }
+
+    func toggleTeachingImagingDrawer() {
+        guard spatialPhase == .explanation else {
+            teachingImagingDrawerVisible = false
+            return
+        }
+        teachingImagingDrawerVisible.toggle()
     }
 
     /// Advances a clinician-paced spatial explanation. It never infers emotion,
@@ -986,6 +997,7 @@ final class StrokeExperienceState: ObservableObject {
         clearQuestionMarker()
         pointField = .regions
         lessonPointsVisible = true
+        teachingImagingDrawerVisible = false
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
@@ -1042,6 +1054,15 @@ final class StrokeExperienceState: ObservableObject {
     func prepareClinicianProof(step: StrokeProcedureStep) {
         prepareProof(step: step)
         audienceLens = .clinician
+    }
+
+    func prepareTeachingImagingProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        teachingImagingDrawerVisible = true
+        anatomyPresentation = .transparent
+        pointField = .regions
+        selectedPointEntityName = "clinician-region-point-field-point-0"
+        selectedPointLabel = "Example affected area"
     }
 
     func prepareEvidenceProof() {

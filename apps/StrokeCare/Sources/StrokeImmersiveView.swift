@@ -227,6 +227,7 @@ struct StrokeImmersiveView: View {
     private let caseReviewActionsID = "spatial-case-review-actions"
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let roleMicroCuesID = "spatial-role-micro-cues"
+    private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
     private let familyControlsID = "spatial-family-controls"
     private let presenterControlsID = "spatial-presenter-controls"
     private let clinicianToolWheelID = "clinician-hand-tool-wheel"
@@ -328,7 +329,7 @@ struct StrokeImmersiveView: View {
                     for id in [
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
-                        teachingTimelineID, roleMicroCuesID,
+                        teachingTimelineID, roleMicroCuesID, teachingImagingDrawerID,
                         familyControlsID, presenterControlsID
                     ] {
                         if let attachment = attachments.entity(for: id) {
@@ -517,6 +518,11 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                             .frame(width: 310)
                     }
+                    Attachment(id: teachingImagingDrawerID) {
+                        StrokeTeachingImagingDrawer()
+                            .environmentObject(experience)
+                            .frame(width: 330)
+                    }
                     Attachment(id: familyControlsID) {
                         SpatialRoleControls(role: .family)
                             .environmentObject(experience)
@@ -685,6 +691,13 @@ struct StrokeImmersiveView: View {
             attachment.scale = [scale, scale, scale]
             attachment.isEnabled = visible
             attachment.components.set(BillboardComponent())
+        }
+
+        if let drawer = attachments.entity(for: teachingImagingDrawerID) {
+            drawer.position = SpatialVisualField.secondaryCaseDrawer
+            drawer.scale = [0.58, 0.58, 0.58]
+            drawer.isEnabled = visible && experience.teachingImagingDrawerVisible
+            drawer.components.set(BillboardComponent())
         }
     }
 
@@ -1090,6 +1103,16 @@ private struct SpatialRoleControls: View {
                     experience.toggleQuestionPlacement()
                 }
 
+                bubbleButton(
+                    experience.teachingImagingDrawerVisible ? "Close images" : "Images",
+                    systemImage: "rectangle.stack.fill",
+                    accent: .orange,
+                    selected: experience.teachingImagingDrawerVisible
+                ) {
+                    experience.toggleTeachingImagingDrawer()
+                }
+                .disabled(experience.spatialPhase != .explanation)
+
                 exitButton
             }
         }
@@ -1202,6 +1225,15 @@ private struct SpatialRoleControls: View {
                 ) {
                     experience.advanceJourney()
                 }
+                bubbleButton(
+                    experience.teachingImagingDrawerVisible ? "Close images" : "Images",
+                    systemImage: "rectangle.stack.fill",
+                    accent: .mint,
+                    selected: experience.teachingImagingDrawerVisible
+                ) {
+                    experience.toggleTeachingImagingDrawer()
+                }
+                .disabled(experience.spatialPhase != .explanation)
 
                 exitButton
             }
@@ -1276,6 +1308,143 @@ private struct SpatialRoleControls: View {
         experience.isImmersivePresented = false
         experience.reset()
         openWindow(id: StrokeSpace.window)
+    }
+}
+
+/// Two compact teaching plates derived from the team's Figma before/purpose
+/// sequence. They are explicitly generic artwork—not a patient scan or an
+/// outcome comparison—and stay peripheral to the registered anatomy.
+private struct StrokeTeachingImagingDrawer: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text("CASE-078 · FICTIONAL TEACHING IMAGE")
+                .font(.caption2.monospaced().weight(.bold))
+                .foregroundStyle(.secondary)
+
+            HStack(alignment: .bottom, spacing: -8) {
+                teachingPlate(.strokeEffect)
+                    .rotationEffect(.degrees(-2.5))
+                    .rotation3DEffect(.degrees(5), axis: (x: 0, y: 1, z: 0), perspective: 0.22)
+                teachingPlate(.makingRoomPurpose)
+                    .rotationEffect(.degrees(2.5))
+                    .rotation3DEffect(.degrees(-5), axis: (x: 0, y: 1, z: 0), perspective: 0.22)
+            }
+
+            Text("Not CT/MRI · not patient imaging · no recovery shown")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text("Clinician review pending")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.orange)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func teachingPlate(_ kind: StrokeTeachingImagingPlateKind) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(kind.title)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white.opacity(0.92))
+            StrokeTeachingImagingSchematic(kind: kind)
+                .frame(width: 132, height: 92)
+        }
+        .padding(10)
+        .background(Color.black.opacity(0.42), in: RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(kind.accent.opacity(0.42), lineWidth: 1))
+        .shadow(color: kind.accent.opacity(0.14), radius: 12, y: 4)
+    }
+}
+
+private enum StrokeTeachingImagingPlateKind {
+    case strokeEffect
+    case makingRoomPurpose
+
+    var title: String {
+        switch self {
+        case .strokeEffect: "Stroke effect"
+        case .makingRoomPurpose: "Making-room purpose"
+        }
+    }
+
+    var accent: Color {
+        switch self {
+        case .strokeEffect: .orange
+        case .makingRoomPurpose: .mint
+        }
+    }
+}
+
+private struct StrokeTeachingImagingSchematic: View {
+    let kind: StrokeTeachingImagingPlateKind
+
+    var body: some View {
+        Canvas { context, size in
+            let w = size.width
+            let h = size.height
+
+            var head = Path()
+            head.move(to: CGPoint(x: 0.24 * w, y: 0.10 * h))
+            head.addCurve(
+                to: CGPoint(x: 0.80 * w, y: 0.18 * h),
+                control1: CGPoint(x: 0.46 * w, y: -0.02 * h),
+                control2: CGPoint(x: 0.72 * w, y: 0.02 * h)
+            )
+            head.addCurve(
+                to: CGPoint(x: 0.77 * w, y: 0.76 * h),
+                control1: CGPoint(x: 0.94 * w, y: 0.35 * h),
+                control2: CGPoint(x: 0.89 * w, y: 0.65 * h)
+            )
+            head.addCurve(
+                to: CGPoint(x: 0.40 * w, y: 0.88 * h),
+                control1: CGPoint(x: 0.66 * w, y: 0.88 * h),
+                control2: CGPoint(x: 0.51 * w, y: 0.91 * h)
+            )
+            head.addLine(to: CGPoint(x: 0.33 * w, y: 0.72 * h))
+            head.addCurve(
+                to: CGPoint(x: 0.18 * w, y: 0.51 * h),
+                control1: CGPoint(x: 0.18 * w, y: 0.69 * h),
+                control2: CGPoint(x: 0.15 * w, y: 0.59 * h)
+            )
+            head.addLine(to: CGPoint(x: 0.27 * w, y: 0.39 * h))
+            head.addCurve(
+                to: CGPoint(x: 0.24 * w, y: 0.10 * h),
+                control1: CGPoint(x: 0.18 * w, y: 0.30 * h),
+                control2: CGPoint(x: 0.18 * w, y: 0.18 * h)
+            )
+            context.fill(head, with: .color(Color.cyan.opacity(0.08)))
+            context.stroke(head, with: .color(Color.white.opacity(0.62)), lineWidth: 1.2)
+
+            let brainRect = CGRect(x: 0.31 * w, y: 0.16 * h, width: 0.50 * w, height: 0.48 * h)
+            context.fill(Path(ellipseIn: brainRect), with: .color(Color.cyan.opacity(0.14)))
+            context.stroke(Path(ellipseIn: brainRect), with: .color(Color.cyan.opacity(0.46)), lineWidth: 1)
+
+            var vessel = Path()
+            vessel.move(to: CGPoint(x: 0.50 * w, y: 0.72 * h))
+            vessel.addCurve(
+                to: CGPoint(x: 0.62 * w, y: 0.30 * h),
+                control1: CGPoint(x: 0.50 * w, y: 0.58 * h),
+                control2: CGPoint(x: 0.55 * w, y: 0.41 * h)
+            )
+            vessel.addLine(to: CGPoint(x: 0.72 * w, y: 0.23 * h))
+            context.stroke(vessel, with: .color(Color.red.opacity(0.72)), lineWidth: 2)
+
+            let affected = CGRect(x: 0.52 * w, y: 0.22 * h, width: 0.24 * w, height: 0.25 * h)
+            context.fill(Path(ellipseIn: affected), with: .color(Color.orange.opacity(kind == .strokeEffect ? 0.58 : 0.36)))
+            context.stroke(Path(ellipseIn: affected), with: .color(Color.orange.opacity(0.86)), lineWidth: 1.2)
+
+            if kind == .strokeEffect {
+                let blockage = CGRect(x: 0.56 * w, y: 0.42 * h, width: 0.07 * w, height: 0.07 * w)
+                context.fill(Path(ellipseIn: blockage), with: .color(Color.red.opacity(0.88)))
+            } else {
+                var roomCue = Path()
+                roomCue.move(to: CGPoint(x: 0.47 * w, y: 0.14 * h))
+                roomCue.addLine(to: CGPoint(x: 0.34 * w, y: 0.08 * h))
+                roomCue.move(to: CGPoint(x: 0.77 * w, y: 0.16 * h))
+                roomCue.addLine(to: CGPoint(x: 0.89 * w, y: 0.09 * h))
+                context.stroke(roomCue, with: .color(Color.mint.opacity(0.90)), lineWidth: 2.2)
+            }
+        }
+        .accessibilityHidden(true)
     }
 }
 

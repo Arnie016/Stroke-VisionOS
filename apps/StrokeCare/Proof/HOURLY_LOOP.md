@@ -314,3 +314,26 @@
   result exists for build 10.
 - Next safe action: wear and unlock XCAT, then rerun the guarded build-10
   deploy/install/foreground-launch lane once.
+
+## 2026-08-09 17:52 SGT — Page 2 teaching-imaging scaffold
+
+- Target: expose the Figma Page 2 stroke-effect and making-room comparison as
+  an on-demand spatial reference without adding another persistent modal.
+- Bounded action: added two separate, slightly fanned teaching plates at the
+  right-secondary field; both retain the affected-region cue, while only the
+  second adds a making-room displacement cue. Added explicit fictional,
+  non-scan, no-recovery, and clinical-review labels plus a deterministic proof
+  route. Kept the drawer closed outside the explanation phase.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; generic physical and
+  visionOS Simulator builds for `0.6 (11)` ended `** BUILD SUCCEEDED **`;
+  Simulator install and `--proof-teaching-imaging` launch returned PID 96960;
+  `Proof/52-teaching-imaging-drawer-simulator.png` records layout only.
+- Verdict: `IMPROVED` — the missing evidence location and safe comparison state
+  are now executable, but the procedural schematics are only a scaffold and
+  have been rejected as the final visual quality bar.
+- Blocker: Figma MCP is rate-limited, XCAT remains unavailable, and no licensed
+  patient-figure or patient-imaging asset is currently verified for runtime.
+- Next safe action: replace the two procedural plates with registered-v2
+  RealityKit anatomy miniatures after the duplicate-surface and performance
+  audit passes.

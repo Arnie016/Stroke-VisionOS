@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
 - Content version: `SC-AIS-001.4`
-- App version: `0.6 (10)` review candidate
+- App version: `0.6 (11)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
