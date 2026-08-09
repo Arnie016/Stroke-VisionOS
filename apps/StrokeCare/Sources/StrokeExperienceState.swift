@@ -103,6 +103,54 @@ enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
     }
 }
 
+/// Named, repeatable views of the authored anatomy. These rotate the complete
+/// registered-v2 assembly as one object; they never reposition individual
+/// organs, vessels, or lesson markers. A true medial view is intentionally not
+/// offered until the cortex has reviewed left/right surfaces or a clipping
+/// plane—the current single cortical surface cannot support that claim.
+enum StrokeAnatomyViewpoint: String, CaseIterable, Identifiable {
+    case free = "Free orbit"
+    case threeQuarter = "Three-quarter"
+    case anterior = "Front · model frame"
+    case lateralA = "Side A · review laterality"
+    case lateralB = "Side B · review laterality"
+    case superior = "Top · model frame"
+
+    var id: String { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .free: "View"
+        case .threeQuarter: "3/4"
+        case .anterior: "Front"
+        case .lateralA: "Side A"
+        case .lateralB: "Side B"
+        case .superior: "Top"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .free: "rotate.3d"
+        case .threeQuarter: "view.3d"
+        case .anterior: "person.crop.circle"
+        case .lateralA: "arrow.left.circle"
+        case .lateralB: "arrow.right.circle"
+        case .superior: "arrow.down.to.line.circle"
+        }
+    }
+
+    var orbit: SIMD2<Float> {
+        switch self {
+        case .free, .threeQuarter: .zero
+        case .anterior: [0.42, 0]
+        case .lateralA: [0.42 - Float.pi * 0.5, 0]
+        case .lateralB: [0.42 + Float.pi * 0.5, 0]
+        case .superior: [0.42, -Float.pi * 0.5]
+        }
+    }
+}
+
 enum StrokeEvidenceKind: String, Equatable {
     case guideline = "Guideline"
     case decisionAid = "Decision aid"
@@ -297,6 +345,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
+    @Published private(set) var anatomyViewpoint: StrokeAnatomyViewpoint = .threeQuarter
     @Published var environmentMode: StrokeEnvironmentMode = .warmHorizon
     @Published var cortexOpacity: Double = 0.34
     @Published var regionPortalActive = false
@@ -647,6 +696,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func focusOcclusion() {
         withAnimation(.easeInOut(duration: 0.65)) {
+            anatomyViewpoint = .free
             brainRevealProgress = 1
             vesselFocusProgress = 1
             spatialZoom = min(max(spatialZoom, 1.10), 1.30)
@@ -676,6 +726,7 @@ final class StrokeExperienceState: ObservableObject {
             }
             regionPortalActive.toggle()
             if regionPortalActive {
+                anatomyViewpoint = .free
                 anatomyPresentation = .transparent
                 cortexOpacity = 0.40
                 pointField = .procedure
@@ -684,6 +735,7 @@ final class StrokeExperienceState: ObservableObject {
                 orbit = [0.14, 0.08]
                 vesselFocusProgress = 1
             } else {
+                anatomyViewpoint = .threeQuarter
                 anatomyPresentation = .assembled
                 cortexOpacity = 0.34
                 spatialZoom = 1
@@ -723,8 +775,33 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func rotateSpatialView(delta: CGSize) {
+        anatomyViewpoint = .free
         orbit.x += Float(delta.width) * 0.008
         orbit.y = min(max(orbit.y + Float(delta.height) * 0.006, -0.78), 0.78)
+    }
+
+    func setAnatomyViewpoint(_ viewpoint: StrokeAnatomyViewpoint, reduceMotion: Bool = false) {
+        anatomyViewpoint = viewpoint
+        if reduceMotion {
+            orbit = viewpoint.orbit
+        } else {
+            withAnimation(.easeInOut(duration: 0.42)) {
+                orbit = viewpoint.orbit
+            }
+        }
+    }
+
+    func cycleAnatomyViewpoint(reduceMotion: Bool = false) {
+        let presets: [StrokeAnatomyViewpoint] = [.anterior, .lateralA, .lateralB, .superior, .threeQuarter]
+        let next: StrokeAnatomyViewpoint
+        if anatomyViewpoint == .free || anatomyViewpoint == .threeQuarter {
+            next = .anterior
+        } else if let index = presets.firstIndex(of: anatomyViewpoint) {
+            next = presets[(index + 1) % presets.count]
+        } else {
+            next = .threeQuarter
+        }
+        setAnatomyViewpoint(next, reduceMotion: reduceMotion)
     }
 
     func magnifySpatialView(ratio: Double) {
@@ -733,7 +810,8 @@ final class StrokeExperienceState: ObservableObject {
 
     func resetSpatialView() {
         spatialZoom = 1
-        orbit = .zero
+        anatomyViewpoint = .threeQuarter
+        orbit = anatomyViewpoint.orbit
     }
 
     func beginCareDiscussion() {
@@ -875,6 +953,7 @@ final class StrokeExperienceState: ObservableObject {
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
+        anatomyViewpoint = .threeQuarter
         environmentMode = .warmHorizon
         cortexOpacity = 0.34
         regionPortalActive = false
@@ -948,8 +1027,12 @@ final class StrokeExperienceState: ObservableObject {
 
     func prepareProcedureFieldProof() {
         prepareClinicianProof(step: .inspectOcclusion)
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.40
+        regionPortalActive = true
+        spatialZoom = 1.24
         pointField = .procedure
-        selectedPointEntityName = "clinician-procedure-point-field-point-1"
+        selectedPointEntityName = "clinician-procedure-point-field-point-2"
         selectedPointLabel = "Example blockage"
     }
 
@@ -965,10 +1048,23 @@ final class StrokeExperienceState: ObservableObject {
         cortexOpacity = 0.40
         regionPortalActive = true
         spatialZoom = 1.36
+        anatomyViewpoint = .free
         orbit = [0.14, 0.08]
         pointField = .procedure
         selectedPointEntityName = "clinician-procedure-point-field-point-2"
         selectedPointLabel = "Illustrative clot focus"
+    }
+
+    func prepareAnatomyViewpointProof(_ viewpoint: StrokeAnatomyViewpoint) {
+        prepareClinicianProof(step: .inspectOcclusion)
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.40
+        regionPortalActive = true
+        spatialZoom = 1.20
+        pointField = .regions
+        selectedPointEntityName = "clinician-region-point-field-point-0"
+        selectedPointLabel = "Example affected area"
+        setAnatomyViewpoint(viewpoint)
     }
 
     func prepareEnvironmentProof(_ mode: StrokeEnvironmentMode) {

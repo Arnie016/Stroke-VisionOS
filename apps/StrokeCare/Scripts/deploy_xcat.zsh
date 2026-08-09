@@ -101,13 +101,22 @@ xcrun devicectl device process launch \
     --log-output "${RECEIPT_DIR}/launch.log" \
     "${BUNDLE_ID}" -- "${PROOF_ROUTE}" | tee "${RECEIPT_DIR}/launch.txt"
 
-xcrun devicectl device info processes \
-    --device "${DEVICE_ID}" \
-    --filter "Name == 'StrokeTime'" \
-    --timeout 30 \
-    --json-output "${RECEIPT_DIR}/process.json" \
-    --log-output "${RECEIPT_DIR}/process.log" \
-    | tee "${RECEIPT_DIR}/process.txt"
+for process_attempt in {1..6}; do
+    xcrun devicectl device info processes \
+        --device "${DEVICE_ID}" \
+        --filter "executable.absoluteString CONTAINS 'StrokeTime'" \
+        --timeout 30 \
+        --json-output "${RECEIPT_DIR}/process.json" \
+        --log-output "${RECEIPT_DIR}/process.log" \
+        | tee "${RECEIPT_DIR}/process.txt"
+
+    if rg -q "StrokeTime" "${RECEIPT_DIR}/process.txt"; then
+        break
+    fi
+
+    print -- "Waiting for StrokeTime process receipt (attempt ${process_attempt}/6)..."
+    sleep 2
+done
 
 if ! rg -q "StrokeTime" "${RECEIPT_DIR}/process.txt"; then
     print -u2 -- "XCAT_DEPLOY=FAILED no running StrokeTime process receipt"

@@ -171,3 +171,27 @@
   wearer judgment, and `SC-AIS-001.4` clinical review remain unproven.
 - Next safe action: run a frame-registration overlay audit for every Vessel
   Story marker before changing any marker position.
+
+## 2026-08-09 15:54 SGT — world-staged anatomy and XCAT 0.6 launch
+
+- Target: put the current main Stroke Care build in front of the XCAT wearer
+  with repeatable model-frame viewpoints and no detached blockage marker.
+- Bounded action: sampled one device pose to place the complete case/anatomy/UI
+  stage in a single room-fixed frame; added Front, Side A, Side B, Top, and
+  Three-quarter views to the existing anatomy control; bound the example
+  blockage marker to the registered clot surface; quarantined unreviewed flow
+  markers from all-point display; and corrected the guarded device process
+  query for current `devicectl` output.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; a clean generic visionOS Simulator build exited
+  `0`; the signed physical build, code-sign verification, install, installed-app
+  query, `--hackathon-demo` foreground launch, and running-process query all
+  passed in `Proof/xcat/20260809-155324/RECEIPT.md` (PID 592).
+- Verdict: `IMPROVED` — the current `0.6 (6)` binary is installed and running on
+  XCAT, while anatomy, case intake, annotations, and controls now share one
+  initial placement frame.
+- Blocker: wearer-visible placement, viewpoint comfort, marker contact in both
+  eyes, gestures, audio perception, comprehension, and clinical laterality are
+  not established by the machine receipt.
+- Next safe action: complete one wearer pass from `Proof/XCAT_ACCEPTANCE.md` and
+  record the four observations in the generated `WEARER_RESULT.md`.

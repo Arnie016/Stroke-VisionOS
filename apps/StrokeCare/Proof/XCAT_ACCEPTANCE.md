@@ -31,11 +31,17 @@ The wearer completes one 90-second pass after the machine receipt succeeds:
    hidden.
 4. Select **Begin family view**. Confirm the complete intake exhibit disappears
    before the brain owns the centre; no files or cabinet remain beside it.
+   The complete stage should initially face you, remain at a comfortable
+   distance, and stay fixed in the room when you turn your head. Record a fail
+   rather than manually compensating if its placement is wrong.
 5. Change **Brain regions → Blood flow**. Confirm five small points stay attached
    to the anatomy and the direction chevrons follow the visible vessel route.
 6. Use **Point**, then select the affected area. Confirm a visible question
    marker appears at brain depth. Orbit and two-hand magnification must move the
    complete registered model without detaching the point.
+   In presenter mode, cycle **Front**, **Side A**, **Side B**, **Top**, and
+   **Three-quarter** from the existing Layers/View control. These are model-frame
+   views; do not interpret Side A/B as clinical laterality until reviewed.
 7. Exit and re-enter as **Clinician teaching**. Confirm presenter controls stay
    in the right peripheral field and the left-palm tool selector does not appear
    to the family.
