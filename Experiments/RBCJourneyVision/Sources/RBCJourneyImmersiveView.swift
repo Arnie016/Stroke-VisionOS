@@ -124,9 +124,14 @@ struct RBCJourneyImmersiveView: View {
             else { return }
 
             model.setFamilyNarrationMoment(.orientation)
-            for moment in [RBCFamilyNarrationMoment.passage, .arrival] {
-                var remainingSeconds = 7.5
-                while remainingSeconds > 0 {
+            let automaticMoments: [RBCFamilyNarrationMoment] = model.flowRideRoute == .frontal
+                ? [.passage]
+                : [.passage, .arrival]
+            for moment in automaticMoments {
+                var remainingSeconds = model.familyNarrationCue.minimumDwellSeconds
+                while remainingSeconds > 0
+                    || familyNarrator.state == .loading
+                    || familyNarrator.state == .speaking {
                     try? await Task.sleep(for: .milliseconds(250))
                     guard !Task.isCancelled,
                           model.isFlowRideActive,
@@ -137,6 +142,11 @@ struct RBCJourneyImmersiveView: View {
                     }
                 }
                 model.setFamilyNarrationMoment(moment)
+            }
+        }
+        .onChange(of: model.familyNarrationReplayRun) { _, _ in
+            if model.familyNarrationEnabled && familyNarrator.isConfigured {
+                familyNarrator.speakExactCaption(model.familyNarrationText)
             }
         }
         .onChange(of: model.familyNarrationEnabled) { _, enabled in

@@ -150,6 +150,21 @@ rewinds that explanation. The arrival copy explicitly distinguishes
 intravascular red-cell travel from oxygen moving toward tissue. **Pause ride**
 holds the arrows, exchange rings, and guide clock at their current phase.
 
+The same three beats are framed as a parent-paced scaffold: **Notice** names
+the visual cue, **Follow** connects that cue to motion through the vessel, and
+**Connect** explains why the arrival matters. The family can choose **Next
+idea** instead of waiting, or **Hear again** without changing the scene. A
+caption remains visible for a reading-time dwell and, when live audio is
+configured, is never replaced before that exact narration finishes. These
+controls remain inside the existing family guide surface; they do not add a
+second dashboard or appear in a clinician-default mode.
+
+On the frontal route, automatic pacing stops at **Follow**. The next family
+action becomes **Enter field**: it expands the capillary environment first and
+only then advances the guide to **Connect**. This keeps the spoken causal order
+identical to the spatial event instead of describing an arrival that the wearer
+has not entered.
+
 The paced captions work without a network connection. If voice is configured,
 the guide uses `gpt-realtime-2.1` with the `marin` voice to read only the exact,
 visible, versioned title and caption. The provider is instructed not to add

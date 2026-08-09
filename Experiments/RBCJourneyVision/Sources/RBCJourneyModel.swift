@@ -490,6 +490,13 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
 struct RBCFamilyNarrationCue: Equatable, Sendable {
     let title: String
     let caption: String
+
+    /// Holds a caption long enough to read at a calm museum-guide pace. Live
+    /// audio may hold it longer, but never shorter.
+    var minimumDwellSeconds: Double {
+        let wordCount = (title + " " + caption).split(whereSeparator: \Character.isWhitespace).count
+        return min(max(Double(wordCount) / 2.2 + 1.5, 8.0), 14.0)
+    }
 }
 
 enum RBCFamilyNarrationMoment: Int, CaseIterable, Identifiable, Sendable {
@@ -499,6 +506,14 @@ enum RBCFamilyNarrationMoment: Int, CaseIterable, Identifiable, Sendable {
 
     var id: Int { rawValue }
     var number: String { String(format: "%02d", rawValue + 1) }
+
+    var guidanceVerb: String {
+        switch self {
+        case .orientation: "NOTICE"
+        case .passage: "FOLLOW"
+        case .arrival: "CONNECT"
+        }
+    }
 }
 
 enum RBCExhibitBeat: Int, CaseIterable, Identifiable {
@@ -589,6 +604,7 @@ final class RBCJourneyModel {
     var familyNarrationConfigured = false
     var familyNarrationMoment: RBCFamilyNarrationMoment = .orientation
     var familyNarrationRun = 0
+    var familyNarrationReplayRun = 0
     let familyNarrationProofLocked: Bool
     var showTeachingPoints = true
     var systemReduceMotion = false
@@ -769,7 +785,16 @@ final class RBCJourneyModel {
     }
 
     var familyNarrationProgressLabel: String {
-        "GUIDE  ·  \(familyNarrationMoment.number) / 03"
+        "FAMILY GUIDE  ·  \(familyNarrationMoment.guidanceVerb)  ·  \(familyNarrationMoment.number) / 03"
+    }
+
+    var familyNarrationAdvanceTitle: String {
+        if flowRideRoute == .frontal,
+           familyNarrationMoment == .passage,
+           !isCapillaryFieldFocused {
+            return "Enter field"
+        }
+        return "Next idea"
     }
 
     func toggleFamilyNarration() {
@@ -790,6 +815,23 @@ final class RBCJourneyModel {
         guard !familyNarrationProofLocked else { return }
         guard moment.rawValue >= familyNarrationMoment.rawValue else { return }
         familyNarrationMoment = moment
+    }
+
+    func advanceFamilyNarration() {
+        guard familyNarrationEnabled, !familyNarrationProofLocked else { return }
+        if flowRideRoute == .frontal,
+           familyNarrationMoment == .passage,
+           !isCapillaryFieldFocused {
+            toggleCapillaryFieldFocus()
+            return
+        }
+        guard let next = RBCFamilyNarrationMoment(rawValue: familyNarrationMoment.rawValue + 1) else { return }
+        setFamilyNarrationMoment(next)
+    }
+
+    func replayFamilyNarration() {
+        guard familyNarrationEnabled else { return }
+        familyNarrationReplayRun += 1
     }
 
     func toggleCapillaryFieldFocus() {

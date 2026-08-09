@@ -5,7 +5,7 @@ import Observation
 
 @MainActor
 @Observable
-final class RBCFamilyNarrationEngine: NSObject {
+final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
     static let model = "gpt-realtime-2.1"
 
     enum State: Equatable {
@@ -14,6 +14,7 @@ final class RBCFamilyNarrationEngine: NSObject {
         case loading
         case speaking
         case paused
+        case ready
         case unavailable
     }
 
@@ -55,6 +56,7 @@ final class RBCFamilyNarrationEngine: NSObject {
 
                 let player = try AVAudioPlayer(data: audio)
                 self?.player = player
+                player.delegate = self
                 player.prepareToPlay()
                 player.play()
                 self?.state = .speaking
@@ -81,6 +83,13 @@ final class RBCFamilyNarrationEngine: NSObject {
         } else {
             player.play()
             state = .speaking
+        }
+    }
+
+    nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        Task { @MainActor [weak self] in
+            self?.player = nil
+            self?.state = flag ? .ready : .unavailable
         }
     }
 

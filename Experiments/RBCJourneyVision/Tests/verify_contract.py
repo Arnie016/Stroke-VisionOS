@@ -196,9 +196,16 @@ checks = {
         "familyNarration(for moment:", "The fork comes into view",
         "Flow carries oxygen forward", "Anatomy can vary",
         "familyNarrationSequenceKey", "selectFlowRideRoute", "familyNarrationProofLocked",
-        "--proof-family-guide-beat-", "remainingSeconds = 7.5",
+        "--proof-family-guide-beat-", "minimumDwellSeconds",
         "Captions work now; connect the local guide for voice.",
     ]) and "|| (model.proofMode && model.familyNarrationEnabled)" not in immersive,
+    "parent_paced_family_scaffold": all(token in model + hud + immersive + narrator for token in [
+        "NOTICE", "FOLLOW", "CONNECT", "minimumDwellSeconds",
+        "advanceFamilyNarration", "replayFamilyNarration", "Hear again", "Next idea",
+        "familyNarrationAdvanceTitle", "Enter field", "automaticMoments",
+        "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
+        "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
+    ]) and "model.flowRideRoute == .frontal && !model.familyNarrationEnabled" in hud,
     "user_triggered_capillary_focus": all(token in model + scene + hud + immersive for token in [
         "--proof-capillary-focus", "isCapillaryFieldFocused",
         "toggleCapillaryFieldFocus", "Enter capillary field", "Return to artery",

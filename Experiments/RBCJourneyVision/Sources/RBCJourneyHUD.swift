@@ -379,7 +379,7 @@ struct RBCRegionInfoHUD: View {
                             }
                             .buttonBorderShape(.capsule)
 
-                            if model.flowRideRoute == .frontal {
+                            if model.flowRideRoute == .frontal && !model.familyNarrationEnabled {
                                 Button(
                                     model.isCapillaryFieldFocused ? "Return to artery" : "Enter capillary field",
                                     systemImage: model.isCapillaryFieldFocused
@@ -427,6 +427,38 @@ struct RBCRegionInfoHUD: View {
                                         }
                                     }
                                     .accessibilityLabel(model.familyNarrationProgressLabel)
+                                }
+                            }
+
+                            if model.familyNarrationEnabled {
+                                HStack(spacing: 8) {
+                                    Spacer(minLength: 0)
+
+                                    Button("Hear again", systemImage: "arrow.counterclockwise") {
+                                        model.replayFamilyNarration()
+                                    }
+                                    .font(.caption.weight(.semibold))
+                                    .buttonStyle(.bordered)
+                                    .disabled(!model.familyNarrationConfigured)
+                                    .accessibilityLabel("Hear the current family explanation again")
+
+                                    if model.familyNarrationMoment != .arrival {
+                                        Button(
+                                            model.familyNarrationAdvanceTitle,
+                                            systemImage: model.familyNarrationAdvanceTitle == "Enter field"
+                                                ? "circle.hexagongrid.fill"
+                                                : "arrow.right"
+                                        ) {
+                                            model.advanceFamilyNarration()
+                                        }
+                                        .font(.caption.weight(.semibold))
+                                        .buttonStyle(.borderedProminent)
+                                        .tint(Color.indigo)
+                                        .disabled(model.familyNarrationProofLocked)
+                                        .accessibilityLabel(model.familyNarrationAdvanceTitle == "Enter field"
+                                            ? "Enter the capillary field and hear why this arrival matters"
+                                            : "Move to the next family explanation")
+                                    }
                                 }
                             }
                         }
