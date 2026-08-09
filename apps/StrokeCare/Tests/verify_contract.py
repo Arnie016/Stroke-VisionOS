@@ -244,6 +244,12 @@ require("WorldTrackingProvider" in immersive and "queryDeviceAnchor" in immersiv
 require("Samples the current device pose once" in immersive and "session.stop()" in immersive, "anatomy stage is continuously head-locked or tracking is not bounded")
 require("stageRoot.addChild(root)" in immersive and "stageRoot.addChild(caseRoom)" in immersive and "relativeTo: stageRoot" in immersive, "brain, case archive, and annotation placement do not share one coherent stage frame")
 require("stroke-stage-placement.json" in immersive and "PLACEMENT_PATH_RAN" in immersive and "raw room transform" in immersive, "physical placement path lacks a privacy-bounded machine receipt")
+require(
+    "#if targetEnvironment(simulator)" in immersive
+    and "transform = nil" in immersive
+    and "Keep deterministic proof routes in" in immersive,
+    "Simulator stage placement can still inherit an invalid or zero device pose",
+)
 require("appDataContainer" in xcat_stage_collect and "anchorTracked == true" in xcat_stage_collect and "wearerEvidence == \"NOT_RUN\"" in xcat_stage_collect, "XCAT placement receipt cannot be collected with explicit proof boundaries")
 require("careViewPermissionGranted" in state and "Reveal layers" in immersive, "non-graphic permission gate is missing")
 require("layerRevealProgress" in state and "calm-layer-reveal-seam" in scene, "calm layer-separation animation is missing")
@@ -340,6 +346,25 @@ require(all(token in immersive for token in (
     "!experience.isClinicianScholarSkullInspectionActive",
 )), "Scholar skull annotation does not expose the registration-review boundary")
 require("--proof-spatial-intake" in launch and "makeSpatialCaseIntake" in scene, "deterministic room-scale case intake is missing")
+simulator_proof = (ROOT / "Scripts" / "capture_simulator_route_proof.zsh").read_text()
+proof_image_check = (ROOT / "Tests" / "verify_proof_image.py").read_text()
+require(all(token in simulator_proof for token in (
+    "--proof-spatial-intake",
+    "--proof-pressure",
+    "simctl install",
+    "simctl launch --terminate-running-process",
+    "simctl io",
+    "kill -0",
+    "verify_proof_image.py",
+    "SIMULATOR_PROOF_BOUNDARY=render-and-process-only;not-wearer-or-clinical-proof",
+)), "current Simulator route proof is not freshly installed, process-checked, captured, and bounded")
+require(all(token in proof_image_check for token in (
+    "PROOF_IMAGE=FAIL",
+    "empty-centre",
+    "colourless-centre",
+    "centre_nonblack_ratio",
+    "centre_colour_ratio",
+)), "Simulator proof images can pass while the spatial stage is blank")
 require("--proof-spatial-docked-case" in launch and "prepareSpatialDockedCaseProof" in state, "deterministic docked-case constellation proof is missing")
 require("spatialCaseFilePosition" in state and "settleSpatialCaseFile" in state and "isSpatialCaseFileTarget" in scene, "spatial case carry-and-dock loop is incomplete")
 require("StrokeSpatialPhase" in state and "caseLibrary" in state and "caseReview" in state and "explanation" in state, "case room and anatomy are not separated into explicit phases")

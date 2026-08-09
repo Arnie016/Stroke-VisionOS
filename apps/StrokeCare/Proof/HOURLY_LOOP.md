@@ -634,3 +634,25 @@
 - Next safe action: on an awake and unlocked XCAT, launch the normal build-16
   path once and confirm the detailed registered brain, arteries, clot, and dura
   all appear without the simplified-view boundary.
+
+## 2026-08-10 03:23 SGT — current Simulator stage regression
+
+- Target: prevent a blank or stale room-scale screenshot from being accepted as
+  proof that the patient-file intake and Pressure anatomy are visible.
+- Bounded action: added one fresh-install route runner for intake/Pressure and a
+  dependency-free PNG verifier; captured both routes from the exact build-16
+  app after terminating competing immersive apps.
+- Evidence: XCAT deployment stopped at the exact `unavailable` gate in
+  `Proof/xcat/20260810-031333/BLOCKED.md`; contract and diff checks passed; a
+  synthetic black image failed the verifier; proofs 77 and 78 are 3840×2160,
+  show the intended current scenes, retained live PIDs through capture, and have
+  SHA-256 values `ceba5848…da4cdc4` and `1a2ce6f6…779595e2`.
+- Verdict: `IMPROVED` — the two P0 demo routes are visibly present in the
+  deterministic Simulator frame and now have a repeatable blank/stale-proof
+  rejection path.
+- Blocker: XCAT is unavailable, so room-locked device placement, targetability,
+  stereo depth, wearer comfort, AirPlay readability, and clinical validity are
+  not proven.
+- Next safe action: on an awake and unlocked XCAT, run build 16 once and verify
+  that the patient-file archive and Pressure anatomy remain in the primary
+  visual field after the sample-once room placement path.

@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (15)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (16)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -549,3 +549,34 @@ does not establish physical-device loading, wearer legibility, gaze-and-pinch
 quality, AirPlay composition, comfort, comprehension, specialist registration,
 or clinical validity. XCAT remained `unavailable`; the dated reachability
 receipt is `Proof/xcat/20260810-030404/BLOCKED.md`.
+
+## 2026-08-10 03:23 SGT — current nonblank room-scale route gate
+
+The P0 stage regression is now exercised through a single repeatable command,
+not accepted from an old screenshot. `Scripts/capture_simulator_route_proof.zsh`
+installs the exact build-16 app, terminates known competing immersive apps,
+launches the requested route, checks the returned process before and after the
+capture, and invokes a dependency-free PNG verifier. The verifier rejects
+undersized, low-variance, empty-centre, and colourless-centre images. A
+synthetic 1920×1080 black PNG was rejected for all four expected reasons.
+
+The fresh `--proof-spatial-intake` capture is
+`Proof/77-current-spatial-intake-simulator.png`, 3840×2160, SHA-256
+`ceba58483cc9ed318599783046737eba393e8478776f908dbcd9ebe37da4cdc4`.
+The current dossier archive and selected fictional file are visible in the
+authored Simulator frame; StrokeTime PID 6218 remained alive through capture.
+
+The fresh `--proof-pressure` capture is
+`Proof/78-current-pressure-stage-simulator.png`, 3840×2160, SHA-256
+`1a2ce6f684f4f07695545673cf6f5a86b64cb4cc4648f10dedfdc990779595e2`.
+The central registered anatomy, attached lesson points, family cue surface, and
+top three-act timeline are visible; StrokeTime PID 7065 remained alive through
+capture. Both runs installed the build whose executable SHA-256 is
+`e988faf9222cca109a26b6b624c88b73aab174460dc562bfdce5178cb72ee534`.
+
+`python3 Tests/verify_contract.py` and `git diff --check` passed. This is
+Simulator render/process evidence only. It does not prove physical XCAT
+placement, wearer visibility, gestures, comfort, AirPlay composition,
+comprehension, specialist registration, or clinical validity. XCAT remained
+`unavailable`; the current reachability receipt is
+`Proof/xcat/20260810-031333/BLOCKED.md` (ignored local machine evidence).

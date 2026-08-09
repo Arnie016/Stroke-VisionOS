@@ -23,6 +23,22 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+The room-scale intake and Pressure scenes now have a fresh-build regression
+gate. The visionOS Simulator stays in the authored eye-height frame instead of
+accepting its unstable zero device pose. `Scripts/capture_simulator_route_proof.zsh`
+installs the exact app bundle, terminates known competing immersive apps,
+launches either `--proof-spatial-intake` or `--proof-pressure`, verifies the
+process before and after capture, and rejects undersized, near-uniform,
+empty-centre, or colourless-centre screenshots.
+
+![Current patient-file intake in visionOS Simulator](Proof/77-current-spatial-intake-simulator.png)
+
+![Current Pressure anatomy scene in visionOS Simulator](Proof/78-current-pressure-stage-simulator.png)
+
+These two captures prove current Simulator render/process state only. They do
+not prove physical placement, gaze-and-pinch quality, comfort, AirPlay
+legibility, comprehension, or clinical validity.
+
 Build `0.6 (16)` now treats brain, arteries, clot, and dura as one required
 registered-v2 teaching set. If any required layer is missing or fails to load,
 Stroke Care logs the exact asset name and shows the complete procedural model
@@ -232,6 +248,19 @@ python3 Tests/verify_contract.py
 Deterministic Simulator routes:
 
 ```bash
+# Fresh-install, current-process, nonblank visual regression receipts
+Scripts/capture_simulator_route_proof.zsh \
+  F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777 \
+  /path/to/StrokeTime.app \
+  --proof-spatial-intake \
+  Proof/current-intake.png
+
+Scripts/capture_simulator_route_proof.zsh \
+  F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777 \
+  /path/to/StrokeTime.app \
+  --proof-pressure \
+  Proof/current-pressure.png
+
 xcrun simctl launch --terminate-running-process \
   F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777 \
   com.arnav.StrokeTime --hackathon-demo
