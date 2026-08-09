@@ -127,9 +127,9 @@ private final class StrokeStagePlacement: ObservableObject {
 }
 
 @MainActor
-private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate {
+private final class StrokeNarrationEngine: ObservableObject {
     private static let model = "gpt-realtime-2.1"
-    private var player: AVAudioPlayer?
+    private let playback = StrokeAudioPlayback()
     private var requestTask: Task<Void, Never>?
 
     func speak(_ text: String) {
@@ -150,11 +150,7 @@ private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPl
                     return
                 }
                 guard !Task.isCancelled else { return }
-                let player = try AVAudioPlayer(data: audio)
-                player.delegate = self
-                self?.player = player
-                player.prepareToPlay()
-                player.play()
+                try await playback.playOnce(audio)
             } catch {
                 // Deliberately no system speech fallback: the voice is either
                 // GPT-Realtime-2.1 or silent with a visible setup state.
@@ -165,8 +161,9 @@ private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPl
     func stop() {
         requestTask?.cancel()
         requestTask = nil
-        player?.stop()
-        player = nil
+        Task { [playback] in
+            await playback.stop()
+        }
     }
 
     var isConfigured: Bool { realtimeProxyEndpoint != nil }

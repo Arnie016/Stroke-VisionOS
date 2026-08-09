@@ -413,6 +413,18 @@ realtime_runner = (ROOT / "Scripts" / "run_realtime_proxy.zsh").read_text()
 require('const MODEL = "gpt-realtime-2.1"' in realtime_proxy and 'body.model !== MODEL' in realtime_proxy, "Realtime proxy does not lock the requested model")
 require('response.output_audio.delta' in realtime_proxy and 'pcm16MonoToWAV' in realtime_proxy, "Realtime audio stream is not converted into app-playable WAV")
 require('AVSpeechSynthesizer' not in realtime_proxy and 'apikey get OPENAI_API_KEY' in realtime_runner, "Narration can fall back to system speech or bypass the keychain router")
+require(all(token in launch for token in (
+    "actor StrokeAudioPlayback",
+    "func playLoop(from url: URL, volume: Float)",
+    "func playOnce(_ data: Data) throws",
+    "audio.prepareToPlay()",
+    "await playback.playLoop",
+)), "prelude audio preparation is not isolated from the main actor")
+require(
+    "try await playback.playOnce(audio)" in immersive
+    and "AVAudioPlayerDelegate" not in immersive,
+    "Realtime narration still prepares or owns AVAudioPlayer on the main actor",
+)
 require(all(token in launch for token in ('--proof-realtime-narration', 'experience.audienceLens = .family', 'experience.setNarrationEnabled(true)')), "deterministic family Realtime playback route is missing")
 require(immersive.count("narrator.speak(") == 1 and all(token in immersive for token in (
     "private func synchronizeNarration()",
