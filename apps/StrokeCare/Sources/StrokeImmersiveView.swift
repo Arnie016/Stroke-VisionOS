@@ -3,21 +3,60 @@ import RealityKit
 import SwiftUI
 
 @MainActor
-private final class StrokeNarrationEngine: ObservableObject {
-    private let synthesizer = AVSpeechSynthesizer()
+private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate {
+    private static let model = "gpt-realtime-2.1"
+    private var player: AVAudioPlayer?
+    private var requestTask: Task<Void, Never>?
 
     func speak(_ text: String) {
-        synthesizer.stopSpeaking(at: .immediate)
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.rate = 0.46
-        utterance.pitchMultiplier = 0.98
-        utterance.preUtteranceDelay = 0.16
-        synthesizer.speak(utterance)
+        stop()
+        guard let endpoint = realtimeProxyEndpoint else { return }
+
+        requestTask = Task { [weak self] in
+            do {
+                var request = URLRequest(url: endpoint)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.timeoutInterval = 25
+                request.httpBody = try JSONEncoder().encode(
+                    RealtimeNarrationRequest(model: Self.model, text: text)
+                )
+                let (audio, response) = try await URLSession.shared.data(for: request)
+                guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+                    return
+                }
+                guard !Task.isCancelled else { return }
+                let player = try AVAudioPlayer(data: audio)
+                player.delegate = self
+                self?.player = player
+                player.prepareToPlay()
+                player.play()
+            } catch {
+                // Deliberately no system speech fallback: the voice is either
+                // GPT-Realtime-2.1 or silent with a visible setup state.
+            }
+        }
     }
 
     func stop() {
-        synthesizer.stopSpeaking(at: .immediate)
+        requestTask?.cancel()
+        requestTask = nil
+        player?.stop()
+        player = nil
     }
+
+    var isConfigured: Bool { realtimeProxyEndpoint != nil }
+
+    private var realtimeProxyEndpoint: URL? {
+        let environment = ProcessInfo.processInfo.environment["STROKE_REALTIME_PROXY_URL"]
+        let bundled = Bundle.main.object(forInfoDictionaryKey: "StrokeRealtimeProxyURL") as? String
+        return (environment ?? bundled).flatMap(URL.init(string:))
+    }
+}
+
+private struct RealtimeNarrationRequest: Encodable {
+    let model: String
+    let text: String
 }
 
 /// The room follows a visual-field rule of three.
@@ -57,7 +96,7 @@ struct StrokeImmersiveView: View {
     private let calmHorizonID = "stroke-calm-paper-horizon"
     private let questionMarkerID = "family-question-marker"
     private let caseDrawerID = "spatial-patient-drawer"
-    private let vesselFocusID = "vessel-focus-reticle"
+    private let lessonSpecimenRailID = "lesson-specimen-rail"
     private let cabinetLabelID = "spatial-case-cabinet-label"
     private let dockLabelID = "spatial-case-dock-label"
     private let hierarchySpineID = "spatial-hierarchy-spine"
@@ -138,10 +177,10 @@ struct StrokeImmersiveView: View {
                         content.add(drawer)
                     }
 
-                    if let focus = attachments.entity(for: vesselFocusID) {
-                        focus.name = vesselFocusID
-                        focus.components.set(BillboardComponent())
-                        content.add(focus)
+                    if let rail = attachments.entity(for: lessonSpecimenRailID) {
+                        rail.name = lessonSpecimenRailID
+                        rail.components.set(BillboardComponent())
+                        content.add(rail)
                     }
 
                     for id in [
@@ -239,14 +278,14 @@ struct StrokeImmersiveView: View {
                         drawer.isEnabled = false
                         drawer.components.set(BillboardComponent())
                     }
-                    if let focus = attachments.entity(for: vesselFocusID) {
-                        if focus.parent == nil {
-                            content.add(focus)
+                    if let rail = attachments.entity(for: lessonSpecimenRailID) {
+                        if rail.parent == nil {
+                            content.add(rail)
                         }
-                        focus.position = SpatialVisualField.primaryVesselFocus
-                        focus.scale = [0.52, 0.52, 0.52]
-                        focus.isEnabled = experience.spatialPhase == .explanation && experience.procedureStep != .chooseCase
-                        focus.components.set(BillboardComponent())
+                        rail.position = [-0.53, 1.53, -0.86]
+                        rail.scale = [0.62, 0.62, 0.62]
+                        rail.isEnabled = experience.spatialPhase == .explanation && experience.procedureStep != .chooseCase
+                        rail.components.set(BillboardComponent())
                     }
                     updateSpatialIntakeAttachments(attachments)
                     updateSpatialRoleControls(attachments, content: content)
@@ -268,10 +307,10 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                             .frame(width: 250)
                     }
-                    Attachment(id: vesselFocusID) {
-                        VesselFocusReticle()
+                    Attachment(id: lessonSpecimenRailID) {
+                        LessonSpecimenRail()
                             .environmentObject(experience)
-                            .frame(width: 170, height: 170)
+                            .frame(width: 420, height: 112)
                     }
                     Attachment(id: cabinetLabelID) {
                         spatialLabel("PATIENT FILES", systemImage: "cabinet.fill")
@@ -1189,47 +1228,56 @@ private struct SpatialPatientDrawer: View {
     }
 }
 
-private struct VesselFocusReticle: View {
+private struct LessonSpecimenRail: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
-        Button {
-            experience.toggleRegionPortal()
-        } label: {
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(experience.regionPortalActive ? 0.12 : 0.035))
-                Circle()
-                    .stroke(Color.orange.opacity(0.30), lineWidth: 2)
-                Circle()
-                    .trim(from: 0.08, to: experience.regionPortalActive ? 0.96 : 0.72)
-                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                    .rotationEffect(.degrees(experience.regionPortalActive ? 42 : -18))
-                Circle()
-                    .stroke(Color.orange.opacity(0.44), lineWidth: 1)
-                    .frame(width: 104, height: 104)
-                Image(systemName: experience.regionPortalActive ? "arrow.uturn.backward" : "arrow.down.right.and.arrow.up.left")
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.orange)
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 8) {
+                Image(systemName: experience.pointField.systemImage)
+                Text(experience.pointField == .procedure ? "VESSEL STORY" : "BRAIN ATLAS")
+                    .font(.caption.weight(.black))
+                    .tracking(1.1)
+                Spacer()
+                Text(experience.selectedPointLabel ?? "Choose a specimen")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
 
-                Text(portalTitle)
-                    .font(.caption2.weight(.black))
-                    .tracking(1.0)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 5)
-                    .background(.regularMaterial, in: Capsule())
-                    .offset(y: 58)
+            HStack(spacing: 10) {
+                ForEach(experience.pointField.lessonPoints) { point in
+                    let selected = experience.selectedPointEntityName == "\(experience.pointField.entityPrefix)\(point.index)"
+                    Button {
+                        experience.selectLessonPoint(point)
+                    } label: {
+                        VStack(spacing: 4) {
+                            ZStack {
+                                Circle()
+                                    .fill(selected ? Color.orange : Color.white.opacity(0.10))
+                                Image(systemName: experience.pointField == .procedure ? "waveform.path.ecg" : "circle.hexagongrid.fill")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(selected ? .black : .primary)
+                            }
+                            .frame(width: 34, height: 34)
+                            Text(point.shortTitle)
+                                .font(.caption2.weight(.semibold))
+                                .lineLimit(1)
+                        }
+                        .frame(minWidth: 58)
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .accessibilityLabel(point.fullTitle)
+                }
             }
         }
-        .buttonStyle(.plain)
-        .hoverEffect(.highlight)
-        .accessibilityLabel(experience.regionPortalActive ? "Return to the full brain" : "Enter the illustrative affected-region flow lesson")
-        .accessibilityHint("Changes the teaching viewpoint only")
-    }
-
-    private var portalTitle: String {
-        if experience.regionPortalActive { return "RETURN" }
-        return experience.audienceLens == .clinician ? "MAGNIFY" : "LOOK WITHIN"
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(.thinMaterial, in: Capsule())
+        .overlay(Capsule().stroke(Color.white.opacity(0.13), lineWidth: 1))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Anatomy specimen rail")
     }
 }
 

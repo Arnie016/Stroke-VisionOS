@@ -1308,6 +1308,10 @@ enum StrokeSceneFactory {
                 let phase = Float(time) * 0.85 + Float(index) * 0.42
                 let pulse = 0.96 + sin(phase) * 0.045
                 let isSelected = child.name == experience.selectedPointEntityName
+                // The rail is the index; the anatomy shows one precise focus.
+                // This avoids a cloud of unrelated floating markers while
+                // preserving direct gaze + pinch on the selected point.
+                child.isEnabled = isSelected || (experience.selectedPointEntityName == nil && index == 0)
                 let emphasis: Float = isSelected ? 1.85 : 1
                 child.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
                 point.model?.materials = [
@@ -1544,11 +1548,11 @@ enum StrokeSceneFactory {
             && experience.pointField == .procedure
         arrows.isEnabled = shouldShow
         if let registeredArrows = root.findEntity(named: registeredFlowArrowName) {
-            registeredArrows.isEnabled = shouldShow && !experience.requestedPause
-            let pulse = Float(0.96 + sin(time * 1.25) * 0.05)
-            for arrow in registeredArrows.children {
-                arrow.scale = [pulse * 1.55, pulse * 1.55, pulse * 1.55]
-            }
+            // These authored-frame glyphs read as detached vessel fragments
+            // around the imported brain. Keep them quarantined until their
+            // centreline registration is reviewed; the procedural arrows below
+            // remain constrained to the qualitative vessel path.
+            registeredArrows.isEnabled = false
         }
         guard shouldShow else { return }
 
