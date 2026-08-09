@@ -518,6 +518,33 @@ require("--proof-main-selected-point" in launch and "prepareTeachingImagingProof
 require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0042)" in scene and "selectedLessonPointMaterial" in scene, "regional lesson cloud is not visibly distinct around the main anatomy")
 require("selectLessonPoint(initialPoint)" not in state and "clearPointSelection()" in state, "lesson family still auto-selects a label instead of beginning dots-first")
 require("clotTarget.position = clotSurfaceMarker" in scene and 'clotBeacon.name = "registered-clot-focus-beacon"' in scene, "registered clot target is not visibly derived from the loaded clot surface")
+require(all(token in scene for token in (
+    'registeredPressureStoryName = "registered-pressure-story"',
+    'registeredPressureBlockageCueName = "registered-pressure-blockage-cue"',
+    'registeredPressureAffectedCueName = "registered-pressure-affected-tissue-cue"',
+    'registeredPressureSwellingCueName = "registered-pressure-swelling-cue"',
+    "let affectedSurfaceMarker = brainCenter + brainRadii * affectedDirection * 1.018",
+    "mesh: .generateCylinder(height: 0.0022, radius: 0.030)",
+    "for index in 0..<14",
+    "experience.procedureStep != .chooseCase",
+    "pressureStory?.isEnabled = showsPressureStory",
+)), "registered-frame blockage, affected-tissue, and constrained-swelling Pressure cues are incomplete")
+require(
+    "imported.findEntity(named: importedEdemaName)?.isEnabled = false" in scene
+    and "imported.findEntity(named: importedFlapName)?.isEnabled = false" in scene
+    and "imported.findEntity(named: importedPatchName)?.isEnabled = false" in scene,
+    "prototype-v1 pressure/open-cranial meshes escaped quarantine",
+)
+require(all(token in state for token in (
+    "prepareFamilyPressureStoryProof",
+    "prepareClinicianPressureStoryProof",
+    "pointField = .regions",
+    "clearPointSelection()",
+)), "family and clinician Pressure-story proof states are missing")
+require(all(token in launch for token in (
+    '"--proof-family-pressure-story"',
+    '"--proof-clinician-pressure-story"',
+)), "deterministic family/clinician Pressure-story routes are missing")
 require("experience.selectedPointEntityName != nil" in immersive and "selected.uppercased()" in immersive, "main explanation appears before point selection or fails to identify the selected target")
 require(all(token in state for token in (
     "The secondary reference is an outcome of selecting a teaching point",

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if (( $# != 4 )); then
-    print -u2 -- "usage: $0 <simulator-udid> <StrokeTime.app> <--proof-spatial-intake|--proof-pressure> <output.png>"
+    print -u2 -- "usage: $0 <simulator-udid> <StrokeTime.app> <proof-route> <output.png>"
     exit 64
 fi
 
@@ -16,10 +16,13 @@ readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
 
-if [[ "${PROOF_ROUTE}" != "--proof-spatial-intake" && "${PROOF_ROUTE}" != "--proof-pressure" ]]; then
-    print -u2 -- "SIMULATOR_PROOF=FAIL unsupported route ${PROOF_ROUTE}"
-    exit 64
-fi
+case "${PROOF_ROUTE}" in
+    --proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story) ;;
+    *)
+        print -u2 -- "SIMULATOR_PROOF=FAIL unsupported route ${PROOF_ROUTE}"
+        exit 64
+        ;;
+esac
 
 if [[ ! -d "${APP_PATH}" ]]; then
     print -u2 -- "SIMULATOR_PROOF=FAIL app bundle is missing: ${APP_PATH}"

@@ -518,6 +518,12 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-pressure") {
             experience.prepareProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-pressure-story") {
+            experience.prepareFamilyPressureStoryProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-pressure-story") {
+            experience.prepareClinicianPressureStoryProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-care-purpose") {
             experience.prepareProof(step: .discussCare)
             Task { await openProofSpace() }

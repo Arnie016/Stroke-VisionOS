@@ -93,6 +93,10 @@ enum StrokeSceneFactory {
     private static let ventriclesLayerName = "anatomy-ventricles-layer"
     private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
     private static let qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"
+    private static let registeredPressureStoryName = "registered-pressure-story"
+    private static let registeredPressureBlockageCueName = "registered-pressure-blockage-cue"
+    private static let registeredPressureAffectedCueName = "registered-pressure-affected-tissue-cue"
+    private static let registeredPressureSwellingCueName = "registered-pressure-swelling-cue"
     private static let fallbackReadinessNoticeName = "procedural-fallback-readiness-notice"
 
     /// The four same-frame assets required to tell the complete three-act
@@ -682,6 +686,11 @@ enum StrokeSceneFactory {
             let center = (bounds.min + bounds.max) / 2
             return SIMD3<Float>(center.x, center.y, bounds.max.z + 0.003)
         } ?? clotCenter
+        let clotToCortex = clotCenter - brainCenter
+        let affectedDirection: SIMD3<Float> = simd_length(clotToCortex) > 0.000_01
+            ? simd_normalize(clotToCortex)
+            : simd_normalize(SIMD3<Float>(0.55, 0.48, 0.62))
+        let affectedSurfaceMarker = brainCenter + brainRadii * affectedDirection * 1.018
         let registeredFlowPoints = procedurePointPositions.enumerated().map { index, position in
             // Keep the blockage marker 3 mm beyond the loaded clot surface so
             // it remains visibly attached instead of being hidden inside it.
@@ -735,10 +744,79 @@ enum StrokeSceneFactory {
         )
         clotBeacon.name = "registered-clot-focus-beacon"
         clotBeacon.components.set(OpacityComponent(opacity: 0.82))
-        clotTarget.addChild(clotBeacon)
+        let blockageCue = Entity()
+        blockageCue.name = registeredPressureBlockageCueName
+        blockageCue.addChild(clotBeacon)
+
+        let blockageHalo = ModelEntity(
+            mesh: .generateSphere(radius: 0.010),
+            materials: [warningMaterial(opacity: 0.16)]
+        )
+        blockageHalo.name = "registered-pressure-blockage-halo"
+        blockageCue.addChild(blockageHalo)
+        clotTarget.addChild(blockageCue)
         blockageLayer.addChild(clotTarget)
 
+        // The Pressure story stays in the same registered-v2 parent as the
+        // loaded anatomy, but its two tissue cues are explicitly qualitative.
+        // Their anchor is derived from the clot-to-cortex direction and the
+        // loaded brain bounds; it is not a segmented patient lesion or edema
+        // measurement. Morphology—not dense labels—keeps the meanings apart:
+        // a filled amber disc marks affected tissue, while the wider dashed
+        // mint boundary communicates constrained swelling inside fixed space.
+        let pressureStory = makeRegisteredPressureStory(
+            affectedSurfaceMarker: affectedSurfaceMarker,
+            affectedDirection: affectedDirection
+        )
+        pressureStory.isEnabled = false
+        registered.addChild(pressureStory)
+
         return imported
+    }
+
+    private static func makeRegisteredPressureStory(
+        affectedSurfaceMarker: SIMD3<Float>,
+        affectedDirection: SIMD3<Float>
+    ) -> Entity {
+        let story = Entity()
+        story.name = registeredPressureStoryName
+
+        let affected = Entity()
+        affected.name = registeredPressureAffectedCueName
+        affected.position = affectedSurfaceMarker
+        affected.orientation = simd_quatf(from: [0, 1, 0], to: affectedDirection)
+
+        let tissueDisc = ModelEntity(
+            mesh: .generateCylinder(height: 0.0022, radius: 0.030),
+            materials: [warningMaterial(opacity: 0.30)]
+        )
+        tissueDisc.name = "registered-pressure-affected-tissue-disc"
+        tissueDisc.scale = [1.18, 1, 0.82]
+        affected.addChild(tissueDisc)
+        story.addChild(affected)
+
+        let swelling = Entity()
+        swelling.name = registeredPressureSwellingCueName
+        swelling.position = affectedSurfaceMarker + affectedDirection * 0.004
+        swelling.orientation = simd_quatf(from: [0, 1, 0], to: affectedDirection)
+
+        let dashMesh = MeshResource.generateBox(
+            size: [0.010, 0.0020, 0.0024],
+            cornerRadius: 0.001
+        )
+        for index in 0..<14 {
+            let angle = Float(index) / 14 * 2 * Float.pi
+            let dash = ModelEntity(
+                mesh: dashMesh,
+                materials: [careMaterial(opacity: 0.74)]
+            )
+            dash.name = "registered-pressure-swelling-dash-\(index)"
+            dash.position = [cos(angle) * 0.045, 0.003, sin(angle) * 0.035]
+            dash.orientation = simd_quatf(angle: -angle, axis: [0, 1, 0])
+            swelling.addChild(dash)
+        }
+        story.addChild(swelling)
+        return story
     }
 
     private static func semanticLayerName(for assetName: String) -> String {
@@ -1809,6 +1887,7 @@ enum StrokeSceneFactory {
         let authoredBloodflowLayer = imported.findEntity(named: authoredBloodflowLayerName)
         let qualitativeFlowOverlayLayer = imported.findEntity(named: qualitativeFlowOverlayLayerName)
         let clotTarget = imported.findEntity(named: importedClotTargetName)
+        let pressureStory = imported.findEntity(named: registeredPressureStoryName)
 
         approach(cortexLayer, [-0.050 * separation, 0, 0])
         approach(regionPointAnchor, [-0.050 * separation, 0, 0])
@@ -1838,6 +1917,9 @@ enum StrokeSceneFactory {
         // or selected catalog record immediately restores the normal assembly.
         let importedSkull = imported.findEntity(named: importedSkullName)
         let isolateScholarSkull = experience.isClinicianScholarSkullInspectionActive && importedSkull != nil
+        let showsPressureStory = experience.spatialPhase == .explanation &&
+            experience.procedureStep != .chooseCase &&
+            !isolateScholarSkull
         // The normal clinician explanation may reveal the already-bundled skull
         // as a separated spatial reference while the cortex remains central.
         // A direct transparent overlap produced depth-sorting that hid cortical
@@ -1926,9 +2008,19 @@ enum StrokeSceneFactory {
 
         // This small beacon marks the exact registered clot-derived target. It
         // is a focus affordance, not a simulated lesion volume or outcome.
-        clotTarget?.isEnabled = !isolateScholarSkull && experience.procedureStep != .chooseCase
+        pressureStory?.isEnabled = showsPressureStory
+        clotTarget?.isEnabled = showsPressureStory
+        let motionTime = experience.requestedPause || reduceMotion ? 0 : time
+        if let affectedCue = pressureStory?.findEntity(named: registeredPressureAffectedCueName) {
+            let breath = Float(1 + sin(motionTime * 0.82) * 0.012)
+            affectedCue.scale = [breath, breath, breath]
+        }
+        if let swellingCue = pressureStory?.findEntity(named: registeredPressureSwellingCueName) {
+            let boundaryBreath = Float(1 + sin(motionTime * 0.62) * 0.024)
+            swellingCue.scale = [boundaryBreath, boundaryBreath, boundaryBreath]
+        }
         if let clotBeacon = clotTarget?.findEntity(named: "registered-clot-focus-beacon") {
-            let pulse = Float(1.0 + sin(time * 1.4) * 0.10)
+            let pulse = Float(1.0 + sin(motionTime * 1.4) * 0.10)
             clotBeacon.scale = [pulse, pulse, pulse]
         }
 

@@ -1549,6 +1549,26 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
     }
 
+    func prepareFamilyPressureStoryProof() {
+        prepareProof(step: .inspectOcclusion)
+        environmentMode = .surroundings
+        pointField = .regions
+        lessonPointsVisible = true
+        spatialZoom = 1.24
+        clearPointSelection()
+    }
+
+    func prepareClinicianPressureStoryProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        environmentMode = .surroundings
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.58
+        pointField = .regions
+        lessonPointsVisible = true
+        spatialZoom = 1.24
+        clearPointSelection()
+    }
+
     func prepareClinicianSixBeatTimelineProof() {
         prepareClinicianProof(step: .discussCare)
         environmentMode = .surroundings
