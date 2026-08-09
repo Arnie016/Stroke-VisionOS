@@ -248,3 +248,22 @@
   `0.6 (7)` installed.
 - Next safe action: wear and unlock XCAT, then install and foreground-launch the
   already signed build 8 and query its running process once.
+
+## 2026-08-09 16:45 SGT — XCAT build 8 installation
+
+- Target: move the merged main Stroke Care build from a signed Mac artifact to
+  the physical XCAT device without overstating launch or wearer evidence.
+- Bounded action: reran the guarded deployment from `main`; after one transient
+  disconnect, confirmed the signed app installed as `Stroke Care 0.6 (8)`.
+- Evidence: the physical visionOS build and deep code-sign checks passed; the
+  install command reported `App installed`; a separate installed-app query
+  returned version `0.6`, bundle version `8`. The normal launch produced no
+  running process, and the deterministic launch timed out after 15 seconds
+  while XCAT reported `passcodeRequired: true`. Receipt:
+  `Proof/xcat/20260809-164319/INSTALL_ONLY.md`.
+- Verdict: `IMPROVED` — the current main build is on XCAT, one evidence rung
+  beyond the previous signed-only gate.
+- Blocker: foreground activation and process existence remain unproved until
+  the wearer unlocks XCAT; wearer and clinical observations remain separate.
+- Next safe action: wear and unlock XCAT, then foreground-launch build 8 once
+  and query the running `StrokeTime` process.
