@@ -88,14 +88,24 @@ require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e
 require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
 require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
-require(len(declared_usdz_paths) == 14 and len(set(declared_usdz_paths)) == 14 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly fourteen unique explicit USDZ resources")
+require(len(declared_usdz_paths) == 15 and len(set(declared_usdz_paths)) == 15 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly fifteen unique explicit USDZ resources")
+require(
+    len({Path(path).name for path in declared_usdz_paths}) == 15
+    and all((ROOT / path).resolve().exists() for path in declared_usdz_paths),
+    "every explicit USDZ resource must exist and have a unique bundle basename",
+)
 require(all(name in project_yml for name in (
     "brain_deep_structures_v2.usdz",
     "brain_ventricles_v2.usdz",
     "cerebral_bloodflow_animation_v2.usdz",
     "dural_sinuses_jugulars_realistic_v2.usdz",
-)), "four reviewed-frame detail assets are not declared in the app bundle")
-require("dural_sinuses_jugulars_realistic_v2" in catalog and "fourteen resources" in catalog, "registered-v2 venous reference is not recorded in the explicit bundle catalog")
+    "circle_of_willis_flow_overlay_v2.usdz",
+)), "five reviewed-frame detail assets are not declared in the app bundle")
+require(all(token in catalog for token in (
+    "dural_sinuses_jugulars_realistic_v2",
+    "circle_of_willis_flow_overlay_v2",
+    "fifteen resources",
+)), "registered-v2 venous or qualitative flow reference is not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
 require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
@@ -155,12 +165,16 @@ require(all(token in scene for token in (
     'importedDeepStructuresName = "brain_deep_structures_v2"',
     'importedVentriclesName = "brain_ventricles_v2"',
     'importedBloodflowName = "cerebral_bloodflow_animation_v2"',
+    'importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"',
+    'qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"',
     "startAuthoredBloodflowAnimations",
     "animation.repeat()",
     "experience.pointField == .regions",
     'hasPrefix(\n                "clinician-procedure-point-field-point-"',
     "experience.requestedPause || reduceMotion",
-    "qualitative authored motion—not CFD",
+    "qualitative teaching cues—not CFD",
+    "qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow",
+    "procedure-point selection",
 )), "registered detail layers are not role/lesson/pause gated or recursively animated")
 require(all(token in scene for token in (
     'importedVenousName = "dural_sinuses_jugulars_realistic_v2"',
@@ -187,7 +201,7 @@ require(all(color in immersive for color in (
     "Color(red: 0.65, green: 0.63, blue: 0.85)",
     "Color(red: 0.95, green: 0.48, blue: 0.29)",
 )), "Figma-derived cool-to-warm three-act timeline palette is missing")
-require("Deep structures · ventricles · generic anatomy · review pending" in state and "Authored blood flow · qualitative · not CFD" in state, "clinician detail boundaries are not visible")
+require("Deep structures · ventricles · generic anatomy · review pending" in state and "Flow overlay + authored markers · qualitative · not CFD" in state, "clinician detail boundaries are not visible")
 require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "PressureBed" in immersive, "entity-anchored spatial audio is missing")
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
@@ -372,7 +386,7 @@ require("134 unique USDZ assets" in asset_triage and all(name in asset_triage fo
     "brain_deep_structures_v2",
     "brain_ventricles_v2",
     "cerebral_bloodflow_animation_v2",
-)), "expanded asset catalog is not triaged separately from the fourteen-file runtime slice")
+)), "expanded asset catalog is not triaged separately from the fifteen-file runtime slice")
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -476,6 +490,7 @@ require(all(token in immersive for token in (
     '"Generic anatomy · not a patient scan"',
     '"Registered-v2 teaching asset · review pending"',
     '"FROM POINT · \\(selectedPointLabel.uppercased())"',
+    '"DIRECTION CUE · QUALITATIVE · NOT CFD"',
 )), "right-side teaching reference lacks role-safe selected-point captions")
 require(all(token in immersive for token in (
     "StrokeScholarReferenceRail",
@@ -534,7 +549,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=FOURTEEN_ASSET_STAGED_SLICE")
+print("github_asset_runtime=FIFTEEN_ASSET_STAGED_SLICE")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")
 print("physical_device=NOT_PROVEN")

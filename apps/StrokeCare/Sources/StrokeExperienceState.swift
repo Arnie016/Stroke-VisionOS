@@ -1140,7 +1140,7 @@ final class StrokeExperienceState: ObservableObject {
         }
         if pointField == .procedure,
            selectedPointEntityName?.hasPrefix("clinician-procedure-point-field-point-") == true {
-            return "Authored blood flow · qualitative · not CFD"
+            return "Flow overlay + authored markers · qualitative · not CFD"
         }
         if anatomyPresentation == .transparent {
             return "Cortex · vessels · separated skull reference"

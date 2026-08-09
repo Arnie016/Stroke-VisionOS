@@ -22,3 +22,8 @@ registration, terminology, and patient-facing use require specialist review.
 
 Project asset manifest: vision_pro_stroke_kit_v2 /
 asset_manifest_cranial_vascular_v2.json, version 0.4.0-cranial-vascular.
+
+The project-authored Circle-of-Willis overlay is conceptual teaching geometry.
+Its coral/gold route lines, arrows, brightness, and spacing are qualitative—not
+CFD, a patient measurement, or evidence of flow speed, pressure, perfusion,
+collateral circulation, treatment response, or outcome.

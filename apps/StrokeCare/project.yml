@@ -7,7 +7,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     MARKETING_VERSION: "0.6"
-    CURRENT_PROJECT_VERSION: "14"
+    CURRENT_PROJECT_VERSION: "15"
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: VV6YGTA587
 targets:
@@ -38,6 +38,8 @@ targets:
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_ventricles_v2.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_bloodflow_animation_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/circle_of_willis_flow_overlay_v2.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/edema_swelling.usdz
         buildPhase: resources

@@ -34,6 +34,7 @@
 		CECA5EDE58ADB678673F208A /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E2573F23F677A6A203F5EFA /* THIRD_PARTY_NOTICES.txt */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
+		E27697BF4448281573658419 /* circle_of_willis_flow_overlay_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */; };
 		F35080EB0A3184483D874359 /* PressureBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = AD36F9CDA16675FE73F438E6 /* PressureBed.wav */; };
 		F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */; };
 /* End PBXBuildFile section */
@@ -62,6 +63,7 @@
 		B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoryTimelineView.swift; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
+		C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = circle_of_willis_flow_overlay_v2.usdz; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
 		D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeEvidenceWorkspaceView.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				0CE81704BF9499FA5FEBCA60 /* brain_ventricles_v2.usdz */,
 				7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */,
 				4DCA91CA49F7E270C5C9AD1B /* cerebral_bloodflow_animation_v2.usdz */,
+				C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */,
 				4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */,
 				3173F69C23E7838AD8B6FF4C /* dural_sinuses_jugulars_realistic_v2.usdz */,
 				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
@@ -228,6 +231,7 @@
 				20371A9349F1E4107A5026E8 /* brain_ventricles_v2.usdz in Resources */,
 				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
 				44DD9315D7655FD2CD86D1D2 /* cerebral_bloodflow_animation_v2.usdz in Resources */,
+				E27697BF4448281573658419 /* circle_of_willis_flow_overlay_v2.usdz in Resources */,
 				12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */,
 				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
 				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
@@ -337,7 +341,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -397,7 +401,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

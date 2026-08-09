@@ -590,3 +590,24 @@
 - Next safe action: when XCAT is awake and unlocked, pinch Side B and Bottom
   once each and verify that brain, vessels, skull reference, and lesson points
   remain attached throughout the transition.
+
+## 2026-08-10 02:40 SGT — selected-point registered flow direction
+
+- Target: make flow direction visible on the detailed registered arterial model
+  without loading the mixed-frame 134-asset catalog or presenting CFD.
+- Bounded action: added the same-frame Circle-of-Willis flow overlay, kept it
+  behind a deliberate Blood-flow point selection, added a visible qualitative /
+  not-CFD boundary, regenerated the project, and increased the build to
+  `0.6 (15)`.
+- Evidence: strict ARKit USD validation passed; contract and diff checks passed;
+  the OS 26.5 Simulator build succeeded; the built app contains exactly 15 USDZ
+  files; clean proof 75 is 3840×2160 with SHA-256
+  `86887fccc6df7f760c306783e535dd6b2a364f6a18104016e2020bce2f6841d8`.
+- Verdict: `IMPROVED` — the selected Blood-flow lesson now reveals authored
+  same-frame route lines and direction chevrons on the registered artery model.
+- Blocker: XCAT is unavailable; Simulator cannot prove motion quality, point
+  targeting, stereo depth, AirPlay readability, specialist meaning, or clinical
+  validity.
+- Next safe action: on an awake XCAT, select the Blood-flow blockage point once
+  and verify that the directional overlay remains registered, readable, and
+  subordinate to the central anatomy during orbit and viewpoint changes.

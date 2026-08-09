@@ -30,6 +30,7 @@ enum StrokeSceneFactory {
     private static let importedDeepStructuresName = "brain_deep_structures_v2"
     private static let importedVentriclesName = "brain_ventricles_v2"
     private static let importedBloodflowName = "cerebral_bloodflow_animation_v2"
+    private static let importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"
     private static let importedEdemaName = "edema_swelling"
     private static let importedFlapName = "craniotomy_bone_flap"
     private static let importedPatchName = "dural_patch"
@@ -85,6 +86,7 @@ enum StrokeSceneFactory {
     private static let deepStructuresLayerName = "anatomy-deep-structures-layer"
     private static let ventriclesLayerName = "anatomy-ventricles-layer"
     private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
+    private static let qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"
 
     /// Retaining the playback controllers lets the global Pause control freeze
     /// the imported four-second teaching loop rather than making it disappear.
@@ -563,7 +565,8 @@ enum StrokeSceneFactory {
             importedDuraName,
             importedDeepStructuresName,
             importedVentriclesName,
-            importedBloodflowName
+            importedBloodflowName,
+            importedFlowOverlayName
         ] {
             if let entity = await loadBundledUSDZ(named: name) {
                 entity.name = name
@@ -576,7 +579,8 @@ enum StrokeSceneFactory {
                     importedVenousName,
                     importedDeepStructuresName,
                     importedVentriclesName,
-                    importedBloodflowName
+                    importedBloodflowName,
+                    importedFlowOverlayName
                 ].contains(name) {
                     // These detail layers are opt-in clinician references, so
                     // they never flash over the family anatomy while loading.
@@ -716,6 +720,8 @@ enum StrokeSceneFactory {
             ventriclesLayerName
         case importedBloodflowName:
             authoredBloodflowLayerName
+        case importedFlowOverlayName:
+            qualitativeFlowOverlayLayerName
         default:
             "anatomy-context-layer"
         }
@@ -1666,6 +1672,7 @@ enum StrokeSceneFactory {
         let deepStructuresLayer = imported.findEntity(named: deepStructuresLayerName)
         let ventriclesLayer = imported.findEntity(named: ventriclesLayerName)
         let authoredBloodflowLayer = imported.findEntity(named: authoredBloodflowLayerName)
+        let qualitativeFlowOverlayLayer = imported.findEntity(named: qualitativeFlowOverlayLayerName)
         let clotTarget = imported.findEntity(named: importedClotTargetName)
 
         approach(cortexLayer, [-0.050 * separation, 0, 0])
@@ -1738,12 +1745,13 @@ enum StrokeSceneFactory {
         deepStructuresLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.96 : 0))
         ventriclesLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.88 : 0))
 
-        // The baked four-second route is qualitative authored motion—not CFD,
-        // perfusion, velocity, or a patient measurement. It appears only when
-        // the clinician deliberately chooses the Blood flow lesson. Pause and
-        // Reduce Motion freeze the imported tracks at their current state.
+        // The baked four-second route and the registered Circle-of-Willis
+        // overlay are qualitative teaching cues—not CFD, perfusion, velocity,
+        // or a patient measurement. They appear only after a deliberate
+        // procedure-point selection. The static overlay supplies authored
+        // direction chevrons without reconnecting the rejected room-space
+        // arrows; Pause and Reduce Motion freeze only the animated markers.
         let showsAuthoredBloodflow = experience.spatialPhase == .explanation &&
-            experience.audienceLens == .clinician &&
             experience.lessonPointsVisible &&
             experience.pointField == .procedure &&
             experience.selectedPointEntityName?.hasPrefix(
@@ -1751,6 +1759,10 @@ enum StrokeSceneFactory {
             ) == true &&
             experience.procedureStep != .chooseCase &&
             !isolateScholarSkull
+        qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow
+        qualitativeFlowOverlayLayer?.components.set(
+            OpacityComponent(opacity: showsAuthoredBloodflow ? 0.90 : 0)
+        )
         updateAuthoredBloodflowPlayback(
             layer: authoredBloodflowLayer,
             isVisible: showsAuthoredBloodflow,

@@ -305,7 +305,7 @@ enum StrokeAssetCatalog {
         )
     ]
 
-    /// These fourteen resources are explicitly listed in project.yml. The
+    /// These fifteen resources are explicitly listed in project.yml. The
     /// static catalog itself still adds no implicit bundle membership.
     private static let existingProjectBundleIDs: Set<String> = [
         "brain_anatomy_realistic_v2",
@@ -317,6 +317,7 @@ enum StrokeAssetCatalog {
         "brain_deep_structures_v2",
         "brain_ventricles_v2",
         "cerebral_bloodflow_animation_v2",
+        "circle_of_willis_flow_overlay_v2",
         "edema_swelling",
         "craniotomy_bone_flap",
         "dural_patch",

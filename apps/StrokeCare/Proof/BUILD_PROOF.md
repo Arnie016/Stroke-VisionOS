@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (14)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (15)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -490,3 +490,31 @@ The receipt proves Simulator render state and visible control selection only.
 XCAT remained `unavailable`; wearer targetability, depth comfort, AirPlay
 legibility, anatomical orientation, specialist review, and clinical validity
 remain unproven.
+
+## 2026-08-10 02:40 SGT — registered qualitative arterial-flow overlay
+
+Build `0.6 (15)` adds `circle_of_willis_flow_overlay_v2.usdz` to the bounded
+runtime slice. The file is 475,177 bytes, contains 10,392 triangles, has SHA-256
+`7aa5442f0d8eb6a1fb14b8b8f046c39040501c7df41589f554f1d8d90f845e7a`,
+and passed `/usr/bin/usdchecker --arkit --strict`. Its authored frame matches
+the existing registered-v2 head assembly. It is enabled only after a deliberate
+Blood-flow procedure-point selection, and the visible teaching boundary says
+`DIRECTION CUE · QUALITATIVE · NOT CFD`. The detached generated arrow root
+remains disabled.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, XcodeGen regenerated the project, and the OS 26.5
+visionOS Simulator Debug build at `/tmp/strokecare-flow-overlay-build` exited
+successfully. The built `0.6 (15)` app is 51 MB and contains exactly 15 unique
+top-level USDZ files plus `THIRD_PARTY_NOTICES.txt`; its executable SHA-256 is
+`ed8ee93daff5870e92f324cdc64638f6e6d076419d6bdc4229a7c2b50d58dbee`.
+
+After rebooting the Simulator to remove a stale competing immersive scene, the
+deterministic `--proof-procedure-field` route produced
+`Proof/75-registered-flow-overlay-simulator.png` at 3840×2160 with SHA-256
+`86887fccc6df7f760c306783e535dd6b2a364f6a18104016e2020bce2f6841d8`.
+This is Simulator composition proof only. It does not establish animation
+quality, XCAT visibility, gaze-and-pinch reliability, stereo depth, AirPlay
+legibility, wearer comfort, arterial/venous meaning, specialist review, or
+clinical validity. The 134-item repository catalog remains an inventory, not
+134 bundled, registered, visible, or approved runtime assets.

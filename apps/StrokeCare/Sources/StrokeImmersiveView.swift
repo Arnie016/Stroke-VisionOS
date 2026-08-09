@@ -1606,6 +1606,13 @@ private struct StrokeTeachingImagingDrawer: View {
             Text(referenceBoundary)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.68))
+
+            if experience.pointField == .procedure {
+                Text("DIRECTION CUE · QUALITATIVE · NOT CFD")
+                    .font(.caption2.monospaced().weight(.semibold))
+                    .tracking(0.35)
+                    .foregroundStyle(.orange.opacity(0.76))
+            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)

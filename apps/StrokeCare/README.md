@@ -23,6 +23,15 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (15)` adds a same-frame, registered-v2 Circle-of-Willis teaching
+overlay to the deliberately selected Blood-flow point. Coral/gold route lines
+and authored direction chevrons stay attached to the central arterial model;
+the adjacent teaching caption states that the cue is qualitative and **not
+CFD**. It is hidden until a point is selected and does not claim patient flow,
+velocity, perfusion, collateral circulation, or treatment effect.
+
+![Registered qualitative flow overlay in visionOS Simulator](Proof/75-registered-flow-overlay-simulator.png)
+
 Doctor-presenter mode now maps the Page 2 procedure story into six compact,
 revisitable checkpoints: **Confirm context**, **Discuss access**, **Protective
 covering**, **Explain purpose**, **Team checks**, and **Explain closure**. The
@@ -123,8 +132,8 @@ tear away from the brain.
 - The default immersive path loads the exact PR #2 registered-v2 brain,
   cerebral arteries, right-M1 teaching marker, conceptual dura, semantic skull,
   deep structures, ventricles, and conceptual cerebral-flow animation from the
-  canonical repository asset catalog. The app declares a bounded **14-USDZ**
-  slice: nine registered-v2 anatomy/teaching files, three quarantined v1 files,
+  canonical repository asset catalog. The app declares a bounded **15-USDZ**
+  slice: ten registered-v2 anatomy/teaching files, three quarantined v1 files,
   and two presenter-only tool files. The wider audited GitHub catalog contains
   134 manifest-backed candidates; they are not all loaded into one scene.
   Authored child transforms are not
