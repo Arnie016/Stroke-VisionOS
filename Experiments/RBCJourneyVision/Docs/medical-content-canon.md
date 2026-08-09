@@ -184,6 +184,14 @@ not specialist review and does not make the app clinical software.
 - UI limit: Locate, X-ray, and Flow reveal the same stable surrounding corridor.
   The app does not move a camera, infer a region from eye gaze, or present the
   one-piece imported deep-structure source as semantic brainstem anatomy.
+- Voyage limit: Converge, Bridge, and Choose progressively emphasize existing
+  vertebral/basilar, small pontine, cerebellar, and posterior-cerebral route
+  families. The transform is a spatial storytelling device, not anatomical
+  motion. Teal and violet outer halos distinguish the two user-selectable
+  destination families; those colors do not encode oxygenation, vessel type,
+  measured flow, dominance, territory, or pathology. Selecting Cerebellum or
+  Visual cortex opens a separate generic destination through the normal
+  threshold and does not claim that one route supplies a complete region.
 
 ## Review status
 

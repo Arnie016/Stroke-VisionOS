@@ -354,6 +354,71 @@ struct RBCRegionInfoHUD: View {
                     .buttonBorderShape(.capsule)
                 }
 
+                if brainstemActive && model.regionVisualization == .flow {
+                    if let voyagePhase = model.posteriorVoyagePhase {
+                        VStack(alignment: .leading, spacing: 7) {
+                            HStack(spacing: 5) {
+                                ForEach(RBCPosteriorVoyagePhase.allCases) { phase in
+                                    Label(phase.shortTitle, systemImage: phase.rawValue <= voyagePhase.rawValue
+                                        ? "circle.inset.filled"
+                                        : "circle")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(phase.rawValue <= voyagePhase.rawValue
+                                            ? Color(red: 0.96, green: 0.48, blue: 0.34)
+                                            : .white.opacity(0.38))
+                                }
+                            }
+                            .accessibilityLabel("Posterior route step \(voyagePhase.rawValue + 1) of 3")
+
+                            HStack(spacing: 7) {
+                                if let nextTitle = voyagePhase.nextActionTitle {
+                                    Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
+                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                            model.advancePosteriorVoyage()
+                                        }
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.82, green: 0.19, blue: 0.25))
+                                    .accessibilityLabel("Continue the posterior circulation voyage")
+                                } else {
+                                    Button("Cerebellum", systemImage: "point.3.connected.trianglepath.dotted") {
+                                        model.choosePosteriorDestination(.cerebellum)
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.29, green: 0.65, blue: 0.62))
+                                    .accessibilityLabel("Open the cerebellar circulation destination")
+
+                                    Button("Visual cortex", systemImage: "eye.fill") {
+                                        model.choosePosteriorDestination(.occipitalLobe)
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.42, green: 0.38, blue: 0.82))
+                                    .accessibilityLabel("Open the posterior cerebral route to visual cortex")
+                                }
+
+                                Button("Leave route", systemImage: "arrow.uturn.backward") {
+                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                        model.stopPosteriorVoyage()
+                                    }
+                                }
+                                .buttonStyle(.bordered)
+                                .accessibilityLabel("Return to the complete brainstem flow view")
+                            }
+                            .buttonBorderShape(.capsule)
+                        }
+                    } else {
+                        Button("Follow posterior route", systemImage: "arrow.triangle.branch") {
+                            withAnimation(.easeInOut(duration: 0.42)) {
+                                model.startPosteriorVoyage()
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 0.82, green: 0.19, blue: 0.25))
+                        .buttonBorderShape(.capsule)
+                        .accessibilityLabel("Begin the three-step posterior circulation voyage")
+                    }
+                }
+
                 if region == .frontalLobe && model.regionVisualization == .flow {
                     HStack(spacing: 7) {
                         Button(
@@ -576,7 +641,7 @@ private struct RBCRegionModeButton: View {
         let selected = mode == model.regionVisualization
         Button {
             withAnimation(.easeInOut(duration: 0.28)) {
-                model.regionVisualization = mode
+                model.selectRegionVisualization(mode)
             }
         } label: {
             Label(mode.title, systemImage: mode.systemImage)

@@ -123,6 +123,10 @@ final class RBCJourneyScene {
     private var brainstemOutlineRoot: Entity?
     private var brainstemPathwayRoot: Entity?
     private var brainstemVesselRoot: Entity?
+    private let brainstemConvergenceRouteRoot = Entity()
+    private let brainstemCerebellarRouteRoot = Entity()
+    private let brainstemVisualRouteRoot = Entity()
+    private let brainstemPontineRouteRoot = Entity()
     private var brainstemDiscoveryTargets: [Entity] = []
     private var brainstemGuideStars: [(entity: ModelEntity, phase: Float)] = []
     private var brainstemFlowPaths: [[SIMD3<Float>]] = []
@@ -130,7 +134,22 @@ final class RBCJourneyScene {
     private var brainstemRuntimeActive = false
     private var brainstemRuntimeHeld = false
     private var brainstemRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var brainstemRuntimeVoyagePhase: RBCPosteriorVoyagePhase?
+    private var brainstemVoyageTransitionProgress: Float = 1
+    private var brainstemVoyageStartTransforms: [Transform] = []
+    private var brainstemVoyageTargetTransforms: [Transform] = []
+    private var brainstemVoyageStartOpacities: [Float] = [1, 1, 1, 1]
+    private var brainstemVoyageTargetOpacities: [Float] = [1, 1, 1, 1]
+    private var brainstemVoyageCurrentOpacities: [Float] = [1, 1, 1, 1]
     private var brainstemElapsed: Float = 0
+    private var brainstemVoyageRouteRoots: [Entity] {
+        [
+            brainstemConvergenceRouteRoot,
+            brainstemCerebellarRouteRoot,
+            brainstemVisualRouteRoot,
+            brainstemPontineRouteRoot,
+        ]
+    }
     private var regionTransferRings: [(
         entity: Entity,
         phase: Float,
@@ -320,6 +339,7 @@ final class RBCJourneyScene {
         regionVisualization: RBCRegionVisualizationMode,
         willisRouteFocus: RBCWillisRouteFocus,
         frontalClotScenarioActive: Bool,
+        posteriorVoyagePhase: RBCPosteriorVoyagePhase?,
         flowRideActive: Bool,
         flowRideRoute: RBCFlowRideRoute,
         capillaryFieldFocused: Bool,
@@ -428,6 +448,7 @@ final class RBCJourneyScene {
         updateBrainstemRegion(
             active: brainstemRegionActive,
             visualization: regionVisualization,
+            voyagePhase: posteriorVoyagePhase,
             motionHeld: motionHeld
         )
         updateWillisNetwork(
@@ -444,7 +465,9 @@ final class RBCJourneyScene {
             motionHeld: motionHeld
         )
         if let infoAttachment {
-            let target: SIMD3<Float> = if lumenRideActive && capillaryFieldFocused {
+            let target: SIMD3<Float> = if posteriorVoyagePhase != nil && brainstemRegionActive {
+                [0, 1.76, -0.70]
+            } else if lumenRideActive && capillaryFieldFocused {
                 [0, 1.78, -0.70]
             } else if lumenRideActive {
                 [0, 1.72, -0.70]
@@ -2432,6 +2455,13 @@ final class RBCJourneyScene {
         vesselRoot.name = "qualitative-vertebral-basilar-pica-aica-sca-pca-and-pontine-routes-not-fixed-territories"
         region.addChild(vesselRoot)
         brainstemVesselRoot = vesselRoot
+        brainstemConvergenceRouteRoot.name = "posterior-voyage-vertebral-to-basilar-convergence"
+        brainstemCerebellarRouteRoot.name = "posterior-voyage-cerebellar-route-family"
+        brainstemVisualRouteRoot.name = "posterior-voyage-posterior-cerebral-route-family"
+        brainstemPontineRouteRoot.name = "posterior-voyage-small-pontine-approaches"
+        for routeRoot in brainstemVoyageRouteRoots {
+            vesselRoot.addChild(routeRoot)
+        }
 
         let outlineMaterial = glowMaterial(
             color: UIColor(red: 0.44, green: 0.96, blue: 0.82, alpha: 0.82),
@@ -2654,6 +2684,22 @@ final class RBCJourneyScene {
             color: UIColor(red: 1.0, green: 0.21, blue: 0.13, alpha: 0.32),
             intensity: 1.25
         )
+        let cerebellarFlowCoreMaterial = glowMaterial(
+            color: UIColor(red: 0.22, green: 0.88, blue: 0.73, alpha: 0.38),
+            intensity: 1.65
+        )
+        let visualFlowCoreMaterial = glowMaterial(
+            color: UIColor(red: 0.56, green: 0.45, blue: 1.0, alpha: 0.40),
+            intensity: 1.75
+        )
+        let cerebellarRouteHaloMaterial = glowMaterial(
+            color: UIColor(red: 0.20, green: 0.88, blue: 0.72, alpha: 0.15),
+            intensity: 1.55
+        )
+        let visualRouteHaloMaterial = glowMaterial(
+            color: UIColor(red: 0.55, green: 0.42, blue: 1.0, alpha: 0.16),
+            intensity: 1.65
+        )
         let flowFrontMaterial = glowMaterial(
             color: UIColor(red: 1.0, green: 0.80, blue: 0.44, alpha: 0.98),
             intensity: 4.4
@@ -2661,6 +2707,22 @@ final class RBCJourneyScene {
         let flowWakeMaterial = glowMaterial(
             color: UIColor(red: 1.0, green: 0.38, blue: 0.17, alpha: 0.64),
             intensity: 2.0
+        )
+        let cerebellarFrontMaterial = glowMaterial(
+            color: UIColor(red: 0.56, green: 1.0, blue: 0.84, alpha: 0.98),
+            intensity: 4.5
+        )
+        let visualFrontMaterial = glowMaterial(
+            color: UIColor(red: 0.78, green: 0.70, blue: 1.0, alpha: 0.98),
+            intensity: 4.7
+        )
+        let cerebellarWakeMaterial = glowMaterial(
+            color: UIColor(red: 0.16, green: 0.70, blue: 0.62, alpha: 0.70),
+            intensity: 2.2
+        )
+        let visualWakeMaterial = glowMaterial(
+            color: UIColor(red: 0.42, green: 0.30, blue: 0.90, alpha: 0.72),
+            intensity: 2.3
         )
         typealias BrainstemPathSpec = (
             name: String,
@@ -2752,9 +2814,59 @@ final class RBCJourneyScene {
         let arrowWakeMesh = MeshResource.generateCylinder(height: 0.046, radius: 0.00115)
         for (pathIndex, spec) in vesselSpecs.enumerated() {
             brainstemFlowPaths.append(spec.points)
+            let routeParent: Entity = if spec.name.contains("pica")
+                || spec.name.contains("aica")
+                || spec.name.contains("sca") {
+                brainstemCerebellarRouteRoot
+            } else if spec.name.contains("posterior-cerebral") {
+                brainstemVisualRouteRoot
+            } else if spec.name.contains("pontine") {
+                brainstemPontineRouteRoot
+            } else {
+                brainstemConvergenceRouteRoot
+            }
+            let routeCoreMaterial: RealityKit.Material = if routeParent === brainstemCerebellarRouteRoot {
+                cerebellarFlowCoreMaterial
+            } else if routeParent === brainstemVisualRouteRoot {
+                visualFlowCoreMaterial
+            } else {
+                flowCoreMaterial
+            }
+            let routeFrontMaterial: RealityKit.Material = if routeParent === brainstemCerebellarRouteRoot {
+                cerebellarFrontMaterial
+            } else if routeParent === brainstemVisualRouteRoot {
+                visualFrontMaterial
+            } else {
+                flowFrontMaterial
+            }
+            let routeWakeMaterial: RealityKit.Material = if routeParent === brainstemCerebellarRouteRoot {
+                cerebellarWakeMaterial
+            } else if routeParent === brainstemVisualRouteRoot {
+                visualWakeMaterial
+            } else {
+                flowWakeMaterial
+            }
+            let routeHaloMaterial: RealityKit.Material? = if routeParent === brainstemCerebellarRouteRoot {
+                cerebellarRouteHaloMaterial
+            } else if routeParent === brainstemVisualRouteRoot {
+                visualRouteHaloMaterial
+            } else {
+                nil
+            }
+            if let routeHaloMaterial {
+                addContinuousTubePath(
+                    spec.points,
+                    to: routeParent,
+                    startRadius: spec.startRadius * 1.26,
+                    endRadius: spec.endRadius * 1.30,
+                    material: routeHaloMaterial,
+                    name: "brainstem-\(spec.name)-destination-teaching-halo-not-vessel-color",
+                    radialSegments: 12
+                )
+            }
             addContinuousTubePath(
                 spec.points,
-                to: vesselRoot,
+                to: routeParent,
                 startRadius: spec.startRadius,
                 endRadius: spec.endRadius,
                 material: vesselMaterial,
@@ -2763,29 +2875,29 @@ final class RBCJourneyScene {
             )
             addContinuousTubePath(
                 spec.points,
-                to: vesselRoot,
+                to: routeParent,
                 startRadius: spec.startRadius * 0.30,
                 endRadius: spec.endRadius * 0.32,
-                material: flowCoreMaterial,
+                material: routeCoreMaterial,
                 name: "brainstem-\(spec.name)-continuous-flow-core",
                 radialSegments: 8
             )
             for frontIndex in 0..<spec.fronts {
                 let front = Entity()
                 front.name = "brainstem-posterior-circulation-tangent-flow-front-\(spec.name)-\(frontIndex)"
-                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [routeFrontMaterial])
                 head.name = "brainstem-flow-front-arrowhead"
                 head.position.y = 0.025
-                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [routeFrontMaterial])
                 tail.name = "brainstem-flow-front-tail"
                 tail.position.y = -0.016
-                let wake = ModelEntity(mesh: arrowWakeMesh, materials: [flowWakeMaterial])
+                let wake = ModelEntity(mesh: arrowWakeMesh, materials: [routeWakeMaterial])
                 wake.name = "brainstem-flow-front-afterglow"
                 wake.position.y = -0.052
                 front.addChild(head)
                 front.addChild(tail)
                 front.addChild(wake)
-                vesselRoot.addChild(front)
+                routeParent.addChild(front)
                 brainstemFlowFronts.append((
                     front,
                     pathIndex,
@@ -2816,7 +2928,7 @@ final class RBCJourneyScene {
         regionInteriorRoot.addChild(region)
         regionInteriors[id] = region
         regionBaseScales[id] = region.scale
-        print("RBC_BRAINSTEM_OBSERVATORY=READY levels=3 broken_outline_arcs=9 environmental_wall_sheets=4 peripheral_ribs=16 longitudinal_guides=9 transverse_pons_guides=9 tegmental_points=72 arterial_paths=17 moving_fronts=23 registered_deep_context=true registered_vertebral_nodes=2")
+        print("RBC_BRAINSTEM_OBSERVATORY=READY levels=3 broken_outline_arcs=9 environmental_wall_sheets=4 peripheral_ribs=16 longitudinal_guides=9 transverse_pons_guides=9 tegmental_points=72 arterial_paths=17 moving_fronts=23 voyage_route_groups=4 destination_route_halos=8 registered_deep_context=true registered_vertebral_nodes=2")
     }
 
     private func makeBrainstemCorridorWallMesh(
@@ -4140,11 +4252,20 @@ final class RBCJourneyScene {
     private func updateBrainstemRegion(
         active: Bool,
         visualization: RBCRegionVisualizationMode,
+        voyagePhase: RBCPosteriorVoyagePhase?,
         motionHeld: Bool
     ) {
         brainstemRuntimeActive = active
         brainstemRuntimeHeld = motionHeld
         brainstemRuntimeVisualization = visualization
+        let requestedVoyagePhase = active && visualization == .flow ? voyagePhase : nil
+        if brainstemRuntimeVoyagePhase != requestedVoyagePhase {
+            configureBrainstemVoyageTransition(
+                to: requestedVoyagePhase,
+                motionHeld: motionHeld || !active
+            )
+            brainstemRuntimeVoyagePhase = requestedVoyagePhase
+        }
         guard active else {
             brainstemElapsed = 0
             return
@@ -4167,8 +4288,8 @@ final class RBCJourneyScene {
             vesselOpacity = 0.055
         case .flow:
             contextOpacity = 0.025
-            outlineOpacity = 0.085
-            pathwayOpacity = 0.13
+            outlineOpacity = requestedVoyagePhase == nil ? 0.085 : 0.050
+            pathwayOpacity = requestedVoyagePhase == nil ? 0.13 : 0.080
             vesselOpacity = 1.0
         }
         brainstemAuthoredContext?.components.set(OpacityComponent(opacity: contextOpacity))
@@ -4190,8 +4311,105 @@ final class RBCJourneyScene {
         guard brainstemRuntimeActive else { return }
         if !brainstemRuntimeHeld {
             brainstemElapsed += min(max(deltaTime, 0), 0.10)
+            brainstemVoyageTransitionProgress = min(
+                1,
+                brainstemVoyageTransitionProgress + min(max(deltaTime, 0), 0.10) / 1.10
+            )
         }
+        applyBrainstemVoyageComposition()
         applyBrainstemMotion()
+    }
+
+    private func configureBrainstemVoyageTransition(
+        to phase: RBCPosteriorVoyagePhase?,
+        motionHeld: Bool
+    ) {
+        let roots = brainstemVoyageRouteRoots
+        brainstemVoyageStartTransforms = roots.map(\.transform)
+        brainstemVoyageStartOpacities = brainstemVoyageCurrentOpacities
+        let layout = brainstemVoyageLayout(for: phase)
+        brainstemVoyageTargetTransforms = layout.transforms
+        brainstemVoyageTargetOpacities = layout.opacities
+        brainstemVoyageTransitionProgress = motionHeld ? 1 : 0
+        applyBrainstemVoyageComposition()
+    }
+
+    private func brainstemVoyageLayout(
+        for phase: RBCPosteriorVoyagePhase?
+    ) -> (transforms: [Transform], opacities: [Float]) {
+        func layoutTransform(
+            scale: Float = 1,
+            yaw: Float = 0,
+            translation: SIMD3<Float> = .zero
+        ) -> Transform {
+            Transform(
+                scale: SIMD3<Float>(repeating: scale),
+                rotation: simd_quatf(angle: yaw, axis: [0, 1, 0]),
+                translation: translation
+            )
+        }
+
+        switch phase {
+        case .convergence:
+            return (
+                [
+                    layoutTransform(scale: 1.18, yaw: -0.06, translation: [0, -0.06, 0.14]),
+                    layoutTransform(),
+                    layoutTransform(),
+                    layoutTransform(),
+                ],
+                [1.0, 0.06, 0.06, 0.12]
+            )
+        case .basilarBridge:
+            return (
+                [
+                    layoutTransform(scale: 1.32, yaw: -0.16, translation: [0.04, -0.18, 0.24]),
+                    layoutTransform(scale: 0.92),
+                    layoutTransform(scale: 0.92),
+                    layoutTransform(scale: 1.08, yaw: 0.12, translation: [-0.03, -0.03, 0.08]),
+                ],
+                [1.0, 0.08, 0.08, 0.44]
+            )
+        case .destinations:
+            return (
+                [
+                    layoutTransform(scale: 1.02, translation: [0, -0.02, 0.05]),
+                    layoutTransform(scale: 1.10, yaw: 0.10, translation: [-0.10, 0.02, 0.12]),
+                    layoutTransform(scale: 1.10, yaw: -0.10, translation: [0.10, 0.03, 0.11]),
+                    layoutTransform(),
+                ],
+                [0.38, 1.0, 1.0, 0.10]
+            )
+        case nil:
+            return (
+                [layoutTransform(), layoutTransform(), layoutTransform(), layoutTransform()],
+                [1.0, 1.0, 1.0, 1.0]
+            )
+        }
+    }
+
+    private func applyBrainstemVoyageComposition() {
+        let roots = brainstemVoyageRouteRoots
+        guard roots.count == brainstemVoyageStartTransforms.count,
+              roots.count == brainstemVoyageTargetTransforms.count,
+              roots.count == brainstemVoyageStartOpacities.count,
+              roots.count == brainstemVoyageTargetOpacities.count
+        else { return }
+        let rawProgress = min(max(brainstemVoyageTransitionProgress, 0), 1)
+        let progress = rawProgress * rawProgress * (3 - 2 * rawProgress)
+        for index in roots.indices {
+            let start = brainstemVoyageStartTransforms[index]
+            let target = brainstemVoyageTargetTransforms[index]
+            roots[index].transform = Transform(
+                scale: simd_mix(start.scale, target.scale, SIMD3<Float>(repeating: progress)),
+                rotation: simd_slerp(start.rotation, target.rotation, progress),
+                translation: simd_mix(start.translation, target.translation, SIMD3<Float>(repeating: progress))
+            )
+            let opacity = brainstemVoyageStartOpacities[index]
+                + (brainstemVoyageTargetOpacities[index] - brainstemVoyageStartOpacities[index]) * progress
+            brainstemVoyageCurrentOpacities[index] = opacity
+            roots[index].components.set(OpacityComponent(opacity: opacity))
+        }
     }
 
     private func applyBrainstemMotion() {

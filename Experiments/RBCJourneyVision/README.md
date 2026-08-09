@@ -215,6 +215,26 @@ pressure, perfusion, CFD, diagnosis, or treatment guidance. Use
 `--proof-region-9`, optionally followed by `--proof-region-mode-xray` or
 `--proof-region-mode-flow`, for deterministic Simulator review.
 
+### Follow the posterior route
+
+Brainstem **Flow** now offers one opt-in three-beat voyage: **Converge → Bridge
+→ Choose**. The first beat isolates the paired vertebral approaches and their
+meeting. The second brings the basilar trunk and small pontine approaches
+forward. The last recedes the trunk and reveals two user-controlled
+continuations: **Cerebellum** or **Visual cortex**. Choosing one uses the same
+spatial threshold as the Region Portal Reel; the app changes the surrounding
+world rather than moving a camera.
+
+The 17 existing arterial paths are reorganized into four semantic route roots,
+not duplicated. A 1.1-second smooth transform interpolates their position,
+scale, yaw, and opacity around the stationary observation origin. Eight faint
+teal or violet outer halos distinguish the two destination families; the
+arterial walls remain red, and the accent color is navigation—not anatomy,
+oxygenation, measured flow, or territory. At the decision beat only the two
+destinations and **Leave route** are offered, keeping the choice count at three.
+If the optional Family companion is enabled, it reads the exact visible title
+and explanation for each beat rather than generating a separate medical answer.
+
 ## Travel with the flow — arterial branch ride
 
 Frontal **Flow** now offers one opt-in **Enter this branch** action. The wearer
@@ -479,6 +499,8 @@ The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 The region reel uses `--proof-region-0` through `--proof-region-9` for its ten
 single-active-region states. Add `--proof-region-mode-xray` or
 `--proof-region-mode-flow` to deterministically select an observatory reading.
+The posterior voyage uses `--proof-posterior-voyage-convergence`,
+`--proof-posterior-voyage-bridge`, and `--proof-posterior-voyage-choice`.
 Use `--proof-region-transition-7
 --proof-region-transition-progress-55` to hold the Cortical layers threshold at
 55 percent without committing the destination. Add `--proof-frontal-clot` to

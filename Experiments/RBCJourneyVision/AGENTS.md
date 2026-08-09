@@ -41,6 +41,12 @@ video cannot.
   tangent fronts. The combined imported source is dim relational context—not
   segmentation, histology, nuclei mapping, tractography, fixed territory, CFD,
   or patient anatomy.
+- Posterior voyage: only from Brainstem Flow, and only by explicit action.
+  Converge → Bridge → Choose smoothly recomposes four existing route families
+  around the stationary wearer. The final beat offers Cerebellum, Visual
+  cortex, and Leave route—never more than three choices. Teal/violet halos are
+  navigation accents around red arterial walls, not anatomy or oxygenation.
+  Destination selection must reuse the normal region-threshold handoff.
 - Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an

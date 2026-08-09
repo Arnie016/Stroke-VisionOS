@@ -453,6 +453,60 @@ enum RBCRegionVisualizationMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum RBCPosteriorVoyagePhase: Int, CaseIterable, Identifiable {
+    case convergence
+    case basilarBridge
+    case destinations
+
+    var id: Int { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .convergence: "Converge"
+        case .basilarBridge: "Bridge"
+        case .destinations: "Choose"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .convergence: "Two routes approach"
+        case .basilarBridge: "Inside the basilar bridge"
+        case .destinations: "Where should the route continue?"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .convergence:
+            "The paired vertebral approaches lift from either side and meet below the pons. The world gathers around you; your viewpoint remains still."
+        case .basilarBridge:
+            "The single basilar trunk now carries the lesson upward along the pons. Small pontine approaches remain visible without assigning a fixed territory."
+        case .destinations:
+            "Posterior circulation continues toward both cerebellar routes and posterior cerebral routes. Open one destination only when you are ready."
+        }
+    }
+
+    var fact: String {
+        switch self {
+        case .convergence:
+            "The paired vertebral arteries join to form the basilar artery near the lower border of the pons."
+        case .basilarBridge:
+            "The basilar artery gives rise to pontine and cerebellar branches before ending as the posterior cerebral arteries."
+        case .destinations:
+            "These two choices teach connected routes, not fixed territories, measured flow, or an individual's anatomy."
+        }
+    }
+
+    var nextActionTitle: String? {
+        switch self {
+        case .convergence: "Reach the bridge"
+        case .basilarBridge: "Open destinations"
+        case .destinations: nil
+        }
+    }
+}
+
 enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
     case overview
     case frontal
@@ -665,6 +719,7 @@ final class RBCJourneyModel {
     var regionVisualization: RBCRegionVisualizationMode
     var willisRouteFocus: RBCWillisRouteFocus
     var flowRideRoute: RBCFlowRideRoute = .overview
+    var posteriorVoyagePhase: RBCPosteriorVoyagePhase?
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
     var isCapillaryFieldFocused = false
@@ -745,6 +800,15 @@ final class RBCJourneyModel {
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
+        let posteriorVoyageProofPhase: RBCPosteriorVoyagePhase? = if arguments.contains("--proof-posterior-voyage-bridge") {
+            .basilarBridge
+        } else if arguments.contains("--proof-posterior-voyage-choice") {
+            .destinations
+        } else if arguments.contains("--proof-posterior-voyage-convergence") {
+            .convergence
+        } else {
+            nil
+        }
         let familyGuideProofRequested = arguments.contains("--proof-family-guide")
         let regionFamilyCompanionProofRequested = arguments.contains("--proof-region-family-companion")
         let familyGuideBeatArgument = arguments.first { $0.hasPrefix("--proof-family-guide-beat-") }
@@ -755,12 +819,16 @@ final class RBCJourneyModel {
             nil
         } else if flowRideProofRequested {
             .arterialLumen
+        } else if posteriorVoyageProofPhase != nil {
+            .brainstem
         } else if willisRouteProofRequested || regionFamilyCompanionProofRequested {
             .circleOfWillis
         } else {
             regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
         }
-        regionVisualization = if arguments.contains("--proof-region-mode-xray") {
+        regionVisualization = if posteriorVoyageProofPhase != nil {
+            .flow
+        } else if arguments.contains("--proof-region-mode-xray") {
             .xray
         } else if arguments.contains("--proof-region-mode-flow") {
             .flow
@@ -785,6 +853,7 @@ final class RBCJourneyModel {
             .overview
         }
         isCapillaryFieldFocused = capillaryFocusProofRequested
+        posteriorVoyagePhase = posteriorVoyageProofPhase
         familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationMoment = familyGuideBeatIndex
@@ -866,6 +935,7 @@ final class RBCJourneyModel {
             || familyGuideBeatArgument != nil
             || flowRideProofRequested
             || capillaryFocusProofRequested
+            || posteriorVoyageProofPhase != nil
             || initialFocus != nil
             || initialTransfer != nil
     }
@@ -973,7 +1043,7 @@ final class RBCJourneyModel {
     var activeWillisFact: String { willisRouteFocus.fact }
 
     var activeCerebellumTitle: String {
-        switch regionVisualization {
+        return switch regionVisualization {
         case .locate: "A folded world behind the brain"
         case .xray: "The tree inside the folds"
         case .flow: "Three routes from posterior circulation"
@@ -981,7 +1051,7 @@ final class RBCJourneyModel {
     }
 
     var activeCerebellumSubtitle: String {
-        switch regionVisualization {
+        return switch regionVisualization {
         case .locate:
             "The two cerebellar hemispheres and their midline vermis surround you as a constellation of repeated folds, posterior and inferior to the cerebrum."
         case .xray:
@@ -992,7 +1062,7 @@ final class RBCJourneyModel {
     }
 
     var activeCerebellumFact: String {
-        switch regionVisualization {
+        return switch regionVisualization {
         case .locate:
             "The cerebellum lies behind the brainstem and below the posterior cerebrum."
         case .xray:
@@ -1063,7 +1133,8 @@ final class RBCJourneyModel {
     }
 
     var activeBrainstemTitle: String {
-        switch regionVisualization {
+        if let posteriorVoyagePhase { return posteriorVoyagePhase.title }
+        return switch regionVisualization {
         case .locate: "The bridge beneath the brain"
         case .xray: "Three levels, many pathways"
         case .flow: "Two vertebral routes become one"
@@ -1071,7 +1142,8 @@ final class RBCJourneyModel {
     }
 
     var activeBrainstemSubtitle: String {
-        switch regionVisualization {
+        if let posteriorVoyagePhase { return posteriorVoyagePhase.subtitle }
+        return switch regionVisualization {
         case .locate:
             "Midbrain, pons, and medulla form one continuous vertical passage between the cerebrum and spinal cord, with the cerebellum behind. Broken contours keep all three levels legible without claiming segmentation."
         case .xray:
@@ -1082,7 +1154,8 @@ final class RBCJourneyModel {
     }
 
     var activeBrainstemFact: String {
-        switch regionVisualization {
+        if let posteriorVoyagePhase { return posteriorVoyagePhase.fact }
+        return switch regionVisualization {
         case .locate:
             "The brainstem comprises the midbrain, pons, and medulla and connects the cerebrum with the spinal cord and cerebellum."
         case .xray:
@@ -1224,6 +1297,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         exhibitBeat = .route
         station = exhibitBeat.station
@@ -1242,6 +1316,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
         isPaused = true
@@ -1264,6 +1339,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
         isPaused = false
@@ -1283,6 +1359,7 @@ final class RBCJourneyModel {
         willisRouteFocus = .overview
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         isPaused = destination == .arterialLumen || destination == .corticalExchange
         isExhibitFactExpanded = false
     }
@@ -1298,6 +1375,7 @@ final class RBCJourneyModel {
         regionTransferRun += 1
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         isPaused = false
         isExhibitFactExpanded = false
@@ -1331,6 +1409,7 @@ final class RBCJourneyModel {
         }
         if regionVisualization != .flow {
             isFrontalClotScenarioActive = false
+            posteriorVoyagePhase = nil
         }
         isPaused = false
     }
@@ -1347,6 +1426,49 @@ final class RBCJourneyModel {
         isPaused = false
     }
 
+    func selectRegionVisualization(_ mode: RBCRegionVisualizationMode) {
+        regionVisualization = mode
+        if mode != .flow {
+            isFrontalClotScenarioActive = false
+            posteriorVoyagePhase = nil
+        }
+        isPaused = false
+    }
+
+    func startPosteriorVoyage() {
+        guard activeRegionDestination == .brainstem,
+              pendingRegionDestination == nil
+        else { return }
+        regionVisualization = .flow
+        posteriorVoyagePhase = .convergence
+        isPaused = false
+    }
+
+    func advancePosteriorVoyage() {
+        guard let posteriorVoyagePhase else { return }
+        switch posteriorVoyagePhase {
+        case .convergence:
+            self.posteriorVoyagePhase = .basilarBridge
+        case .basilarBridge:
+            self.posteriorVoyagePhase = .destinations
+        case .destinations:
+            break
+        }
+        isPaused = false
+    }
+
+    func choosePosteriorDestination(_ destination: RBCBrainRegionDestination) {
+        guard posteriorVoyagePhase == .destinations,
+              destination == .cerebellum || destination == .occipitalLobe
+        else { return }
+        requestRegion(destination)
+    }
+
+    func stopPosteriorVoyage() {
+        posteriorVoyagePhase = nil
+        isPaused = false
+    }
+
     func startFlowRide() {
         experienceMode = .regionAtlas
         activeRegionDestination = .arterialLumen
@@ -1357,6 +1479,7 @@ final class RBCJourneyModel {
         regionVisualization = .flow
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
+        posteriorVoyagePhase = nil
         flowRideRoute = .overview
         isCapillaryFieldFocused = false
         familyNarrationMoment = .orientation
@@ -1374,6 +1497,7 @@ final class RBCJourneyModel {
         transferredPortalID = RBCBrainRegionDestination.frontalLobe.id
         regionVisualization = .flow
         isFlowRideActive = false
+        posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         familyNarrationEnabled = false
         familyNarrationMoment = .orientation

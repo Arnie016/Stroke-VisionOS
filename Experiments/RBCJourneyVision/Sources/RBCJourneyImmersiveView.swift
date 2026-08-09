@@ -53,6 +53,7 @@ struct RBCJourneyImmersiveView: View {
                     regionVisualization: model.regionVisualization,
                     willisRouteFocus: model.willisRouteFocus,
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
+                    posteriorVoyagePhase: model.posteriorVoyagePhase,
                     flowRideActive: model.isFlowRideActive,
                     flowRideRoute: model.flowRideRoute,
                     capillaryFieldFocused: model.isCapillaryFieldFocused,
