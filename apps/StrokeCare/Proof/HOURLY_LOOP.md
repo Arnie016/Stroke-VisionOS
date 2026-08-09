@@ -700,3 +700,28 @@
 - Next safe action: on an awake and unlocked XCAT, run build 18 and confirm the
   amber aperture, moving protective cover, and mint room boundary remain
   co-located and legible from the default family viewpoint.
+
+## 2026-08-10 04:37 SGT — nonblocking audio preparation
+
+- Target: GitHub issue #31; remove synchronous `AVAudioPlayer` construction and
+  preparation from the main actor before the three-minute judged demo.
+- Bounded action: introduced one isolated `StrokeAudioPlayback` actor shared by
+  the ambient prelude and family-only GPT-Realtime-2.1 narration; moved player
+  construction, `prepareToPlay`, play, and stop onto that actor; raised the
+  review candidate to `0.6 (19)` in source commit `ffd49c1`.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded; build `0.6 (19)` installed with 15 USDZ resources and
+  remained alive as PID 71948 after an eight-second observation window; its
+  executable SHA-256 is
+  `aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`;
+  the focused 45-second process query returned `HANG_MATCHES=0` while audio
+  preparation ran on a non-main executor. The exact XCAT gate is
+  `Proof/xcat/20260810-043035/BLOCKED.md`.
+- Verdict: `IMPROVED` — the known blocking preparation path no longer executes
+  on the main actor, while the authored prelude and GPT-only narration boundary
+  remain unchanged.
+- Blocker: the Realtime proxy was not configured for this Simulator pass, XCAT
+  is unavailable, and interruption/replay quality on hardware is not proven.
+- Next safe action: on an awake XCAT with the existing Realtime proxy configured,
+  run one family narration play → pause → resume → exit cycle and retain the
+  device log plus wearer-observed continuity result.

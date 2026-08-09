@@ -648,3 +648,27 @@ the exact reachability receipt is
 Wearer targetability, stereo depth, AirPlay legibility, motion quality,
 comprehension, specialist registration review, and clinical validity remain
 unproven.
+
+## 2026-08-10 04:37 SGT — audio lifecycle isolation
+
+Build `0.6 (19)` moves the ambient prelude and family-only GPT-Realtime-2.1
+player lifecycle to `StrokeAudioPlayback`, an isolated actor. Player creation,
+`prepareToPlay`, playback, and teardown no longer execute on the main actor.
+Doctor-presenter mode remains silent; no system-speech fallback was added.
+The reviewed source change is commit `ffd49c1`.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-audio-actor-19` succeeded. A clean default launch ran as PID
+71948 and remained alive after the eight-second observation window. The built
+executable SHA-256 is
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`, and
+the installed review app contains 15 USDZ resources. A focused 45-second
+`log show` query covering launch and audio preparation returned
+`HANG_MATCHES=0`. Simulator audio-service diagnostics are not evidence of
+device playback quality.
+
+XCAT remained `unavailable`; the reachability receipt is
+`Proof/xcat/20260810-043035/BLOCKED.md` (ignored local machine evidence).
+Realtime proxy playback, interruption handling, hardware continuity, wearer
+perception, AirPlay audio, and clinical validity remain unproven.
