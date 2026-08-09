@@ -8,12 +8,15 @@ Run from `apps/StrokeCare`:
 Scripts/deploy_xcat.zsh
 ```
 
-The command stops before building or installing unless XCAT is reachable. A
-successful run creates a dated folder under `Proof/xcat/` containing the signed
-build log, install receipt, installed-app query, foreground-launch receipt, and
-running-process query. It launches the deterministic `--hackathon-demo` route
-so the wearer starts at the prelude and follows the complete 0.6 flow. It also
-creates `WEARER_RESULT.md` with every human field set to `NOT RUN`.
+Every run creates a local dated folder under `Proof/xcat/`. An unavailable run
+writes `BLOCKED.md`, the exact device-list JSON, and a one-line device state;
+it explicitly records that build, install, launch, wearer, and clinical checks
+were not run. If XCAT is reachable, the same guarded command continues through
+the signed build log, install receipt, installed-app query, foreground-launch
+receipt, and running-process query. It launches the deterministic
+`--hackathon-demo` route so the wearer starts at the prelude and follows the
+complete 0.6 flow. It also creates `WEARER_RESULT.md` with every human field set
+to `NOT RUN`.
 
 ## Wearer gate
 

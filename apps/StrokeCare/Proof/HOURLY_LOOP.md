@@ -32,6 +32,25 @@
 - Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
   rerun `Scripts/deploy_xcat.zsh` once.
 
+## 2026-08-09 10:38 SGT — durable unavailable-device receipt
+
+- Target: preserve an authoritative machine record when XCAT is unreachable
+  without mistaking that record for physical app execution.
+- Bounded action: updated `Scripts/deploy_xcat.zsh` so every run writes the
+  exact device JSON, one-line state, and a dated `BLOCKED.md` before exiting on
+  an unavailable tunnel. Local receipt contents are ignored by Git.
+- Evidence: test run created
+  `Proof/xcat/20260809-103545/BLOCKED.md` with `tunnelState=unavailable`,
+  `pairingState=paired`, `ddiServicesAvailable=false`, and explicit `NO` values
+  for build, install, and foreground launch. The contract and narrow visionOS
+  Simulator build passed.
+- Verdict: `IMPROVED` — a failed reachability attempt now has durable evidence
+  while the device, wearer, and clinical proof boundaries remain intact.
+- Blocker: XCAT 0.6 install, foreground launch, wearer observations, and the
+  `SC-AIS-001.4` clinician decision remain unproven.
+- Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
+  rerun `Scripts/deploy_xcat.zsh` once.
+
 ## 2026-08-09 10:26 SGT — conditional Make space wording
 
 - Target: preserve the mechanical purpose of Act 3 without implying that an

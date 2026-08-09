@@ -164,6 +164,7 @@ require("determine eligibility" in clinical_packet and "does not show treatment 
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
 require("BRAIN_REVEAL_RIG" in houdini_builder and "OCCLUSION_RADIUS_PROFILE" in houdini_builder, "stroke Houdini graph builder is missing")
 require("XCAT_DEPLOY=BLOCKED" in xcat_deploy and "XCAT_DEPLOY=PASS" in xcat_deploy, "guarded XCAT deployment receipt is missing")
+require("BLOCKED.md" in xcat_deploy and "device-list.json" in xcat_deploy and "Tunnel state:" in xcat_deploy, "blocked XCAT reachability does not create a dated machine receipt")
 require("Install command: PASS" in xcat_deploy and "Running-process query: PASS" in xcat_deploy, "XCAT machine evidence ladder is incomplete")
 require("--hackathon-demo" in xcat_deploy and "-derivedDataPath" in xcat_deploy and "WEARER_RESULT.md" in xcat_deploy and "NOT RUN" in xcat_deploy, "XCAT launch is not tied to the complete deterministic wearer route and receipt")
 require("LEGIBILITY" in xcat_acceptance and "GESTURE" in xcat_acceptance and "COMFORT" in xcat_acceptance and "COMPREHENSION" in xcat_acceptance, "XCAT wearer acceptance protocol is incomplete")
