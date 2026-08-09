@@ -13,18 +13,45 @@ readonly DERIVED_DATA_DIR="/tmp/stroke-care-xcat-derived-data"
 readonly APP_PATH="${DERIVED_DATA_DIR}/Build/Products/Debug-xros/StrokeTime.app"
 readonly RUN_ID="$(date '+%Y%m%d-%H%M%S')"
 readonly RECEIPT_DIR="${APP_ROOT}/Proof/xcat/${RUN_ID}"
+readonly DEVICE_JSON="${RECEIPT_DIR}/device-list.json"
+
+mkdir -p "${RECEIPT_DIR}"
+xcrun devicectl list devices --json-output "${DEVICE_JSON}" >/dev/null
 
 device_line="$(xcrun devicectl list devices | awk '$1 == "XCAT" { print; exit }')"
 print -r -- "${device_line}"
+print -r -- "${device_line}" > "${RECEIPT_DIR}/device-state.txt"
+
+tunnel_state="$(jq -r --arg id "${DEVICE_ID}" '.result.devices[] | select(.identifier == $id) | .connectionProperties.tunnelState // "unknown"' "${DEVICE_JSON}")"
+pairing_state="$(jq -r --arg id "${DEVICE_ID}" '.result.devices[] | select(.identifier == $id) | .connectionProperties.pairingState // "unknown"' "${DEVICE_JSON}")"
+ddi_services="$(jq -r --arg id "${DEVICE_ID}" '.result.devices[] | select(.identifier == $id) | .deviceProperties.ddiServicesAvailable // false' "${DEVICE_JSON}")"
+
+tunnel_state="${tunnel_state:-unknown}"
+pairing_state="${pairing_state:-unknown}"
+ddi_services="${ddi_services:-false}"
 
 if [[ -z "${device_line}" || "${device_line}" == *"unavailable"* ]]; then
-    print -u2 -- "XCAT_DEPLOY=BLOCKED device is not reachable"
+    cat > "${RECEIPT_DIR}/BLOCKED.md" <<EOF
+# XCAT deployment blocked
+
+- Timestamp: $(date '+%Y-%m-%d %H:%M:%S %Z')
+- Device: ${DEVICE_NAME} / ${DEVICE_ID}
+- State: unavailable
+- Tunnel state: ${tunnel_state}
+- Pairing state: ${pairing_state}
+- DDI services available: ${ddi_services}
+- Build attempted: NO
+- Install attempted: NO
+- Foreground launch attempted: NO
+- Wearer and clinical evidence: NOT RUN
+
+This is a reachability receipt only. It is not a build, install, launch,
+wearer, or clinical-validation receipt.
+EOF
+    print -u2 -- "XCAT_DEPLOY=BLOCKED receipt=${RECEIPT_DIR}/BLOCKED.md"
     print -u2 -- "Power on, wear, unlock, and keep XCAT near this Mac, then rerun."
     exit 2
 fi
-
-mkdir -p "${RECEIPT_DIR}"
-print -r -- "${device_line}" > "${RECEIPT_DIR}/device-state.txt"
 
 cd "${APP_ROOT}"
 

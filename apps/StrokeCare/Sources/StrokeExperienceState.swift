@@ -517,9 +517,9 @@ final class StrokeExperienceState: ObservableObject {
         case .chooseCase:
             "This model shows one severe stroke affecting one side of the brain."
         case .inspectOcclusion:
-            "Here, a large stroke causes swelling inside the fixed skull."
+            "In this severe stroke, swelling builds inside the fixed skull."
         case .discussCare:
-            "Surgery makes room for swelling. It cannot undo the stroke injury."
+            "Surgery can make room for swelling. It cannot undo the stroke injury."
         }
     }
 
