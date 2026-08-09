@@ -57,7 +57,10 @@ video cannot.
   halos and one broken warm aperture are navigation accents, never vessel
   color or patient registration. The final beat offers only Enter artery, Open
   frontal field, and Leave passage; both destinations reuse their established
-  fixed-wearer handoffs.
+  fixed-wearer handoffs. The warm aperture is a standard RealityKit target:
+  system hover plus one pinch enters the artery, while the labelled Enter
+  artery button remains the accessible and Simulator-safe equivalent. Never
+  read, store, or infer an eye-gaze vector for this interaction.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,

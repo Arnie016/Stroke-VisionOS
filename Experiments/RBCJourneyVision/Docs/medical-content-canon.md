@@ -21,8 +21,10 @@ not specialist review and does not make the app clinical software.
   patient, a complete branch atlas, collateral-flow prediction, measured
   vessel calibre, physiological timing, perfusion, pressure, CFD, territory,
   diagnosis, or treatment guidance. The three outer halos and broken warm
-  threshold encode navigation only. The world recomposes around a stationary
-  wearer; no anatomy or app camera moves the person through a vessel.
+  threshold encode navigation only. The threshold's system hover and pinch
+  target express user intent; they do not expose or retain an eye-gaze vector.
+  The world recomposes around a stationary wearer; no anatomy or app camera
+  moves the person through a vessel.
 
 ## Cerebral routes and microcirculation
 

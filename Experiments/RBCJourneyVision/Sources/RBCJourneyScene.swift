@@ -642,6 +642,17 @@ final class RBCJourneyScene {
         return false
     }
 
+    func isAnteriorPassageGatewayTarget(_ entity: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.name == "right-mca-entry-threshold-to-inhabited-arterial-lumen" {
+                return true
+            }
+            candidate = current.parent
+        }
+        return false
+    }
+
     func attachTimeline(_ entity: Entity) {
         guard entity.parent == nil else { return }
         entity.name = "journey-timeline-attachment"
@@ -3364,6 +3375,13 @@ final class RBCJourneyScene {
             }
             willisAnteriorGatewayRoot.addChild(contour)
         }
+        willisAnteriorGatewayRoot.components.set(InputTargetComponent(
+            allowedInputTypes: [.direct, .indirect]
+        ))
+        willisAnteriorGatewayRoot.components.set(CollisionComponent(shapes: [
+            .generateSphere(radius: 0.205),
+        ]))
+        willisAnteriorGatewayRoot.components.set(HoverEffectComponent())
         willisAnteriorGatewayRoot.isEnabled = false
     }
 

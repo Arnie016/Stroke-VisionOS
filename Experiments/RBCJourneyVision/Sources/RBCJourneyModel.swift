@@ -459,7 +459,7 @@ enum RBCAnteriorPassagePhase: Int, CaseIterable, Identifiable {
         case .circleCrossroads:
             "Anterior, middle-cerebral, and communicating paths meet in one connected teaching network. The crossings stay visible without claiming a universal collateral-flow direction."
         case .middleCerebralContinuation:
-            "One example right middle-cerebral route stays bright while the opposite side recedes as orientation context. Cross its living threshold to inhabit the artery, or open the frontal field around it."
+            "One example right middle-cerebral route stays bright while the opposite side recedes as orientation context. Look at its warm threshold and pinch to inhabit the artery, or open the frontal field around it."
         }
     }
 

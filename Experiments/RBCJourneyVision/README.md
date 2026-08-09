@@ -77,10 +77,14 @@ recompose the existing 26 paths instead of loading a second vessel model.
 
 Three faint coral navigation halos sit outside only the selected route's red
 arterial wall. At its continuation, a broken warm aperture pulses around the
-handoff to the existing inhabited arterial-lumen lesson. The final beat offers
-exactly **Enter artery**, **Open frontal field**, or **Leave passage**. Entering
-the artery reuses the established fixed-wearer lumen ride; opening the frontal
-field reuses the normal region threshold. The right-sided route is a teaching
+handoff to the existing inhabited arterial-lumen lesson. The aperture itself
+is a direct and indirect RealityKit input target: system hover confirms the
+focus, and one ordinary pinch enters the artery. The app never receives or
+stores an eye-gaze vector. The final beat also offers exactly **Enter artery**,
+**Open frontal field**, or **Leave passage**. Entering the artery reuses the
+established fixed-wearer lumen ride; opening the frontal field reuses the
+normal region threshold. **Enter artery** remains the accessible Simulator and
+motor fallback for the same action. The right-sided route is a teaching
 exemplar, not a patient-specific pathway, complete vascular atlas, measured
 flow, CFD, territory map, or recommendation.
 

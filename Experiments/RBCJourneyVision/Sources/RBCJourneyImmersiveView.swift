@@ -107,7 +107,9 @@ struct RBCJourneyImmersiveView: View {
                 TapGesture()
                     .targetedToAnyEntity()
                     .onEnded { value in
-                        if scene.isCapillaryFocusTarget(value.entity) {
+                        if scene.isAnteriorPassageGatewayTarget(value.entity) {
+                            model.chooseAnteriorDestination(.arterialLumen)
+                        } else if scene.isCapillaryFocusTarget(value.entity) {
                             model.toggleCapillaryFieldFocus()
                         } else if scene.isFrontalClotTarget(value.entity) {
                             model.toggleFrontalClotScenario()

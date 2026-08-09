@@ -166,6 +166,15 @@ checks = {
         "teaching exemplar, not a patient-specific pathway",
         "stationary wearer",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "spatial_anterior_gateway_activation": all(token in model + scene + hud + immersive + medical_canon + readme for token in [
+        "isAnteriorPassageGatewayTarget", "right-mca-entry-threshold-to-inhabited-arterial-lumen",
+        "InputTargetComponent", "allowedInputTypes: [.direct, .indirect]",
+        "CollisionComponent", ".generateSphere(radius: 0.205)", "HoverEffectComponent()",
+        "TapGesture()", ".targetedToAnyEntity()",
+        "model.chooseAnteriorDestination(.arterialLumen)",
+        "Look at its warm threshold and pinch", "system hover", "Enter artery",
+        "motor fallback", "do not expose or retain an eye-gaze vector",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "spatial_entry_prologue": all(token in model + hud + immersive + scene for token in [
         "RBCEntryPreludeChapter", "Entering the brain.", "No region works alone.",
         "A blockage changes more than one point.", "Follow one route.",
