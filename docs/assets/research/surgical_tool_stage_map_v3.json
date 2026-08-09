@@ -1,0 +1,364 @@
+{
+  "schema_version": "1.0.0",
+  "audit_date": "2026-08-08",
+  "status": "EDUCATIONAL_WORKFLOW_AUDIT_REQUIRES_SPECIALIST_REVIEW",
+  "baseline": {
+    "build_record_count": 110,
+    "prototype_v1": 29,
+    "realistic_v2": 36,
+    "intracranial_detail_v3": 45,
+    "license_held_in_baseline": 2,
+    "tool_candidate_records_not_in_baseline": 26,
+    "note": "The 12 EVT and 14 open-cranial candidate IDs were reported by parallel builders after the 110-record baseline snapshot; this map does not certify their geometry, validation, or release status."
+  },
+  "global_contract": {
+    "intended_use": "generic patient education and design review only",
+    "patient_specific": false,
+    "device_specific": false,
+    "meters_per_unit": 1,
+    "up_axis": "Y",
+    "allowed_physics": ["static", "authored_kinematic"],
+    "prohibited_uses": [
+      "diagnosis",
+      "EVT eligibility determination",
+      "treatment planning",
+      "surgical planning",
+      "navigation",
+      "device selection",
+      "device sizing",
+      "compatibility determination",
+      "operative training",
+      "competency assessment",
+      "outcome prediction"
+    ],
+    "persistent_warnings": [
+      "Generic educational geometry — not patient or device specific",
+      "Static/kinematic illustration — not validated procedural physics",
+      "Magnified close-up"
+    ]
+  },
+  "branches": {
+    "ischemic_evt": {
+      "title": "Endovascular mechanical thrombectomy",
+      "clinical_gate": "clinician_selected_ischemic_evt",
+      "canonical_root": "/World/ProcedureTools/Endovascular",
+      "ordinary_evt_has_craniotomy": false,
+      "ordinary_evt_has_head_dressing": false,
+      "stages": [
+        {
+          "id": "EVT-00_SELECTION",
+          "parent": "/World/ProcedureTools/Endovascular",
+          "existing": ["vital_sign_monitor"],
+          "candidate": [],
+          "deactivate": ["all_invasive_tools", "OpenCranialRoot"],
+          "claim_boundary": "No automated eligibility decision"
+        },
+        {
+          "id": "EVT-01_SUITE_SETUP",
+          "parent": "/World/Environment",
+          "existing": ["patient_supine_generic", "angiography_operating_table", "angiography_c_arm", "vital_sign_monitor", "clinical_team_generic"],
+          "candidate": ["sterile_endovascular_instrument_tray_educational_v3", "angiography_suite_controls_educational_v3"],
+          "deactivate": ["OpenCranialRoot"],
+          "claim_boundary": "No sterile-pack completeness, dose, equipment-clearance, or commercial-console claim"
+        },
+        {
+          "id": "EVT-02_ARTERIAL_ACCESS",
+          "parent": "/World/ProcedureTools/Endovascular/AccessSupport",
+          "existing": ["arterial_access_site"],
+          "candidate": ["vascular_access_needle_educational_v3", "vascular_access_wire_educational_v3", "introducer_sheath_dilator_set_educational_v3"],
+          "deactivate": ["intracranial_retrieval_action", "OpenCranialRoot"],
+          "claim_boundary": "No required access site, gauge, French size, angle, depth, side, or compatibility"
+        },
+        {
+          "id": "EVT-03_GUIDE_ACCESS",
+          "parent": "/World/ProcedureTools/Endovascular/GuideSupport",
+          "existing": ["catheter_body_to_brain_route"],
+          "candidate": ["guide_catheter_hemostatic_valve_educational_v3", "torque_device_y_connector_accessories_educational_v3"],
+          "deactivate": ["clot_engagement_action", "OpenCranialRoot"],
+          "claim_boundary": "No anatomical centerline, connector compatibility, coating, trackability, or flow-control performance"
+        },
+        {
+          "id": "EVT-04_BASELINE_ANGIOGRAPHY",
+          "parent": "/World/ProcedureTools/Endovascular/ImagingSupport",
+          "existing": ["angiography_c_arm", "angiography_contrast_flow"],
+          "candidate": ["contrast_manifold_syringe_flush_educational_v3", "angiography_suite_controls_educational_v3"],
+          "deactivate": ["retrieval_action"],
+          "claim_boundary": "No contrast agent/dose/pressure/flow/timing, perfusion, radiation, or diagnostic claim"
+        },
+        {
+          "id": "EVT-05_DISTAL_DELIVERY",
+          "parent": "/World/ProcedureTools/Endovascular/Delivery",
+          "existing": ["guidewire_educational_v2", "microcatheter_educational_v2", "guidewire_microcatheter_set"],
+          "candidate": ["guide_catheter_hemostatic_valve_educational_v3", "torque_device_y_connector_accessories_educational_v3"],
+          "deactivate": ["retrieval_action_until_variant_selected"],
+          "claim_boundary": "Kinematic route only; no wall contact, force, perforation, dissection, or safe-path claim"
+        },
+        {
+          "id": "EVT-06A_STENT_RETRIEVER",
+          "parent": "/World/ProcedureTools/Endovascular/Retrieval",
+          "existing": ["stent_retriever_educational_v2", "stent_retriever"],
+          "candidate": ["guide_catheter_hemostatic_valve_educational_v3"],
+          "deactivate": ["aspiration_only_action", "OpenCranialRoot"],
+          "claim_boundary": "No radial force, clot integration, pass success, compatibility, or outcome claim"
+        },
+        {
+          "id": "EVT-06B_CONTACT_ASPIRATION",
+          "parent": "/World/ProcedureTools/Endovascular/Retrieval",
+          "existing": ["aspiration_catheter_educational_v2", "aspiration_catheter"],
+          "candidate": ["aspiration_pump_canister_tubing_educational_v3", "guide_catheter_hemostatic_valve_educational_v3"],
+          "deactivate": ["stent_retriever_action", "OpenCranialRoot"],
+          "claim_boundary": "No pressure, vacuum, flow, clot mechanics, compatible-system, or efficacy claim"
+        },
+        {
+          "id": "EVT-06C_COMBINED",
+          "parent": "/World/ProcedureTools/Endovascular/Retrieval",
+          "existing": ["stent_retriever_educational_v2", "aspiration_catheter_educational_v2"],
+          "candidate": ["aspiration_pump_canister_tubing_educational_v3", "guide_catheter_hemostatic_valve_educational_v3"],
+          "deactivate": ["unreviewed_simultaneous_device_timing", "OpenCranialRoot"],
+          "claim_boundary": "Explicit reviewed variant only; no compatibility, superiority, or timing inference"
+        },
+        {
+          "id": "EVT-07_VERIFICATION",
+          "parent": "/World/ProcedureTools/Endovascular/ImagingSupport",
+          "existing": ["angiography_contrast_flow", "cerebral_bloodflow_animation_v2"],
+          "candidate": ["contrast_manifold_syringe_flush_educational_v3", "angiography_suite_controls_educational_v3"],
+          "deactivate": ["clot_engagement_closeup", "retrieval_action"],
+          "claim_boundary": "No automatic reperfusion score or outcome claim"
+        },
+        {
+          "id": "EVT-08_WITHDRAWAL_HEMOSTASIS",
+          "parent": "/World/ProcedureTools/Endovascular/AccessHemostasis",
+          "existing": ["arterial_access_site"],
+          "candidate": ["puncture_site_hemostasis_options_educational_v3"],
+          "deactivate": ["all_intracranial_device_instances", "OpenCranialRoot"],
+          "claim_boundary": "No closure-device, compression-time, ambulation, or complication claim"
+        },
+        {
+          "id": "EVT-09_POST_PROCEDURE",
+          "parent": "/World/Environment",
+          "existing": ["vital_sign_monitor", "patient_supine_generic"],
+          "candidate": [],
+          "deactivate": ["OpenCranialRoot", "postoperative_head_dressing", "optional_evd_system", "all_active_procedure_tools"],
+          "claim_boundary": "Ordinary EVT has no craniotomy, EVD, or head dressing"
+        }
+      ],
+      "technique_variant_set": {
+        "name": "evtTechnique",
+        "values": ["none", "stentRetriever", "contactAspiration", "combined"],
+        "mutually_exclusive": true
+      }
+    },
+    "open_cranial_hemorrhage": {
+      "title": "Conditional open-cranial hemorrhage/decompression",
+      "clinical_gate": "clinician_selected_hemorrhage_or_decompression",
+      "canonical_root": "/World/OpenCranial",
+      "default_loaded": false,
+      "stages": [
+        {
+          "id": "OPEN-00_SELECTION",
+          "parent": "/World/OpenCranial",
+          "existing": ["ich_hematoma", "edema_swelling"],
+          "candidate": [],
+          "deactivate": ["all_open_tools", "EndovascularToolRoot"],
+          "claim_boundary": "Generic hematoma geometry cannot select surgery"
+        },
+        {
+          "id": "OPEN-01_POSITION_PREP",
+          "parent": "/World/OpenCranial/Positioning",
+          "existing": ["patient_supine_generic", "angiography_operating_table", "clinical_team_generic"],
+          "candidate": ["surface_marking_ruler_set_open_neurosurgery_v3"],
+          "deactivate": ["EndovascularToolRoot"],
+          "claim_boundary": "No head-fixation force, pin placement, surface measurement, or suitability claim"
+        },
+        {
+          "id": "OPEN-02_SCALP_EXPOSURE",
+          "parent": "/World/OpenCranial/Exposure",
+          "existing": ["scalp_incision_flap"],
+          "candidate": ["scalpel_dissector_set_open_neurosurgery_v3", "scalp_retractor_hemostat_set_open_neurosurgery_v3"],
+          "deactivate": ["bone_cutting_action", "dural_action", "EndovascularToolRoot"],
+          "claim_boundary": "Non-graphic tool recognition only; no incision, tissue plane, force, clip count, or sequence instruction"
+        },
+        {
+          "id": "OPEN-03_BONE_ACCESS",
+          "parent": "/World/OpenCranial/BoneAccess",
+          "existing": ["cranial_drill_generic", "craniotomy_bone_flap"],
+          "candidate": ["perforator_craniotome_system_open_neurosurgery_v3", "cranial_access_tools_review_assembly_open_neurosurgery_v3"],
+          "deactivate": ["runtime_cutting_physics", "EndovascularToolRoot"],
+          "claim_boundary": "No speed, torque, auto-disengagement, burr-hole placement, cut path, or safe-stop claim"
+        },
+        {
+          "id": "OPEN-04_DURAL_ACCESS",
+          "parent": "/World/OpenCranial/DuralAccess",
+          "existing": ["dura_mater_conceptual_v2", "dura_mater_cutaway_conceptual_v2"],
+          "candidate": ["dural_scissors_hooks_forceps_set_open_neurosurgery_v3", "microscope_microinstrument_tray_open_neurosurgery_v3"],
+          "deactivate": ["runtime_cutting_physics", "EndovascularToolRoot"],
+          "claim_boundary": "No dural-opening pattern, corridor, trajectory, magnification, or anatomy-clearance claim"
+        },
+        {
+          "id": "OPEN-05A_OPEN_EVACUATION",
+          "parent": "/World/OpenCranial/Evacuation",
+          "existing": ["suction_and_forceps"],
+          "candidate": ["bipolar_forceps_irrigation_set_open_neurosurgery_v3", "suction_microdissector_set_open_neurosurgery_v3", "brain_spatula_retractor_set_open_neurosurgery_v3", "microscope_microinstrument_tray_open_neurosurgery_v3", "intradural_closure_tools_review_assembly_open_neurosurgery_v3"],
+          "deactivate": ["minimally_invasive_evacuator_port", "runtime_tissue_physics", "EndovascularToolRoot"],
+          "claim_boundary": "No tissue removal, bleeding, pressure, energy, retraction, completeness, or outcome claim"
+        },
+        {
+          "id": "OPEN-05B_MINIMALLY_INVASIVE_EVACUATION",
+          "parent": "/World/OpenCranial/Evacuation",
+          "existing": ["minimally_invasive_evacuator_port"],
+          "candidate": [],
+          "deactivate": ["open_evacuator_action", "cranial_access_tools_review_assembly_open_neurosurgery_v3", "EndovascularToolRoot"],
+          "claim_boundary": "Distinct from EVT aspiration; no target, trajectory, device, or efficacy claim"
+        },
+        {
+          "id": "OPEN-05C_DECOMPRESSION",
+          "parent": "/World/OpenCranial/BoneAccess",
+          "existing": ["craniotomy_bone_flap", "edema_swelling"],
+          "candidate": ["perforator_craniotome_system_open_neurosurgery_v3"],
+          "deactivate": ["bone_flap_replacement", "EndovascularToolRoot"],
+          "claim_boundary": "No decompression extent, ICP, tissue, or outcome claim"
+        },
+        {
+          "id": "OPEN-06_HEMOSTASIS_INSPECTION",
+          "parent": "/World/OpenCranial/Hemostasis",
+          "existing": ["suction_and_forceps"],
+          "candidate": ["bipolar_forceps_irrigation_set_open_neurosurgery_v3", "suction_microdissector_set_open_neurosurgery_v3"],
+          "deactivate": ["active_cutting_tools", "EndovascularToolRoot"],
+          "claim_boundary": "No electrical/thermal sealing, blood-loss, irrigation, suction, or success metric"
+        },
+        {
+          "id": "OPEN-07A_CRANIOTOMY_CLOSURE",
+          "parent": "/World/OpenCranial/Closure",
+          "existing": ["dural_patch", "craniotomy_bone_flap", "scalp_closure_sutures"],
+          "candidate": ["bone_flap_fixation_set_open_neurosurgery_v3", "dural_closure_suture_patch_set_open_neurosurgery_v3"],
+          "deactivate": ["decompressiveLeaveOff", "active_cutting_tools", "EndovascularToolRoot"],
+          "claim_boundary": "No implant material/size/torque, closure pattern, watertightness, or wound-care claim"
+        },
+        {
+          "id": "OPEN-07B_CRANIECTOMY_CLOSURE",
+          "parent": "/World/OpenCranial/Closure",
+          "existing": ["dural_patch", "scalp_closure_sutures"],
+          "candidate": ["dural_closure_suture_patch_set_open_neurosurgery_v3"],
+          "deactivate": ["craniotomy_bone_flap", "bone_flap_fixation_set_open_neurosurgery_v3", "EndovascularToolRoot"],
+          "claim_boundary": "Bone flap remains absent in this educational state; no clinical outcome claim"
+        },
+        {
+          "id": "OPEN-EVD_OPTIONAL",
+          "parent": "/World/OpenCranial/OptionalEVD",
+          "existing": ["optional_evd_system", "brain_ventricles_v2", "ventricular_spaces_v3"],
+          "candidate": ["conditional_csf_access_instrument_set_open_neurosurgery_v3"],
+          "deactivate": ["default_EVD_visibility", "unreviewed_ventricular_registration", "EndovascularToolRoot"],
+          "claim_boundary": "No target, insertion path/depth, leveling, drainage height, ICP, flow, waveform, or management instruction"
+        },
+        {
+          "id": "OPEN-08_POSTOPERATIVE",
+          "parent": "/World/OpenCranial/Closure",
+          "existing": ["postoperative_head_dressing", "vital_sign_monitor"],
+          "candidate": [],
+          "deactivate": ["active_drill", "active_cutting_tools", "open_dura_state", "EndovascularToolRoot"],
+          "claim_boundary": "Dressing only when applicable to the selected open branch"
+        }
+      ],
+      "approach_variant_set": {
+        "name": "openApproach",
+        "values": ["none", "openEvacuation", "minimallyInvasive", "decompressive"],
+        "mutually_exclusive": true
+      },
+      "bone_closure_variant_set": {
+        "name": "boneClosure",
+        "values": ["notApplicable", "craniotomyReplace", "decompressiveLeaveOff"],
+        "mutually_exclusive": true
+      },
+      "evd_variant_set": {
+        "name": "evdState",
+        "values": ["off", "clinicianSelected"],
+        "default": "off"
+      }
+    }
+  },
+  "existing_duplicate_rules": [
+    {
+      "aggregate": "thrombectomy_device_set_educational_v2",
+      "excludes": ["guidewire_educational_v2", "microcatheter_educational_v2", "aspiration_catheter_educational_v2", "stent_retriever_educational_v2"]
+    },
+    {
+      "aggregate": "vascular_access_setup_review_assembly_v3",
+      "excludes": ["vascular_access_needle_educational_v3", "vascular_access_wire_educational_v3", "introducer_sheath_dilator_set_educational_v3", "puncture_site_hemostasis_options_educational_v3"]
+    },
+    {
+      "aggregate": "endovascular_tools_workflow_review_assembly_v3",
+      "excludes": ["vascular_access_setup_review_assembly_v3", "vascular_access_needle_educational_v3", "vascular_access_wire_educational_v3", "introducer_sheath_dilator_set_educational_v3", "guide_catheter_hemostatic_valve_educational_v3", "aspiration_pump_canister_tubing_educational_v3", "contrast_manifold_syringe_flush_educational_v3", "torque_device_y_connector_accessories_educational_v3", "puncture_site_hemostasis_options_educational_v3", "sterile_endovascular_instrument_tray_educational_v3", "angiography_suite_controls_educational_v3"]
+    },
+    {
+      "aggregate": "cranial_access_tools_review_assembly_open_neurosurgery_v3",
+      "excludes": ["surface_marking_ruler_set_open_neurosurgery_v3", "scalpel_dissector_set_open_neurosurgery_v3", "scalp_retractor_hemostat_set_open_neurosurgery_v3", "perforator_craniotome_system_open_neurosurgery_v3", "bone_flap_fixation_set_open_neurosurgery_v3"]
+    },
+    {
+      "aggregate": "intradural_closure_tools_review_assembly_open_neurosurgery_v3",
+      "excludes": ["dural_scissors_hooks_forceps_set_open_neurosurgery_v3", "bipolar_forceps_irrigation_set_open_neurosurgery_v3", "suction_microdissector_set_open_neurosurgery_v3", "brain_spatula_retractor_set_open_neurosurgery_v3", "microscope_microinstrument_tray_open_neurosurgery_v3", "dural_closure_suture_patch_set_open_neurosurgery_v3"]
+    },
+    {
+      "replacement": "conditional_csf_access_instrument_set_open_neurosurgery_v3",
+      "excludes": ["optional_evd_system"]
+    }
+  ],
+  "hard_invariants": [
+    "not(ischemic_evt.active && open_cranial_hemorrhage.active)",
+    "not(ischemic_evt.active && postoperative_head_dressing.visible)",
+    "not(ischemic_evt.active && optional_evd_system.visible)",
+    "not(ischemic_evt.active && craniotomy_bone_flap.visible)",
+    "not(evtTechnique == 'contactAspiration' && stentRetrieverAction.visible)",
+    "not(evtTechnique == 'stentRetriever' && aspirationAction.visible)",
+    "not(openApproach == 'minimallyInvasive' && openEvacuationAction.visible)",
+    "not(boneClosure == 'decompressiveLeaveOff' && boneFlapFixation.visible)",
+    "not(evdState == 'clinicianSelected' && !clinicalEVDSelectionConfirmed)",
+    "not(magnifiedInspectionEntity === registeredPatientToolEntity)"
+  ],
+  "physics_boundaries": {
+    "anatomy": "static; coarse selection colliders only",
+    "catheters_and_wires": "authored curve-driven kinematics; no wall contact, force, buckling, friction, perforation, or safe-path model",
+    "retriever": "visibility/blend-state animation; no radial force, clot integration, vessel deformation, or success model",
+    "aspiration": "symbolic arrows/canister state; no vacuum, pressure, fluid, clot, or efficacy solver",
+    "contrast": "qualitative overlay; no injection, perfusion, dose, or radiation model",
+    "open_cutting_tools": "approach/withdraw kinematics only; no cutting, fracture, heat, force, or trajectory model",
+    "retraction_and_head_holding": "static/small kinematic placement; no force, tissue pressure, or safety model",
+    "hemostasis": "state cue only; no thermal, electrical, blood-loss, sealing, or success model",
+    "evd": "static/kinematic teaching model; no trajectory, CSF, ICP, level, waveform, or drainage model"
+  },
+  "houdini": {
+    "layers": ["00_source_payloads.usdc", "10_registration.usda", "20_tool_placement.usda", "30_lookdev.usda", "40_procedure_states.usda", "50_kinematic_clips.usda", "60_warnings_and_labels.usda", "90_release_flattened.usdc"],
+    "working_format": "layered USD/USDC",
+    "delivery_format": "USDZ final package only",
+    "payload_slots": [
+      "/World/ProcedureTools/Endovascular/AccessSupport",
+      "/World/ProcedureTools/Endovascular/GuideSupport",
+      "/World/ProcedureTools/Endovascular/ImagingSupport",
+      "/World/ProcedureTools/Endovascular/Delivery",
+      "/World/ProcedureTools/Endovascular/Retrieval",
+      "/World/ProcedureTools/Endovascular/AccessHemostasis",
+      "/World/OpenCranial/Positioning",
+      "/World/OpenCranial/Exposure",
+      "/World/OpenCranial/BoneAccess",
+      "/World/OpenCranial/DuralAccess",
+      "/World/OpenCranial/Evacuation",
+      "/World/OpenCranial/Hemostasis",
+      "/World/OpenCranial/Closure",
+      "/World/OpenCranial/OptionalEVD"
+    ]
+  },
+  "sources": [
+    {"authority": "AHA/ASA", "title": "2026 acute ischemic stroke guideline", "url": "https://doi.org/10.1161/STR.0000000000000513"},
+    {"authority": "AHA/ASA", "title": "2026 EVT eligibility algorithm", "url": "https://professional.heart.org/en/-/media/PHD-Files-2/Science-News/2/2026/AIS-EVT-Algorithm-Poster.pdf?sc_lang=en"},
+    {"authority": "AHA/ASA", "title": "2022 spontaneous ICH guideline", "url": "https://doi.org/10.1161/STR.0000000000000407"},
+    {"authority": "SNIS", "title": "Transarterial and transvenous access standards", "url": "https://jnis.bmj.com/content/12/8/733"},
+    {"authority": "SNIS", "title": "Basilar artery occlusion EVT focused update", "url": "https://jnis.bmj.com/content/16/8/752"},
+    {"authority": "FDA", "title": "Neurovascular mechanical thrombectomy classification POL", "url": "https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpcd/classification.cfm?id=4136"},
+    {"authority": "FDA", "title": "Neurovascular percutaneous catheter classification QJP", "url": "https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpcd/classification.cfm?id=3963"},
+    {"authority": "FDA", "title": "Catheter introducer classification DYB", "url": "https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfPCD/classification.cfm?ID=DYB"},
+    {"authority": "FDA", "title": "Intravascular catheter, wire, and delivery-system coating guidance", "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/intravascular-catheters-wires-and-delivery-systems-lubricious-coatings-labeling-considerations"},
+    {"authority": "Neurocritical Care Society", "title": "EVD insertion and management consensus", "url": "https://www.neurocriticalcare.org/Portals/0/Docs/Resources/EVD_FINAL.pdf"},
+    {"authority": "FDA", "title": "Neurosurgical head holder classification HBL", "url": "https://www.accessdata.fda.gov/scripts/cdrh/cfPCD/classification.cfm?ID=HBL"},
+    {"authority": "FDA", "title": "Cranial drill classifications", "url": "https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpcd/classification.cfm?devicename=drill&sortcolumn=deviceclassdesc&start_search=1"},
+    {"authority": "FDA", "title": "Cranial fixation 510(k) summary K192162", "url": "https://www.accessdata.fda.gov/cdrh_docs/pdf19/K192162.pdf"}
+  ]
+}

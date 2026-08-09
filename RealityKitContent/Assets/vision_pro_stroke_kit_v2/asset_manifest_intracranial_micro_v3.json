@@ -1,0 +1,348 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v3 detail expansion",
+  "module": "Scale-separated intracranial microanatomy teaching assets",
+  "version": "0.1.0-intracranial-micro-v3",
+  "generated_with": "5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "scale_domain": "microscopic_conceptual_separate",
+  "intended_use": "Generic patient education and design review only",
+  "patient_specific": false,
+  "histology_validated": false,
+  "quantitative": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "assets": [
+    {
+      "id": "blood_brain_barrier_neurovascular_unit_conceptual_v3",
+      "title": "Blood-brain barrier and neurovascular-unit teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Opened capillary with endothelial layer, tight-junction seams, basement membrane, pericyte, astrocyte endfeet, and magnified RBC context.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 16092,
+      "dimensions_m": [
+        0.12,
+        0.072065,
+        0.057608
+      ],
+      "usdc": "exports/usdc/blood_brain_barrier_neurovascular_unit_conceptual_v3.usdc",
+      "usdz": "exports/usdz/blood_brain_barrier_neurovascular_unit_conceptual_v3.usdz",
+      "usdz_bytes": 549906,
+      "usdz_sha256": "303d5f0d62876abaa5443cf825eb4e5830ae9497e642576b6b94ca5a6ab6c22d",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "capillary_endothelium_tight_junctions_conceptual_v3",
+      "title": "Capillary endothelium and tight-junction close-up",
+      "module": "intracranial_micro_v3",
+      "description": "Flattened endothelial-cell sheet with nuclei, basement membrane, conceptual tight-junction seams, and pericyte context.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 6360,
+      "dimensions_m": [
+        0.145011,
+        0.055334,
+        0.0365
+      ],
+      "usdc": "exports/usdc/capillary_endothelium_tight_junctions_conceptual_v3.usdc",
+      "usdz": "exports/usdz/capillary_endothelium_tight_junctions_conceptual_v3.usdz",
+      "usdz_bytes": 124893,
+      "usdz_sha256": "d750fe1c6b434e803266adc0872a3200322d822f202c7853d6a110feb705966b",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "formed_blood_elements_magnified_v3",
+      "title": "Magnified formed blood elements",
+      "module": "intracranial_micro_v3",
+      "description": "Scale-separated red blood cells, a generic leukocyte cue, and platelet forms with illustrative granules.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 9760,
+      "dimensions_m": [
+        0.145295,
+        0.062857,
+        0.046601
+      ],
+      "usdc": "exports/usdc/formed_blood_elements_magnified_v3.usdc",
+      "usdz": "exports/usdz/formed_blood_elements_magnified_v3.usdz",
+      "usdz_bytes": 351257,
+      "usdz_sha256": "0e4830d646b7abe696e5d458161206eb43680632eb284622539f9c157a6ab18a",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "platelet_fibrin_thrombus_microstructure_conceptual_v3",
+      "title": "Conceptual platelet-fibrin thrombus microstructure",
+      "module": "intracranial_micro_v3",
+      "description": "Opened vessel context with entrapped RBCs, platelet-rich cues, fibrin strands, and a textured clot-volume reference.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 29296,
+      "dimensions_m": [
+        0.15,
+        0.053364,
+        0.062
+      ],
+      "usdc": "exports/usdc/platelet_fibrin_thrombus_microstructure_conceptual_v3.usdc",
+      "usdz": "exports/usdz/platelet_fibrin_thrombus_microstructure_conceptual_v3.usdz",
+      "usdz_bytes": 5058520,
+      "usdz_sha256": "a107c72697e061b9a51582bb045b642d5fc3c702de092b124d61f6a9b8c5c897",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "multipolar_neuron_detailed_conceptual_v3",
+      "title": "Detailed multipolar-neuron teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Generic soma, nucleus, dendrites, enlarged spine cues, axon, and terminal branches.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 9012,
+      "dimensions_m": [
+        0.190216,
+        0.121083,
+        0.048539
+      ],
+      "usdc": "exports/usdc/multipolar_neuron_detailed_conceptual_v3.usdc",
+      "usdz": "exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz",
+      "usdz_bytes": 213065,
+      "usdz_sha256": "11aa857a443a4cbfd80288032017c4807b4631a5d83f69094ed3c6f195f3ae68",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "astrocyte_capillary_endfeet_conceptual_v3",
+      "title": "Astrocyte and capillary-endfeet teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Branching astrocyte morphology with enlarged endfeet approaching an opaque capillary context.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 3596,
+      "dimensions_m": [
+        0.14,
+        0.09694,
+        0.074277
+      ],
+      "usdc": "exports/usdc/astrocyte_capillary_endfeet_conceptual_v3.usdc",
+      "usdz": "exports/usdz/astrocyte_capillary_endfeet_conceptual_v3.usdz",
+      "usdz_bytes": 136178,
+      "usdz_sha256": "717c6d7aa439f6ecc5f283e99151244356f2c81dad7dde650aa9ca0e714380fb",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "oligodendrocyte_myelinated_axons_conceptual_v3",
+      "title": "Oligodendrocyte and myelinated-axon teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Generic oligodendrocyte with processes connected to several simplified myelin internodes.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 2584,
+      "dimensions_m": [
+        0.142,
+        0.069192,
+        0.0544
+      ],
+      "usdc": "exports/usdc/oligodendrocyte_myelinated_axons_conceptual_v3.usdc",
+      "usdz": "exports/usdz/oligodendrocyte_myelinated_axons_conceptual_v3.usdz",
+      "usdz_bytes": 1918864,
+      "usdz_sha256": "d06c34d6b52f81be510d4e5a813ef6935989a79f0b2d990669c74a6ee000a6e7",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "myelinated_axon_node_of_ranvier_conceptual_v3",
+      "title": "Myelinated axon and node-of-Ranvier close-up",
+      "module": "intracranial_micro_v3",
+      "description": "Continuous axon core with separated myelin internodes, surface-ring cues, and enlarged channel-location markers.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 9124,
+      "dimensions_m": [
+        0.17,
+        0.0223,
+        0.0223
+      ],
+      "usdc": "exports/usdc/myelinated_axon_node_of_ranvier_conceptual_v3.usdc",
+      "usdz": "exports/usdz/myelinated_axon_node_of_ranvier_conceptual_v3.usdz",
+      "usdz_bytes": 1906402,
+      "usdz_sha256": "8430d771e3c263a10f35af845eda1468841d7381f125fe3c7f9c673778d57601",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "chemical_synapse_closeup_conceptual_v3",
+      "title": "Chemical-synapse teaching close-up",
+      "module": "intracranial_micro_v3",
+      "description": "Presynaptic axon terminal, enlarged vesicles, cleft particles, postsynaptic dendrite, and generic receptor-location cues.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 8708,
+      "dimensions_m": [
+        0.115546,
+        0.037703,
+        0.073797
+      ],
+      "usdc": "exports/usdc/chemical_synapse_closeup_conceptual_v3.usdc",
+      "usdz": "exports/usdz/chemical_synapse_closeup_conceptual_v3.usdz",
+      "usdz_bytes": 175142,
+      "usdz_sha256": "69b7ce4d7e8e332abc83d871fa4cedd5149c1e54241b8acebc0b5622a73df203",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "choroid_plexus_csf_interface_conceptual_v3",
+      "title": "Choroid-plexus and CSF-interface teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Simplified capillary folds with epithelial-cell cues and non-quantitative CSF direction markers.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 15000,
+      "dimensions_m": [
+        0.137719,
+        0.067058,
+        0.066499
+      ],
+      "usdc": "exports/usdc/choroid_plexus_csf_interface_conceptual_v3.usdc",
+      "usdz": "exports/usdz/choroid_plexus_csf_interface_conceptual_v3.usdz",
+      "usdz_bytes": 147495,
+      "usdz_sha256": "7a318a4e4f2030b42cc52e064bb91d83599a685d2305199298970f4e5ed9753a",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "ischemic_tissue_zones_conceptual_v3",
+      "title": "Conceptual ischemic tissue-zone teaching model",
+      "module": "intracranial_micro_v3",
+      "description": "Opaque layered surrounding, at-risk, and core teaching regions with non-quantitative microvessel context.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 4560,
+      "dimensions_m": [
+        0.147024,
+        0.100381,
+        0.0481
+      ],
+      "usdc": "exports/usdc/ischemic_tissue_zones_conceptual_v3.usdc",
+      "usdz": "exports/usdz/ischemic_tissue_zones_conceptual_v3.usdz",
+      "usdz_bytes": 2522734,
+      "usdz_sha256": "ee9c47fb7ccf62078a5fb5064d931951d87a0f74ac1bd3c59a7df3a3e68c3c25",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "intracranial_micro_teaching_set_v3",
+      "title": "Intracranial microanatomy teaching-set review assembly",
+      "module": "intracranial_micro_v3",
+      "description": "Review-only gallery of all eleven scale-separated microanatomy vignettes; use individual packages at runtime.",
+      "clinical_note": "Generic magnified explanatory geometry only; not histology, patient-specific anatomy, measured physiology, diagnosis, treatment planning, or a validated clinical simulation.",
+      "triangle_count": 114092,
+      "dimensions_m": [
+        0.566976,
+        0.324533,
+        0.045384
+      ],
+      "usdc": "exports/usdc/intracranial_micro_teaching_set_v3.usdc",
+      "usdz": "exports/usdz/intracranial_micro_teaching_set_v3.usdz",
+      "usdz_bytes": 11199963,
+      "usdz_sha256": "2812f5a93502e68481a2a07bfbd597acfd8dbe0a1d7e6a19a48adb4352655198",
+      "scale_domain": "microscopic_conceptual_separate",
+      "magnification_label_required": true,
+      "registered_to_head": false,
+      "patient_specific": false,
+      "histology_validated": false,
+      "quantitative": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW"
+    }
+  ],
+  "imagegen_appearance_references": [
+    {
+      "path": "textures/source/intracranial_micro_v3/cerebral_microtissue_albedo_v1.png",
+      "sha256": "db9a0383316c47fab2913af9742ad622e425c109b1ee0b1b3b0b85d3394c7a9c",
+      "use": "non-histologic cerebral microtissue base-color reference"
+    },
+    {
+      "path": "textures/source/intracranial_micro_v3/myelin_white_matter_albedo_v1.png",
+      "sha256": "04ef16d985825d46a3c9d98c1cdd2cd130c404b1ebb9f9a02918a57250a67359",
+      "use": "non-histologic myelin/white-matter base-color reference"
+    },
+    {
+      "path": "textures/source/intracranial_micro_v3/thrombus_fibrin_albedo_v1.png",
+      "sha256": "ca6682ff45f7b4f75cb5b45a55ecdff18fdd7551f5701a89f0881addc741c4fc",
+      "use": "non-diagnostic fibrin/thrombus base-color reference"
+    }
+  ],
+  "warnings": [
+    "Every package is a magnified, scale-separated vignette and must display a prominent not-to-anatomical-scale label.",
+    "No package is registered to the metre-scale head; never overlay it as if cell dimensions or placement were anatomical.",
+    "Geometry, spacing, thickness, counts, colors, flow cues, channel locations, tissue zones, and composition are illustrative and non-quantitative.",
+    "Image-generated maps are project-owned appearance references only and are not microscopy, histology, anatomy, pathology, or clinical evidence.",
+    "Do not use for diagnosis, treatment planning, navigation, device selection, perfusion assessment, pathology classification, prognosis, or outcome prediction.",
+    "Specialist neuroanatomy, neuropathology, hematology, neuroradiology, accessibility, and patient-communications review are required before patient-facing use."
+  ],
+  "prohibited_combinations": [
+    {
+      "asset": "intracranial_micro_teaching_set_v3",
+      "excludes": [
+        "blood_brain_barrier_neurovascular_unit_conceptual_v3",
+        "capillary_endothelium_tight_junctions_conceptual_v3",
+        "formed_blood_elements_magnified_v3",
+        "platelet_fibrin_thrombus_microstructure_conceptual_v3",
+        "multipolar_neuron_detailed_conceptual_v3",
+        "astrocyte_capillary_endfeet_conceptual_v3",
+        "oligodendrocyte_myelinated_axons_conceptual_v3",
+        "myelinated_axon_node_of_ranvier_conceptual_v3",
+        "chemical_synapse_closeup_conceptual_v3",
+        "choroid_plexus_csf_interface_conceptual_v3",
+        "ischemic_tissue_zones_conceptual_v3"
+      ],
+      "reason": "Review assembly duplicates every individual vignette."
+    }
+  ]
+}

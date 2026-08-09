@@ -1,0 +1,673 @@
+{
+  "kit": "Vision Pro Stroke Patient Education Kit v3",
+  "module": "Generic open-cranial neurosurgery instrument concepts",
+  "version": "0.3.0-open-cranial-tools",
+  "generated_with": "5.2.0 LTS",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "procedure_scope": "open_neurosurgery_only",
+  "default_thrombectomy_pathway_allowed": false,
+  "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+  "patient_specific": false,
+  "device_specific": false,
+  "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+  "independent_asset_count": 12,
+  "review_assembly_count": 2,
+  "assets": [
+    {
+      "id": "surface_marking_ruler_set_open_neurosurgery_v3",
+      "title": "Generic surface marker and flexible ruler set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "surface_preparation",
+        "orientation_context"
+      ],
+      "description": "Unbranded marker and non-calibrated flexible-ruler visual set used to explain that external reference marking may be discussed before an open cranial procedure.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 7592,
+      "dimensions_m": [
+        0.165606,
+        0.0805,
+        0.014
+      ],
+      "usdc": "exports/usdc/surface_marking_ruler_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/surface_marking_ruler_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 111024,
+      "usdz_sha256": "2f7aefb347a3eb87c4fe921eca8d00ca418ebe65d8a2b3ca6f4847cfc55043d6",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "external_head_scalp_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "cranial_access_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "scalpel_dissector_set_open_neurosurgery_v3",
+      "title": "Generic scalpel and blunt dissector set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "soft_tissue_access"
+      ],
+      "description": "Generic scalpel silhouette and double-ended blunt dissector concept for non-graphic explanation of soft-tissue access tooling.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 6956,
+      "dimensions_m": [
+        0.180397,
+        0.063,
+        0.005825
+      ],
+      "usdc": "exports/usdc/scalpel_dissector_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/scalpel_dissector_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 77294,
+      "usdz_sha256": "456df6dae1e5241c4535e4f6bcb4ac3e5c193974ec2496b592bb47abef03900a",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "external_head_scalp_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "cranial_access_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "scalp_retractor_hemostat_set_open_neurosurgery_v3",
+      "title": "Generic scalp retractor and hemostat set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "soft_tissue_exposure",
+        "surface_hemostasis"
+      ],
+      "description": "Self-retaining retractor and paired hemostat visual concepts for explaining exposure and surface-hemostasis tool categories without technique claims.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 12004,
+      "dimensions_m": [
+        0.158718,
+        0.106574,
+        0.004535
+      ],
+      "usdc": "exports/usdc/scalp_retractor_hemostat_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/scalp_retractor_hemostat_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 211467,
+      "usdz_sha256": "efb8e92c00b788969c5239a214c57e8d0626bda530aefc9f79a9d31a1d1bed38",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "external_head_scalp_realistic_v2",
+        "skull_semantic_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "cranial_access_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "perforator_craniotome_system_open_neurosurgery_v3",
+      "title": "Generic perforator and craniotome system concepts",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "cranial_opening",
+        "bone_access"
+      ],
+      "description": "Unbranded handpiece, perforator silhouette, craniotome attachment, abbreviated cable, and protective-footplate visual concepts.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 10460,
+      "dimensions_m": [
+        0.203174,
+        0.086779,
+        0.032
+      ],
+      "usdc": "exports/usdc/perforator_craniotome_system_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/perforator_craniotome_system_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 230127,
+      "usdz_sha256": "14407122ef78a7f5a3b37908140de71f9022a880bd9c5dca98ff74a63357077e",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "skull_semantic_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "cranial_access_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "bone_flap_fixation_set_open_neurosurgery_v3",
+      "title": "Generic bone-flap fixation plates and screws",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "cranial_reconstruction",
+        "closure_context"
+      ],
+      "description": "Generic low-profile plate and screw visual concepts for explaining cranial reconstruction; all forms and dimensions are illustrative.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 11796,
+      "dimensions_m": [
+        0.148463,
+        0.080916,
+        0.004875
+      ],
+      "usdc": "exports/usdc/bone_flap_fixation_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/bone_flap_fixation_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 101911,
+      "usdz_sha256": "217c36a70010bc4afb9df40d70c8a36dfae01c1f02160f788b9d3a9a20ac97b9",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "skull_semantic_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "cranial_access_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "dural_scissors_hooks_forceps_set_open_neurosurgery_v3",
+      "title": "Generic dural scissors, hook, and forceps set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "dural_exposure",
+        "intradural_access_context"
+      ],
+      "description": "Fine scissors, rounded hook, and spring-forceps visual concepts associated with discussion of the dural layer.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 3936,
+      "dimensions_m": [
+        0.160296,
+        0.106369,
+        0.005797
+      ],
+      "usdc": "exports/usdc/dural_scissors_hooks_forceps_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/dural_scissors_hooks_forceps_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 137957,
+      "usdz_sha256": "4a076849cf44ca737ba53ca2093d8df793129b0a11b003c448e1f809434f1b8d",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "dura_mater_conceptual_v2",
+        "meningeal_partitions_atlas_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "bipolar_forceps_irrigation_set_open_neurosurgery_v3",
+      "title": "Generic bipolar forceps and irrigation set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "microsurgical_hemostasis",
+        "irrigation_context"
+      ],
+      "description": "Bayonet-style paired forceps arms with an illustrative irrigation path and abbreviated cable; no energy or fluid settings are represented.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 1192,
+      "dimensions_m": [
+        0.18836,
+        0.083312,
+        0.014761
+      ],
+      "usdc": "exports/usdc/bipolar_forceps_irrigation_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/bipolar_forceps_irrigation_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 67468,
+      "usdz_sha256": "66a0bf8cd1209e9903cd1689a42caa70b30832b910f2f2f80823c2a0fda367bf",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "cerebral_arteries_realistic_v2",
+        "dural_venous_sinuses_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "suction_microdissector_set_open_neurosurgery_v3",
+      "title": "Generic suction and microdissector set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "field_management",
+        "microsurgical_handling"
+      ],
+      "description": "Curved suction-instrument and blunt microdissector visual concepts for high-level explanation of field-management and manipulation tool categories.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 4288,
+      "dimensions_m": [
+        0.171899,
+        0.066192,
+        0.013648
+      ],
+      "usdc": "exports/usdc/suction_microdissector_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/suction_microdissector_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 109288,
+      "usdz_sha256": "07bebc78c548b9e7971cfe6c250b6280414d3de23fe80915a58f5192bc0302d3",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "brain_deep_structures_v2",
+        "cerebral_arteries_realistic_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "brain_spatula_retractor_set_open_neurosurgery_v3",
+      "title": "Generic brain spatula and retractor set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "tissue_protection_context",
+        "exposure_context"
+      ],
+      "description": "Three blunt spatula/retractor silhouettes with distinct widths for visual comparison only; placement and pressure are deliberately not modeled.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 8616,
+      "dimensions_m": [
+        0.179399,
+        0.08478,
+        0.006097
+      ],
+      "usdc": "exports/usdc/brain_spatula_retractor_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/brain_spatula_retractor_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 73239,
+      "usdz_sha256": "261c2b6880d256686776b83c4393520d372d3c320d763d286829130e977ced84",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "brain_deep_structures_v2",
+        "neural_detail_registered_review_assembly_v3"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "microscope_microinstrument_tray_open_neurosurgery_v3",
+      "title": "Generic microscope-compatible microinstrument tray",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "microsurgical_instrumentation",
+        "review_layout"
+      ],
+      "description": "Presentation tray containing generic microforceps, microscissors, and probe silhouettes, arranged only for visual recognition.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 5888,
+      "dimensions_m": [
+        0.19,
+        0.108,
+        0.0127
+      ],
+      "usdc": "exports/usdc/microscope_microinstrument_tray_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/microscope_microinstrument_tray_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 216537,
+      "usdz_sha256": "2702a95c5211fb74d733ad0d174811b87ac7125e64c90b6843919e40914ec85c",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "neural_detail_registered_review_assembly_v3"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "dural_closure_suture_patch_set_open_neurosurgery_v3",
+      "title": "Generic dural closure needle, suture, and patch set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "dural_closure",
+        "reconstruction_context"
+      ],
+      "description": "Needle holder, curved-needle silhouette, abbreviated suture, and generic patch concept for explaining closure material categories.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 7464,
+      "dimensions_m": [
+        0.147586,
+        0.108998,
+        0.004806
+      ],
+      "usdc": "exports/usdc/dural_closure_suture_patch_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/dural_closure_suture_patch_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 249623,
+      "usdz_sha256": "63ce6d2930de6b05658e6b748058d4a2a7e71c0488e72139d3ab6213497e907c",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [
+        "dura_mater_conceptual_v2",
+        "meningeal_partitions_atlas_v2"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": "intradural_closure_tools_review_assembly_open_neurosurgery_v3"
+    },
+    {
+      "id": "conditional_csf_access_instrument_set_open_neurosurgery_v3",
+      "title": "Conditional generic CSF-access instrument set",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "independent_instrument_set",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "conditional_csf_access",
+        "postoperative_monitoring_context"
+      ],
+      "description": "Isolated conditional set with generic ventricular-catheter, sheath, clamp, and dressing concepts; no trajectory, target, insertion depth, or placement technique is represented.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 6976,
+      "dimensions_m": [
+        0.164,
+        0.096364,
+        0.011
+      ],
+      "usdc": "exports/usdc/conditional_csf_access_instrument_set_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/conditional_csf_access_instrument_set_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 231598,
+      "usdz_sha256": "b5bdb73b68a4bc182b33b82a7eabae66d694255cd938cd176affbc1bca171d68",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": true,
+      "context_asset_ids": [
+        "brain_ventricles_v2",
+        "ventricular_spaces_v3"
+      ],
+      "component_asset_ids": [],
+      "transitive_exclusions": [],
+      "mutually_exclusive_with_review_assembly": null
+    },
+    {
+      "id": "cranial_access_tools_review_assembly_open_neurosurgery_v3",
+      "title": "Cranial-access tools review assembly",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "review_assembly",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "review_assembly",
+        "surface_and_cranial_access_context"
+      ],
+      "description": "Review-only comparison layout duplicating the surface marking, soft-tissue, retraction, drill, and fixation sets.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 48808,
+      "dimensions_m": [
+        0.642017,
+        0.248,
+        0.032
+      ],
+      "usdc": "exports/usdc/cranial_access_tools_review_assembly_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/cranial_access_tools_review_assembly_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 718226,
+      "usdz_sha256": "6226e220345561f40990920846912ae4516bc2ce426c97d069613aeec943bc3c",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [],
+      "component_asset_ids": [
+        "surface_marking_ruler_set_open_neurosurgery_v3",
+        "scalpel_dissector_set_open_neurosurgery_v3",
+        "scalp_retractor_hemostat_set_open_neurosurgery_v3",
+        "perforator_craniotome_system_open_neurosurgery_v3",
+        "bone_flap_fixation_set_open_neurosurgery_v3"
+      ],
+      "transitive_exclusions": [
+        "surface_marking_ruler_set_open_neurosurgery_v3",
+        "scalpel_dissector_set_open_neurosurgery_v3",
+        "scalp_retractor_hemostat_set_open_neurosurgery_v3",
+        "perforator_craniotome_system_open_neurosurgery_v3",
+        "bone_flap_fixation_set_open_neurosurgery_v3"
+      ],
+      "mutually_exclusive_with_review_assembly": null
+    },
+    {
+      "id": "intradural_closure_tools_review_assembly_open_neurosurgery_v3",
+      "title": "Intradural and closure tools review assembly",
+      "module": "open_cranial_tools_v3",
+      "asset_kind": "review_assembly",
+      "procedure_scope": "open_neurosurgery_only",
+      "default_thrombectomy_pathway_allowed": false,
+      "narrative_gate": "clinician_selected_hemorrhage_or_decompression_only",
+      "prohibited_pathways": [
+        "default_endovascular_thrombectomy",
+        "ordinary_ischemic_evt"
+      ],
+      "stage_tags": [
+        "review_assembly",
+        "intradural_and_closure_context"
+      ],
+      "description": "Review-only comparison layout duplicating six dural, microsurgical, protection, tray, and closure sets; it intentionally excludes the conditional CSF-access set.",
+      "stage_context_note": "Association metadata only; it does not prescribe sequence, necessity, technique, or clinical decisions.",
+      "triangle_count": 31384,
+      "dimensions_m": [
+        0.629399,
+        0.279698,
+        0.0158
+      ],
+      "usdc": "exports/usdc/intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdc",
+      "usdz": "exports/usdz/intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdz",
+      "usdz_bytes": 695304,
+      "usdz_sha256": "769e3dff8befa9b8c774df8f860258db977f943c46ec14c7f107785e298cbbae",
+      "patient_specific": false,
+      "device_specific": false,
+      "clinical_review_status": "REQUIRES_SPECIALIST_REVIEW",
+      "not_for_surgical_training": true,
+      "not_for_navigation": true,
+      "not_for_device_selection_or_sizing": true,
+      "no_force_depth_trajectory_energy_claims": true,
+      "conditional_only": false,
+      "context_asset_ids": [],
+      "component_asset_ids": [
+        "dural_scissors_hooks_forceps_set_open_neurosurgery_v3",
+        "bipolar_forceps_irrigation_set_open_neurosurgery_v3",
+        "suction_microdissector_set_open_neurosurgery_v3",
+        "brain_spatula_retractor_set_open_neurosurgery_v3",
+        "microscope_microinstrument_tray_open_neurosurgery_v3",
+        "dural_closure_suture_patch_set_open_neurosurgery_v3"
+      ],
+      "transitive_exclusions": [
+        "dural_scissors_hooks_forceps_set_open_neurosurgery_v3",
+        "bipolar_forceps_irrigation_set_open_neurosurgery_v3",
+        "suction_microdissector_set_open_neurosurgery_v3",
+        "brain_spatula_retractor_set_open_neurosurgery_v3",
+        "microscope_microinstrument_tray_open_neurosurgery_v3",
+        "dural_closure_suture_patch_set_open_neurosurgery_v3"
+      ],
+      "mutually_exclusive_with_review_assembly": null
+    }
+  ],
+  "assembly_rules": {
+    "co_load_policy": "Never co-load a review assembly with any component listed in its component_asset_ids/transitive_exclusions.",
+    "assemblies_are_registered_procedures": false,
+    "assemblies_encode_sequence": false,
+    "conditional_csf_set_included_in_assemblies": false
+  },
+  "workflow_guards": {
+    "allowed_pathways": [
+      "clinician_selected_hemorrhage_or_decompression_patient_education"
+    ],
+    "prohibited_pathways": [
+      "default_endovascular_thrombectomy",
+      "ordinary_ischemic_evt"
+    ],
+    "stage_tags_are_descriptive_only": true,
+    "clinical_sequence_encoded": false
+  },
+  "warnings": [
+    "Generic, original, unbranded visual concepts; not representations of any marketed instrument or implant.",
+    "Not operative instructions, surgical training, procedural simulation, device specifications, or a recommendation that any instrument or stage is appropriate for a patient.",
+    "No geometry, spacing, markings, aperture, blade, burr, catheter, suture, screw, plate, or patch dimension is clinically meaningful.",
+    "Do not use for device selection, sizing, trajectory, insertion depth, drilling, cutting, retraction force, electrosurgical energy, irrigation or suction settings, navigation, treatment planning, or clinical decisions.",
+    "All use in patient-facing content requires neurosurgeon, perioperative-team, infection-control, human-factors, accessibility, and institutional governance review.",
+    "The conditional CSF-access set must remain hidden unless a specialist-reviewed narrative explicitly requires it; it is not part of either review assembly."
+  ]
+}

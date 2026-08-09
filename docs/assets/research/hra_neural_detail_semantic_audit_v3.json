@@ -1,0 +1,1714 @@
+{
+  "module": "neural_detail_v3",
+  "source": "vendor/nih3d/hra_brain_male_3DPX-020960_v1.01/source/3d-vh-m-allen-brain.glb",
+  "source_sha256": "2b9ad5b53e40e9f0936da74f7be38d2eed15604e26358c3870a0ea13499b9a35",
+  "source_mesh_count": 283,
+  "registration_center_source_m": [
+    -9e-05,
+    0.001155,
+    0.829567
+  ],
+  "registration": "native HRA metre frame translated by negative recorded whole-brain bounds centre",
+  "selected_source_meshes": 275,
+  "omitted_source_meshes": 8,
+  "selected": [
+    {
+      "source_object": "Allen_amygdalohippocampal_area_L",
+      "base_structure": "amygdalohippocampal_area",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_amygdalohippocampal_area_R",
+      "base_structure": "amygdalohippocampal_area",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_angular_gyrus_L",
+      "base_structure": "angular_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_angular_gyrus_R",
+      "base_structure": "angular_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_amygdaloid_area_L",
+      "base_structure": "anterior_amygdaloid_area",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_amygdaloid_area_R",
+      "base_structure": "anterior_amygdaloid_area",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_commissure_L",
+      "base_structure": "anterior_commissure",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_commissure_R",
+      "base_structure": "anterior_commissure",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_cortical_nucleus_L",
+      "base_structure": "anterior_cortical_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_cortical_nucleus_R",
+      "base_structure": "anterior_cortical_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_horn_of_lateral_ventricle_L",
+      "base_structure": "anterior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_horn_of_lateral_ventricle_R",
+      "base_structure": "anterior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_intermediate_orbital_gyrus_L",
+      "base_structure": "anterior_intermediate_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_intermediate_orbital_gyrus_R",
+      "base_structure": "anterior_intermediate_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_nuclear_complex_of_thalamus_L",
+      "base_structure": "anterior_nuclear_complex_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_nuclear_complex_of_thalamus_R",
+      "base_structure": "anterior_nuclear_complex_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_olfactory_nucleus_L",
+      "base_structure": "anterior_olfactory_nucleus",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_olfactory_nucleus_R",
+      "base_structure": "anterior_olfactory_nucleus",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_anterior_parahippocampal_gyrus_L",
+      "base_structure": "anterior_parahippocampal_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_anterior_parahippocampal_gyrus_R",
+      "base_structure": "anterior_parahippocampal_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_atrium_of_lateral_ventricle_L",
+      "base_structure": "atrium_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_atrium_of_lateral_ventricle_R",
+      "base_structure": "atrium_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_basal_forebrain_L",
+      "base_structure": "basal_forebrain",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_basal_forebrain_R",
+      "base_structure": "basal_forebrain",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_basilar_part_of_pons_L",
+      "base_structure": "basilar_part_of_pons",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_basilar_part_of_pons_R",
+      "base_structure": "basilar_part_of_pons",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_basolateral_nucleus_basal_nucleus_L",
+      "base_structure": "basolateral_nucleus_basal_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_basolateral_nucleus_basal_nucleus_R",
+      "base_structure": "basolateral_nucleus_basal_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_basomedial_nucleus_accessory_basal_nucleus_L",
+      "base_structure": "basomedial_nucleus_accessory_basal_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_basomedial_nucleus_accessory_basal_nucleus_R",
+      "base_structure": "basomedial_nucleus_accessory_basal_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_bed_nucleus_of_stria_terminalis_L",
+      "base_structure": "bed_nucleus_of_stria_terminalis",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_bed_nucleus_of_stria_terminalis_R",
+      "base_structure": "bed_nucleus_of_stria_terminalis",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_body_of_caudate_L",
+      "base_structure": "body_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_body_of_caudate_R",
+      "base_structure": "body_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_body_of_hippocampus_L",
+      "base_structure": "body_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_body_of_hippocampus_R",
+      "base_structure": "body_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_body_of_lateral_ventricle_L",
+      "base_structure": "body_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_body_of_lateral_ventricle_R",
+      "base_structure": "body_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_central_canal_of_medulla_oblongata_L",
+      "base_structure": "central_canal_of_medulla_oblongata",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_central_canal_of_medulla_oblongata_R",
+      "base_structure": "central_canal_of_medulla_oblongata",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_central_nuclear_group_L",
+      "base_structure": "central_nuclear_group",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_central_nuclear_group_R",
+      "base_structure": "central_nuclear_group",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_centromedian_nucleus_of_thalamus_L",
+      "base_structure": "centromedian_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_centromedian_nucleus_of_thalamus_R",
+      "base_structure": "centromedian_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cerebellar_deep_nuclei_L",
+      "base_structure": "cerebellar_deep_nuclei",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cerebellar_deep_nuclei_R",
+      "base_structure": "cerebellar_deep_nuclei",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cerebellar_vermis_L",
+      "base_structure": "cerebellar_vermis",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cerebellar_vermis_R",
+      "base_structure": "cerebellar_vermis",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cerebral_aqueduct_L",
+      "base_structure": "cerebral_aqueduct",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cerebral_aqueduct_R",
+      "base_structure": "cerebral_aqueduct",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cerebral_peduncle_crus_cerebri_L",
+      "base_structure": "cerebral_peduncle_crus_cerebri",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cerebral_peduncle_crus_cerebri_R",
+      "base_structure": "cerebral_peduncle_crus_cerebri",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cingulate_gyrus_caudal_posterior_part_L",
+      "base_structure": "cingulate_gyrus_caudal_posterior_part",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cingulate_gyrus_caudal_posterior_part_R",
+      "base_structure": "cingulate_gyrus_caudal_posterior_part",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cingulate_gyrus_rostral_anterior_part_L",
+      "base_structure": "cingulate_gyrus_rostral_anterior_part",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cingulate_gyrus_rostral_anterior_part_R",
+      "base_structure": "cingulate_gyrus_rostral_anterior_part",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_claustrum_L",
+      "base_structure": "claustrum",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_claustrum_R",
+      "base_structure": "claustrum",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_corpus_callosum_L",
+      "base_structure": "corpus_callosum",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_corpus_callosum_R",
+      "base_structure": "corpus_callosum",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_cuneus_L",
+      "base_structure": "cuneus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_cuneus_R",
+      "base_structure": "cuneus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_dorsal_lateral_geniculate_nucleus_L",
+      "base_structure": "dorsal_lateral_geniculate_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_dorsal_lateral_geniculate_nucleus_R",
+      "base_structure": "dorsal_lateral_geniculate_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_external_segment_of_globus_pallidus_L",
+      "base_structure": "external_segment_of_globus_pallidus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_external_segment_of_globus_pallidus_R",
+      "base_structure": "external_segment_of_globus_pallidus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_fornix_L",
+      "base_structure": "fornix",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_fornix_R",
+      "base_structure": "fornix",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_fourth_ventricle_L",
+      "base_structure": "fourth_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_fourth_ventricle_R",
+      "base_structure": "fourth_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_frontal_agranular_insular_cortex_area_Fl_L",
+      "base_structure": "frontal_agranular_insular_cortex_area_Fl",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_frontal_agranular_insular_cortex_area_Fl_R",
+      "base_structure": "frontal_agranular_insular_cortex_area_Fl",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_frontal_operculum_L",
+      "base_structure": "frontal_operculum",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_frontal_operculum_R",
+      "base_structure": "frontal_operculum",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_frontal_pole_L",
+      "base_structure": "frontal_pole",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_frontal_pole_R",
+      "base_structure": "frontal_pole",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_frontomarginal_gyrus_L",
+      "base_structure": "frontomarginal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_frontomarginal_gyrus_R",
+      "base_structure": "frontomarginal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_gyrus_ambiens_L",
+      "base_structure": "gyrus_ambiens",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_gyrus_ambiens_R",
+      "base_structure": "gyrus_ambiens",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_gyrus_rectus_straight_gyrus_L",
+      "base_structure": "gyrus_rectus_straight_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_gyrus_rectus_straight_gyrus_R",
+      "base_structure": "gyrus_rectus_straight_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_habenular_nuclei_L",
+      "base_structure": "habenular_nuclei",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_habenular_nuclei_R",
+      "base_structure": "habenular_nuclei",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_head_of_caudate_L",
+      "base_structure": "head_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_head_of_caudate_R",
+      "base_structure": "head_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_head_of_hippocampus_L",
+      "base_structure": "head_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_head_of_hippocampus_R",
+      "base_structure": "head_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_cerebellar_peduncle_L",
+      "base_structure": "inferior_cerebellar_peduncle",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_cerebellar_peduncle_R",
+      "base_structure": "inferior_cerebellar_peduncle",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_colliculus_L",
+      "base_structure": "inferior_colliculus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_colliculus_R",
+      "base_structure": "inferior_colliculus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_frontal_gyrus_opercular_part_L",
+      "base_structure": "inferior_frontal_gyrus_opercular_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_frontal_gyrus_opercular_part_R",
+      "base_structure": "inferior_frontal_gyrus_opercular_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_frontal_gyrus_triangular_part_L",
+      "base_structure": "inferior_frontal_gyrus_triangular_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_frontal_gyrus_triangular_part_R",
+      "base_structure": "inferior_frontal_gyrus_triangular_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_horn_of_lateral_ventricle_L",
+      "base_structure": "inferior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_horn_of_lateral_ventricle_R",
+      "base_structure": "inferior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_occipital_gyrus_L",
+      "base_structure": "inferior_occipital_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_occipital_gyrus_R",
+      "base_structure": "inferior_occipital_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_olive_L",
+      "base_structure": "inferior_olive",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_olive_R",
+      "base_structure": "inferior_olive",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_inferior_temporal_gyrus_L",
+      "base_structure": "inferior_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_inferior_temporal_gyrus_R",
+      "base_structure": "inferior_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_ingulo_parahippocampal_isthmus_L",
+      "base_structure": "ingulo_parahippocampal_isthmus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_ingulo_parahippocampal_isthmus_R",
+      "base_structure": "ingulo_parahippocampal_isthmus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_internal_segment_of_globus_pallidus_L",
+      "base_structure": "internal_segment_of_globus_pallidus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_internal_segment_of_globus_pallidus_R",
+      "base_structure": "internal_segment_of_globus_pallidus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_dorsal_nucleus_of_thalamus_L",
+      "base_structure": "lateral_dorsal_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_dorsal_nucleus_of_thalamus_R",
+      "base_structure": "lateral_dorsal_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_hemisphere_of_cerebellum_L",
+      "base_structure": "lateral_hemisphere_of_cerebellum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_hemisphere_of_cerebellum_R",
+      "base_structure": "lateral_hemisphere_of_cerebellum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_nucleus_L",
+      "base_structure": "lateral_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_nucleus_R",
+      "base_structure": "lateral_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_occipitotemporal_fusiform_gyrus_occipital_part_L",
+      "base_structure": "lateral_occipitotemporal_fusiform_gyrus_occipital_part",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_occipitotemporal_fusiform_gyrus_occipital_part_R",
+      "base_structure": "lateral_occipitotemporal_fusiform_gyrus_occipital_part",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_olfactory_gyrus_L",
+      "base_structure": "lateral_olfactory_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_olfactory_gyrus_R",
+      "base_structure": "lateral_olfactory_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_orbital_gyrus_L",
+      "base_structure": "lateral_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_orbital_gyrus_R",
+      "base_structure": "lateral_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lateral_posterior_nucleus_of_thalamus_L",
+      "base_structure": "lateral_posterior_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lateral_posterior_nucleus_of_thalamus_R",
+      "base_structure": "lateral_posterior_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_limen_insula_L",
+      "base_structure": "limen_insula",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_limen_insula_R",
+      "base_structure": "limen_insula",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_lingual_gyrus_medial_occipitotemporal_gyrus_L",
+      "base_structure": "lingual_gyrus_medial_occipitotemporal_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_lingual_gyrus_medial_occipitotemporal_gyrus_R",
+      "base_structure": "lingual_gyrus_medial_occipitotemporal_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_long_insular_gyri_L",
+      "base_structure": "long_insular_gyri",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_long_insular_gyri_R",
+      "base_structure": "long_insular_gyri",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_mammillary_region_of_HTH_L",
+      "base_structure": "mammillary_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_mammillary_region_of_HTH_R",
+      "base_structure": "mammillary_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_mammillothalamic_tract_L",
+      "base_structure": "mammillothalamic_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_mammillothalamic_tract_R",
+      "base_structure": "mammillothalamic_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_medial_geniculate_nuclei_L",
+      "base_structure": "medial_geniculate_nuclei",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_medial_geniculate_nuclei_R",
+      "base_structure": "medial_geniculate_nuclei",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_medial_nucleus_L",
+      "base_structure": "medial_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_medial_nucleus_R",
+      "base_structure": "medial_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_medial_orbital_gyrus_L",
+      "base_structure": "medial_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_medial_orbital_gyrus_R",
+      "base_structure": "medial_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_mediodorsal_nucleus_of_thalamus_L",
+      "base_structure": "mediodorsal_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_mediodorsal_nucleus_of_thalamus_R",
+      "base_structure": "mediodorsal_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_midbrain_tegmentum_L",
+      "base_structure": "midbrain_tegmentum",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_midbrain_tegmentum_R",
+      "base_structure": "midbrain_tegmentum",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_middle_cerebellar_peduncle_L",
+      "base_structure": "middle_cerebellar_peduncle",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_middle_cerebellar_peduncle_R",
+      "base_structure": "middle_cerebellar_peduncle",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_middle_frontal_gyrus_L",
+      "base_structure": "middle_frontal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_middle_frontal_gyrus_R",
+      "base_structure": "middle_frontal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_middle_temporal_gyrus_L",
+      "base_structure": "middle_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_middle_temporal_gyrus_R",
+      "base_structure": "middle_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_midline_nuclear_complex_L",
+      "base_structure": "midline_nuclear_complex",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_midline_nuclear_complex_R",
+      "base_structure": "midline_nuclear_complex",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_nucleus_accumbens_L",
+      "base_structure": "nucleus_accumbens",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_nucleus_accumbens_R",
+      "base_structure": "nucleus_accumbens",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_occipital_pole_L",
+      "base_structure": "occipital_pole",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_occipital_pole_R",
+      "base_structure": "occipital_pole",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_occipitotemporal_fusiform_gyrus_temporal_part_L",
+      "base_structure": "occipitotemporal_fusiform_gyrus_temporal_part",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_occipitotemporal_fusiform_gyrus_temporal_part_R",
+      "base_structure": "occipitotemporal_fusiform_gyrus_temporal_part",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_olfactory_bulb_L",
+      "base_structure": "olfactory_bulb",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_olfactory_bulb_R",
+      "base_structure": "olfactory_bulb",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_olfactory_tract_L",
+      "base_structure": "olfactory_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_olfactory_tract_R",
+      "base_structure": "olfactory_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_optic_radiation_L",
+      "base_structure": "optic_radiation",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_optic_radiation_R",
+      "base_structure": "optic_radiation",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_optic_tract_L",
+      "base_structure": "optic_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_optic_tract_R",
+      "base_structure": "optic_tract",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_paracentral_lobule_caudal_part_L",
+      "base_structure": "paracentral_lobule_caudal_part",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_paracentral_lobule_caudal_part_R",
+      "base_structure": "paracentral_lobule_caudal_part",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_paracentral_lobule_rostral_part_L",
+      "base_structure": "paracentral_lobule_rostral_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_paracentral_lobule_rostral_part_R",
+      "base_structure": "paracentral_lobule_rostral_part",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_paracingulate_gyrus_L",
+      "base_structure": "paracingulate_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_paracingulate_gyrus_R",
+      "base_structure": "paracingulate_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_parafascicular_nucleus_of_thalamus_L",
+      "base_structure": "parafascicular_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_parafascicular_nucleus_of_thalamus_R",
+      "base_structure": "parafascicular_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_paravermis_of_cerebellum_L",
+      "base_structure": "paravermis_of_cerebellum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_paravermis_of_cerebellum_R",
+      "base_structure": "paravermis_of_cerebellum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_parietal_operculum_L",
+      "base_structure": "parietal_operculum",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_parietal_operculum_R",
+      "base_structure": "parietal_operculum",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_perirhinal_gyrus_rostral_part_of_FuGt_L",
+      "base_structure": "perirhinal_gyrus_rostral_part_of_FuGt",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_perirhinal_gyrus_rostral_part_of_FuGt_R",
+      "base_structure": "perirhinal_gyrus_rostral_part_of_FuGt",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_pineal_body_L",
+      "base_structure": "pineal_body",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_pineal_body_R",
+      "base_structure": "pineal_body",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_piriform_region_L",
+      "base_structure": "piriform_region",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_piriform_region_R",
+      "base_structure": "piriform_region",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_planum_polare_L",
+      "base_structure": "planum_polare",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_planum_polare_R",
+      "base_structure": "planum_polare",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_planum_temporale_L",
+      "base_structure": "planum_temporale",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_planum_temporale_R",
+      "base_structure": "planum_temporale",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_pontine_tegmentum_L",
+      "base_structure": "pontine_tegmentum",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_pontine_tegmentum_R",
+      "base_structure": "pontine_tegmentum",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_postcentral_gyrus_L",
+      "base_structure": "postcentral_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_postcentral_gyrus_R",
+      "base_structure": "postcentral_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_posterior_cortical_nucleus_L",
+      "base_structure": "posterior_cortical_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_posterior_cortical_nucleus_R",
+      "base_structure": "posterior_cortical_nucleus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_posterior_horn_of_lateral_ventricle_L",
+      "base_structure": "posterior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_posterior_horn_of_lateral_ventricle_R",
+      "base_structure": "posterior_horn_of_lateral_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_posterior_intermediate_orbital_gyrus_L",
+      "base_structure": "posterior_intermediate_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_posterior_intermediate_orbital_gyrus_R",
+      "base_structure": "posterior_intermediate_orbital_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_posterior_parahippocampal_gyrus_L",
+      "base_structure": "posterior_parahippocampal_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_posterior_parahippocampal_gyrus_R",
+      "base_structure": "posterior_parahippocampal_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_precentral_gyrus_L",
+      "base_structure": "precentral_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_precentral_gyrus_R",
+      "base_structure": "precentral_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_precuneus_L",
+      "base_structure": "precuneus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_precuneus_R",
+      "base_structure": "precuneus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_preoptic_region_of_HTH_L",
+      "base_structure": "preoptic_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_preoptic_region_of_HTH_R",
+      "base_structure": "preoptic_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_pretectal_region_L",
+      "base_structure": "pretectal_region",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_pretectal_region_R",
+      "base_structure": "pretectal_region",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_pulvinar_of_thalamus_L",
+      "base_structure": "pulvinar_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_pulvinar_of_thalamus_R",
+      "base_structure": "pulvinar_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_putamen_L",
+      "base_structure": "putamen",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_putamen_R",
+      "base_structure": "putamen",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_pyramidal_part_of_medulla_oblongata_L",
+      "base_structure": "pyramidal_part_of_medulla_oblongata",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_pyramidal_part_of_medulla_oblongata_R",
+      "base_structure": "pyramidal_part_of_medulla_oblongata",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_red_nucleus_L",
+      "base_structure": "red_nucleus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_red_nucleus_R",
+      "base_structure": "red_nucleus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_reuniens_nucleus_medioventral_nucleus_of_thalamus_L",
+      "base_structure": "reuniens_nucleus_medioventral_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_reuniens_nucleus_medioventral_nucleus_of_thalamus_R",
+      "base_structure": "reuniens_nucleus_medioventral_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_rostral_gyrus_L",
+      "base_structure": "rostral_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_rostral_gyrus_R",
+      "base_structure": "rostral_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_septal_nuclei_L",
+      "base_structure": "septal_nuclei",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_septal_nuclei_R",
+      "base_structure": "septal_nuclei",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_short_insular_gyri_L",
+      "base_structure": "short_insular_gyri",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_short_insular_gyri_R",
+      "base_structure": "short_insular_gyri",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_subcallosal_gyrus_parolfactory_gyrus_L",
+      "base_structure": "subcallosal_gyrus_parolfactory_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_subcallosal_gyrus_parolfactory_gyrus_R",
+      "base_structure": "subcallosal_gyrus_parolfactory_gyrus",
+      "group": "cingulate_parahippocampal_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_substantia_nigra_L",
+      "base_structure": "substantia_nigra",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_substantia_nigra_R",
+      "base_structure": "substantia_nigra",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_subthalamic_nucleus_L",
+      "base_structure": "subthalamic_nucleus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_subthalamic_nucleus_R",
+      "base_structure": "subthalamic_nucleus",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_superior_cerebellar_peduncle_brachium_conjunctivum_L",
+      "base_structure": "superior_cerebellar_peduncle_brachium_conjunctivum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_superior_cerebellar_peduncle_brachium_conjunctivum_R",
+      "base_structure": "superior_cerebellar_peduncle_brachium_conjunctivum",
+      "group": "cerebellar_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_superior_colliculus_L",
+      "base_structure": "superior_colliculus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_superior_colliculus_R",
+      "base_structure": "superior_colliculus",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_superior_frontal_gyrus_L",
+      "base_structure": "superior_frontal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_superior_frontal_gyrus_R",
+      "base_structure": "superior_frontal_gyrus",
+      "group": "frontal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_superior_occipital_gyrus_L",
+      "base_structure": "superior_occipital_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_superior_occipital_gyrus_R",
+      "base_structure": "superior_occipital_gyrus",
+      "group": "occipital_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_superior_temporal_gyrus_L",
+      "base_structure": "superior_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_superior_temporal_gyrus_R",
+      "base_structure": "superior_temporal_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_supramarginal_gyrus_L",
+      "base_structure": "supramarginal_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_supramarginal_gyrus_R",
+      "base_structure": "supramarginal_gyrus",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_supraoptic_region_of_HTH_L",
+      "base_structure": "supraoptic_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_supraoptic_region_of_HTH_R",
+      "base_structure": "supraoptic_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_supraparietal_lobule_L",
+      "base_structure": "supraparietal_lobule",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_supraparietal_lobule_R",
+      "base_structure": "supraparietal_lobule",
+      "group": "parietal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_tail_of_caudate_L",
+      "base_structure": "tail_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_tail_of_caudate_R",
+      "base_structure": "tail_of_caudate",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_tail_of_hippocampus_L",
+      "base_structure": "tail_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_tail_of_hippocampus_R",
+      "base_structure": "tail_of_hippocampus",
+      "group": "hippocampal_amygdala_limbic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_tegmentum_of_medulla_oblongata_L",
+      "base_structure": "tegmentum_of_medulla_oblongata",
+      "group": "brainstem_substructures_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_tegmentum_of_medulla_oblongata_R",
+      "base_structure": "tegmentum_of_medulla_oblongata",
+      "group": "brainstem_substructures_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_temporal_agranular_insular_cortex_area_Tl_L",
+      "base_structure": "temporal_agranular_insular_cortex_area_Tl",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_temporal_agranular_insular_cortex_area_Tl_R",
+      "base_structure": "temporal_agranular_insular_cortex_area_Tl",
+      "group": "insular_opercular_cortex_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_temporal_pole_L",
+      "base_structure": "temporal_pole",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_temporal_pole_R",
+      "base_structure": "temporal_pole",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_third_ventricle_L",
+      "base_structure": "third_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_third_ventricle_R",
+      "base_structure": "third_ventricle",
+      "group": "ventricular_spaces_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_transverse_temporal_gyrus_Heschls_gyrus_L",
+      "base_structure": "transverse_temporal_gyrus_Heschls_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_transverse_temporal_gyrus_Heschls_gyrus_R",
+      "base_structure": "transverse_temporal_gyrus_Heschls_gyrus",
+      "group": "temporal_cortex_parcellation_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_tuberal_region_of_HTH_L",
+      "base_structure": "tuberal_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_tuberal_region_of_HTH_R",
+      "base_structure": "tuberal_region_of_HTH",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_ventral_anterior_nucleus_of_thalamus_L",
+      "base_structure": "ventral_anterior_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_ventral_anterior_nucleus_of_thalamus_R",
+      "base_structure": "ventral_anterior_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_ventral_lateral_nucleus_of_thalamus_L",
+      "base_structure": "ventral_lateral_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_ventral_lateral_nucleus_of_thalamus_R",
+      "base_structure": "ventral_lateral_nucleus_of_thalamus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_ventral_posterior_lateral_nucleus_L",
+      "base_structure": "ventral_posterior_lateral_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_ventral_posterior_lateral_nucleus_R",
+      "base_structure": "ventral_posterior_lateral_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_ventral_posterior_medial_nucleus_L",
+      "base_structure": "ventral_posterior_medial_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_ventral_posterior_medial_nucleus_R",
+      "base_structure": "ventral_posterior_medial_nucleus",
+      "group": "thalamic_hypothalamic_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_white_matter_of_forebrain_L",
+      "base_structure": "white_matter_of_forebrain",
+      "group": "major_white_matter_regions_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_white_matter_of_forebrain_R",
+      "base_structure": "white_matter_of_forebrain",
+      "group": "major_white_matter_regions_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_white_matter_of_hindbrain_L",
+      "base_structure": "white_matter_of_hindbrain",
+      "group": "major_white_matter_regions_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_white_matter_of_hindbrain_R",
+      "base_structure": "white_matter_of_hindbrain",
+      "group": "major_white_matter_regions_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "Allen_zona_incerta_L",
+      "base_structure": "zona_incerta",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "left"
+    },
+    {
+      "source_object": "Allen_zona_incerta_R",
+      "base_structure": "zona_incerta",
+      "group": "basal_ganglia_deep_nuclei_v3",
+      "laterality": "right"
+    },
+    {
+      "source_object": "VH_M_optic_chiasm",
+      "base_structure": "VH_M_optic_chiasm",
+      "group": "commissural_sensory_pathways_v3",
+      "laterality": "midline"
+    }
+  ],
+  "omitted": [
+    {
+      "source_object": "Allen_amygdaloid_complex_L",
+      "base_structure": "amygdaloid_complex",
+      "reason": "broad parent volume omitted in favour of its detailed source nuclei"
+    },
+    {
+      "source_object": "Allen_amygdaloid_complex_R",
+      "base_structure": "amygdaloid_complex",
+      "reason": "broad parent volume omitted in favour of its detailed source nuclei"
+    },
+    {
+      "source_object": "Allen_hypothalamus_L",
+      "base_structure": "hypothalamus",
+      "reason": "broad parent volume omitted in favour of detailed source hypothalamic regions"
+    },
+    {
+      "source_object": "Allen_hypothalamus_R",
+      "base_structure": "hypothalamus",
+      "reason": "broad parent volume omitted in favour of detailed source hypothalamic regions"
+    },
+    {
+      "source_object": "Allen_posteroventral_putamen_L",
+      "base_structure": "posteroventral_putamen",
+      "reason": "overlapping alternate putamen volume omitted; named putamen retained"
+    },
+    {
+      "source_object": "Allen_posteroventral_putamen_R",
+      "base_structure": "posteroventral_putamen",
+      "reason": "overlapping alternate putamen volume omitted; named putamen retained"
+    },
+    {
+      "source_object": "Allen_thalamus_L",
+      "base_structure": "thalamus",
+      "reason": "broad parent volume omitted in favour of detailed source thalamic nuclei"
+    },
+    {
+      "source_object": "Allen_thalamus_R",
+      "base_structure": "thalamus",
+      "reason": "broad parent volume omitted in favour of detailed source thalamic nuclei"
+    }
+  ],
+  "source_gaps": {
+    "pituitary": "absent from this HRA brain GLB",
+    "choroid_plexus": "absent from this HRA brain GLB",
+    "csf_particle_or_fluid_data": "absent; ventricular meshes are atlas space surfaces only",
+    "microscopic_neurons_glia_myelin": "absent; source is macroscopic atlas anatomy"
+  }
+}

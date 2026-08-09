@@ -1,7 +1,10 @@
 # MASTER — scene assembly, behavior, and Houdini handoff
 
 This document is the implementation contract for assembling the repository's
-65 runtime assets into one coherent Apple Vision Pro educational experience.
+134 release-catalog runtime assets into one coherent Apple Vision Pro
+educational experience. The full source build has 136 unique package records;
+two inner-ear-containing records are licence-held and not present as runtime
+binaries in this publishing tree.
 It is written for a coding agent, technical artist, Houdini artist, or
 RealityKit engineer. The individual asset descriptions live in the
 [asset catalog](RealityKitContent/Assets/README.md); this file defines how the
@@ -18,7 +21,7 @@ must be validated before a patient-facing pilot.
 
 When files disagree, use this order:
 
-1. The six JSON manifests are authoritative for asset IDs, package paths,
+1. The eleven release JSON manifests are authoritative for asset IDs, package paths,
    units, up axis, provenance notes, and prohibited combinations.
 2. This file is authoritative for assembly, state, interaction, and pathway
    rules.
@@ -28,8 +31,20 @@ When files disagree, use this order:
    [provenance](docs/assets/PROVENANCE.md), and
    [validation](docs/assets/VALIDATION.md) are release gates, not optional
    background reading.
-5. The [clinical review checklist](docs/assets/source-notes/V2_CLINICAL_REVIEW_CHECKLIST.md)
+5. The [clinical review checklist](docs/assets/source-notes/CLINICAL_REVIEW_CHECKLIST.md)
    must be signed for the exact build before any patient-facing pilot.
+6. The [v3 detail catalog](docs/assets/INTRACRANIAL_ASSET_CATALOG_V3.md)
+   preserves the 45 new build records one by one, including the two held records
+   that are intentionally absent from the release manifest and binary tree.
+7. The
+   [surgical-tool stage audit](docs/assets/research/SURGICAL_TOOL_STAGE_AUDIT_V3.md)
+   is authoritative for tool-category duplication checks, `EVT-*` and `OPEN-*`
+   associations, branch gates, remaining gaps, qualitative physics boundaries,
+   and Houdini stage slots. Stage associations are descriptive patient-education
+   metadata, not operating instructions or a required clinical sequence.
+   Machine readers may use the adjacent
+   [stage map](docs/assets/research/surgical_tool_stage_map_v3.json) only after
+   validating its IDs against the two release manifests.
 
 The word **must** below means a release-blocking requirement. **Should** means
 the default implementation unless a reviewed design decision says otherwise.
@@ -57,6 +72,23 @@ the default implementation unless a reviewed design decision says otherwise.
   dimensions were anatomical. V2 device inspection assets use a separate,
   non-registered domain but default to 1:1 scale; label them as magnified only
   when an inspection view actually changes their root scale.
+- The neural-detail and non-held cranial-detail v3 packages are macroscopic
+  generic-atlas layers in their recorded project registration frames. Preserve
+  their authored transforms and semantic children; never normalize each package
+  independently.
+- Every intracranial-micro-v3 package uses
+  `microscopic_conceptual_separate`. Its metre dimensions describe a
+  presentation stage, not biological dimensions. It must be placed under
+  `MicroScaleRoot`, never under `HeadRegisteredRoot`, and must keep a visible
+  magnification/conceptual/non-patient warning for its entire display time.
+- Tool-v3 packages use metre/Y-up presentation frames but are not registered
+  patient anatomy or measured products. Handheld/display bounds are plausible
+  authoring dimensions only; no asset may supply device sizing, compatibility,
+  trajectory, depth, force, pressure, energy, sterility, or navigation data.
+- Endovascular support packages belong only under the selected
+  `EndovascularToolRoot` stage. Open-cranial packages stay under
+  `LegacyHeadRoot/OpenCranialRoot`, unloaded in ordinary EVT, and require the
+  explicit `clinician_selected_hemorrhage_or_decompression_only` gate.
 - The prototype-v1 room and body assets are staging aids, not a verified
   registration frame for v2 head anatomy. Align them visually under a separate
   parent and record the chosen transform.
@@ -85,16 +117,38 @@ flowchart TD
     H --> S["SkullRoot"]
     H --> M["MeningesRoot"]
     H --> B["BrainRoot"]
+    B --> NS["NeuralSemanticRoot"]
     H --> A["ArterialRoot"]
     H --> V["VenousRoot"]
     H --> L["PathologyRoot"]
+    H --> CN["CranialNerveRoot"]
+    H --> OR["OrbitalSupportRoot"]
+    H --> EN["EndocrineRoot"]
+    H --> AW["AirwayRoot"]
+    H --> MU["MuscleRoot"]
     LH --> O["OpenCranialRoot"]
     PT --> PR["ProcedureToolRoot"]
+    PR --> EVT["EndovascularToolRoot"]
+    EVT --> EVTA["AccessSupportRoot"]
+    EVT --> EVTG["GuideSupportRoot"]
+    EVT --> EVTI["ImagingSupportRoot"]
+    EVT --> EVTD["DeliveryRoot"]
+    EVT --> EVTR["RetrievalRoot"]
+    EVT --> EVTH["AccessHemostasisRoot"]
+    O --> OP["PositioningRoot"]
+    O --> OE["ExposureRoot"]
+    O --> OB["BoneAccessRoot"]
+    O --> OD["DuralAccessRoot"]
+    O --> OV["EvacuationRoot"]
+    O --> OH["HemostasisRoot"]
+    O --> OC["ClosureRoot"]
+    O --> OEVD["OptionalEVDAdjunctRoot"]
     P --> T["TeachingVignetteRoot"]
     P --> DI["DeviceInspectionRoot"]
     T --> VW["VesselWallVignetteRoot"]
     T --> MC["MicrocirculationVignetteRoot"]
     T --> RBC["RBCCloseupRoot"]
+    T --> MS["MicroScaleRoot"]
 ```
 
 Recommended engine names and responsibilities:
@@ -111,13 +165,35 @@ Recommended engine names and responsibilities:
 | `SkullRoot` | Optional semantic skull | Off by default in the combined cutaway |
 | `MeningesRoot` | Dura and falx/tentorium variants | Use opaque toggles/cutaways |
 | `BrainRoot` | Cortex/brain hero, deep structures, ventricles | Components may be progressively revealed |
+| `NeuralSemanticRoot` | v3 cortical parcels, cerebellum/brainstem, deep nuclei, ventricles, white matter, and pathways | Registered macroscopic atlas domain; use semantic variants/cutaways and hierarchy exclusions |
 | `ArterialRoot` | Cerebral and neck-access arteries | Static anatomy plus optional illustrative overlay |
 | `VenousRoot` | Sinuses, jugulars, supplemental veins | Choose components or one aggregate, never both |
 | `PathologyRoot` | Registered v2 ischemic clot and future reviewed registered pathology | Pathway-exclusive state |
+| `CranialNerveRoot` | Non-held v3 cranial-nerve groups or their nerve-only review assembly | Static generic atlas layers; components or assembly, never both |
+| `OrbitalSupportRoot` | Extraocular-muscle support around the separate eye asset | Static; no ocular-motor simulation |
+| `EndocrineRoot` | Source-backed anterior/posterior pituitary context | Static; no hormone or disease behavior |
+| `AirwayRoot` | Nasal/paranasal and pharyngeal orientation context | Static; no airflow, swallowing, aspiration, or drainage solver |
+| `MuscleRoot` | Mastication and selected head/neck orientation muscles | Static; no contraction, force, or tissue deformation |
 | `ProcedureToolRoot` | Authored in-patient guidewire/catheter/tool poses | Kinematic narrative motion only; must have a reviewed placement |
+| `EndovascularToolRoot` | Stage-gated EVT access, guide, imaging, delivery, retrieval-support, and access-hemostasis categories | Enabled only for the ischemic-EVT branch; each optional category follows its reviewed `EVT-*` association |
+| `AccessSupportRoot` | Access needle/wire/sheath and access review variants | Detached or reviewed access-context placement; not a route, puncture, depth, or size specification |
+| `GuideSupportRoot` | Guide-catheter/valve and Y-connector/torque accessories | Static/kinematic recognition only; no compatibility, torque, seal, or navigation behavior |
+| `ImagingSupportRoot` | Contrast/flush props and suite controls | No fluid identity/dose/pressure, radiation, control mapping, or equipment operation |
+| `DeliveryRoot` | Existing guidewire/microcatheter routed instances | One reviewed qualitative pose path; no vessel contact, force, or trajectory claim |
+| `RetrievalRoot` | Existing retriever/aspiration variants plus conditional external aspiration support | `EVT-06A`, `06B`, and `06C` are explicit alternatives; no efficacy or solver claim |
+| `AccessHemostasisRoot` | Conditional post-access compression/closure-option cues | Alternatives/adjuncts only; no pressure, timing, method, or aftercare instruction |
 | `DeviceInspectionRoot` | Detached v2 device inspection/comparison tray | Separate registration domain; 1:1 default, labelled if scaled; not a vessel path |
-| `OpenCranialRoot` | Flap, drill, patch, evacuator, closure | Disabled for the thrombectomy pathway |
+| `OpenCranialRoot` | Conditional open-neurosurgery anatomy states and generic instrument categories | Unloaded by default; disabled for ordinary EVT; requires the clinician-selected hemorrhage/decompression gate |
+| `PositioningRoot` | Open-branch positioning/orientation context | No clamp/pin, measurement, navigation, or patient-suitability claim |
+| `ExposureRoot` | Surface marking, scalpel/dissector, retractor/hemostat, and scalp state | Non-graphic static/kinematic recognition only; no incision, tissue plane, force, or technique |
+| `BoneAccessRoot` | Bone-flap state, prototype drill, perforator/craniotome, and branch-correct fixation | No cutting/drilling physics; fixation prohibited for decompressive leave-off |
+| `DuralAccessRoot` | Dural scissors/hooks/forceps and optional microinstrument context | No opening pattern, corridor, clearance, or trajectory claim |
+| `EvacuationRoot` | Mutually exclusive open or minimally invasive evacuation context | No tissue removal, suction, completion, or outcome simulation |
+| `HemostasisRoot` | Bipolar/irrigation, suction/microdissector, and protective retractor context | Highlight/pose only; no energy, flow, pressure, tissue contact, or efficacy |
+| `ClosureRoot` | Dural closure/patch, branch-correct bone state, scalp closure | No suture tension, watertightness, fixation torque, or wound-care instruction |
+| `OptionalEVDAdjunctRoot` | Existing or detailed conditional CSF-access explanation | Off unless separately approved; no target, trajectory, depth, leveling, pressure, or drainage logic |
 | `TeachingVignetteRoot` | Magnified, scale-separated explanations | Place beside the patient with a visible scale label |
+| `MicroScaleRoot` | v3 conceptual BBB, blood, thrombus, neural-cell, myelin, synapse, CSF-interface, and ischemic-zone vignettes | Separate presentation stage; never registered to or nested inside the head |
 | `SpatialGuidanceRoot` | World-space step markers and arrows | Inherits placement/orbit/scale with the experience |
 | `AppUIRoot` | Captions, replay, warnings, non-spatial controls | App-owned UI; not transformed with world content |
 
@@ -139,6 +215,19 @@ assembly is a **replacement view**, not another layer to stack on top:
 | `artery_cutaway_complete_v2.usdz` | Separate artery-wall and interior-flow packages |
 | `cerebral_bloodflow_teaching_set_v2.usdz` | Complete cutaway, Circle-of-Willis overlay, RBC close-up, and microcirculation in a rearranged static comparison layout; it excludes the animation |
 | `thrombectomy_device_set_educational_v2.usdz` | The four v2 device close-ups in a comparison layout |
+| `neural_detail_registered_review_assembly_v3.usdz` | All 14 v3 neural-detail packages; while focused, also replace the opaque v2 brain/deep/ventricle layers that obscure or duplicate its source-backed review view |
+| `cranial_nerves_complete_assembly_v3.usdz` | The nine independent cranial-nerve group packages |
+| `intracranial_micro_teaching_set_v3.usdz` | All 11 independent scale-separated micro vignettes |
+| `vascular_access_setup_review_assembly_v3.usdz` | The access needle, short access wire, sheath/dilator, and puncture-site hemostasis-option packages |
+| `endovascular_tools_workflow_review_assembly_v3.usdz` | All ten independent endovascular-support packages and the nested vascular-access review assembly |
+| `cranial_access_tools_review_assembly_open_neurosurgery_v3.usdz` | The five surface-marking, soft-tissue exposure, retraction/hemostat, perforator/craniotome, and bone-fixation component sets |
+| `intradural_closure_tools_review_assembly_open_neurosurgery_v3.usdz` | The six dural-instrument, bipolar/irrigation, suction/microdissector, brain-retractor, microinstrument-tray, and dural-closure component sets; conditional CSF access is intentionally excluded |
+
+`cranial_support_registered_assembly_v3` would contain all 16 cranial
+components and transitively overlap the nerve assembly, but it is a held
+source-build record—not a release asset. A loader must fail closed if that ID
+appears until its hold is formally cleared and a new release manifest is
+reviewed.
 
 Loading an aggregate and its parts together causes duplicate geometry,
 z-fighting, unnecessary memory use, and ambiguous state ownership. Enforce
@@ -151,6 +240,26 @@ active asset. For example, the hero and layered-head aggregates both contain
 the brain even though neither is the other's direct component; the vascular
 assembly overlaps the expanded-veins aggregate; and the teaching set overlaps
 the complete cutaway. All three pairs must be rejected.
+
+Apply the same recursive rule to v3. The neural review assembly excludes
+N01–N14; the cranial-nerve assembly excludes C01–C09; the micro teaching set
+excludes M01–M11. Also enforce semantic-overlap groups that are not literal
+package containment: broad `major_white_matter_regions_v3` and detailed
+`commissural_sensory_pathways_v3` must not be presented as disjoint tissue
+volumes, `ventricular_spaces_v3` replaces `brain_ventricles_v2` in a focused
+view, and v3 cortical/deep layers require hiding or cutting any opaque v2 brain
+surface that would duplicate or obscure them.
+
+Apply the rule to tools without weakening the pathway gates. The access review
+assembly excludes its four components. The endovascular workflow assembly
+excludes all ten endovascular components **and** the access assembly. The
+cranial-access assembly excludes its five components; the intradural/closure
+assembly excludes its six. Existing semantic overlaps also require replacement:
+the new access close-up replaces overlapping children of `arterial_access_site`,
+the detailed open suction view replaces `suction_and_forceps`, the conditional
+CSF close-up replaces the detailed view of `optional_evd_system`, and the
+perforator/craniotome package must not create a coincident second drill motor
+beside `cranial_drill_generic`.
 
 ### 4.2 Reveal policy
 
@@ -165,6 +274,11 @@ the complete cutaway. All three pairs must be rejected.
   cross-source fit has been accepted for a specific shot.
 - A cutaway window is an educational reveal, not a claimed incision,
   craniotomy, operative corridor, or planned opening.
+- Neural detail follows an explicit drill-down, not an opacity pile:
+  macroscopic brain context → one cortical/deep/ventricular/pathway focus →
+  semantic child highlight. A transition to cell-scale teaching opens a
+  separate `MicroScaleRoot` stage and never zooms the head geometry until it
+  appears to become a literal cell model.
 
 ### 4.3 Pathway exclusivity
 
@@ -204,10 +318,14 @@ stateDiagram-v2
 The app must require an explicit pathway choice before enabling intervention
 assets. Changing pathway performs a full state reset.
 
-## 5. Master relationship map — all 65 runtime assets
+## 5. Master relationship map — 136 build records / 134 release assets
 
 The `Parent` column is the canonical scene slot. `Relationship / rule` tells an
-agent how each package fits into the constructed experience.
+agent how each package fits into the constructed experience. Records 1–65 are
+the original release baseline; records 66–110 are the intracranial-detail v3
+expansion; and records 111–136 are the surgical-tool v3 expansion. Records 92
+and 98 are held audit records with no published binary, leaving 134
+release assets. Asset IDs, not sequence numbers, are the runtime keys.
 
 ### 5.1 Realistic v2 core anatomy
 
@@ -324,6 +442,144 @@ agent how each package fits into the constructed experience.
 | 64 | `postoperative_head_dressing` | `LegacyHeadRoot/Recovery` | Generic v1 head-space dressing only after an applicable cranial-access procedure. Do not use after ordinary thrombectomy or monitoring-only care; any non-legacy placement needs a reviewed transform. It is not evidence of success. |
 | 65 | `spatial_step_markers` | `SpatialGuidanceRoot/Markers` | Eight markers in one wide entity. Use as authored or create app-owned labels; do not place the entire package at head origin or imply that every pathway has eight steps. |
 
+### 5.11 Neural-detail v3 — build records 66–80
+
+These 15 packages are release-eligible generic HRA atlas layers. Build numbers
+remain stable across the complete 136-record build map; runtime code must use the
+asset ID, not the number.
+
+| Build # | Asset ID | Parent | Relationship / rule |
+|---:|---|---|---|
+| 66 | `frontal_cortex_parcellation_v3` | `NeuralSemanticRoot/Cortex/Frontal` | Semantic frontal alternative beneath/instead of opaque v2 cortex; use a cutaway or hide the obscuring brain surface. |
+| 67 | `parietal_cortex_parcellation_v3` | `NeuralSemanticRoot/Cortex/Parietal` | Semantic parietal focus; preserve bilateral named children and never infer patient function or deficit. |
+| 68 | `temporal_cortex_parcellation_v3` | `NeuralSemanticRoot/Cortex/Temporal` | Semantic temporal/auditory-plane focus; static atlas anatomy, not a functional map. |
+| 69 | `occipital_cortex_parcellation_v3` | `NeuralSemanticRoot/Cortex/Occipital` | Semantic occipital focus; colour is a selection convention, not vision status. |
+| 70 | `insular_opercular_cortex_v3` | `NeuralSemanticRoot/Cortex/InsularOpercular` | Internal focus requiring an opaque cutaway/hide state; do not stack it beneath an opaque whole brain. |
+| 71 | `cingulate_parahippocampal_cortex_v3` | `NeuralSemanticRoot/Cortex/Medial` | Medial cortical focus; static atlas relationship only, with no cognition, memory, or outcome claim. |
+| 72 | `cerebellar_substructures_v3` | `NeuralSemanticRoot/Cerebellum` | Detailed cerebellar alternative for the broader v2 cerebellar context; do not co-render overlapping opaque source levels. |
+| 73 | `brainstem_substructures_v3` | `NeuralSemanticRoot/Brainstem` | Detailed brainstem focus; no pathway conduction, deficit, or procedural safe-margin meaning. |
+| 74 | `basal_ganglia_deep_nuclei_v3` | `NeuralSemanticRoot/Deep/BasalGanglia` | Higher-detail alternative to broad `brain_deep_structures_v2`; reveal only after hiding/cutting obscuring tissue. |
+| 75 | `thalamic_hypothalamic_nuclei_v3` | `NeuralSemanticRoot/Deep/ThalamicHypothalamic` | Detailed child nuclei with overlapping broad parents deliberately omitted; do not reconstruct the omitted parents as new anatomy. |
+| 76 | `hippocampal_amygdala_limbic_nuclei_v3` | `NeuralSemanticRoot/Deep/Limbic` | Semantic limbic focus; atlas anatomy does not encode memory, emotion, seizure, prognosis, or patient findings. |
+| 77 | `ventricular_spaces_v3` | `NeuralSemanticRoot/Ventricles` | Higher-detail replacement for `brain_ventricles_v2` in the focused state; a space surface, not CSF volume, flow, or pressure. |
+| 78 | `major_white_matter_regions_v3` | `NeuralSemanticRoot/WhiteMatter/Broad` | Broad source volumes; alternate hierarchy level to asset 79, not a disjoint compartment or tractography result. |
+| 79 | `commissural_sensory_pathways_v3` | `NeuralSemanticRoot/WhiteMatter/Pathways` | Named source pathways; do not present as patient DTI, connectivity, conduction, or a safe surgical route. |
+| 80 | `neural_detail_registered_review_assembly_v3` | `HeadRegisteredRoot/NeuralReviewVariant` | Opaque unilateral review assembly. Replaces assets 66–79 and the obscuring/duplicated v2 brain, deep, and ventricle layers while active; lazy-load for review only. |
+
+### 5.12 Cranial-support v3 — build records 81–98
+
+Records 81–91 and 93–97 are in the release tree. Records 92 and 98 are audit
+records only; their binaries and release-manifest entries are absent.
+
+| Build # | Asset ID | Parent | Relationship / rule |
+|---:|---|---|---|
+| 81 | `cranial_nerve_olfactory_i_bilateral_v3` | `CranialNerveRoot/I` | Pair optionally with nasal context for orientation; visibility/colour does not encode smell function. |
+| 82 | `cranial_nerve_optic_ii_bilateral_v3` | `CranialNerveRoot/II` | Pair with the separate eye asset without duplicating eyeballs; approximate cross-source contact is not navigation geometry. |
+| 83 | `cranial_nerves_ocular_motor_iii_iv_vi_v3` | `CranialNerveRoot/OcularMotor` | Pair with orbital support for static explanation only; no eye-motion, palsy, or conduction simulation. |
+| 84 | `cranial_nerve_trigeminal_v_expanded_v3` | `CranialNerveRoot/V` | Semantic trigeminal roots/divisions/branches; not a complete peripheral map, pain map, block target, or surgical corridor. |
+| 85 | `cranial_nerve_facial_vii_bilateral_v3` | `CranialNerveRoot/VII` | Static facial/chorda paths; not a facial-expression rig, deficit model, or monitoring system. |
+| 86 | `cranial_nerve_vestibulocochlear_viii_v3` | `CranialNerveRoot/VIII` | Source-identity-preserving VIII pathways; may be shown without the held ear asset and encodes no hearing/balance function. |
+| 87 | `cranial_nerves_glossopharyngeal_ix_vagus_x_v3` | `CranialNerveRoot/IX_X` | Long atlas-provided paths into the neck; static orientation, not swallowing, autonomic, airway, or stimulation logic. |
+| 88 | `cranial_nerve_accessory_xi_bilateral_v3` | `CranialNerveRoot/XI` | Static neck pathway; no strength, range-of-motion, monitoring, or deficit inference. |
+| 89 | `cranial_nerve_hypoglossal_xii_bilateral_v3` | `CranialNerveRoot/XII` | Static pathway; no tongue-motion, swallowing, deficit, or safe-margin claim. |
+| 90 | `extraocular_muscles_orbital_support_v3` | `OrbitalSupportRoot/Muscles` | Pair with assets 82–83 and optional eyes; static anatomy with no contraction or gaze mechanics. |
+| 91 | `pituitary_adenohypophysis_neurohypophysis_v3` | `EndocrineRoot/Pituitary` | Two exact source lobes; static generic atlas context with no endocrine function, lesion, or patient interpretation. |
+| 92 | `middle_inner_ear_bilateral_v3` | `NOT_PUBLISHED` | `HOLD_FOR_INNER_EAR_LICENSE_REVIEW`; binary absent. Never create a fallback path to a local/quarantine copy. |
+| 93 | `nasal_cavity_paranasal_spaces_v3` | `AirwayRoot/NasalParanasal` | Partial source-backed sinonasal context; no invented maxillary sinus, airflow, drainage, infection, or operative claim. |
+| 94 | `pharyngeal_upper_airway_context_v3` | `AirwayRoot/Pharyngeal` | Static naso/oro/laryngopharyngeal orientation; no airflow, swallowing, aspiration, obstruction, or ventilation solver. |
+| 95 | `muscles_of_mastication_bilateral_v3` | `MuscleRoot/Mastication` | Static context between scalp/skull and trigeminal paths; no chewing, jaw force, deformation, or approach simulation. |
+| 96 | `head_neck_orientation_muscles_v3` | `MuscleRoot/HeadNeck` | Partial orientation set; not complete myology and contains no contraction, stiffness, or access-corridor meaning. |
+| 97 | `cranial_nerves_complete_assembly_v3` | `CranialNerveRoot/ReviewVariant` | Nerve-only review assembly replacing assets 81–89; use individual payloads for interactive states. |
+| 98 | `cranial_support_registered_assembly_v3` | `NOT_PUBLISHED` | Held, binary absent, and transitively duplicates assets 81–97 while also containing held asset 92. It must never resolve at runtime. |
+
+### 5.13 Conceptual intracranial-micro v3 — build records 99–110
+
+All 12 packages belong exclusively to `MicroScaleRoot`. They are magnified
+presentation models, not histology, quantitative physiology, or head-registered
+anatomy. Their displayed dimensions and object counts have no biological
+measurement meaning.
+
+| Build # | Asset ID | Parent | Relationship / rule |
+|---:|---|---|---|
+| 99 | `blood_brain_barrier_neurovascular_unit_conceptual_v3` | `MicroScaleRoot/BBB` | Conceptual opened capillary/NVU overview; complements v2 microcirculation but is not a continuation of its geometry. |
+| 100 | `capillary_endothelium_tight_junctions_conceptual_v3` | `MicroScaleRoot/BBB/Endothelium` | Endothelium/junction close-up; do not infer real cell count, barrier permeability, thickness, or molecular mechanism. |
+| 101 | `formed_blood_elements_magnified_v3` | `MicroScaleRoot/BloodElements` | Illustrative RBC/leukocyte/platelet forms; not a blood film, count, morphology finding, oxygenation cue, or pathology classification. |
+| 102 | `platelet_fibrin_thrombus_microstructure_conceptual_v3` | `MicroScaleRoot/Thrombus` | Complements the macro clot markers without registration; composition, strand count, texture, and packing are illustrative. |
+| 103 | `multipolar_neuron_detailed_conceptual_v3` | `MicroScaleRoot/NeuralCell/Neuron` | Generic teaching morphology; not a sampled cell, connectome, firing model, or patient tissue. |
+| 104 | `astrocyte_capillary_endfeet_conceptual_v3` | `MicroScaleRoot/NeuralCell/Astrocyte` | Conceptual astrocyte/endfeet relationship; placement and coverage are not measured. |
+| 105 | `oligodendrocyte_myelinated_axons_conceptual_v3` | `MicroScaleRoot/NeuralCell/Oligodendrocyte` | Conceptual glia/internode overview; counts, spacing, and connections are not histology. |
+| 106 | `myelinated_axon_node_of_ranvier_conceptual_v3` | `MicroScaleRoot/NeuralCell/Node` | Enlarged node/internode close-up; no electrophysiology, channel density, conduction velocity, or nerve registration. |
+| 107 | `chemical_synapse_closeup_conceptual_v3` | `MicroScaleRoot/NeuralCell/Synapse` | Conceptual terminal/vesicle/cleft/receptor-location cues; no neurotransmitter, kinetics, receptor density, or signaling solver. |
+| 108 | `choroid_plexus_csf_interface_conceptual_v3` | `MicroScaleRoot/CSFInterface` | Conceptual interface/direction cues; not registered choroid plexus and contains no CSF production, pressure, composition, or flow rate. |
+| 109 | `ischemic_tissue_zones_conceptual_v3` | `MicroScaleRoot/IschemicZones` | Qualitative nested teaching zones only; never map them to patient tissue, perfusion thresholds, time, prognosis, or treatment eligibility. |
+| 110 | `intracranial_micro_teaching_set_v3` | `MicroScaleRoot/ReviewVariant` | Review gallery replacing assets 99–109. Never co-load with those components or use the gallery as an interactive patient view. |
+
+### 5.14 Endovascular support tools v3 — build records 111–122
+
+These 12 packages are original generic education props under
+`EndovascularToolRoot`. Their `EVT-*` associations are conditional filters, not
+a required procedure, sequence, route, or device list. The models are static or
+qualitatively kinematic and encode no force, depth, pressure, flow, radiation,
+compatibility, sizing, navigation, device operation, training, or clinical
+performance.
+
+| Build # | Asset ID | Parent | Relationship / rule |
+|---:|---|---|---|
+| 111 | `vascular_access_needle_educational_v3` | `EndovascularToolRoot/AccessSupportRoot/Needle` | Optional `EVT-02_ARTERIAL_ACCESS` close-up. It complements/replaces the overlapping access detail in `arterial_access_site`; no route, gauge, angle, target, depth, or puncture technique. |
+| 112 | `vascular_access_wire_educational_v3` | `EndovascularToolRoot/AccessSupportRoot/AccessWire` | Optional `EVT-02` short-wire recognition cue, separate from the v2 intracranial guidewire inspection model; no coating, length, diameter, motion, or vessel interaction. |
+| 113 | `introducer_sheath_dilator_set_educational_v3` | `EndovascularToolRoot/AccessSupportRoot/SheathDilator` | Optional `EVT-02` access-support category; dimensions, taper, valve, sidearm, insertion depth, compatibility, and order are illustrative. |
+| 114 | `guide_catheter_hemostatic_valve_educational_v3` | `EndovascularToolRoot/GuideSupportRoot/GuideValve` | Optional `EVT-03_GUIDE_ACCESS`/`EVT-05_DISTAL_DELIVERY` proximal-support category; no named curve, navigation, support, seal, setting, or connector claim. |
+| 115 | `aspiration_pump_canister_tubing_educational_v3` | `EndovascularToolRoot/RetrievalRoot/AspirationSupport` | Enable only for selected `EVT-06B_CONTACT_ASPIRATION` or `EVT-06C_COMBINED`; no vacuum, pressure, duration, connection, aspirate volume, alarm, clot capture, or efficacy. |
+| 116 | `contrast_manifold_syringe_flush_educational_v3` | `EndovascularToolRoot/ImagingSupportRoot/ContrastFlush` | Conditional `EVT-04_BASELINE_ANGIOGRAPHY`/`EVT-07_VERIFICATION` prop; no agent identity, dose, route, pressure, stopcock position, timing, injection, or renal/allergy decision. |
+| 117 | `torque_device_y_connector_accessories_educational_v3` | `EndovascularToolRoot/GuideSupportRoot/Accessories` | Optional `EVT-03`/`EVT-05` accessory context; no torque magnitude, seal adjustment, connection order, manipulation, or compatibility. |
+| 118 | `puncture_site_hemostasis_options_educational_v3` | `EndovascularToolRoot/AccessHemostasisRoot/Options` | `EVT-08_WITHDRAWAL_HEMOSTASIS` alternatives/adjuncts, not a simultaneous setup; method, pressure, timing, deployment, monitoring, and aftercare remain clinician/local-protocol decisions. |
+| 119 | `sterile_endovascular_instrument_tray_educational_v3` | `EndovascularToolRoot/AccessSupportRoot/SterileTray` | Optional `EVT-01_SUITE_SETUP` review prop; intentionally incomplete and not a sterile pack, item count, medication setup, sharps procedure, or institutional checklist. |
+| 120 | `angiography_suite_controls_educational_v3` | `EndovascularToolRoot/ImagingSupportRoot/SuiteControls` | External context for `EVT-01`, `EVT-04`, or `EVT-07`; no button/pedal mapping, radiation, table/injector operation, emergency function, or operator workflow. |
+| 121 | `vascular_access_setup_review_assembly_v3` | `EndovascularToolRoot/AccessSupportRoot/ReviewVariant` | Review-only non-registered gallery replacing assets 111–113 and 118. It is non-sterile/non-chronological and must never co-load with those components. |
+| 122 | `endovascular_tools_workflow_review_assembly_v3` | `EndovascularToolRoot/ReviewVariant` | Review-only gallery replacing assets 111–120 and the nested asset 121. It is not a room setup, required list, clinical sequence, or patient plan. |
+
+### 5.15 Open-cranial tools v3 — build records 123–136
+
+All 14 packages are `open_neurosurgery_only`, prohibited from ordinary
+ischemic EVT, unloaded by default, and available only after
+`clinician_selected_hemorrhage_or_decompression_only`. Stage tags describe
+where a reviewed lesson may introduce a category; they do not establish that
+open surgery is appropriate or that every category is required.
+
+| Build # | Asset ID | Parent | Relationship / rule |
+|---:|---|---|---|
+| 123 | `surface_marking_ruler_set_open_neurosurgery_v3` | `OpenCranialRoot/PositioningRoot/SurfaceOrientation` | Optional `OPEN-01_POSITION_PREP` context. Markings are non-calibrated and define no patient coordinate, measurement, incision, trajectory, or plan. |
+| 124 | `scalpel_dissector_set_open_neurosurgery_v3` | `OpenCranialRoot/ExposureRoot/SoftTissueAccess` | Non-graphic `OPEN-02_SCALP_EXPOSURE` recognition only; no blade choice, incision, dissection plane, depth, force, or technique. |
+| 125 | `scalp_retractor_hemostat_set_open_neurosurgery_v3` | `OpenCranialRoot/ExposureRoot/RetractionHemostasis` | Optional `OPEN-02` exposure/hemostasis category; no tissue contact, retraction force/duration, clamp pressure, or efficacy. |
+| 126 | `perforator_craniotome_system_open_neurosurgery_v3` | `OpenCranialRoot/BoneAccessRoot/PerforatorCraniotome` | `OPEN-03_BONE_ACCESS` detail replacing/supplementing the overlapping prototype drill view; no speed, torque, path, cutting, heat, stop, or safety simulation. |
+| 127 | `bone_flap_fixation_set_open_neurosurgery_v3` | `OpenCranialRoot/ClosureRoot/BoneFixation` | `OPEN-07A_CRANIOTOMY_CLOSURE` only when the reviewed branch replaces the flap; prohibited for decompressive leave-off; no implant, dimension, compatibility, placement, or torque claim. |
+| 128 | `dural_scissors_hooks_forceps_set_open_neurosurgery_v3` | `OpenCranialRoot/DuralAccessRoot/Instruments` | `OPEN-04_DURAL_ACCESS` recognition view; no opening pattern, corridor, clearance, trajectory, tissue contact, or technique. |
+| 129 | `bipolar_forceps_irrigation_set_open_neurosurgery_v3` | `OpenCranialRoot/HemostasisRoot/BipolarIrrigation` | Optional `OPEN-05A_OPEN_EVACUATION`/`OPEN-06_HEMOSTASIS_INSPECTION` context; no electrical/thermal energy, fluid identity/rate, temperature, sealing, or efficacy. |
+| 130 | `suction_microdissector_set_open_neurosurgery_v3` | `OpenCranialRoot/EvacuationRoot/SuctionMicrodissector` | Optional `OPEN-05A`/`OPEN-06` replacement for the overlapping `suction_and_forceps` close-up; no pressure, flow, tissue removal, manipulation, bleeding, or completeness metric. |
+| 131 | `brain_spatula_retractor_set_open_neurosurgery_v3` | `OpenCranialRoot/EvacuationRoot/ProtectionRetraction` | Conditional `OPEN-05A` recognition only; no placement, corridor, width choice, pressure, duration, deformation, or safety meaning. |
+| 132 | `microscope_microinstrument_tray_open_neurosurgery_v3` | `OpenCranialRoot/DuralAccessRoot/MicroinstrumentTray` | Optional detached `OPEN-04`/`OPEN-05A` comparison; not an operating-microscope model, complete/sterile tray, optical specification, or setup. |
+| 133 | `dural_closure_suture_patch_set_open_neurosurgery_v3` | `OpenCranialRoot/ClosureRoot/DuralClosure` | Branch-appropriate `OPEN-07A`/`OPEN-07B` material-category view; no selection, pattern, tension, watertightness, compatibility, or outcome. |
+| 134 | `conditional_csf_access_instrument_set_open_neurosurgery_v3` | `OpenCranialRoot/OptionalEVDAdjunctRoot/InstrumentCloseup` | Hidden by default; `OPEN-EVD_OPTIONAL` only after separate approval, replacing the detailed view of `optional_evd_system`; no target, trajectory, depth, leveling, pressure, waveform, or management. |
+| 135 | `cranial_access_tools_review_assembly_open_neurosurgery_v3` | `OpenCranialRoot/ReviewVariant/CranialAccess` | Review-only layout replacing assets 123–127. Transitive exclusions are mandatory; placement is not a sterile tray, patient registration, or sequence. |
+| 136 | `intradural_closure_tools_review_assembly_open_neurosurgery_v3` | `OpenCranialRoot/ReviewVariant/IntraduralClosure` | Review-only layout replacing assets 128–133 except asset 134, which is intentionally excluded. It encodes no required order or operative arrangement. |
+
+### 5.16 Known gaps and omission rule
+
+The surgical-tool set is representative, not exhaustive. The current build has
+no dedicated access-ultrasound prop, diagnostic or balloon-guide catheter
+variant, radiation-shielding set, neurosurgical head holder, manual rongeur,
+periosteal-elevator set, operating microscope/illumination model, generator
+console, patties/hemostatic-material set, external surgical
+suction/irrigation console, skin stapler, stereotactic navigation pointer, or
+complete external EVD leveling/drainage system. The existing prototype EVD and
+room/device context may be reused only within their documented boundaries.
+
+Do not invent a missing category from unrelated geometry, copy commercial CAD
+or product appearance, or interpret omission as evidence that the category is
+clinically unnecessary. A future addition needs a unique semantic delta,
+project-owned or verified compatible source, the same branch/stage metadata,
+technical/visual QA, specialist review, and an updated release count.
+
 ## 6. Recommended lesson assembly
 
 ### 6.1 Orientation and layer reveal
@@ -359,6 +615,27 @@ The stent-retriever and aspiration options are alternative explanations. If
 shown in one lesson, present them as a comparison with an explicit reset
 between them.
 
+#### 6.2.1 Endovascular tool-stage associations
+
+This table controls visibility for patient education; it is not an operative
+checklist or mandatory order. A clinician-reviewed lesson may omit any optional
+category or use a different approved narration.
+
+| Educational state | Eligible tool-v3 category | Required exclusions / meaning boundary |
+|---|---|---|
+| `EVT-00_SELECTION` | None | All invasive tool props off; generic geometry never decides eligibility. |
+| `EVT-01_SUITE_SETUP` | `sterile_endovascular_instrument_tray_educational_v3`, optional `angiography_suite_controls_educational_v3` | Open-cranial tools off; tray is incomplete and controls have no functional mapping. |
+| `EVT-02_ARTERIAL_ACCESS` | Needle, short access wire, and sheath/dilator components **or** access review assembly | Choose only a reviewed route context; no gauge, site, angle, depth, or required access method. |
+| `EVT-03_GUIDE_ACCESS` | Guide-catheter/valve and optional torque/Y-connector accessories | No clot engagement, head opening, navigation, compatibility, seal, or torque behavior. |
+| `EVT-04_BASELINE_ANGIOGRAPHY` | Contrast/flush set and optional suite controls | No agent/dose/pressure/radiation or claim that the qualitative overlay is measured angiography. |
+| `EVT-05_DISTAL_DELIVERY` | Existing v2 guidewire/microcatheter instances plus optional guide/accessory context | One reviewed qualitative path; retrieval action stays off until a technique variant is selected. |
+| `EVT-06A_STENT_RETRIEVER` | Existing stent-retriever concept; proximal support only if reviewed | Aspiration-only action and pump hidden unless the explicit combined variant is selected. |
+| `EVT-06B_CONTACT_ASPIRATION` | Existing aspiration-catheter concept plus aspiration pump/canister/tubing | Deployed retriever action hidden; pump has no vacuum, pressure, timing, or efficacy data. |
+| `EVT-06C_COMBINED` | Existing retriever/aspiration categories plus conditional pump/proximal support | Separate reviewed variant; no superiority, compatibility, simultaneity, or success inference. |
+| `EVT-07_VERIFICATION` | Contrast/flush set and optional suite controls | Retrieval action off; no reperfusion score, perfusion, dose, or outcome claim. |
+| `EVT-08_WITHDRAWAL_HEMOSTASIS` | Puncture-site hemostasis options or the access review assembly | Components withdrawn/hidden; options are alternatives/adjuncts with no pressure, timing, or aftercare instruction. |
+| `EVT-09_POST_PROCEDURE` | None from tool-v3 | No open-cranial tool, EVD, cranial closure, or head dressing in ordinary EVT. |
+
 ### 6.3 Haemorrhage/open-cranial educational path
 
 1. Reset and unload every endovascular clot-removal/device state.
@@ -378,6 +655,29 @@ between them.
 6. Do not imply every haemorrhagic stroke needs open surgery, evacuation, EVD,
    patching, or the same recovery path.
 
+#### 6.3.1 Open-cranial tool-stage associations
+
+This table becomes available only after
+`clinicalSelectionConfirmed == true` for the open hemorrhage/decompression
+branch. The stages and tools are conditional explanations, not a universal
+operation or training sequence.
+
+| Educational state | Eligible tool-v3 category | Required exclusions / meaning boundary |
+|---|---|---|
+| `OPEN-00_SELECTION` | None | Open tools off; generic hematoma/edema size never selects surgery. |
+| `OPEN-01_POSITION_PREP` | Surface marker/ruler; review-table context only if useful | Endovascular tools off; no measurement, incision, head fixation, or navigation claim. |
+| `OPEN-02_SCALP_EXPOSURE` | Scalpel/dissector and retractor/hemostat sets | Bone/dural/evacuation actions off; no incision, tissue plane, force, pressure, or hemostatic efficacy. |
+| `OPEN-03_BONE_ACCESS` | Perforator/craniotome set with the existing bone-flap state | Avoid a coincident second drill motor; no cutting, speed, torque, heat, path, or safety simulation. |
+| `OPEN-04_DURAL_ACCESS` | Dural scissors/hooks/forceps and optional detached microinstrument tray | Existing educational cutaways are not operative openings; no corridor or opening pattern. |
+| `OPEN-05A_OPEN_EVACUATION` | Bipolar/irrigation, suction/microdissector, brain spatula/retractor, optional microinstrument tray | Hide MIS port; detailed suction replaces `suction_and_forceps`; no tissue, pressure, flow, energy, retraction, or completeness model. |
+| `OPEN-05B_MINIMALLY_INVASIVE_EVACUATION` | Existing `minimally_invasive_evacuator_port` only unless another category is separately reviewed | Hide open-craniotomy instrument action; keep distinct from EVT aspiration. |
+| `OPEN-05C_DECOMPRESSION` | Bone-access categories only as a static recap if approved | No promise of hematoma removal/outcome; do not replace or fix the bone flap in the leave-off state. |
+| `OPEN-06_HEMOSTASIS_INSPECTION` | Bipolar/irrigation and suction/microdissector | Static/kinematic highlights only; no bleeding rate, energy, fluid, pressure, sealing, or success metric. |
+| `OPEN-07A_CRANIOTOMY_CLOSURE` | Dural closure/suture/patch plus bone-flap fixation | Only when the selected branch replaces the flap; no closure tension, watertightness, implant, placement, or torque claim. |
+| `OPEN-07B_CRANIECTOMY_CLOSURE` | Dural closure/suture/patch; branch-appropriate existing scalp closure | Bone-flap fixation off and flap absent; do not call this craniotomy closure. |
+| `OPEN-EVD_OPTIONAL` | Conditional CSF-access set **or** existing `optional_evd_system` detailed view | Separate specialist approval; never routine or co-loaded as duplicate; no target, depth, leveling, pressure, waveform, or management. |
+| `OPEN-08_POSTOPERATIVE` | No active tool-v3 package; existing dressing only if branch-appropriate | Drills, cutting tools, open dura, intravascular devices, and intervention close-ups off. |
+
 ### 6.4 Procedure-specific recovery
 
 - Monitoring-only: no surgical closure or dressing.
@@ -391,6 +691,30 @@ between them.
   approved for that branch.
 - Never animate the brain instantly returning to normal, a neurological deficit
   disappearing, a recovery percentage, or a guaranteed outcome.
+
+### 6.5 Intracranial semantic drill-down
+
+Use one reversible presentation sequence:
+
+1. Start from a macroscopic v2 brain/head orientation state.
+2. Swap to exactly one v3 semantic focus: cortical region, deep nuclei,
+   ventricles, broad white matter, detailed pathway, cranial nerve, orbital,
+   pituitary, airway, or muscle context.
+3. Preserve source semantic children for highlighting and labels. Hide or cut
+   the opaque parent anatomy that would obscure or spatially duplicate the
+   focus.
+4. If a cellular explanation is selected, keep the macroscopic state as a
+   labelled thumbnail/context cue and open one M-series asset under
+   `MicroScaleRoot` in a separate stage. Do not animate a literal coordinate
+   zoom from the head into the micro package.
+5. Keep “magnified conceptual view — not to anatomical scale; not histology,
+   quantitative physiology, or patient-specific” persistently visible.
+6. Returning to macro context unloads the micro assembly/component, clears its
+   highlights, and restores the prior reviewed macro variant exactly.
+
+No v3 detail package changes the selected ischemic/haemorrhage treatment
+branch. Anatomy exploration and intervention sequencing remain independent
+state dimensions.
 
 ## 7. Runtime state and deterministic logic
 
@@ -426,6 +750,31 @@ enum ICHManagementBranch: String, Codable {
     case openCraniotomyEvacuation, decompressiveCraniectomy, evdAdjunct
 }
 
+enum EVTStage: String, Codable {
+    case none, selection, suiteSetup, arterialAccess, guideAccess
+    case baselineAngiography, distalDelivery, reperfusionVariant
+    case verification, withdrawalHemostasis, postProcedure
+}
+
+enum EVTTechnique: String, Codable {
+    case none, stentRetriever, contactAspiration, combined
+}
+
+enum OpenStage: String, Codable {
+    case none, selection, positionPrep, scalpExposure, boneAccess, duralAccess
+    case openEvacuation, minimallyInvasiveEvacuation, decompression
+    case hemostasisInspection, craniotomyClosure, craniectomyClosure
+    case optionalEVD, postoperative
+}
+
+enum OpenApproach: String, Codable {
+    case none, openEvacuation, minimallyInvasive, decompressive
+}
+
+enum BoneClosure: String, Codable {
+    case notApplicable, craniotomyReplace, decompressiveLeaveOff
+}
+
 struct StrokeExperienceState: Equatable {
     var pathway: EducationPathway = .none
     var step: LessonStep = .orientation
@@ -433,7 +782,16 @@ struct StrokeExperienceState: Equatable {
     var selectedAggregateIDs: Set<String> = []
     var flow: FlowPresentation = .hidden
     var ichManagement: ICHManagementBranch = .none
+    var evtStage: EVTStage = .none
+    var evtTechnique: EVTTechnique = .none
+    var openStage: OpenStage = .none
+    var openApproach: OpenApproach = .none
+    var boneClosure: BoneClosure = .notApplicable
+    var clinicalOpenSelectionConfirmed = false
+    var clinicalEVDSelectionConfirmed = false
     var magnifiedViewIsActive = false
+    var activeScaleDomain: String = "macroscopic_generic_atlas"
+    var semanticFocusAssetID: String? = nil
     var animationRevision = 0       // increment to replay deterministically
     var clinicalWarningsVisible = true
 }
@@ -441,7 +799,7 @@ struct StrokeExperienceState: Equatable {
 struct AssetAssemblyRule: Decodable {
     let assetID: String
     let canonicalParent: String
-    let frameID: String              // registered_v2, legacy_v1, vignette, device_tray
+    let frameID: String              // registered_v2, neural_hra, cranial_z, legacy_v1, vignette, micro_separate, device_tray
     let directContainedAssetIDs: Set<String>
     let allowedPathways: Set<EducationPathway>
     let scaleMode: String            // anatomical_1_to_1, magnified, or detached_1_to_1
@@ -466,20 +824,50 @@ if an aggregate becomes visible:
     recursively expand its containedLeafAssetIDs
     reject if that set intersects any active asset's expanded leaf set
 
+if license_review_status begins with "HOLD_" or assetID is a held build record:
+    reject before resolving a file URL
+
 if ischemicThrombectomy:
     OpenCranialRoot.isEnabled = false
     ich_hematoma and edema_swelling are disabled
+    every open_neurosurgery_only asset is rejected before file resolution
+    evt tool visibility is filtered by evtStage and evtTechnique
 
 if intracerebralHemorrhage:
     ProcedureToolRoot endovascular children are disabled
     DeviceInspectionRoot endovascular treatment comparison is disabled
     ischemic clot and arterial retrieval cues are disabled
 
+if an open_neurosurgery_only asset is requested:
+    require pathway == intracerebralHemorrhage
+    require clinicalOpenSelectionConfirmed == true
+    require its stage association includes openStage
+
+if evtTechnique == stentRetriever:
+    aspiration-only action and aspiration pump are disabled
+
+if evtTechnique == contactAspiration:
+    stent-retriever action is disabled
+
+if boneClosure == decompressiveLeaveOff:
+    craniotomy_bone_flap replacement and bone_flap_fixation are disabled
+
 if ichManagement == evdAdjunct and lesson configuration lacks EVD approval:
     reject the transition and keep the prior state
 
+if conditional_csf_access_instrument_set_open_neurosurgery_v3 is requested:
+    require clinicalEVDSelectionConfirmed == true
+    require openStage == optionalEVD
+    hide the overlapping detailed optional_evd_system view
+
 if magnified vignette is active:
     show “Magnified educational view — not to anatomical scale”
+
+if activeScaleDomain == "microscopic_conceptual_separate":
+    require parent == MicroScaleRoot
+    require registered_to_head == false
+    keep “conceptual, nonquantitative, not patient-specific” visible
+    prevent head-space registration, shared bounds fitting, and physical-unit comparison
 
 if DeviceInspectionRoot scale != 1:
     show “Magnified educational view” and an explicit scale indicator
@@ -502,6 +890,8 @@ simulation.
 | Content | Runtime body | Collision use | Motion / solver rule |
 |---|---|---|---|
 | Brain, skull, scalp, dura, partitions | Static; no gravity | Input hit shape only when selectable | Visibility swap or rigid transform only; no tissue deformation claim |
+| v3 neural parcels, deep nuclei, ventricles, white matter, and pathways | Static; no gravity | Coarse input proxy only | Semantic highlight/cutaway/variant only; no conduction, tractography, tissue, or lesion solver |
+| v3 cranial nerves, orbital/pituitary/airway/muscle context | Static; no gravity | Coarse input proxy only | Selection/visibility only; no nerve conduction, contraction, swallowing, airflow, or endocrine behavior |
 | Arteries, veins, sinuses | Static; no gravity | Usually none; broad selection trigger if needed | Never infer compliance, pressure, flow, or contact from the mesh |
 | Clot | Kinematic state object | Optional trigger for authored engagement event | Discrete visible/engaged/removed states; no friction, adhesion, compression, or measured deformation |
 | Guidewire and catheters | Kinematic | Optional coarse trigger, not physical vessel contact | Follow a pre-authored path/pose sequence; no force, torque, buckling, perforation, or navigation accuracy claim |
@@ -509,7 +899,10 @@ simulation.
 | Flow markers/arrows/RBCs | No rigid body | None | Transform or particle-cue animation; direction and timing are illustrative and dimensionless |
 | Room equipment | Static or kinematic | Coarse safety/selection volumes only | No verified C-arm/table collision envelope |
 | Patient/staff | Static | Input/comfort exclusion only if needed | No ragdoll or human biomechanics |
-| Open-cranial tools/flaps | Kinematic | Optional trigger for lesson sequencing | Authored transforms only; no cutting, drilling, suction, tissue, or force simulation |
+| Prototype open-cranial tools/flaps | Kinematic | Optional trigger for lesson sequencing | Authored transforms only; no cutting, drilling, suction, tissue, or force simulation |
+| v3 endovascular support tools | Static; detached pickup may use a kinematic presentation proxy | Coarse UI picking only; never vessel/device contact | Stage visibility, highlight, exploded comparison, or return-to-tray pose only; no puncture, connection, injection, aspiration, pressure, radiation, compatibility, navigation, or operating simulation |
+| v3 open-cranial instrument sets | Static; detached pickup may use a kinematic presentation proxy | Coarse UI picking only; never anatomy/tool contact | Stage visibility, highlight, exploded comparison, or return-to-tray pose only; no marking, cutting, drilling, retraction, suction, irrigation, energy, fixation, closure, CSF access, or tissue simulation |
+| v3 micro cells, thrombus, BBB, myelin, synapse, CSF interface, and tissue zones | Static; illustrative markers may be kinematic | None except coarse UI picking | Separate-stage visibility or qualitative cue motion only; no fluid, diffusion, electrophysiology, reaction, perfusion, histology, or viability solver |
 
 Implementation rules:
 
@@ -520,6 +913,10 @@ Implementation rules:
   physics interaction.
 - Use triggers only to advance a deterministic authored event; never let a
   collision decide a clinical outcome.
+- Tool-mesh bounds may support selection and presentation layout only. They must
+  never become a sterilization clearance, safe corridor, grip/ergonomic measure,
+  puncture/insertion depth, device fit, collision safety margin, or contact
+  detector.
 - Keep a separate `ViewerFitRoot`/placement parent for scaling and centering so
   baked animation channels remain untouched.
 - Discover imported animation through `availableAnimations`, choose the
@@ -530,6 +927,13 @@ Implementation rules:
 - Describe a restriction only as “blood flow may be reduced.” Collateral
   circulation is not modeled, so the visualization must not guarantee zero
   downstream flow.
+- Never assign tissue density/stiffness, nerve conductivity, membrane
+  permeability, clot composition, CSF production, diffusion, reaction kinetics,
+  channel density, perfusion threshold, or cell population values from v3 mesh
+  appearance. Such metadata is absent.
+- If a presentation arrow, particle, pulse, or colour transition is added to a
+  v3 micro asset, keep it app-owned or in a separate behavior layer, mark it
+  `conceptual=true` and `quantitative=false`, and expose no physical units.
 - A future Houdini FLIP, FEM, Vellum, wire, or tissue solve is an **offline
   visual authoring aid only** until independently validated. It must be reduced
   to a supported baked representation and retain the conceptual label.
@@ -538,8 +942,8 @@ Implementation rules:
 
 ### 9.1 Non-destructive working layout
 
-1. Work in Solaris/LOPs and keep each asset as a referenced component. Do not
-   merge the 65 source packages into one destructive mesh.
+1. Work in Solaris/LOPs and keep each asset as a referenced or payloaded
+   component. Do not merge the 134 release packages into one destructive mesh.
 2. Prefer the source USDC interchange file when available. If only a USDZ is
    present in this repository, unpack it to a temporary working directory with
    USD tooling; never edit the committed package in place.
@@ -553,6 +957,15 @@ Implementation rules:
    imported transform stack.
 7. Author aggregate/component relationships as a variant set or app-side
    exclusivity rule. Do not author both visible by default.
+8. Use payloads for phase-specific heavy anatomy/review packages and references
+   for lightweight always-needed components. A payload load decision must not
+   change clinical meaning.
+9. Keep five explicit composition domains: `MACRO_HEAD` for registered
+   generic atlas anatomy, `MESO_VESSEL` for magnified wall/device teaching,
+   `MICRO_CELLULAR` for M-series presentation models, `EVT_TOOLS` for the gated
+   endovascular branch, and `OPEN_TOOLS` for the separately gated open branch.
+   Never pass a display scale, viewer-fit transform, tool placement, or state
+   between incompatible domains.
 
 Each publishable component should have one root `Xform`, `kind = "component"`,
 and that root as the file's `defaultPrim`. The master root should use
@@ -579,6 +992,69 @@ Sublayer/input manifests
     -> USD ROP / USD Render ROP
     -> usdchecker
 ```
+
+Recommended layer stack:
+
+```text
+00_source_payloads.usdc      # immutable geometry and semantic/source metadata
+10_registration.usda         # project-frame or approved patient-frame xforms
+20_look.usda                 # reviewed materials; no clinical state
+25_tool_placement.usda       # illustrative static/kinematic tool poses only
+30_presentation.usda         # cutaways, visibility variants, qualitative cues
+35_tool_states.usda          # gated EVT/OPEN variants; no device commands
+40_lesson.usda               # IDs, captions/warnings, pathway bindings
+90_master.usda               # composition only; no copied geometry
+```
+
+Use variant sets such as `anatomyDetail={broad,semantic}`,
+`whiteMatterView={broad,pathways}`, `cranialNerves={components,assembly}`,
+`microView={off,individual,review}`, and
+`exterior={intact,cutaway}`. Tool composition additionally requires
+`workflowBranch={anatomyOnly,ischemicEVT,openCranialHemorrhage}`,
+`evtTechnique={none,stentRetriever,contactAspiration,combined}`,
+`evtAccessSupport={simplifiedExisting,detailedGeneric,reviewAssembly}`,
+`openApproach={none,openEvacuation,minimallyInvasive,decompressive}`,
+`boneClosure={notApplicable,craniotomyReplace,decompressiveLeaveOff}`,
+`evdState={off,clinicianSelected}`, and
+`toolReview={components,assembly}`. Invalid combinations must have no authored
+variant, not merely rely on a default-off checkbox. Preserve HRA ontology/source
+properties and Z-Anatomy `userProperties:anatomical_name`; do not flatten
+semantic children or bind interaction to vertex indices.
+
+#### 9.1.1 Surgical-tool payload and state slots
+
+Reference source tool geometry without modification and author only reviewed
+presentation transforms in `25_tool_placement.usda`. Room-scale support props
+may be physically parented under `EnvironmentRoot`, but their state owner stays
+with the relevant branch. Detached inspection/review layouts belong under
+`DeviceInspectionRoot` and require a persistent magnification label whenever
+their scale is changed.
+
+| Solaris path | Canonical state root | Eligible content |
+|---|---|---|
+| `/World/ProcedureTools/Endovascular/AccessSupport` | `AccessSupportRoot` | Access components or access review assembly; sterile tray only in reviewed setup context |
+| `/World/ProcedureTools/Endovascular/GuideSupport` | `GuideSupportRoot` | Guide-catheter/valve and torque/Y-connector accessory categories |
+| `/World/ProcedureTools/Endovascular/ImagingSupport` | `ImagingSupportRoot` | Contrast/flush props and suite controls; qualitative imaging cues remain separate |
+| `/World/ProcedureTools/Endovascular/Delivery` | `DeliveryRoot` | Existing wire/microcatheter routed instances, never detached close-up payloads reused as paths |
+| `/World/ProcedureTools/Endovascular/Retrieval` | `RetrievalRoot` | Existing retriever/aspiration technique variants plus conditional external pump support |
+| `/World/ProcedureTools/Endovascular/AccessHemostasis` | `AccessHemostasisRoot` | Post-access hemostasis alternatives/adjuncts |
+| `/World/ProcedureTools/Endovascular/Review` | `EndovascularToolRoot/ReviewVariant` | Full tool gallery; excludes access assembly and all ten components |
+| `/World/OpenCranial/Positioning` | `PositioningRoot` | Surface orientation and future reviewed positioning context |
+| `/World/OpenCranial/Exposure` | `ExposureRoot` | Scalpel/dissector and retractor/hemostat categories plus scalp state |
+| `/World/OpenCranial/BoneAccess` | `BoneAccessRoot` | Existing drill/bone-flap context and perforator/craniotome detail |
+| `/World/OpenCranial/DuralAccess` | `DuralAccessRoot` | Dural instruments and optional detached microinstrument tray |
+| `/World/OpenCranial/Evacuation` | `EvacuationRoot` | Mutually exclusive open/MIS/decompression context and eligible static tool categories |
+| `/World/OpenCranial/Hemostasis` | `HemostasisRoot` | Bipolar/irrigation and suction/microdissector context |
+| `/World/OpenCranial/Closure` | `ClosureRoot` | Dural closure and branch-correct bone fixation/closure context |
+| `/World/OpenCranial/OptionalEVD` | `OptionalEVDAdjunctRoot` | Existing or detailed conditional CSF-access view, never both |
+| `/World/OpenCranial/Review` | `OpenCranialRoot/ReviewVariant` | One open review assembly or its components, never both |
+
+Write only semantic events such as `procedure.stage.entered`,
+`procedure.variant.selected`, `tool.category.shown`, and
+`warning.educational.presented`. Do not create device-command or clinical-result
+events such as `path.safe`, `device.success`, `reperfusion.achieved`,
+`hemostasis.complete`, or `evd.correct`. Stage timing belongs in the lesson/app
+layer and may not destructively alter payload geometry.
 
 ### 9.2 Curves, devices, and procedural motion
 
@@ -636,12 +1112,89 @@ Sublayer/input manifests
 - Bake unsupported Houdini/Blender procedural networks to textures. Do not
   assume a custom shader or arbitrary MaterialX network will survive USDZ and
   RealityKit import.
+- Treat the three ImageGen micro-v3 maps only as project-owned base-colour
+  appearance references. They are not calibrated material measurements,
+  microscopy, histology, anatomy, pathology, or a source for geometry/physics.
+  Preserve their hashes and prompt record in
+  [`IMAGEGEN_INTRACRANIAL_MICRO_V3.md`](docs/assets/source-notes/IMAGEGEN_INTRACRANIAL_MICRO_V3.md).
 - Prefer opaque surfaces. Minimize alpha overlap and double-sided materials.
 - Use USDC for geometry-heavy working layers and USDZ for self-contained
   delivery. Reality Composer Pro may compile the selected content into a
   `.reality` resource for the application.
 - Each delivery package must contain all of its referenced textures and stay
   independently loadable.
+
+### 9.5 Patient-specific DICOM replacement hooks
+
+The generic assets remain the default educational content. A future
+patient-authorized clinical environment may replace only named input slots; it
+must not deform an atlas until it “looks patient-specific.” This hook is an
+engineering interface, not evidence that the current app is suitable for
+diagnosis, planning, navigation, or treatment.
+
+| Houdini input | Generic fallback | Permitted patient-specific replacement |
+|---|---|---|
+| `IN_HEAD_SKIN` | HRA skin crop | Approved CT/MRI external-surface segmentation |
+| `IN_SKULL` | NIH/Z-Anatomy skull context | Reviewed thin-slice CT bone segmentation |
+| `IN_BRAIN_PARENCHYMA` | HRA brain | Clinician-reviewed T1/T2/FLAIR segmentation |
+| `IN_CORTEX_LABELS` | HRA named regions | Approved patient parcellation with algorithm/version |
+| `IN_VENTRICLES` | HRA ventricles | Reviewed CT/MRI segmentation |
+| `IN_ARTERIAL_TREE` | Z-Anatomy arteries | Reviewed CTA/MRA/3DRA/DSA-derived vessel segmentation |
+| `IN_VENOUS_TREE` | Z-Anatomy dural/head veins | Reviewed CTV/MRV segmentation |
+| `IN_LESION_CORE` | Generic clot/infarct teaching cue | Reviewed DWI/ADC or CT-derived lesion segmentation |
+| `IN_PERFUSION_MAPS` | None | Registered clinical parametric maps with provenance |
+| `IN_DTI_TRACTS` | No patient fallback | Reviewed tractography plus uncertainty metadata |
+| `IN_DEVICE_PATH` | Generic educational route | Approved plan/recorded centreline; never inferred from atlas anatomy |
+
+Routine scans generally cannot resolve cranial nerves, pia/arachnoid,
+capillary beds, cellular injury, or a complete perforator network. Keep those
+layers visibly labelled “generic atlas/conceptual” or omit them; never warp and
+relabel them as patient anatomy.
+
+Prefer DICOM Segmentation (SEG) or DICOM Surface Segmentation tied to the source
+study and `FrameOfReferenceUID`. Preserve one patient frame; never centre each
+surface independently. For column-vector points in DICOM LPS millimetres, the
+exact project conversion to Houdini Y-up, right-handed metres is:
+
+```text
+x_h = -0.001 * x_lps
+y_h =  0.001 * z_lps
+z_h =  0.001 * y_lps
+
+M_lps_mm_to_houdini_m =
+[[-0.001,  0.000, 0.000, 0],
+ [ 0.000,  0.000, 0.001, 0],
+ [ 0.000,  0.001, 0.000, 0],
+ [ 0.000,  0.000, 0.000, 1]]
+```
+
+If an approved tool exports RAS millimetres, use
+`(x_ras, z_ras, -y_ras) * 0.001`. Parent all converted surfaces beneath one
+`PATIENT_FRAME` xform and retain, inside the controlled clinical system:
+`StudyInstanceUID`, `SeriesInstanceUID`, `FrameOfReferenceUID`,
+`ImagePositionPatient`, `ImageOrientationPatient`, spacing, source
+series/modality, segmentation algorithm/version, registration transform/hash,
+review status/role/time, and de-identification status. Exported USD/USDZ must
+not carry raw identifiers, private paths, or hidden DICOM metadata.
+
+Before switching any slot from `GENERIC_ATLAS` to
+`PATIENT_SEGMENTATION`, require all of:
+
+1. source series and Frame of Reference identified;
+2. unit and LPS/RAS conversion verified with at least three landmarks;
+3. explicit left/right reflection check;
+4. expected components, bounds, normals, and topology checked;
+5. registration residual/error recorded—visual alignment alone is insufficient;
+6. segmentation algorithm, parameters, and version recorded;
+7. qualified reviewer approval for the intended use;
+8. atlas, conceptual, and patient layers visibly distinguished;
+9. PHI confined to the approved access-controlled environment; and
+10. export scanned for identifiers and private paths.
+
+Raw DICOM, identifiable facial surfaces, derived patient meshes, and PHI must
+never enter this public repository or a generic app bundle. The detailed source
+coverage, missing-anatomy audit, and replacement rationale are in
+[`INTRACRANIAL_DETAIL_SOURCE_AUDIT.md`](docs/assets/research/INTRACRANIAL_DETAIL_SOURCE_AUDIT.md).
 
 ## 10. RealityKit integration contract
 
@@ -661,6 +1214,22 @@ Sublayer/input manifests
 9. Stop old animations before switching state. Restart Replay from time zero.
 10. Surface an explicit load/animation error instead of silently substituting a
     clinically different asset.
+11. Reject any held ID/status before file resolution, even if a developer has a
+    quarantine copy elsewhere on disk.
+12. Route `microscopic_conceptual_separate` only to `MicroScaleRoot`; do not
+    compare its bounds or metre values with head geometry.
+13. Resolve labels/highlights from stable semantic properties, retain
+    component/assembly and broad/pathway exclusions from each manifest, and
+    fail catalog validation if a referenced exclusion ID is unknown.
+14. Route `endovascular_tools_v3` records only through the active `EVT-*`
+    branch/stage filter. Treat route, technique, contrast/flush, aspiration,
+    anesthesia, controls, and hemostasis categories as conditional options.
+15. Reject every `open_cranial_tools_v3` record unless the open branch and
+    clinician-selection gate are true. Route it only to the matching `OPEN-*`
+    root and prohibit it from ordinary EVT before file resolution.
+16. Treat stage tags and narrative adjacency as descriptive metadata only; the
+    app owns the reviewed lesson order and must not turn a manifest into device
+    instructions or a clinical checklist.
 
 The application, not a USD file, owns:
 
@@ -670,7 +1239,12 @@ The application, not a USD file, owns:
 - reset/home behavior;
 - gestures and selected highlights;
 - clinical opt-out/pause behavior;
-- qualitative baseline/restricted/restored-flow presentation.
+- qualitative baseline/restricted/restored-flow presentation;
+- persistent magnification, conceptual/nonquantitative, atlas-versus-patient,
+  licence-hold, and clinical-boundary warnings;
+- scale-domain routing and release-manifest filtering;
+- EVT/open branch gates, stage/category eligibility, technique and closure
+  variants, conditional EVD approval, and all tool assembly/overlap exclusions.
 
 The USD/Houdini layer owns:
 
@@ -689,12 +1263,27 @@ The USD/Houdini layer owns:
 - Also budget the whole active scene, not each file, around Apple's approximate
   Shared Space guidance of 250 draw calls/250,000 visible vertices and Full
   Space guidance of 500 draw calls/500,000 visible vertices.
-- Do not preload all 65 assets or display the combined review assemblies with
+- Do not preload all 134 release assets or display combined review assemblies with
   their individual components.
 - `layered_head_cutaway_registered_v2` is 333,642 triangles and
   `thrombectomy_registered_hero_v2` is 440,648 triangles. Either asset alone is
   already beyond the Shared Space triangle guideline; treat it as a heavy,
   lazy-loaded review view and profile the exact Full Space presentation.
+- `neural_detail_registered_review_assembly_v3` is 279,788 triangles,
+  `cranial_nerves_complete_assembly_v3` is 150,722 triangles, and
+  `intracranial_micro_teaching_set_v3` is 114,092 triangles across 424 model
+  meshes. Each is a review/lazy-load variant, not a default layer; never
+  co-load it with its components.
+- `endovascular_tools_workflow_review_assembly_v3` is 135,860 triangles and
+  replaces all ten endovascular components plus the access review assembly;
+  `vascular_access_setup_review_assembly_v3` is 44,152 triangles and replaces
+  its four access/hemostasis components.
+- The two open review assemblies are 48,808 and 31,384 triangles respectively.
+  They are lazy review-table variants and replace their listed component sets;
+  the conditional CSF-access package remains outside both assemblies.
+- The held `cranial_support_registered_assembly_v3` build record is 333,360
+  triangles, but its binary is not a performance option because it is not in
+  the release tree.
 - Lazy-load expensive head/hero assemblies, cache reusable resources, and
   unload an inactive pathway when memory pressure requires it.
 - Reduce mesh/entity/material/texture counts and merge only non-interactive
@@ -732,8 +1321,37 @@ These are hard failures:
   training, or manufacturer-specific explanation.
 - No venous blue/purple material described as the literal colour of blood.
 - No magnified vignette presented as scale-matched to the head.
+- No M-series geometry, presentation dimensions, counts, colours, spacing, or
+  directional cues described as histology, measured physiology, or a literal
+  position inside the head.
+- No HRA/Z-Anatomy layer presented as a patient's segmentation, functional map,
+  tractography, operative target, safe margin, or complete anatomy.
+- No ImageGen appearance reference described as microscopy, histology,
+  pathology, anatomical authority, or clinical evidence.
+- No held inner-ear-containing build record resolved, bundled, previewed as
+  released content, or restored by a developer fallback path.
+- No broad white-matter parent and detailed pathway layer presented as disjoint
+  tissue compartments.
 - No patient scan, identifier, record, or outcome data introduced without a
   separately approved privacy, security, clinical, and regulatory workflow.
+- No raw DICOM, patient-derived mesh, identifiable facial surface, or PHI in
+  this repository or generic app bundle.
+- No open-tool manifest record, payload, review assembly, or preview-derived
+  substitute in ordinary EVT. Open tools require the clinician-selected
+  hemorrhage/decompression gate and a matching `OPEN-*` state.
+- No endovascular support prop outside the EVT branch or matching stage filter;
+  availability never implies necessity, route, compatibility, or preferred
+  technique.
+- No tool mesh dimension, placement, collider, animation, material, or gallery
+  layout used as force, depth, trajectory, pressure, energy, sterile setup,
+  sizing, compatibility, navigation, tissue contact, device-operation, training,
+  or outcome evidence.
+- No access, endovascular workflow, cranial-access, or intradural/closure review
+  assembly co-loaded with a direct or transitive component.
+- No bone-flap fixation in a decompressive-craniectomy leave-off state; no
+  conditional CSF-access set without separate approval; no detailed access,
+  drill, suction/forceps, or EVD close-up stacked with its overlapping legacy
+  view.
 
 Required automated guards should fail closed:
 
@@ -748,6 +1366,28 @@ assert no pair of active assets has intersecting transitive contained-leaf sets
 assert not (v1 equivalent visible with v2 equivalent outside comparison mode)
 assert not (magnified vignette parented under HeadRegisteredRoot)
 assert not (unregistered v2 device inspection asset treated as a patient path)
+assert release manifest IDs do not contain either inner-ear hold record
+assert every manifest exclusion references a known build-record ID
+assert not (neural review assembly visible with any N01–N14 component)
+assert not (cranial-nerve assembly visible with any C01–C09 component)
+assert not (micro teaching set visible with any M01–M11 component)
+assert not (major white-matter regions visible with detailed pathways)
+assert every microscopic_conceptual_separate asset is parented under MicroScaleRoot
+assert every active micro view keeps magnification/conceptual/non-patient warnings visible
+assert exported generic assets contain no DICOM identifiers or private paths
+assert not (evtBranch.active and any open_neurosurgery_only asset visible)
+assert not (openCranialBranch.active and any endovascular_tools_v3 asset visible)
+assert every visible endovascular_tools_v3 asset is eligible for evtStage and evtTechnique
+assert every visible open_cranial_tools_v3 asset is eligible for openStage
+assert every visible open_cranial_tools_v3 asset requires clinicalOpenSelectionConfirmed
+assert not (evtTechnique == stentRetriever and aspirationPump visible)
+assert not (evtTechnique == contactAspiration and stentRetrieverAction visible)
+assert not (boneClosure == decompressiveLeaveOff and boneFlapFixation visible)
+assert not (conditionalCSFAccess visible and not clinicalEVDSelectionConfirmed)
+assert not (access review assembly visible with any of its four components)
+assert not (endovascular workflow assembly visible with access assembly or any of its ten components)
+assert not (cranial-access review assembly visible with any of its five components)
+assert not (intradural/closure review assembly visible with any of its six components)
 ```
 
 ## 13. Validation gates
@@ -764,13 +1404,30 @@ Every generated or modified asset must pass all applicable gates:
   content, and resolvable texture references.
 - RealityKit loads the package and exposes nonzero renderable bounds.
 - An animated package exposes the expected animation resource(s).
+- The release catalog contains 134 unique IDs and paths across 11 manifests;
+  the full build map contains 136 IDs; neither held build ID
+  nor binary is present.
+- Every aggregate/exclusion graph is known, acyclic, recursively expanded, and
+  tested against each other active asset.
+- Every micro record declares `microscopic_conceptual_separate`,
+  `registered_to_head=false`, `quantitative=false`,
+  `histology_validated=false`, and a required magnification label.
+- Every tool-v3 record is project-authored, generic, non-patient-specific,
+  non-device-specific, not for planning/navigation/sizing/training, and carries
+  a known stage/category mapping. All four tool review assemblies have valid,
+  acyclic transitive exclusions.
 
 ### Visual/interaction gate
 
 - Registration, laterality, dimensions, pivots, materials, normals, culling,
   cutaways, and labels are inspected in Reality Composer Pro or the target app.
 - Aggregate/component switches produce no duplicates or z-fighting.
+- Broad/semantic/pathway variants hide overlapping source hierarchy levels, and
+  all M-series content opens in a visibly separate presentation stage.
 - Reset restores every transform, layer, pathway, highlight, and animation.
+- EVT screenshots/tests contain zero open-cranial tools; open screenshots state
+  that the branch is conditional and clinician-selected. Technique, closure,
+  EVD, and all component/assembly alternatives pass mutual-exclusion tests.
 - The simulator build shows actual loaded content, not a spinner or placeholder.
 - A physical Vision Pro pass verifies comfort, legibility, interaction, and
   frame timing.
@@ -782,11 +1439,25 @@ Every generated or modified asset must pass all applicable gates:
 - Stroke neurology reviews mechanism, uncertainty, urgency, alternatives,
   risks, and recovery language.
 - Neurosurgery reviews every open-cranial/haemorrhage sequence that is included.
+- Interventional neuroradiology reviews each displayed endovascular support
+  category, its stage association, route/technique conditionality, and overlap
+  with existing device concepts. Neurosurgery reviews every displayed open-tool
+  category, conditional branch, closure state, and CSF-access gate.
+- The clinical team confirms that the 26-tool catalog is described as
+  representative, not exhaustive, and that no mesh or motion communicates
+  force, depth, trajectory, energy, pressure, compatibility, sizing, navigation,
+  sterile technique, training, or device performance.
+- Neuroanatomy reviews v3 cortical, deep, white-matter, ventricular, and cranial
+  nerve identity/laterality/registration; neuropathology and haematology review
+  the conceptual micro/thrombus wording and imagery.
 - Accessibility/human-factors review covers captions, colour-independent cues,
   seated/reclined use, opt-out, and non-graphic presentation.
 - Licensing, attribution, ShareAlike, source, and modification notices ship
   with the applicable assets.
 - The signed checklist identifies the exact reviewed version.
+- Any patient-specific replacement separately passes DICOM frame, registration,
+  segmentation, privacy/security, human-factors, clinical-validation, quality,
+  and regulatory gates for its intended use.
 
 ## 14. Agent handoff and definition of done
 
@@ -796,6 +1467,7 @@ An agent or Houdini artist implementing the combined experience must deliver:
    canonical hierarchy.
 2. A machine-readable mapping from every loaded manifest ID to canonical parent,
    pathway, visibility state, replacement group, and warning label.
+   Preserve separate audit records for the two held IDs without runtime paths.
 3. Deterministic state transitions and a complete Reset/Home test.
 4. Separate ischemic and haemorrhage pathways with automated tests for every
    prohibited combination.
@@ -805,11 +1477,26 @@ An agent or Houdini artist implementing the combined experience must deliver:
 7. Simulator evidence plus a clearly separate physical-device QA record.
 8. Updated manifests, checksums, provenance, licence notices, and clinical
    review version whenever geometry, materials, animation, or meaning changes.
+9. A layered Solaris handoff preserving source payloads, semantic properties,
+   scale domains, variants, exclusions, and separate look/presentation/lesson
+   layers; USDZ is final delivery, not the editable master.
+10. A test showing held IDs fail before file resolution and micro packages
+    cannot enter the head registration graph.
+11. If patient replacement is in scope, the controlled DICOM frame/registration
+    record and all acceptance-gate evidence—never the patient data itself in
+    this repository.
+12. A 136-record build map / 134-file release map and deterministic tests for
+    every `EVT-*`/`OPEN-*` tool-stage gate, technique/closure/EVD variant,
+    assembly exclusion, legacy-overlap replacement, and representative-set
+    warning, using the
+    [surgical-tool audit](docs/assets/research/SURGICAL_TOOL_STAGE_AUDIT_V3.md)
+    and machine-readable stage map as handoff inputs.
 
 The work is **not done** merely because the master scene opens. It is done only
 when the selected assets fit without duplicate geometry, every state is
-reversible, prohibited combinations are impossible in code, package and device
-performance are measured, and the exact patient-facing build has completed the
+reversible, prohibited combinations are impossible in code, package loading and
+on-device rendering performance are measured on the target hardware, and the
+exact patient-facing build has completed the
 review gates above.
 
 ## 15. Official implementation references
@@ -832,7 +1519,14 @@ review gates above.
 - SideFX: [Configure Layer LOP](https://www.sidefx.com/docs/houdini/nodes/lop/configurelayer.html)
 - SideFX: [USD Export SOP](https://www.sidefx.com/docs/houdini/nodes/sop/usdexport.html)
 - SideFX: [USD File Cache LOP](https://www.sidefx.com/docs/houdini/nodes/lop/filecache.html)
+- SideFX: [USD output and USDZ packaging](https://www.sidefx.com/docs/houdini/solaris/output.html)
 - SideFX: [USD Zip output](https://www.sidefx.com/docs/houdini/nodes/out/usdzip.html)
 - SideFX: [USD volume prims](https://www.sidefx.com/docs/houdini/nodes/lop/volume.html)
+- SideFX: [VDB from Polygons](https://www.sidefx.com/docs/houdini/nodes/sop/vdbfrompolygons.html)
 - SideFX: [DOP simulation caching](https://www.sidefx.com/docs/houdini/dyno/cache)
 - SideFX: [Fluid SOP caching](https://www.sidefx.com/docs/houdini/fluid/sopcaching.html)
+- DICOM: [Patient-based coordinate system and image plane](https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_c.7.6.2.html)
+- 3D Slicer: [Segmentations module](https://slicer.readthedocs.io/en/5.8/user_guide/modules/segmentations.html)
+- 3D Slicer: [Segmentation developer guide](https://slicer.readthedocs.io/en/latest/developer_guide/modules/segmentations.html)
+- NIH 3D: [HRA Brain, Male 3DPX-020960](https://3d.nih.gov/entries/20960/1)
+- BodyParts3D: [Licence](https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html)
