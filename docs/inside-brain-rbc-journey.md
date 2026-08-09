@@ -25,6 +25,11 @@ a window. The short judge path is:
 7. The selected frontal route resolves from artery to penetrating arteriole and
    an organic 34-node capillary web inside the existing regional outline. It is
    an expanded-scale relationship lesson, not a patient-specific cortical bed.
+8. A pinch on that field or one Simulator-safe control expands only the
+   capillary destination while the wearer remains still. The artery and regional
+   outline recede; **Return to artery** reverses the transition. If the optional
+   family guide is running, its visible and spoken copy advances to the matching
+   arrival explanation.
 
 Everything is generic education. No scene is patient-specific anatomy, CFD,
 perfusion, velocity, pressure, diagnosis, treatment guidance, or an outcome
@@ -51,6 +56,7 @@ The deterministic arterial-ride UI is launched with:
 --proof-flow-ride --proof-flow-route-neighbor
 --proof-flow-ride --proof-family-guide
 --proof-flow-ride --proof-family-guide --proof-family-guide-beat-2 --proof-flow-route-frontal
+--proof-capillary-focus --proof-family-guide --proof-family-guide-beat-2
 ```
 
 That launch flag proves only the selected interface state. It does not prove a
@@ -63,7 +69,9 @@ for the zero-cost secure-transport check, and
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V5_PBR_WALL_RECEIPT.md`
 for the wall-material gate, and
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V6_MACRO_MICRO_RECEIPT.md`
-for the current frontal-destination gate.
+for the artery-to-capillary destination gate, and
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V7_CAPILLARY_FOCUS_RECEIPT.md`
+for the user-triggered scale-transfer and family-arrival gate.
 
 ## Optional family narration
 
@@ -99,7 +107,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 53-check contract and generic Simulator build before publishing.
+5. Run the 54-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.

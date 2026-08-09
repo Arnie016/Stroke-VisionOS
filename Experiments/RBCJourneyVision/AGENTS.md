@@ -20,11 +20,13 @@ video cannot.
   Pause, Leave, and Exit.
 - Frontal destination: constellation outline around an authored artery →
   penetrating arteriole → 34-node capillary-field scale transition with sparse
-  traveling fronts. It is an orientation/exchange lesson, not measured flow or
-  patient anatomy.
+  traveling fronts. The wearer may pinch the field or use one fallback control
+  to let it expand while the wearer stays still, then return to the artery. It
+  is an orientation/exchange lesson, not measured flow or patient anatomy.
 - Family guide: optional three-beat orientation → passage → arrival captions;
   voice may read only the exact visible copy through a loopback proxy. It is
-  off by default and never a clinician default.
+  off by default and never a clinician default. Entering the capillary field
+  advances the guide to the matching arrival explanation.
 
 ## Non-negotiable constraints
 

@@ -24,7 +24,12 @@ final class RBCJourneyScene {
     private let flowRideInteriorShellRoot = Entity()
     private let flowRideForkFieldRoot = Entity()
     private let flowRideFrontalDestinationRoot = Entity()
+    private let flowRideFrontalOutlineRoot = Entity()
+    private let flowRideFrontalArterioleRoot = Entity()
+    private let flowRideCapillaryWebRoot = Entity()
     private let flowRideNeighborDestinationRoot = Entity()
+    private var flowRideCapillaryFocusTarget: Entity?
+    private var flowRideFrontalDestinationCenter: SIMD3<Float> = .zero
 
     private var cortexLayer: Entity?
     private var deepLayer: Entity?
@@ -80,6 +85,8 @@ final class RBCJourneyScene {
         speed: Float
     )] = []
     private var flowRideRuntimeRoute: RBCFlowRideRoute = .overview
+    private var flowRideRuntimeCapillaryFocus = false
+    private var flowRideCapillaryFocusMix: Float = 0
     private var flowRideElapsed: Float = 0
     private var flowRideWasActive = false
     private var flowRideRuntimeActive = false
@@ -121,6 +128,9 @@ final class RBCJourneyScene {
         flowRideInteriorShellRoot.name = "native-inward-facing-arterial-corridor"
         flowRideForkFieldRoot.name = "user-selected-branching-flow-field-not-cfd"
         flowRideFrontalDestinationRoot.name = "frontal-route-constellation-outline-not-segmentation"
+        flowRideFrontalOutlineRoot.name = "frontal-route-orientation-outline"
+        flowRideFrontalArterioleRoot.name = "frontal-route-macro-arteriole-context"
+        flowRideCapillaryWebRoot.name = "frontal-route-capillary-field-focus"
         flowRideNeighborDestinationRoot.name = "neighbor-route-tissue-point-field-not-segmentation"
 
         root.addChild(worldRoot)
@@ -137,6 +147,7 @@ final class RBCJourneyScene {
         flowRideRoot.addChild(flowRideForkFieldRoot)
         flowRideRoot.addChild(flowRideFrontalDestinationRoot)
         flowRideRoot.addChild(flowRideNeighborDestinationRoot)
+        flowRideFrontalDestinationRoot.addChild(flowRideFrontalOutlineRoot)
         worldRoot.addChild(portalRoot)
         worldRoot.addChild(regionGuideRoot)
         corticalVaultRoot.addChild(registeredContent)
@@ -177,6 +188,7 @@ final class RBCJourneyScene {
         frontalClotScenarioActive: Bool,
         flowRideActive: Bool,
         flowRideRoute: RBCFlowRideRoute,
+        capillaryFieldFocused: Bool,
         time: TimeInterval,
         paused: Bool,
         reducedMotion: Bool,
@@ -237,13 +249,18 @@ final class RBCJourneyScene {
         updateFlowRide(
             active: lumenRideActive,
             route: flowRideRoute,
+            capillaryFieldFocused: capillaryFieldFocused,
             time: t,
             motionHeld: motionHeld
         )
         if let infoAttachment {
-            let target: SIMD3<Float> = lumenRideActive
-                ? [0, 1.72, -0.70]
-                : [0, 2.08, -1.04]
+            let target: SIMD3<Float> = if lumenRideActive && capillaryFieldFocused {
+                [0, 1.78, -0.70]
+            } else if lumenRideActive {
+                [0, 1.72, -0.70]
+            } else {
+                [0, 2.08, -1.04]
+            }
             infoAttachment.position += (target - infoAttachment.position) * (reducedMotion ? 1 : 0.22)
         }
 
@@ -365,6 +382,17 @@ final class RBCJourneyScene {
         var candidate: Entity? = entity
         while let current = candidate {
             if current.name.hasPrefix("illustrative-frontal-branch-occlusion-not-patient-specific") {
+                return true
+            }
+            candidate = current.parent
+        }
+        return false
+    }
+
+    func isCapillaryFocusTarget(_ entity: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.name == "frontal-capillary-field-focus-target" {
                 return true
             }
             candidate = current.parent
@@ -1657,12 +1685,12 @@ final class RBCJourneyScene {
             let star = ModelEntity(mesh: .generateSphere(radius: index.isMultiple(of: 4) ? 0.017 : 0.010), materials: [material])
             star.name = "frontal-route-constellation-star-\(index)"
             star.position = point
-            flowRideFrontalDestinationRoot.addChild(star)
+            flowRideFrontalOutlineRoot.addChild(star)
         }
         if let first = outlinePoints.first { outlinePoints.append(first) }
         addTubePath(
             outlinePoints,
-            to: flowRideFrontalDestinationRoot,
+            to: flowRideFrontalOutlineRoot,
             radius: 0.0035,
             material: material,
             name: "frontal-route-constellation-arc"
@@ -1674,9 +1702,23 @@ final class RBCJourneyScene {
     /// is a qualitative spatial relationship, not a patient vessel, measured
     /// perfusion, or a literal size comparison.
     private func buildFrontalMacroToMicroDestination(center: SIMD3<Float>) {
+        flowRideFrontalDestinationCenter = center + SIMD3<Float>(0, 0.04, -0.55)
         let microvascularRoot = Entity()
         microvascularRoot.name = "frontal-route-arteriole-capillary-transition-not-to-scale"
         flowRideFrontalDestinationRoot.addChild(microvascularRoot)
+        microvascularRoot.addChild(flowRideFrontalArterioleRoot)
+        microvascularRoot.addChild(flowRideCapillaryWebRoot)
+
+        let focusTarget = Entity()
+        focusTarget.name = "frontal-capillary-field-focus-target"
+        focusTarget.position = flowRideFrontalDestinationCenter
+        focusTarget.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
+        focusTarget.components.set(CollisionComponent(shapes: [
+            .generateBox(size: [1.24, 0.94, 0.26])
+        ]))
+        focusTarget.components.set(HoverEffectComponent())
+        flowRideCapillaryWebRoot.addChild(focusTarget)
+        flowRideCapillaryFocusTarget = focusTarget
 
         if let sheetMesh = try? makeCorticalExchangeSheet(
             center: center + SIMD3<Float>(0, 0.08, -0.58),
@@ -1691,16 +1733,16 @@ final class RBCJourneyScene {
             )
             let sheet = ModelEntity(mesh: sheetMesh, materials: [sheetMaterial])
             sheet.name = "frontal-route-cortical-exchange-surface-not-segmentation"
-            microvascularRoot.addChild(sheet)
+            flowRideCapillaryWebRoot.addChild(sheet)
         }
 
         let arterioleMaterial = tissueContextMaterial(
             color: UIColor(red: 0.46, green: 0.014, blue: 0.032, alpha: 0.86),
             emissive: UIColor(red: 0.70, green: 0.025, blue: 0.055, alpha: 1)
         )
-        let capillaryMaterial = glowMaterial(
-            color: UIColor(red: 0.82, green: 0.075, blue: 0.12, alpha: 0.78),
-            intensity: 0.82
+        let capillaryMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.34, green: 0.018, blue: 0.038, alpha: 0.82),
+            emissive: UIColor(red: 0.46, green: 0.010, blue: 0.028, alpha: 1)
         )
         let flowFrontMaterial = glowMaterial(
             color: UIColor(red: 1.0, green: 0.62, blue: 0.28, alpha: 0.94),
@@ -1716,7 +1758,7 @@ final class RBCJourneyScene {
         )
         addMicrovascularTube(
             penetratingArteriole,
-            to: microvascularRoot,
+            to: flowRideFrontalArterioleRoot,
             startRadius: 0.030,
             endRadius: 0.014,
             material: arterioleMaterial,
@@ -1733,8 +1775,8 @@ final class RBCJourneyScene {
                 cos(angle) * radius * 0.61,
                 sin(angle) * radius * 0.45 + 0.05,
                 -0.55
-                    + sin(angle * 1.7) * 0.10
-                    + cos(radius * .pi * 2.2) * 0.040
+                    + sin(angle * 1.7) * 0.17
+                    + cos(radius * .pi * 2.2) * 0.080
             )
         }
         let junction = penetratingArteriole.last ?? center
@@ -1757,7 +1799,7 @@ final class RBCJourneyScene {
                 }
             }
         }
-        var microPaths: [[SIMD3<Float>]] = [penetratingArteriole]
+        var microPaths: [[SIMD3<Float>]] = []
         let feederTargets = nodes
             .sorted { $0.y < $1.y }
             .prefix(3)
@@ -1772,13 +1814,12 @@ final class RBCJourneyScene {
             )
             addMicrovascularTube(
                 path,
-                to: microvascularRoot,
+                to: flowRideFrontalArterioleRoot,
                 startRadius: 0.012,
                 endRadius: 0.0065,
                 material: arterioleMaterial,
                 name: "frontal-route-precapillary-feeder-\(index)"
             )
-            microPaths.append(path)
         }
 
         for (index, edge) in edgeIndices.enumerated() {
@@ -1789,19 +1830,23 @@ final class RBCJourneyScene {
             side = simd_length_squared(side) < 0.000_1
                 ? SIMD3<Float>(0, 1, 0)
                 : simd_normalize(side)
-            let bow = (Float(index % 3) - 1) * 0.035
+            let bow = (Float(index % 5) - 2) * 0.018
+            let lateralWave = sin(Float(index) * 1.618) * 0.042
+            let verticalWave = cos(Float(index) * 0.91) * 0.048
             let path = sampleCubicBezier(
                 start,
-                start + delta * 0.32 + side * bow + SIMD3<Float>(0, 0, -0.025),
-                start + delta * 0.68 - side * bow + SIMD3<Float>(0, 0, 0.022),
+                start + delta * 0.28 + side * (bow + lateralWave)
+                    + SIMD3<Float>(0, verticalWave, -0.040),
+                start + delta * 0.72 - side * (bow - lateralWave * 0.45)
+                    + SIMD3<Float>(0, -verticalWave * 0.72, 0.040),
                 end,
                 samples: 11
             )
             addMicrovascularTube(
                 path,
-                to: microvascularRoot,
-                startRadius: 0.0072,
-                endRadius: 0.0046,
+                to: flowRideCapillaryWebRoot,
+                startRadius: 0.0046,
+                endRadius: 0.0028,
                 material: capillaryMaterial,
                 name: "frontal-route-capillary-link-\(index)"
             )
@@ -1813,7 +1858,7 @@ final class RBCJourneyScene {
             let glint = ModelEntity(mesh: glintMesh, materials: [flowFrontMaterial])
             glint.name = "frontal-route-capillary-traveling-flow-front-\(index)"
             glint.position = path.first ?? center
-            microvascularRoot.addChild(glint)
+            flowRideCapillaryWebRoot.addChild(glint)
             flowRideMicrovascularGlints.append((
                 glint,
                 path,
@@ -1987,22 +2032,28 @@ final class RBCJourneyScene {
     private func updateFlowRide(
         active: Bool,
         route: RBCFlowRideRoute,
+        capillaryFieldFocused: Bool,
         time _: Float,
         motionHeld: Bool
     ) {
         flowRideRuntimeActive = active
         flowRideRuntimeHeld = motionHeld
         flowRideRuntimeRoute = route
+        flowRideRuntimeCapillaryFocus = capillaryFieldFocused && route == .frontal
         flowRideRoot.isEnabled = active
         guard active else {
             flowRideWasActive = false
             flowRideElapsed = 0
+            flowRideCapillaryFocusMix = 0
             return
         }
 
         if !flowRideWasActive {
             flowRideWasActive = true
             flowRideElapsed = 0
+        }
+        if flowRideRuntimeHeld {
+            flowRideCapillaryFocusMix = flowRideRuntimeCapillaryFocus ? 1 : 0
         }
         applyFlowRidePose()
     }
@@ -2011,6 +2062,13 @@ final class RBCJourneyScene {
         guard flowRideRuntimeActive else { return }
         if !flowRideRuntimeHeld {
             flowRideElapsed += min(max(deltaTime, 0), 0.10)
+            let focusTarget: Float = flowRideRuntimeCapillaryFocus ? 1 : 0
+            let focusStep = min(max(deltaTime, 0), 0.10) * 0.82
+            if flowRideCapillaryFocusMix < focusTarget {
+                flowRideCapillaryFocusMix = min(focusTarget, flowRideCapillaryFocusMix + focusStep)
+            } else if flowRideCapillaryFocusMix > focusTarget {
+                flowRideCapillaryFocusMix = max(focusTarget, flowRideCapillaryFocusMix - focusStep)
+            }
         }
         applyFlowRidePose()
     }
@@ -2020,6 +2078,8 @@ final class RBCJourneyScene {
         // local X. The room-scale hero rotates that axis forward into -Z.
         // Moving children in local space preserves the textured wall and avoids
         // moving the wearer's camera or entire world.
+        let focusMix = flowRideCapillaryFocusMix * flowRideCapillaryFocusMix
+            * (3 - 2 * flowRideCapillaryFocusMix)
         let near: Float = -0.038
         let span: Float = 0.112
         for item in flowRideCells {
@@ -2042,6 +2102,7 @@ final class RBCJourneyScene {
                 1 - deformation * 0.05,
                 1 - deformation * 0.03
             )
+            item.entity.components.set(OpacityComponent(opacity: 1 - focusMix * 0.96))
         }
 
         for item in flowRideRibbonSegments {
@@ -2134,7 +2195,21 @@ final class RBCJourneyScene {
         let destinationPulse: Float = flowRideRuntimeHeld
             ? 1
             : 1 + sin(flowRideElapsed * 1.8) * 0.035
-        flowRideFrontalDestinationRoot.scale = [destinationPulse, destinationPulse, destinationPulse]
+        let capillaryScale = 1 + focusMix * 0.56
+        flowRideFrontalDestinationRoot.scale = [
+            destinationPulse * capillaryScale,
+            destinationPulse * capillaryScale,
+            destinationPulse * (1 + focusMix * 0.92)
+        ]
+        let destinationTilt = simd_slerp(
+            simd_quatf(angle: 0, axis: [0, 1, 0]),
+            simd_quatf(angle: -0.16, axis: [0, 1, 0])
+                * simd_quatf(angle: 0.055, axis: [1, 0, 0]),
+            focusMix
+        )
+        flowRideFrontalDestinationRoot.orientation = destinationTilt
+        flowRideFrontalOutlineRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
+        flowRideFrontalArterioleRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
         let neighborPulse: Float = flowRideRuntimeHeld
             ? 1
             : 1 + cos(flowRideElapsed * 1.65) * 0.028
@@ -2156,8 +2231,21 @@ final class RBCJourneyScene {
             routePosition = [1.09, 0.08, 1.50]
             routeOrientation = simd_quatf(angle: 0.50, axis: [0, 1, 0])
         }
-        flowRideRoot.position = routePosition
+        let focusedDestinationScale = SIMD3<Float>(
+            destinationPulse * capillaryScale,
+            destinationPulse * capillaryScale,
+            destinationPulse * (1 + focusMix * 0.92)
+        )
+        let focusedCenter = destinationTilt.act(flowRideFrontalDestinationCenter * focusedDestinationScale)
+        let focusWorldTarget = SIMD3<Float>(0.20, 1.40, -2.08)
+        let focusedRoutePosition = focusWorldTarget - routeOrientation.act(focusedCenter)
+        flowRideRoot.position = routePosition + (focusedRoutePosition - routePosition) * focusMix
         flowRideRoot.orientation = routeOrientation
+
+        flowRideCapillaryFocusTarget?.isEnabled = flowRideRuntimeRoute == .frontal
+        flowRideInteriorShellRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
+        flowRideForkFieldRoot.components.set(OpacityComponent(opacity: 1 - focusMix * 0.98))
+        flowRideDirectionFieldRoot.components.set(OpacityComponent(opacity: 1 - focusMix * 0.98))
 
         // The local clock stops while held, so the vessel, ribbons, and cells
         // retain their exact pose instead of snapping to a generic still pose.

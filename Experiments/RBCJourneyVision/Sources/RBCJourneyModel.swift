@@ -579,6 +579,7 @@ final class RBCJourneyModel {
     var flowRideRoute: RBCFlowRideRoute = .overview
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
+    var isCapillaryFieldFocused = false
     var motionMode: RBCJourneyMotionMode
     var isPresented = false
     var isSceneReady = false
@@ -629,7 +630,9 @@ final class RBCJourneyModel {
         let regionIndex = regionArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-region-", with: ""))
         }
+        let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
+            || capillaryFocusProofRequested
         let familyGuideProofRequested = arguments.contains("--proof-family-guide")
         let familyGuideBeatArgument = arguments.first { $0.hasPrefix("--proof-family-guide-beat-") }
         let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
@@ -647,13 +650,15 @@ final class RBCJourneyModel {
         }
         isFrontalClotScenarioActive = arguments.contains("--proof-frontal-clot")
         isFlowRideActive = flowRideProofRequested
-        flowRideRoute = if arguments.contains("--proof-flow-route-frontal") {
+        flowRideRoute = if arguments.contains("--proof-flow-route-frontal")
+            || capillaryFocusProofRequested {
             .frontal
         } else if arguments.contains("--proof-flow-route-neighbor") {
             .neighboring
         } else {
             .overview
         }
+        isCapillaryFieldFocused = capillaryFocusProofRequested
         familyNarrationEnabled = familyGuideProofRequested
         familyNarrationConfigured = familyGuideProofRequested
         familyNarrationMoment = familyGuideBeatIndex
@@ -721,6 +726,7 @@ final class RBCJourneyModel {
             || familyGuideProofRequested
             || familyGuideBeatArgument != nil
             || flowRideProofRequested
+            || capillaryFocusProofRequested
             || initialFocus != nil
             || initialTransfer != nil
     }
@@ -740,6 +746,24 @@ final class RBCJourneyModel {
         flowRideRoute.familyNarration(for: familyNarrationMoment)
     }
 
+    var activeFlowRideTitle: String {
+        isCapillaryFieldFocused ? "Inside the capillary field" : flowRideRoute.title
+    }
+
+    var activeFlowRideSubtitle: String {
+        if isCapillaryFieldFocused {
+            return "The network expands around you while your body stays still. Gold fronts show direction only; scale, spacing, and flow are illustrative."
+        }
+        return flowRideRoute.subtitle
+    }
+
+    var activeFlowRideFact: String {
+        if isCapillaryFieldFocused {
+            return "Capillary networks are where blood and nearby tissue exchange oxygen and nutrients."
+        }
+        return flowRideRoute.fact
+    }
+
     var familyNarrationSequenceKey: String {
         "\(isFlowRideActive)-\(familyNarrationEnabled)-\(flowRideRoute.rawValue)-\(familyNarrationRun)"
     }
@@ -757,13 +781,23 @@ final class RBCJourneyModel {
     func selectFlowRideRoute(_ route: RBCFlowRideRoute) {
         guard flowRideRoute != route else { return }
         flowRideRoute = route
+        isCapillaryFieldFocused = false
         familyNarrationMoment = .orientation
         familyNarrationRun += 1
     }
 
     func setFamilyNarrationMoment(_ moment: RBCFamilyNarrationMoment) {
         guard !familyNarrationProofLocked else { return }
+        guard moment.rawValue >= familyNarrationMoment.rawValue else { return }
         familyNarrationMoment = moment
+    }
+
+    func toggleCapillaryFieldFocus() {
+        guard isFlowRideActive, flowRideRoute == .frontal else { return }
+        isCapillaryFieldFocused.toggle()
+        if isCapillaryFieldFocused {
+            setFamilyNarrationMoment(.arrival)
+        }
     }
 
     var progress: Double {
@@ -937,6 +971,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
         flowRideRoute = .overview
+        isCapillaryFieldFocused = false
         familyNarrationMoment = .orientation
         familyNarrationRun += 1
         isPaused = false
@@ -952,6 +987,7 @@ final class RBCJourneyModel {
         transferredPortalID = RBCBrainRegionDestination.frontalLobe.id
         regionVisualization = .flow
         isFlowRideActive = false
+        isCapillaryFieldFocused = false
         familyNarrationEnabled = false
         familyNarrationMoment = .orientation
         familyNarrationRun += 1

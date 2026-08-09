@@ -112,6 +112,14 @@ literal geometric transition, measured perfusion, patient anatomy, histology,
 or clinical segmentation. The bundled flat microcirculation vignette remains a
 separate portal reference and was not dropped into this endpoint as a 3D card.
 
+On the frontal route, pinch the capillary web or choose **Enter capillary
+field**. Over about 1.2 seconds, the constellation, artery wall, and macro
+arteriole yield while the darker, thinner capillary bed expands at a comfortable
+depth around the stationary wearer. **Return to artery** reverses that authored
+scale transfer. This changes scene hierarchy and depth rather than moving an app
+camera. `--proof-capillary-focus` opens the deterministic focused state and
+implies the frontal arterial ride for Simulator review.
+
 **Pause ride** freezes the local flow clock without jumping on resume.
 **Leave branch** returns directly to the frontal Flow observatory. **Exit** is
 always visible. The Region Portal Reel is hidden during the ride so there is one
@@ -132,7 +140,9 @@ is intentionally separate from clinician tooling. Turning it on starts a short
 three-beat voyage—**orientation → passage → arrival**—inside the existing lesson
 surface. It does not open another panel. Each selected route has its own three
 short title-and-caption pairs; choosing a different route restarts the sequence
-at orientation. **Pause ride** holds both the flow and the guide clock.
+at orientation. Entering the capillary field advances the guide to its matching
+arrival cue instead of waiting for a generic timer. The remaining timer never
+rewinds that explanation. **Pause ride** holds both the flow and the guide clock.
 
 The paced captions work without a network connection. If voice is configured,
 the guide uses `gpt-realtime-2.1` with the `marin` voice to read only the exact,

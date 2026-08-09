@@ -52,6 +52,7 @@ struct RBCJourneyImmersiveView: View {
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
                     flowRideActive: model.isFlowRideActive,
                     flowRideRoute: model.flowRideRoute,
+                    capillaryFieldFocused: model.isCapillaryFieldFocused,
                     time: timeline.date.timeIntervalSinceReferenceDate,
                     paused: model.isPaused,
                     reducedMotion: model.effectiveReducedMotion,
@@ -97,7 +98,9 @@ struct RBCJourneyImmersiveView: View {
                 TapGesture()
                     .targetedToAnyEntity()
                     .onEnded { value in
-                        if scene.isFrontalClotTarget(value.entity) {
+                        if scene.isCapillaryFocusTarget(value.entity) {
+                            model.toggleCapillaryFieldFocus()
+                        } else if scene.isFrontalClotTarget(value.entity) {
                             model.toggleFrontalClotScenario()
                         } else if let portalID = scene.portalID(for: value.entity) {
                             model.focusPortal(portalID)

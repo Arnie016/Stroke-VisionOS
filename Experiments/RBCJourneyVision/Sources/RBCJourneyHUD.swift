@@ -271,14 +271,14 @@ struct RBCRegionInfoHUD: View {
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationCue.title
                     : (flowRideActive
-                        ? model.flowRideRoute.title
+                        ? model.activeFlowRideTitle
                         : (exampleClotActive ? "One branch, interrupted" : region.title)))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationCue.caption
                     : (flowRideActive
-                        ? model.flowRideRoute.subtitle
+                        ? model.activeFlowRideSubtitle
                         : (exampleClotActive
                             ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
                             : region.subtitle)))
@@ -287,7 +287,7 @@ struct RBCRegionInfoHUD: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 Label(flowRideActive
-                    ? model.flowRideRoute.fact
+                    ? model.activeFlowRideFact
                     : (exampleClotActive
                         ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
                         : region.fact),
@@ -378,6 +378,24 @@ struct RBCRegionInfoHUD: View {
                                 }
                             }
                             .buttonBorderShape(.capsule)
+
+                            if model.flowRideRoute == .frontal {
+                                Button(
+                                    model.isCapillaryFieldFocused ? "Return to artery" : "Enter capillary field",
+                                    systemImage: model.isCapillaryFieldFocused
+                                        ? "arrow.down.right.and.arrow.up.left"
+                                        : "circle.hexagongrid.fill"
+                                ) {
+                                    model.toggleCapillaryFieldFocus()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(model.isCapillaryFieldFocused
+                                    ? Color(red: 0.72, green: 0.17, blue: 0.28)
+                                    : Color(red: 0.90, green: 0.34, blue: 0.30))
+                                .accessibilityLabel(model.isCapillaryFieldFocused
+                                    ? "Return from the illustrative capillary field to the artery"
+                                    : "Expand the illustrative capillary field around you")
+                            }
 
                             HStack(spacing: 8) {
                                 Button(

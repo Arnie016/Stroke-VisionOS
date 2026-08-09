@@ -199,6 +199,15 @@ checks = {
         "--proof-family-guide-beat-", "remainingSeconds = 7.5",
         "Captions work now; connect the local guide for voice.",
     ]) and "|| (model.proofMode && model.familyNarrationEnabled)" not in immersive,
+    "user_triggered_capillary_focus": all(token in model + scene + hud + immersive for token in [
+        "--proof-capillary-focus", "isCapillaryFieldFocused",
+        "toggleCapillaryFieldFocus", "Enter capillary field", "Return to artery",
+        "frontal-capillary-field-focus-target", "isCapillaryFocusTarget",
+        "flowRideCapillaryFocusMix", "flowRideFrontalOutlineRoot",
+        "flowRideFrontalArterioleRoot", "flowRideCapillaryWebRoot",
+        "The network expands around you while your body stays still.",
+        "setFamilyNarrationMoment(.arrival)",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
