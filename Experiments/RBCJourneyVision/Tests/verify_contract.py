@@ -16,6 +16,7 @@ required_files = [
     ROOT / "Sources/RBCJourneyScene.swift",
     ROOT / "Sources/RBCPortalGestureController.swift",
     ROOT / "Docs/existing-app-inventory.json",
+    ROOT / "Docs/medical-content-canon.md",
     ROOT / "Resources/Provenance/portal-anchor-manifest.json",
     ROOT / "Scripts/rbc_realtime_narration_proxy.mjs",
     ROOT / "Scripts/run_rbc_realtime_proxy.zsh",
@@ -35,6 +36,7 @@ narrator = (ROOT / "Sources/RBCFamilyNarrationEngine.swift").read_text()
 gestures = (ROOT / "Sources/RBCPortalGestureController.swift").read_text()
 hud = (ROOT / "Sources/RBCJourneyHUD.swift").read_text()
 readme = (ROOT / "README.md").read_text()
+medical_canon = (ROOT / "Docs/medical-content-canon.md").read_text()
 realtime_proxy = (ROOT / "Scripts/rbc_realtime_narration_proxy.mjs").read_text()
 realtime_runner = (ROOT / "Scripts/run_rbc_realtime_proxy.zsh").read_text()
 anchor_manifest = json.loads((ROOT / "Resources/Provenance/portal-anchor-manifest.json").read_text())
@@ -178,6 +180,16 @@ checks = {
         "provenance-tracked-arterial-wall-pbr-microtexture-main",
         "descriptor.textureCoordinates", "descriptor.tangents",
         "descriptor.bitangents", "RBC_FLOW_WALL_PBR=READY",
+    ]),
+    "frontal_macro_to_micro_destination": all(token in scene + model + medical_canon for token in [
+        "frontal-route-arteriole-capillary-transition-not-to-scale",
+        "frontal-route-penetrating-arteriole",
+        "frontal-route-capillary-link-",
+        "frontal-route-capillary-traveling-flow-front-",
+        "frontal-route-cortical-exchange-surface-not-segmentation",
+        "capillary_nodes=34", "organic_links=nearest_neighbor",
+        "From artery to cortex", "A network meets the cortex",
+        "surface arteries give rise to", "macro-to-micro destination expands scale",
     ]),
     "paced_family_voyage_guide": all(token in model + hud + immersive for token in [
         "enum RBCFamilyNarrationMoment", "case orientation", "case passage", "case arrival",

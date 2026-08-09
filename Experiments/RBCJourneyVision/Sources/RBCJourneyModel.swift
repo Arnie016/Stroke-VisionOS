@@ -409,7 +409,7 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .overview: "A fork inside the brain"
-        case .frontal: "Follow the frontal route"
+        case .frontal: "From artery to cortex"
         case .neighboring: "Compare the neighboring route"
         }
     }
@@ -419,7 +419,7 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         case .overview:
             "The vessel surrounds you and divides ahead. Red cells and traveling light reveal both downstream directions while you remain physically still."
         case .frontal:
-            "The coral branch leads toward a constellation-like frontal-region guide. It connects vessel direction to a place in the surrounding brain without claiming patient segmentation."
+            "The coral branch narrows toward penetrating arterioles and an interconnected capillary field. The expanded scale makes the relationship visible without claiming patient anatomy."
         case .neighboring:
             "The second branch stays visible to show that a vascular journey belongs to a network, not a single isolated tube. This route is illustrative rather than patient anatomy."
         }
@@ -430,7 +430,7 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         case .overview:
             "Cerebral arteries branch repeatedly as they distribute blood through different territories."
         case .frontal:
-            "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement; the constellation is only an orientation guide."
+            "Cerebral arteries divide into smaller arteries and arterioles before dense capillary networks exchange oxygen and nutrients with tissue."
         case .neighboring:
             "Neighboring arterial routes and collateral connections vary between people, so this scene does not predict individual blood supply."
         }
@@ -465,8 +465,8 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
             )
         case (.frontal, .arrival):
             RBCFamilyNarrationCue(
-                title: "A region, not a single point",
-                caption: "The constellation ahead is an orientation guide to the frontal lobe, which contributes to planning, speech, inhibition, and voluntary movement."
+                title: "A network meets the cortex",
+                caption: "The artery narrows into arterioles and then a capillary bed. This expanded view shows the relationship, not real scale or measured flow."
             )
         case (.neighboring, .orientation):
             RBCFamilyNarrationCue(

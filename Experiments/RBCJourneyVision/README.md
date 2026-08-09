@@ -97,10 +97,20 @@ duplicated UV seam plus tangents and bitangents, so the material follows both
 branches without turning the imported cutaway back on. If all three maps cannot
 be recovered, the layer fails closed and the original native corridor remains.
 
-The frontal destination ends in an irregular constellation-like outline plus a
-sparse coral tissue field. The neighboring destination uses a separate teal
-field so route selection changes the spatial relationship, not only a label.
-These fields are orientation metaphors, not clinical segmentation.
+The frontal destination now carries two linked scales. An irregular
+constellation-like outline locates the broad region; inside it, the selected
+artery narrows into one penetrating arteriole, three precapillary feeders, and
+a genuinely three-dimensional 34-node capillary web. Twelve sparse gold fronts
+travel through different curved links over an undulating cortical exchange
+surface, so direction remains visible without recreating a bead chain. The
+neighboring destination keeps its separate teal field, so route selection
+changes the spatial relationship rather than only a label.
+
+The macro-to-micro transition deliberately expands scale. It teaches the
+relationship among artery, arteriole, capillary bed, and cortex; it is not a
+literal geometric transition, measured perfusion, patient anatomy, histology,
+or clinical segmentation. The bundled flat microcirculation vignette remains a
+separate portal reference and was not dropped into this endpoint as a 3D card.
 
 **Pause ride** freezes the local flow clock without jumping on resume.
 **Leave branch** returns directly to the frontal Flow observatory. **Exit** is

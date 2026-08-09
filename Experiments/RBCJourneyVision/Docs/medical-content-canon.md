@@ -1,6 +1,6 @@
 # Medical content canon
 
-Checked: 2026-08-09
+Checked: 2026-08-10
 
 This ledger constrains the educational copy used by `RBCJourneyVision`. It is
 not specialist review and does not make the app clinical software.
@@ -21,14 +21,16 @@ not specialist review and does not make the app clinical software.
   Circulation*.
   https://www.ncbi.nlm.nih.gov/books/NBK53086/
 - Supported wording: cerebral arteries divide into smaller arteries and
-  arterioles that supply cortical regions; cerebral capillary beds are dense
-  exchange networks.
+  arterioles that supply cortical regions; surface arteries give rise to
+  penetrating arterioles; cerebral capillary beds are dense exchange networks.
 - Source: NCBI Bookshelf, *Tissue Gas Transport*.
   https://www.ncbi.nlm.nih.gov/books/NBK54110/
 - Supported wording: oxygen moves from blood toward tissue by diffusion. The
   teaching scene keeps the red blood cell intravascular.
 - UI limit: no velocity, pressure, perfusion, tissue-outcome, or collateral-flow
-  prediction may be inferred from animation speed, color, density, or path.
+  prediction may be inferred from animation speed, color, density, or path. The
+  macro-to-micro destination expands scale for legibility and is not a literal
+  geometric transition or patient-specific cortical bed.
 
 ## Brain orientation
 

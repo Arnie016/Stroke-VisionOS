@@ -22,6 +22,9 @@ a window. The short judge path is:
    through the ride. A local GPT Realtime proxy may read the exact visible copy;
    captions remain available without it. The guide is off by default and is not
    clinician tooling.
+7. The selected frontal route resolves from artery to penetrating arteriole and
+   an organic 34-node capillary web inside the existing regional outline. It is
+   an expanded-scale relationship lesson, not a patient-specific cortical bed.
 
 Everything is generic education. No scene is patient-specific anatomy, CFD,
 perfusion, velocity, pressure, diagnosis, treatment guidance, or an outcome
@@ -58,7 +61,9 @@ for the paced-guide evidence boundary,
 `Experiments/RBCJourneyVision/Proof/FAMILY_VOYAGE_PROXY_READINESS_RECEIPT.md`
 for the zero-cost secure-transport check, and
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V5_PBR_WALL_RECEIPT.md`
-for the current wall-material gate.
+for the wall-material gate, and
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V6_MACRO_MICRO_RECEIPT.md`
+for the current frontal-destination gate.
 
 ## Optional family narration
 
@@ -94,7 +99,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 52-check contract and generic Simulator build before publishing.
+5. Run the 53-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.

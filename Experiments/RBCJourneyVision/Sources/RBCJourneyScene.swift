@@ -73,6 +73,12 @@ final class RBCJourneyScene {
         phase: Float,
         route: RBCFlowRideRoute
     )] = []
+    private var flowRideMicrovascularGlints: [(
+        entity: ModelEntity,
+        path: [SIMD3<Float>],
+        offset: Float,
+        speed: Float
+    )] = []
     private var flowRideRuntimeRoute: RBCFlowRideRoute = .overview
     private var flowRideElapsed: Float = 0
     private var flowRideWasActive = false
@@ -1461,13 +1467,7 @@ final class RBCJourneyScene {
         let frontalDestination = frontalShellPath.last ?? [-1.50, 1.96, -5.02]
         let neighboringDestination = neighboringShellPath.last ?? [1.50, 1.24, -5.02]
         buildFrontalRouteConstellation(center: frontalDestination)
-        buildDestinationPointField(
-            center: frontalDestination + SIMD3<Float>(-0.10, 0.04, -0.30),
-            color: UIColor(red: 1.0, green: 0.19, blue: 0.28, alpha: 0.48),
-            count: 48,
-            name: "frontal-route-cortical-point-field",
-            parent: flowRideFrontalDestinationRoot
-        )
+        buildFrontalMacroToMicroDestination(center: frontalDestination)
         buildDestinationPointField(
             center: neighboringDestination + SIMD3<Float>(0.10, -0.03, -0.30),
             color: UIColor(red: 0.16, green: 0.78, blue: 0.70, alpha: 0.42),
@@ -1669,6 +1669,229 @@ final class RBCJourneyScene {
         )
     }
 
+    /// Expands the selected frontal route into an authored scale transition:
+    /// artery -> penetrating arteriole -> interconnected capillary field. This
+    /// is a qualitative spatial relationship, not a patient vessel, measured
+    /// perfusion, or a literal size comparison.
+    private func buildFrontalMacroToMicroDestination(center: SIMD3<Float>) {
+        let microvascularRoot = Entity()
+        microvascularRoot.name = "frontal-route-arteriole-capillary-transition-not-to-scale"
+        flowRideFrontalDestinationRoot.addChild(microvascularRoot)
+
+        if let sheetMesh = try? makeCorticalExchangeSheet(
+            center: center + SIMD3<Float>(0, 0.08, -0.58),
+            width: 1.42,
+            height: 1.02,
+            columns: 15,
+            rows: 11
+        ) {
+            let sheetMaterial = tissueContextMaterial(
+                color: UIColor(red: 0.23, green: 0.055, blue: 0.078, alpha: 0.26),
+                emissive: UIColor(red: 0.25, green: 0.025, blue: 0.055, alpha: 1)
+            )
+            let sheet = ModelEntity(mesh: sheetMesh, materials: [sheetMaterial])
+            sheet.name = "frontal-route-cortical-exchange-surface-not-segmentation"
+            microvascularRoot.addChild(sheet)
+        }
+
+        let arterioleMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.46, green: 0.014, blue: 0.032, alpha: 0.86),
+            emissive: UIColor(red: 0.70, green: 0.025, blue: 0.055, alpha: 1)
+        )
+        let capillaryMaterial = glowMaterial(
+            color: UIColor(red: 0.82, green: 0.075, blue: 0.12, alpha: 0.78),
+            intensity: 0.82
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.62, blue: 0.28, alpha: 0.94),
+            intensity: 4.0
+        )
+
+        let penetratingArteriole = sampleCubicBezier(
+            center + SIMD3<Float>(0, 0, -0.03),
+            center + SIMD3<Float>(0.02, -0.08, -0.17),
+            center + SIMD3<Float>(-0.04, -0.25, -0.32),
+            center + SIMD3<Float>(0, -0.34, -0.42),
+            samples: 22
+        )
+        addMicrovascularTube(
+            penetratingArteriole,
+            to: microvascularRoot,
+            startRadius: 0.030,
+            endRadius: 0.014,
+            material: arterioleMaterial,
+            name: "frontal-route-penetrating-arteriole"
+        )
+
+        let nodeCount = 34
+        let goldenAngle = Float.pi * (3 - sqrt(5 as Float))
+        let nodes: [SIMD3<Float>] = (0..<nodeCount).map { index in
+            let fraction = (Float(index) + 0.7) / Float(nodeCount)
+            let radius = sqrt(fraction)
+            let angle = Float(index) * goldenAngle + sin(Float(index) * 0.73) * 0.11
+            return center + SIMD3<Float>(
+                cos(angle) * radius * 0.61,
+                sin(angle) * radius * 0.45 + 0.05,
+                -0.55
+                    + sin(angle * 1.7) * 0.10
+                    + cos(radius * .pi * 2.2) * 0.040
+            )
+        }
+        let junction = penetratingArteriole.last ?? center
+        var edgeIndices: [(Int, Int)] = []
+        var edgeKeys: Set<String> = []
+        for index in nodes.indices {
+            let neighbors = nodes.indices
+                .filter { $0 != index }
+                .sorted {
+                    simd_distance(nodes[index], nodes[$0])
+                        < simd_distance(nodes[index], nodes[$1])
+                }
+            let connectionCount = index.isMultiple(of: 5) ? 4 : 3
+            for neighbor in neighbors.prefix(connectionCount) {
+                let start = min(index, neighbor)
+                let end = max(index, neighbor)
+                let key = "\(start)-\(end)"
+                if edgeKeys.insert(key).inserted {
+                    edgeIndices.append((start, end))
+                }
+            }
+        }
+        var microPaths: [[SIMD3<Float>]] = [penetratingArteriole]
+        let feederTargets = nodes
+            .sorted { $0.y < $1.y }
+            .prefix(3)
+        for (index, target) in feederTargets.enumerated() {
+            let lateral = (Float(index) - 1) * 0.050
+            let path = sampleCubicBezier(
+                junction,
+                junction + SIMD3<Float>(lateral, -0.04, -0.10),
+                target + SIMD3<Float>(-lateral * 0.5, -0.04, 0.08),
+                target,
+                samples: 13
+            )
+            addMicrovascularTube(
+                path,
+                to: microvascularRoot,
+                startRadius: 0.012,
+                endRadius: 0.0065,
+                material: arterioleMaterial,
+                name: "frontal-route-precapillary-feeder-\(index)"
+            )
+            microPaths.append(path)
+        }
+
+        for (index, edge) in edgeIndices.enumerated() {
+            let start = nodes[edge.0]
+            let end = nodes[edge.1]
+            let delta = end - start
+            var side = simd_cross(delta, SIMD3<Float>(0, 0, 1))
+            side = simd_length_squared(side) < 0.000_1
+                ? SIMD3<Float>(0, 1, 0)
+                : simd_normalize(side)
+            let bow = (Float(index % 3) - 1) * 0.035
+            let path = sampleCubicBezier(
+                start,
+                start + delta * 0.32 + side * bow + SIMD3<Float>(0, 0, -0.025),
+                start + delta * 0.68 - side * bow + SIMD3<Float>(0, 0, 0.022),
+                end,
+                samples: 11
+            )
+            addMicrovascularTube(
+                path,
+                to: microvascularRoot,
+                startRadius: 0.0072,
+                endRadius: 0.0046,
+                material: capillaryMaterial,
+                name: "frontal-route-capillary-link-\(index)"
+            )
+            microPaths.append(path)
+        }
+
+        let glintMesh = MeshResource.generateCylinder(height: 0.048, radius: 0.0065)
+        for (index, path) in microPaths.enumerated() where index < 24 && index.isMultiple(of: 2) {
+            let glint = ModelEntity(mesh: glintMesh, materials: [flowFrontMaterial])
+            glint.name = "frontal-route-capillary-traveling-flow-front-\(index)"
+            glint.position = path.first ?? center
+            microvascularRoot.addChild(glint)
+            flowRideMicrovascularGlints.append((
+                glint,
+                path,
+                Float(index) / Float(max(microPaths.count, 1)),
+                0.045 + Float(index % 4) * 0.007
+            ))
+        }
+
+        print("RBC_FRONTAL_MICROVASCULAR_DESTINATION=READY arteriole=1 feeders=3 capillary_nodes=34 organic_links=nearest_neighbor flow_fronts=12 not_to_scale=true")
+    }
+
+    private func addMicrovascularTube(
+        _ path: [SIMD3<Float>],
+        to parent: Entity,
+        startRadius: Float,
+        endRadius: Float,
+        material: RealityKit.Material,
+        name: String
+    ) {
+        guard let mesh = try? makeInwardFacingTubeMesh(
+            path: path,
+            startRadius: startRadius,
+            endRadius: endRadius,
+            radialSegments: 8,
+            name: name,
+            inwardFacing: false
+        ) else { return }
+        let vessel = ModelEntity(mesh: mesh, materials: [material])
+        vessel.name = "\(name)-continuous-mesh"
+        parent.addChild(vessel)
+    }
+
+    private func makeCorticalExchangeSheet(
+        center: SIMD3<Float>,
+        width: Float,
+        height: Float,
+        columns: Int,
+        rows: Int
+    ) throws -> MeshResource {
+        guard columns > 1, rows > 1 else {
+            throw NSError(domain: "RBCCorticalExchangeSheet", code: 1)
+        }
+        var positions: [SIMD3<Float>] = []
+        var normals: [SIMD3<Float>] = []
+        var indices: [UInt32] = []
+        positions.reserveCapacity(columns * rows)
+        normals.reserveCapacity(columns * rows)
+        indices.reserveCapacity((columns - 1) * (rows - 1) * 6)
+
+        for row in 0..<rows {
+            let v = Float(row) / Float(rows - 1)
+            let y = (v - 0.5) * height
+            for column in 0..<columns {
+                let u = Float(column) / Float(columns - 1)
+                let x = (u - 0.5) * width
+                let fold = sin(u * .pi * 3.2) * 0.070
+                    + cos(v * .pi * 2.4) * 0.045
+                    + sin((u + v) * .pi * 2.1) * 0.026
+                positions.append(center + SIMD3<Float>(x, y, fold))
+                normals.append([0, 0, 1])
+            }
+        }
+        for row in 0..<(rows - 1) {
+            for column in 0..<(columns - 1) {
+                let a = UInt32(row * columns + column)
+                let b = UInt32(row * columns + column + 1)
+                let c = UInt32((row + 1) * columns + column)
+                let d = UInt32((row + 1) * columns + column + 1)
+                indices.append(contentsOf: [a, c, b, b, c, d])
+            }
+        }
+        var descriptor = MeshDescriptor(name: "frontal-route-cortical-exchange-sheet")
+        descriptor.positions = MeshBuffers.Positions(positions)
+        descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.primitives = .triangles(indices)
+        return try MeshResource.generate(from: [descriptor])
+    }
+
     private func buildDestinationPointField(
         center: SIMD3<Float>,
         color: UIColor,
@@ -1858,6 +2081,25 @@ final class RBCJourneyScene {
             )
             let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
             item.entity.components.set(OpacityComponent(opacity: selected ? 1 : 0.08))
+        }
+
+        for item in flowRideMicrovascularGlints {
+            let progress = (item.offset + flowRideElapsed * item.speed)
+                .truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: item.path, progress: progress)
+            let ahead = interpolatedPoint(on: item.path, progress: min(progress + 0.025, 1))
+            item.entity.position = point
+            let tangent = ahead - point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: SIMD3<Float>(0, 1, 0),
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = flowRideRuntimeHeld
+                ? 0.92
+                : 0.88 + sin(flowRideElapsed * 3.1 + item.offset * 9) * 0.12
+            item.entity.scale = [pulse, 1, pulse]
         }
 
         for item in flowRideForkSegments {

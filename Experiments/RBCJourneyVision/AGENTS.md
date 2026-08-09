@@ -18,6 +18,10 @@ video cannot.
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,
   Pause, Leave, and Exit.
+- Frontal destination: constellation outline around an authored artery →
+  penetrating arteriole → 34-node capillary-field scale transition with sparse
+  traveling fronts. It is an orientation/exchange lesson, not measured flow or
+  patient anatomy.
 - Family guide: optional three-beat orientation → passage → arrival captions;
   voice may read only the exact visible copy through a loopback proxy. It is
   off by default and never a clinician default.
