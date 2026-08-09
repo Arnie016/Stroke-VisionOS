@@ -280,6 +280,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
     case frontalLobe
     case corticalMicroarchitecture
     case occipitalLobe
+    case brainstem
 
     var id: Int { rawValue }
 
@@ -294,6 +295,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .frontalLobe: "Frontal lobe"
         case .corticalMicroarchitecture: "Cortical microarchitecture"
         case .occipitalLobe: "Occipital lobe"
+        case .brainstem: "Brainstem"
         }
     }
 
@@ -308,6 +310,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .frontalLobe: "Frontal"
         case .corticalMicroarchitecture: "Cortical layers"
         case .occipitalLobe: "Visual cortex"
+        case .brainstem: "Brainstem bridge"
         }
     }
 
@@ -331,6 +334,8 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
             "Enter a magnified cortical fold. Six laminar bands and simplified radial guides surround a penetrating arteriole as it branches toward capillary exchange."
         case .occipitalLobe:
             "Stand inside the posterior cortical vault. A constellation locates the calcarine region while qualitative posterior-cerebral branches reveal how arterial routes approach visual cortex."
+        case .brainstem:
+            "Enter the vertical bridge between cerebrum, cerebellum, and spinal cord. Midbrain, pons, and medulla gather around the basilar route without moving the wearer."
         }
     }
 
@@ -345,6 +350,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .frontalLobe: "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement. The outline is an orientation guide, not diagnostic segmentation."
         case .corticalMicroarchitecture: "Most cerebral cortex is six-layered neocortex, but layer thickness, cell density, and columnar organization vary across cortical areas."
         case .occipitalLobe: "Primary visual cortex lies along the banks of the calcarine sulcus. This scene is an orientation abstraction, not functional mapping or diagnostic segmentation."
+        case .brainstem: "The brainstem contains the midbrain, pons, and medulla. This scene teaches their relationships and posterior circulation qualitatively, not patient anatomy or measured perfusion."
         }
     }
 
@@ -359,6 +365,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .frontalLobe: "brain.head.profile.fill"
         case .corticalMicroarchitecture: "square.3.layers.3d"
         case .occipitalLobe: "eye.fill"
+        case .brainstem: "arrow.up.and.down.circle.fill"
         }
     }
 
@@ -367,7 +374,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .arterialLumen: .enterTheLumen
         case .circleOfWillis: .circleOfWillis
         case .corticalExchange: .microcirculation
-        case .ventricularSystem, .cerebellum, .deepStructures: .circleOfWillis
+        case .ventricularSystem, .cerebellum, .deepStructures, .brainstem: .circleOfWillis
         case .frontalLobe: .followTheMCA
         case .corticalMicroarchitecture: .microcirculation
         case .occipitalLobe: .circleOfWillis
@@ -902,6 +909,7 @@ final class RBCJourneyModel {
         if region == .cerebellum { return activeCerebellumTitle }
         if region == .deepStructures { return activeDeepStructuresTitle }
         if region == .occipitalLobe { return activeOccipitalTitle }
+        if region == .brainstem { return activeBrainstemTitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "One branch, interrupted"
         }
@@ -914,6 +922,7 @@ final class RBCJourneyModel {
         if region == .cerebellum { return activeCerebellumSubtitle }
         if region == .deepStructures { return activeDeepStructuresSubtitle }
         if region == .occipitalLobe { return activeOccipitalSubtitle }
+        if region == .brainstem { return activeBrainstemSubtitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
         }
@@ -1050,6 +1059,36 @@ final class RBCJourneyModel {
             "Primary visual cortex lies along the calcarine sulcus on the medial occipital surface."
         case .flow:
             "Cortical branches of the posterior cerebral artery supply most of the occipital lobe; branch patterns and territories vary."
+        }
+    }
+
+    var activeBrainstemTitle: String {
+        switch regionVisualization {
+        case .locate: "The bridge beneath the brain"
+        case .xray: "Three levels, many pathways"
+        case .flow: "Two vertebral routes become one"
+        }
+    }
+
+    var activeBrainstemSubtitle: String {
+        switch regionVisualization {
+        case .locate:
+            "Midbrain, pons, and medulla form one continuous vertical passage between the cerebrum and spinal cord, with the cerebellum behind. Broken contours keep all three levels legible without claiming segmentation."
+        case .xray:
+            "Long ascending and descending pathway guides pass through all three levels while transverse pontine fibers cross the middle. The luminous layers are an enlarged relationship lesson, not tractography or measured anatomy."
+        case .flow:
+            "Paired vertebral approaches join into the basilar trunk along the pons. Gold fronts continue toward illustrative PICA, AICA, SCA, posterior-cerebral, and small pontine approaches without assigning fixed territories."
+        }
+    }
+
+    var activeBrainstemFact: String {
+        switch regionVisualization {
+        case .locate:
+            "The brainstem comprises the midbrain, pons, and medulla and connects the cerebrum with the spinal cord and cerebellum."
+        case .xray:
+            "Brainstem gray matter and major ascending and descending pathways occupy a compact space, so this view separates relationships rather than reproducing histology."
+        case .flow:
+            "The vertebral arteries join to form the basilar artery; posterior-circulation branches and perforators approach the brainstem at several levels and vary between people."
         }
     }
 

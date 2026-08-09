@@ -149,6 +149,42 @@ not specialist review and does not make the app clinical software.
   context. Locate, X-ray, and Flow reveal one stationary selected wall; the
   app does not move a camera or infer a region from eye gaze.
 
+## Brainstem posterior-circulation observatory
+
+- Source: NCBI Bookshelf, *Neuroanatomy, Brainstem*.
+  https://www.ncbi.nlm.nih.gov/books/NBK544297/
+- Supported wording: the brainstem comprises the midbrain, pons, and medulla
+  and connects the cerebrum with the spinal cord and cerebellum. Major
+  ascending and descending pathways and compact gray-matter structures occupy
+  this region. The medulla, pons, and midbrain receive overlapping branches of
+  the vertebrobasilar/posterior circulation.
+- Source: NCBI Bookshelf, *The Blood Supply of the Brain and Spinal Cord*.
+  https://www.ncbi.nlm.nih.gov/books/NBK11042/
+- Supported wording: the paired vertebral arteries join on the ventral surface
+  of the pons to form the basilar artery.
+- Source: NCBI Bookshelf, *Neuroanatomy, Vertebrobasilar System*.
+  https://www.ncbi.nlm.nih.gov/books/NBK540995/
+- Supported wording: the vertebrobasilar system includes the bilateral
+  vertebral arteries and unpaired basilar artery and supplies posterior brain
+  structures including the brainstem and cerebellum.
+- Source: NCBI Bookshelf, *The Basilar Artery and Its Branches*.
+  https://www.ncbi.nlm.nih.gov/books/NBK27376/
+- Supported wording: the basilar artery forms near the lower border of the
+  pons, gives off pontine and cerebellar branches including AICA and SCA, and
+  terminates as the posterior cerebral arteries. PICA commonly arises from the
+  vertebral artery.
+- Representation limit: the three broken level contours, four folded
+  environment walls, 16 peripheral ribs, nine longitudinal guides, nine
+  transverse pontine guides, 72 sparse points, 17 arterial paths, and 23 moving
+  fronts are enlarged qualitative orientation
+  geometry. They are not brainstem segmentation, histology, nuclei mapping,
+  tractography, a fixed arterial territory, complete branching, vessel
+  dominance, patient anatomy, physiological timing, perfusion, pressure, CFD,
+  tissue outcome, diagnosis, or treatment guidance.
+- UI limit: Locate, X-ray, and Flow reveal the same stable surrounding corridor.
+  The app does not move a camera, infer a region from eye gaze, or present the
+  one-piece imported deep-structure source as semantic brainstem anatomy.
+
 ## Review status
 
 - Source-reviewed copy: complete for the narrow claims above.

@@ -33,6 +33,14 @@ video cannot.
   fragments, six calcarine-bank layers, and ten qualitative posterior routes
   with 12 moving fronts. It is not segmentation, a sulcal atlas, retinotopy,
   visual-field mapping, fixed territories, CFD, or patient anatomy.
+- Brainstem observatory: one upright midbrain–pons–medulla corridor around the
+  stable wearer, three broken level contours, four folded environment walls,
+  16 peripheral depth ribs, nine longitudinal and nine transverse pontine
+  guides, 72 sparse tegmental points,
+  and 17 qualitative vertebral/basilar/cerebellar/posterior routes with 23
+  tangent fronts. The combined imported source is dim relational context—not
+  segmentation, histology, nuclei mapping, tractography, fixed territory, CFD,
+  or patient anatomy.
 - Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an

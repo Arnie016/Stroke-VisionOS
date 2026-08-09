@@ -119,6 +119,18 @@ final class RBCJourneyScene {
     private var occipitalRuntimeHeld = false
     private var occipitalRuntimeVisualization: RBCRegionVisualizationMode = .locate
     private var occipitalElapsed: Float = 0
+    private var brainstemAuthoredContext: Entity?
+    private var brainstemOutlineRoot: Entity?
+    private var brainstemPathwayRoot: Entity?
+    private var brainstemVesselRoot: Entity?
+    private var brainstemDiscoveryTargets: [Entity] = []
+    private var brainstemGuideStars: [(entity: ModelEntity, phase: Float)] = []
+    private var brainstemFlowPaths: [[SIMD3<Float>]] = []
+    private var brainstemFlowFronts: [(entity: Entity, pathIndex: Int, offset: Float)] = []
+    private var brainstemRuntimeActive = false
+    private var brainstemRuntimeHeld = false
+    private var brainstemRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var brainstemElapsed: Float = 0
     private var regionTransferRings: [(
         entity: Entity,
         phase: Float,
@@ -269,6 +281,7 @@ final class RBCJourneyScene {
         buildFrontalRegionInterior()
         buildCorticalMicroarchitectureInterior()
         buildOccipitalRegionInterior()
+        buildBrainstemRegionInterior()
         buildRegionTransferThreshold()
         buildCausalStoryField()
     }
@@ -288,6 +301,7 @@ final class RBCJourneyScene {
                 self?.advanceCerebellumFrame(deltaTime: deltaTime)
                 self?.advanceDeepStructuresFrame(deltaTime: deltaTime)
                 self?.advanceOccipitalFrame(deltaTime: deltaTime)
+                self?.advanceBrainstemFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
         }
@@ -329,6 +343,7 @@ final class RBCJourneyScene {
         let cerebellumRegionActive = renderedRegionID == RBCBrainRegionDestination.cerebellum.id
         let deepStructuresRegionActive = renderedRegionID == RBCBrainRegionDestination.deepStructures.id
         let occipitalRegionActive = renderedRegionID == RBCBrainRegionDestination.occipitalLobe.id
+        let brainstemRegionActive = renderedRegionID == RBCBrainRegionDestination.brainstem.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
@@ -407,6 +422,11 @@ final class RBCJourneyScene {
         )
         updateOccipitalRegion(
             active: occipitalRegionActive,
+            visualization: regionVisualization,
+            motionHeld: motionHeld
+        )
+        updateBrainstemRegion(
+            active: brainstemRegionActive,
             visualization: regionVisualization,
             motionHeld: motionHeld
         )
@@ -2357,6 +2377,503 @@ final class RBCJourneyScene {
         print("RBC_OCCIPITAL_OBSERVATORY=READY selected_medial_wall=left broken_boundary_arcs=3 field_points=168 fold_fragments=28 calcarine_bank_layers=6 arterial_paths=10 moving_fronts=12 registered_reference=true")
     }
 
+    /// A room-scale bridge lesson linking the posterior circulation destinations.
+    /// The source deep-brain asset is a single combined mesh, so it remains dim
+    /// context rather than being presented as segmented brainstem anatomy. The
+    /// paired vertebral nodes are preserved as registered vascular references;
+    /// all readable levels, pathway guides, and flow routes are native teaching
+    /// geometry, not a patient scan, tractography, CFD, or fixed territory map.
+    private func buildBrainstemRegionInterior() {
+        let id = RBCBrainRegionDestination.brainstem.id
+        let region = Entity()
+        region.name = "transferred-region-interior-\(id)-brainstem-posterior-circulation-bridge"
+
+        let authoredContext = Entity()
+        authoredContext.name = "registered-brainstem-relational-context-combined-source-not-segmentation"
+        if let deepLayer {
+            let deepReference = deepLayer.clone(recursive: true)
+            deepReference.name = "registered-combined-deep-structures-context-behind-brainstem"
+            normalize(deepReference, targetExtent: 2.82)
+            deepReference.position += [0, 1.42, -2.34]
+            authoredContext.addChild(deepReference)
+        }
+        if let cranialVascularLayer {
+            let pairedVertebralReference = Entity()
+            pairedVertebralReference.name = "registered-paired-vertebral-artery-reference-source-nodes"
+            for sourceName in ["Assembly__Vertebral_artery_l", "Assembly__Vertebral_artery_r"] {
+                if let source = cranialVascularLayer.findEntity(named: sourceName) {
+                    pairedVertebralReference.addChild(source.clone(recursive: true))
+                }
+            }
+            normalize(pairedVertebralReference, targetExtent: 2.14)
+            pairedVertebralReference.position += [0, 1.28, -2.06]
+            // The source nodes are preserved for registration provenance, but
+            // their combined catalogue transform reads as two dark loops at
+            // environmental scale. The native continuous routes below are the
+            // visible lesson until a semantically segmented replacement exists.
+            pairedVertebralReference.isEnabled = false
+            authoredContext.addChild(pairedVertebralReference)
+        }
+        authoredContext.components.set(OpacityComponent(opacity: 0.11))
+        region.addChild(authoredContext)
+        brainstemAuthoredContext = authoredContext
+
+        let outlineRoot = Entity()
+        outlineRoot.name = "midbrain-pons-medulla-broken-contours-not-segmentation"
+        region.addChild(outlineRoot)
+        brainstemOutlineRoot = outlineRoot
+
+        let pathwayRoot = Entity()
+        pathwayRoot.name = "brainstem-longitudinal-and-transverse-pathway-guides-not-tractography"
+        region.addChild(pathwayRoot)
+        brainstemPathwayRoot = pathwayRoot
+
+        let vesselRoot = Entity()
+        vesselRoot.name = "qualitative-vertebral-basilar-pica-aica-sca-pca-and-pontine-routes-not-fixed-territories"
+        region.addChild(vesselRoot)
+        brainstemVesselRoot = vesselRoot
+
+        let outlineMaterial = glowMaterial(
+            color: UIColor(red: 0.44, green: 0.96, blue: 0.82, alpha: 0.82),
+            intensity: 1.9
+        )
+        let starMaterial = glowMaterial(
+            color: UIColor(red: 0.84, green: 1.0, blue: 0.94, alpha: 0.96),
+            intensity: 3.0
+        )
+        let pathwayMaterial = glowMaterial(
+            color: UIColor(red: 0.94, green: 0.79, blue: 0.56, alpha: 0.66),
+            intensity: 1.15
+        )
+        let transverseMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.38, green: 0.22, blue: 0.48, alpha: 0.42),
+            emissive: UIColor(red: 0.56, green: 0.34, blue: 0.72, alpha: 1)
+        )
+        let centralChannelMaterial = glowMaterial(
+            color: UIColor(red: 0.34, green: 0.76, blue: 0.92, alpha: 0.72),
+            intensity: 1.55
+        )
+        let corridorWallMaterials: [RealityKit.Material] = [
+            tissueContextMaterial(
+                color: UIColor(red: 0.22, green: 0.075, blue: 0.12, alpha: 0.50),
+                emissive: UIColor(red: 0.62, green: 0.12, blue: 0.20, alpha: 1)
+            ),
+            tissueContextMaterial(
+                color: UIColor(red: 0.070, green: 0.090, blue: 0.25, alpha: 0.42),
+                emissive: UIColor(red: 0.15, green: 0.25, blue: 0.68, alpha: 1)
+            ),
+        ]
+
+        // Four low-density folded sheets turn the front-facing guide into a
+        // corridor with side and rear depth. They are an atmospheric boundary,
+        // not brainstem surface reconstruction or segmented anatomy.
+        for side: Float in [-1, 1] {
+            for layerIndex in 0..<2 {
+                if let mesh = try? makeBrainstemCorridorWallMesh(
+                    side: side,
+                    layer: layerIndex,
+                    phase: (side < 0 ? 0.35 : 1.10) + Float(layerIndex) * 0.77
+                ) {
+                    let wall = ModelEntity(
+                        mesh: mesh,
+                        materials: [corridorWallMaterials[layerIndex]]
+                    )
+                    wall.name = "brainstem-folded-environment-wall-not-surface-segmentation-\(side < 0 ? "left" : "right")-\(layerIndex)"
+                    outlineRoot.addChild(wall)
+                }
+            }
+        }
+
+        typealias BrainstemLevel = (
+            name: String,
+            center: SIMD3<Float>,
+            radii: SIMD2<Float>,
+            phase: Float,
+            depth: Float
+        )
+        let levels: [BrainstemLevel] = [
+            ("midbrain", [-0.09, 2.08, -1.91], [0.57, 0.35], 0.30, 0.24),
+            ("pons", [0.08, 1.43, -1.80], [0.82, 0.48], 1.10, 0.31),
+            ("medulla", [-0.055, 0.70, -1.88], [0.46, 0.57], 2.00, 0.26),
+        ]
+        let outlineStarMesh = MeshResource.generateSphere(radius: 0.008)
+        for (levelIndex, level) in levels.enumerated() {
+            let controls = (0..<16).map { index -> SIMD3<Float> in
+                let angle = Float(index) / 16 * .pi * 2
+                let irregularity = 1
+                    + sin(angle * 3 + level.phase) * 0.10
+                    + cos(angle * 5 - level.phase) * 0.035
+                return [
+                    level.center.x + cos(angle) * level.radii.x * irregularity,
+                    level.center.y + sin(angle) * level.radii.y * (1 + cos(angle * 2 + level.phase) * 0.075),
+                    level.center.z
+                        + sin(angle + level.phase) * level.depth
+                        + cos(angle * 2.4 - level.phase) * 0.055,
+                ]
+            }
+            let contour = sampleClosedCatmullRom(controls, samplesPerSegment: 5)
+            let arcRanges = [2..<18, 31..<45, 58..<73]
+            for (arcIndex, range) in arcRanges.enumerated() {
+                addContinuousTubePath(
+                    Array(contour[range]),
+                    to: outlineRoot,
+                    startRadius: levelIndex == 1 ? 0.0046 : 0.0038,
+                    endRadius: 0.0022,
+                    material: outlineMaterial,
+                    name: "brainstem-\(level.name)-broken-constellation-arc-\(arcIndex)",
+                    radialSegments: 8
+                )
+            }
+            for (index, point) in controls.enumerated() where !index.isMultiple(of: 3) {
+                let star = ModelEntity(mesh: outlineStarMesh, materials: [starMaterial])
+                star.name = "brainstem-\(level.name)-guide-star-\(index)"
+                star.position = point + SIMD3<Float>(0, 0, 0.010)
+                outlineRoot.addChild(star)
+                brainstemGuideStars.append((star, Float(levelIndex * 16 + index) * 0.43))
+            }
+        }
+
+        // Peripheral ribs make the vertical lesson inhabit a room rather than
+        // collapse into a front-facing diagram.
+        for ribIndex in 0..<8 {
+            let progress = Float(ribIndex) / 7
+            let y = 0.46 + progress * 1.86
+            let width = 0.58 + sin(progress * .pi) * 0.46
+            for side: Float in [-1, 1] {
+                let rib = sampleCubicBezier(
+                    [side * width, y, -1.86],
+                    [side * (width + 0.34), y + 0.04, -1.72],
+                    [side * (1.30 + progress * 0.15), y + 0.08, -1.12],
+                    [side * (1.62 + sin(progress * .pi) * 0.16), y + 0.13, -0.62],
+                    samples: 34
+                )
+                addContinuousTubePath(
+                    rib,
+                    to: outlineRoot,
+                    startRadius: 0.0028,
+                    endRadius: 0.0012,
+                    material: outlineMaterial,
+                    name: "brainstem-peripheral-depth-rib-\(ribIndex)-\(side < 0 ? "left" : "right")",
+                    radialSegments: 7
+                )
+            }
+        }
+
+        // Three vertical laminae are separated for spatial reading; their
+        // placement is illustrative and must not be read as a tract atlas.
+        let laminaOffsets: [(name: String, x: Float, z: Float)] = [
+            ("left", -0.31, -1.80),
+            ("central", 0.0, -1.92),
+            ("right", 0.31, -1.80),
+        ]
+        for (laneIndex, lane) in laminaOffsets.enumerated() {
+            for depthIndex in 0..<3 {
+                let depthOffset = Float(depthIndex - 1) * 0.095
+                let xDrift = Float(depthIndex - 1) * 0.12
+                let path = sampleCubicBezier(
+                    [lane.x - xDrift * 1.7, 0.22, lane.z + depthOffset + 0.12],
+                    [lane.x + 0.14 * sin(Float(laneIndex) + 0.4), 0.86, lane.z + depthOffset - 0.18],
+                    [lane.x - 0.12 * cos(Float(depthIndex) + 0.3), 1.70, lane.z + depthOffset + 0.15],
+                    [lane.x + xDrift * 1.5, 2.46, lane.z + depthOffset - 0.11],
+                    samples: 58
+                )
+                addContinuousTubePath(
+                    path,
+                    to: pathwayRoot,
+                    startRadius: depthIndex == 1 ? 0.0070 : 0.0032,
+                    endRadius: depthIndex == 1 ? 0.0054 : 0.0020,
+                    material: pathwayMaterial,
+                    name: "brainstem-\(lane.name)-longitudinal-pathway-guide-\(depthIndex)",
+                    radialSegments: depthIndex == 1 ? 10 : 7
+                )
+            }
+        }
+        for fiberIndex in 0..<9 {
+            let fraction = Float(fiberIndex) / 8
+            let y = 1.08 + fraction * 0.68
+            let bow = 0.13 + sin(fraction * .pi) * 0.10
+            let transversePath = sampleCubicBezier(
+                [-0.76, y - 0.035, -1.73 - fraction * 0.14],
+                [-0.34, y + bow, -1.55 - sin(fraction * .pi) * 0.18],
+                [0.29, y - bow * 0.46, -1.91 + cos(fraction * .pi) * 0.12],
+                [0.74, y + sin(Float(fiberIndex) * 0.82) * 0.065, -1.69 - (1 - fraction) * 0.17],
+                samples: 44
+            )
+            addContinuousTubePath(
+                transversePath,
+                to: pathwayRoot,
+                startRadius: 0.0044,
+                endRadius: 0.0030,
+                material: transverseMaterial,
+                name: "brainstem-transverse-pontine-fiber-guide-\(fiberIndex)",
+                radialSegments: 8
+            )
+        }
+        let centralChannel = sampleCubicBezier(
+            [0, 1.26, -2.00], [0.01, 1.52, -2.03],
+            [-0.01, 1.89, -2.02], [0, 2.26, -1.98],
+            samples: 48
+        )
+        addContinuousTubePath(
+            centralChannel,
+            to: pathwayRoot,
+            startRadius: 0.012,
+            endRadius: 0.008,
+            material: centralChannelMaterial,
+            name: "central-aqueduct-to-fourth-ventricle-orientation-guide-not-segmentation",
+            radialSegments: 12
+        )
+
+        let fieldPointMesh = MeshResource.generateSphere(radius: 0.0062)
+        let fieldPointMaterial = glowMaterial(
+            color: UIColor(red: 0.72, green: 0.60, blue: 0.94, alpha: 0.58),
+            intensity: 1.15
+        )
+        let goldenAngle: Float = 2.3999632
+        for index in 0..<72 {
+            let fraction = (Float(index) + 0.5) / 72
+            let angle = Float(index) * goldenAngle
+            let point = SIMD3<Float>(
+                cos(angle) * (0.12 + sqrt(fraction) * 0.46),
+                0.50 + fraction * 1.68 + sin(angle * 1.7) * 0.075,
+                -1.92 + sin(angle) * (0.08 + fraction * 0.15)
+            )
+            let mote = ModelEntity(mesh: fieldPointMesh, materials: [fieldPointMaterial])
+            mote.name = "brainstem-sparse-tegmental-point-field-not-nuclei-map-\(index)"
+            mote.position = point
+            let scale = 0.66 + Float(index % 6) * 0.075
+            mote.scale = [scale, scale, scale]
+            pathwayRoot.addChild(mote)
+        }
+
+        let vesselMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.46, green: 0.010, blue: 0.026, alpha: 0.86),
+            emissive: UIColor(red: 0.74, green: 0.018, blue: 0.040, alpha: 1)
+        )
+        let flowCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.21, blue: 0.13, alpha: 0.32),
+            intensity: 1.25
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.80, blue: 0.44, alpha: 0.98),
+            intensity: 4.4
+        )
+        let flowWakeMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.38, blue: 0.17, alpha: 0.64),
+            intensity: 2.0
+        )
+        typealias BrainstemPathSpec = (
+            name: String,
+            points: [SIMD3<Float>],
+            startRadius: Float,
+            endRadius: Float,
+            fronts: Int
+        )
+        let leftVertebral = sampleCubicBezier(
+            [-0.30, 0.12, -1.43], [-0.27, 0.34, -1.45],
+            [-0.17, 0.58, -1.47], [0, 0.74, -1.50], samples: 56
+        )
+        let rightVertebral = sampleCubicBezier(
+            [0.30, 0.12, -1.43], [0.27, 0.34, -1.45],
+            [0.17, 0.58, -1.47], [0, 0.74, -1.50], samples: 56
+        )
+        let basilar = sampleCubicBezier(
+            [0, 0.74, -1.50], [-0.070, 1.08, -1.43],
+            [0.085, 1.68, -1.54], [-0.030, 2.08, -1.48], samples: 76
+        )
+        var vesselSpecs: [BrainstemPathSpec] = [
+            ("left-vertebral-approach", leftVertebral, 0.022, 0.018, 2),
+            ("right-vertebral-approach", rightVertebral, 0.022, 0.018, 2),
+            ("basilar-trunk", basilar, 0.024, 0.017, 3),
+        ]
+        for side: Float in [-1, 1] {
+            let sideName = side < 0 ? "left" : "right"
+            let vertebralPath = side < 0 ? leftVertebral : rightVertebral
+            let picaStart = interpolatedPoint(on: vertebralPath, progress: 0.58)
+            let pica = sampleCubicBezier(
+                picaStart,
+                picaStart + SIMD3<Float>(side * 0.18, 0.08, -0.08),
+                [side * 0.72, 0.61, -1.70],
+                [side * 1.15, 0.78, -1.88],
+                samples: 50
+            )
+            vesselSpecs.append(("\(sideName)-pica-approach", pica, 0.010, 0.0038, 1))
+
+            let aicaStart = interpolatedPoint(on: basilar, progress: 0.34)
+            let aica = sampleCubicBezier(
+                aicaStart,
+                aicaStart + SIMD3<Float>(side * 0.24, 0.04, -0.04),
+                [side * 0.76, 1.21, -1.66],
+                [side * 1.20, 1.30, -1.82],
+                samples: 50
+            )
+            vesselSpecs.append(("\(sideName)-aica-approach", aica, 0.011, 0.0040, 1))
+
+            let scaStart = interpolatedPoint(on: basilar, progress: 0.78)
+            let sca = sampleCubicBezier(
+                scaStart,
+                scaStart + SIMD3<Float>(side * 0.26, 0.06, -0.04),
+                [side * 0.72, 1.84, -1.66],
+                [side * 1.13, 1.96, -1.84],
+                samples: 50
+            )
+            vesselSpecs.append(("\(sideName)-sca-approach", sca, 0.0105, 0.0038, 1))
+
+            let pca = sampleCubicBezier(
+                basilar.last ?? [0, 2.08, -1.48],
+                [side * 0.24, 2.17, -1.42],
+                [side * 0.70, 2.31, -1.62],
+                [side * 1.20, 2.25 + side * 0.045, -1.82],
+                samples: 56
+            )
+            vesselSpecs.append(("\(sideName)-posterior-cerebral-continuation", pca, 0.015, 0.0070, 2))
+
+            for perforatorIndex in 0..<3 {
+                let progress = 0.27 + Float(perforatorIndex) * 0.20
+                let start = interpolatedPoint(on: basilar, progress: progress)
+                let end = SIMD3<Float>(
+                    side * (0.34 + Float(perforatorIndex) * 0.08),
+                    start.y + 0.08 + Float(perforatorIndex) * 0.03,
+                    -1.96 - Float(perforatorIndex) * 0.035
+                )
+                let perforator = sampleCubicBezier(
+                    start,
+                    start + SIMD3<Float>(side * 0.11, 0.01, -0.10),
+                    end + SIMD3<Float>(-side * 0.08, -0.02, 0.08),
+                    end,
+                    samples: 38
+                )
+                vesselSpecs.append(("\(sideName)-paramedian-pontine-approach-\(perforatorIndex)", perforator, 0.0046, 0.0017, 1))
+            }
+        }
+
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.020, radius: 0.0058)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.030, radius: 0.0018)
+        let arrowWakeMesh = MeshResource.generateCylinder(height: 0.046, radius: 0.00115)
+        for (pathIndex, spec) in vesselSpecs.enumerated() {
+            brainstemFlowPaths.append(spec.points)
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius,
+                endRadius: spec.endRadius,
+                material: vesselMaterial,
+                name: "brainstem-\(spec.name)-continuous-wall",
+                radialSegments: spec.startRadius > 0.016 ? 16 : 12
+            )
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius * 0.30,
+                endRadius: spec.endRadius * 0.32,
+                material: flowCoreMaterial,
+                name: "brainstem-\(spec.name)-continuous-flow-core",
+                radialSegments: 8
+            )
+            for frontIndex in 0..<spec.fronts {
+                let front = Entity()
+                front.name = "brainstem-posterior-circulation-tangent-flow-front-\(spec.name)-\(frontIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                head.name = "brainstem-flow-front-arrowhead"
+                head.position.y = 0.025
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                tail.name = "brainstem-flow-front-tail"
+                tail.position.y = -0.016
+                let wake = ModelEntity(mesh: arrowWakeMesh, materials: [flowWakeMaterial])
+                wake.name = "brainstem-flow-front-afterglow"
+                wake.position.y = -0.052
+                front.addChild(head)
+                front.addChild(tail)
+                front.addChild(wake)
+                vesselRoot.addChild(front)
+                brainstemFlowFronts.append((
+                    front,
+                    pathIndex,
+                    (Float(frontIndex) / Float(max(spec.fronts, 1)) + Float(pathIndex) * 0.089)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let overviewTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "overview",
+            position: [-1.05, 0.96, -1.45],
+            collisionRadius: 0.20
+        )
+        regionGuideRoot.addChild(overviewTarget)
+        brainstemDiscoveryTargets.append(overviewTarget)
+        let activeTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "active",
+            position: [-1.18, 1.26, -1.52],
+            collisionRadius: 0.22
+        )
+        region.addChild(activeTarget)
+        brainstemDiscoveryTargets.append(activeTarget)
+
+        region.isEnabled = false
+        regionInteriorRoot.addChild(region)
+        regionInteriors[id] = region
+        regionBaseScales[id] = region.scale
+        print("RBC_BRAINSTEM_OBSERVATORY=READY levels=3 broken_outline_arcs=9 environmental_wall_sheets=4 peripheral_ribs=16 longitudinal_guides=9 transverse_pons_guides=9 tegmental_points=72 arterial_paths=17 moving_fronts=23 registered_deep_context=true registered_vertebral_nodes=2")
+    }
+
+    private func makeBrainstemCorridorWallMesh(
+        side: Float,
+        layer: Int,
+        phase: Float
+    ) throws -> MeshResource {
+        let columns = 13
+        let rows = 35
+        var positions: [SIMD3<Float>] = []
+        var normals: [SIMD3<Float>] = []
+        var textureCoordinates: [SIMD2<Float>] = []
+        var indices: [UInt32] = []
+        positions.reserveCapacity(columns * rows)
+        normals.reserveCapacity(columns * rows)
+        textureCoordinates.reserveCapacity(columns * rows)
+        indices.reserveCapacity((columns - 1) * (rows - 1) * 6)
+
+        let layerOffset = Float(layer) * 0.12
+        for row in 0..<rows {
+            let v = Float(row) / Float(rows - 1)
+            let y = 0.12 + v * 2.50
+            for column in 0..<columns {
+                let u = Float(column) / Float(columns - 1)
+                let envelope = sin(v * .pi)
+                let foldedX = 0.50 + u * 1.10
+                    + sin(v * .pi * 3.2 + phase) * 0.12
+                    + cos((u + v) * .pi * 4.4 + phase) * 0.045
+                let foldedZ = -0.82 - u * 1.52 - layerOffset
+                    + sin(v * .pi * 4.1 - phase) * 0.095
+                    + cos(u * .pi * 2.2 + v * .pi * 1.6) * 0.055
+                positions.append([
+                    side * (foldedX + envelope * 0.13),
+                    y + sin(u * .pi * 2.0 + phase) * 0.035,
+                    foldedZ,
+                ])
+                normals.append(simd_normalize(SIMD3<Float>(-side * 0.82, 0.08, 0.56)))
+                textureCoordinates.append([u, v])
+            }
+        }
+        for row in 0..<(rows - 1) {
+            for column in 0..<(columns - 1) {
+                let a = UInt32(row * columns + column)
+                let b = UInt32(row * columns + column + 1)
+                let c = UInt32((row + 1) * columns + column)
+                let d = UInt32((row + 1) * columns + column + 1)
+                indices.append(contentsOf: [a, c, b, b, c, d])
+            }
+        }
+        var descriptor = MeshDescriptor(name: "brainstem-folded-environment-wall")
+        descriptor.positions = MeshBuffers.Positions(positions)
+        descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.textureCoordinates = MeshBuffers.TextureCoordinates(textureCoordinates)
+        descriptor.primitives = .triangles(indices)
+        return try MeshResource.generate(from: [descriptor])
+    }
+
     /// A room-scale teaching map of the arterial crossroads. The authored
     /// asset remains as dim anatomical context; these continuous native paths
     /// provide readable direction and a user-controlled anterior/posterior
@@ -3616,6 +4133,96 @@ final class RBCJourneyScene {
             let pulse = occipitalRuntimeHeld
                 ? 1
                 : 0.94 + sin(occipitalElapsed * 4.3 + item.offset * 7.6) * 0.08
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+    }
+
+    private func updateBrainstemRegion(
+        active: Bool,
+        visualization: RBCRegionVisualizationMode,
+        motionHeld: Bool
+    ) {
+        brainstemRuntimeActive = active
+        brainstemRuntimeHeld = motionHeld
+        brainstemRuntimeVisualization = visualization
+        guard active else {
+            brainstemElapsed = 0
+            return
+        }
+
+        let contextOpacity: Float
+        let outlineOpacity: Float
+        let pathwayOpacity: Float
+        let vesselOpacity: Float
+        switch visualization {
+        case .locate:
+            contextOpacity = 0.11
+            outlineOpacity = 0.72
+            pathwayOpacity = 0.055
+            vesselOpacity = 0.030
+        case .xray:
+            contextOpacity = 0.035
+            outlineOpacity = 0.15
+            pathwayOpacity = 0.92
+            vesselOpacity = 0.055
+        case .flow:
+            contextOpacity = 0.025
+            outlineOpacity = 0.085
+            pathwayOpacity = 0.13
+            vesselOpacity = 1.0
+        }
+        brainstemAuthoredContext?.components.set(OpacityComponent(opacity: contextOpacity))
+        brainstemOutlineRoot?.components.set(OpacityComponent(opacity: outlineOpacity))
+        brainstemPathwayRoot?.components.set(OpacityComponent(opacity: pathwayOpacity))
+        brainstemVesselRoot?.components.set(OpacityComponent(opacity: vesselOpacity))
+        for target in brainstemDiscoveryTargets where target.name.hasSuffix("-active") {
+            let opacity: Float = switch visualization {
+            case .locate: 0.72
+            case .xray: 0.40
+            case .flow: 0.28
+            }
+            target.components.set(OpacityComponent(opacity: opacity))
+        }
+        applyBrainstemMotion()
+    }
+
+    private func advanceBrainstemFrame(deltaTime: Float) {
+        guard brainstemRuntimeActive else { return }
+        if !brainstemRuntimeHeld {
+            brainstemElapsed += min(max(deltaTime, 0), 0.10)
+        }
+        applyBrainstemMotion()
+    }
+
+    private func applyBrainstemMotion() {
+        for item in brainstemGuideStars {
+            let pulse = brainstemRuntimeHeld
+                ? 1
+                : 0.84 + sin(brainstemElapsed * 1.40 + item.phase) * 0.17
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+        for item in brainstemFlowFronts {
+            item.entity.isEnabled = brainstemRuntimeVisualization == .flow
+            guard brainstemFlowPaths.indices.contains(item.pathIndex) else { continue }
+            let path = brainstemFlowPaths[item.pathIndex]
+            let speed: Float = item.pathIndex < 3 ? 0.105 : 0.080
+            let progress = brainstemRuntimeHeld
+                ? item.offset
+                : (item.offset + brainstemElapsed * speed).truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: path, progress: progress)
+            let ahead = interpolatedPoint(on: path, progress: min(progress + 0.017, 1))
+            let behind = interpolatedPoint(on: path, progress: max(progress - 0.017, 0))
+            let tangent = ahead - behind
+            item.entity.position = point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: [0, 1, 0],
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = brainstemRuntimeHeld
+                ? 1
+                : 0.94 + sin(brainstemElapsed * 4.25 + item.offset * 7.5) * 0.08
             item.entity.scale = [pulse, pulse, pulse]
         }
     }

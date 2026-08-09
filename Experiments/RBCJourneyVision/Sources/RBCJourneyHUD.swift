@@ -264,6 +264,7 @@ struct RBCRegionInfoHUD: View {
             let cerebellumActive = region == .cerebellum
             let deepStructuresActive = region == .deepStructures
             let occipitalActive = region == .occipitalLobe
+            let brainstemActive = region == .brainstem
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
             VStack(alignment: .leading, spacing: 9) {
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -289,7 +290,9 @@ struct RBCRegionInfoHUD: View {
                                     ? model.activeDeepStructuresTitle
                                     : (occipitalActive
                                         ? model.activeOccipitalTitle
-                                        : (exampleClotActive ? "One branch, interrupted" : region.title)))))))
+                                        : (brainstemActive
+                                            ? model.activeBrainstemTitle
+                                            : (exampleClotActive ? "One branch, interrupted" : region.title))))))))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -304,9 +307,11 @@ struct RBCRegionInfoHUD: View {
                                     ? model.activeDeepStructuresSubtitle
                                     : (occipitalActive
                                         ? model.activeOccipitalSubtitle
-                                        : (exampleClotActive
-                                            ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                                            : region.subtitle)))))))
+                                        : (brainstemActive
+                                            ? model.activeBrainstemSubtitle
+                                            : (exampleClotActive
+                                                ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+                                                : region.subtitle))))))))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -321,9 +326,11 @@ struct RBCRegionInfoHUD: View {
                                 ? model.activeDeepStructuresFact
                                 : (occipitalActive
                                     ? model.activeOccipitalFact
-                                    : (exampleClotActive
-                                        ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                                        : region.fact))))),
+                                    : (brainstemActive
+                                        ? model.activeBrainstemFact
+                                        : (exampleClotActive
+                                            ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
+                                            : region.fact)))))),
                     systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
@@ -338,7 +345,7 @@ struct RBCRegionInfoHUD: View {
                     .buttonBorderShape(.capsule)
                 }
 
-                if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum || region == .deepStructures || region == .occipitalLobe {
+                if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum || region == .deepStructures || region == .occipitalLobe || region == .brainstem {
                     HStack(spacing: 7) {
                         ForEach(RBCRegionVisualizationMode.allCases) { mode in
                             RBCRegionModeButton(mode: mode, regionTitle: region.title)

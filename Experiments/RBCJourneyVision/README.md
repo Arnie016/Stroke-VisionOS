@@ -34,10 +34,10 @@ result.
 
 A lower **Region Portal Reel** provides a second, user-directed exploration
 mode. It shows exactly three destinations at once and scrolls horizontally to
-nine supported local destinations: arterial lumen, Circle of Willis, cortical
+ten supported local destinations: arterial lumen, Circle of Willis, cortical
 exchange, ventricular system, cerebellum, deep structures, frontal lobe,
-cortical microarchitecture, and the occipital visual cortex. Only one region
-can transfer at a time. The enclosing cortical atmosphere
+cortical microarchitecture, the occipital visual cortex, and the brainstem
+bridge. Only one region can transfer at a time. The enclosing cortical atmosphere
 remains present so the foreground lesson changes scale without turning into a
 disconnected model viewer.
 
@@ -187,6 +187,32 @@ This is not lobe segmentation, a sulcal atlas, histology, retinotopic or
 visual-field mapping, a fixed arterial territory, patient anatomy, measured
 speed, pressure, perfusion, CFD, diagnosis, or treatment guidance. Use
 `--proof-region-8`, optionally followed by `--proof-region-mode-xray` or
+`--proof-region-mode-flow`, for deterministic Simulator review.
+
+## Brainstem observatory — the vertical posterior-circulation bridge
+
+The **Brainstem** destination places the wearer inside one upright corridor
+rather than presenting a small brainstem model. Three broken surrounding
+contours locate the midbrain, pons, and medulla. Four low-density folded
+environment walls, 16 peripheral depth ribs, nine longitudinal pathway guides,
+nine transverse pontine guides, and 72 sparse tegmental orientation points
+establish a layered interior without claiming
+histology, nuclei segmentation, or tractography. A combined registered source
+remains only as dim relational context; it is never presented as segmented
+brainstem anatomy.
+
+**Locate** lifts the three-level constellation. **X-ray** recedes the reference
+and reveals the crossing and longitudinal pathway grammar. **Flow** reveals 17
+continuous qualitative paths: paired vertebral approaches, the basilar trunk,
+bilateral PICA, AICA, SCA, and posterior-cerebral continuations, plus six small
+pontine approaches. Twenty-three tangent-aligned fronts move through those
+paths so direction remains legible without turning blood into a bead chain.
+The wearer stays at one stable observation origin throughout.
+
+This is not a brainstem segmentation, nuclei map, tractography, fixed arterial
+territory, complete vasculature, patient anatomy, physiological timing,
+pressure, perfusion, CFD, diagnosis, or treatment guidance. Use
+`--proof-region-9`, optionally followed by `--proof-region-mode-xray` or
 `--proof-region-mode-flow`, for deterministic Simulator review.
 
 ## Travel with the flow — arterial branch ride
@@ -450,7 +476,7 @@ Deterministic proof routes use `--proof-station-0` through
 Resume control without pretending a Simulator launch is wearer interaction.
 The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 `--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
-The region reel uses `--proof-region-0` through `--proof-region-8` for its nine
+The region reel uses `--proof-region-0` through `--proof-region-9` for its ten
 single-active-region states. Add `--proof-region-mode-xray` or
 `--proof-region-mode-flow` to deterministically select an observatory reading.
 Use `--proof-region-transition-7
