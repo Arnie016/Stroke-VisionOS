@@ -31,6 +31,13 @@ registered-v2 brain/clot bounds, and does not claim an access site, outcome, or
 patient-specific procedure. The prototype-v1 bone flap and dural patch remain
 quarantined.
 
+![Family Make-space purpose cue in visionOS Simulator](Proof/81-family-make-space-purpose-simulator.png)
+
+This capture proves the build-18 Simulator render/process state only. It does
+not prove anatomical meaning, gaze-and-pinch quality, stereo depth, AirPlay
+legibility, wearer comfort, comprehension, specialist review, or clinical
+validity.
+
 Build `0.6 (17)` made the Pressure story visually explicit without adding a
 diagnostic overlay. The registered clot keeps a compact pulse; a filled amber
 surface cue marks affected tissue; and a wider dashed mint boundary represents
@@ -42,7 +49,7 @@ space. The prototype-v1 edema, flap, and patch meshes remain quarantined.
 
 ![Doctor-presenter Pressure story in visionOS Simulator](Proof/80-clinician-pressure-story-simulator.png)
 
-These captures prove the build-17 Simulator render/process state only. They do
+The two Pressure captures prove the build-17 Simulator render/process state only. They do
 not prove anatomical meaning, clinical correctness, gaze-and-pinch quality,
 stereo depth, AirPlay legibility, wearer comfort, or family comprehension.
 

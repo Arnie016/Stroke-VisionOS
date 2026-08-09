@@ -678,3 +678,25 @@
 - Next safe action: when XCAT is awake and unlocked, launch build 17, select one
   Pressure point, and verify that clot pulse, amber tissue cue, and mint swelling
   boundary remain attached and distinguishable from front and side views.
+
+## 2026-08-10 04:23 SGT — family Make-space purpose cue
+
+- Target: GitHub issue #28; make the normal family Make-space path visibly
+  explain opening and additional room without importing the unregistered
+  prototype-v1 flap/patch or simulating surgery.
+- Bounded action: added a registered-frame amber aperture, translucent lifted
+  protective cover, wider mint room boundary, deterministic proof route, and
+  raised the review candidate to `0.6 (18)` / `SC-AIS-001.7`.
+- Evidence: contract and diff checks passed; the OS 26.5 Simulator build
+  succeeded; the built app contains 15 unique USDZ files; proof 81 is
+  3840×2160, passed the image verifier, and has SHA-256
+  `96c77c71…1b51e`; source commit is `2293265b…5e5326`.
+- Verdict: `IMPROVED` — Make-space now has a visible, reversible mechanical
+  purpose cue while the central anatomy, attached points, family questions,
+  and top three-act timeline remain present.
+- Blocker: XCAT is `unavailable`; wearer targetability, stereo depth, AirPlay
+  readability, motion quality, comprehension, specialist review, and clinical
+  validity are not proven.
+- Next safe action: on an awake and unlocked XCAT, run build 18 and confirm the
+  amber aperture, moving protective cover, and mint room boundary remain
+  co-located and legible from the default family viewpoint.

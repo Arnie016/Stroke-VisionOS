@@ -616,3 +616,35 @@ the exact reachability receipt is
 `Proof/xcat/20260810-035247/BLOCKED.md` (ignored local machine evidence).
 Wearer targetability, stereo depth, AirPlay legibility, comfort, comprehension,
 specialist registration review, and clinical validity remain unproven.
+
+## 2026-08-10 04:23 SGT — family Make-space purpose cue
+
+Build `0.6 (18)` adds one registered-frame, permission-controlled purpose cue
+to the normal family Make-space path. A high-contrast amber dashed aperture
+marks a generic reversible opening concept; a translucent protective cover
+moves outward with the existing layer-reveal progress; and a wider mint dashed
+boundary expands to communicate additional room. It does not cut anatomy,
+choose an access site, rank treatment, show an outcome, or imply repaired
+tissue. The mismatched prototype-v1 bone flap and dural patch remain disabled.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-family-purpose-derived` succeeded. The built app contains
+exactly 15 unique USDZ files. Its executable SHA-256 is
+`8aebad7361809b750d70ec111df1fb7b7e21698828456855df9f4aeec3567ad7`.
+
+The committed source is
+`2293265b1fe12e99d34432f0f8e2c4b2085e5326`. The deterministic
+`--proof-family-make-space-purpose` route produced
+`Proof/81-family-make-space-purpose-simulator.png`, 3840×2160, SHA-256
+`96c77c71b9bb0aacd266865371b00e601f8df0352e181fdc4528c587bf31b51e`.
+The proof image passed the nonblank/centre/colour verifier and was visually
+inspected for the central registered anatomy, attached point field, family
+question surface, top three-act timeline, and distinct amber/mint purpose cue.
+
+This is Simulator render/process evidence only. XCAT remained `unavailable`;
+the exact reachability receipt is
+`Proof/xcat/20260810-042337/BLOCKED.md` (ignored local machine evidence).
+Wearer targetability, stereo depth, AirPlay legibility, motion quality,
+comprehension, specialist registration review, and clinical validity remain
+unproven.
