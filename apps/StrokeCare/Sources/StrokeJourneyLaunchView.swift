@@ -476,6 +476,12 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-pressure") {
             experience.prepareClinicianProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-main-overview") {
+            experience.prepareMainOverviewProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-main-selected-point") {
+            experience.prepareTeachingImagingProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-teaching-imaging") {
             experience.prepareTeachingImagingProof()
             Task { await openProofSpace() }

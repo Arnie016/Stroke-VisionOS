@@ -491,7 +491,7 @@ final class StrokeExperienceState: ObservableObject {
     func beginExplanation() {
         guard spatialCaseDocked, isCaseSelected else { return }
         spatialPhase = .explanation
-        teachingImagingDrawerVisible = false
+        clearPointSelection()
         procedureStep = .chooseCase
         lessonPointsVisible = true
         requestedPause = false
@@ -516,9 +516,10 @@ final class StrokeExperienceState: ObservableObject {
     func selectLessonFamily(_ field: StrokePointField) {
         pointField = field
         lessonPointsVisible = true
-        if let initialPoint = field.lessonPoints.first(where: { $0.index == field.defaultLessonPointIndex }) {
-            selectLessonPoint(initialPoint)
-        }
+        // A lesson family begins as quiet anatomy-attached points. The wearer
+        // decides which explanation to reveal; switching families never opens
+        // a label or teaching reference on their behalf.
+        clearPointSelection()
         requestedPause = false
         if field == .procedure {
             withAnimation(.easeInOut(duration: 0.65)) {
@@ -568,6 +569,7 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = false
         closingReflectionVisible = false
         regionPortalActive = false
+        clearPointSelection()
         switch procedureStep {
         case .chooseCase:
             isCaseSelected = true
@@ -840,8 +842,7 @@ final class StrokeExperienceState: ObservableObject {
     func setAnatomyPresentation(_ presentation: StrokeAnatomyPresentation) {
         anatomyPresentation = presentation
         if presentation == .assembled {
-            selectedPointEntityName = nil
-            selectedPointLabel = nil
+            clearPointSelection()
         }
     }
 
@@ -864,9 +865,7 @@ final class StrokeExperienceState: ObservableObject {
                 cortexOpacity = 0.40
                 pointField = .procedure
                 lessonPointsVisible = true
-                if let blockagePoint = pointField.lessonPoints.first(where: { $0.index == pointField.defaultLessonPointIndex }) {
-                    selectLessonPoint(blockagePoint)
-                }
+                clearPointSelection()
                 spatialZoom = 1.36
                 orbit = [0.14, 0.08]
                 vesselFocusProgress = 1
@@ -884,6 +883,18 @@ final class StrokeExperienceState: ObservableObject {
     func selectPoint(entityName: String, label: String) {
         selectedPointEntityName = entityName
         selectedPointLabel = label
+        // The secondary reference is an outcome of selecting a teaching point,
+        // not a parallel image browser. Exactly one act-matched object appears.
+        switch procedureStep {
+        case .chooseCase:
+            teachingImagingDrawerVisible = false
+        case .inspectOcclusion:
+            teachingImagingLens = .affectedVessel
+            teachingImagingDrawerVisible = true
+        case .discussCare:
+            teachingImagingLens = .makingRoomPurpose
+            teachingImagingDrawerVisible = careViewPermissionGranted
+        }
         // A lesson point should reveal motion, not freeze it. Family pause is a
         // separate, reversible control.
         requestedPause = false
@@ -908,6 +919,7 @@ final class StrokeExperienceState: ObservableObject {
     func clearPointSelection() {
         selectedPointEntityName = nil
         selectedPointLabel = nil
+        teachingImagingDrawerVisible = false
     }
 
     func rotateSpatialView(delta: CGSize) {
@@ -968,6 +980,7 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = false
         clarificationRequested = false
         clearQuestionMarker()
+        clearPointSelection()
         isConsentPromptVisible = false
         regionPortalActive = false
 
@@ -1154,14 +1167,23 @@ final class StrokeExperienceState: ObservableObject {
         audienceLens = .clinician
     }
 
-    func prepareTeachingImagingProof() {
+    func prepareMainOverviewProof() {
         prepareClinicianProof(step: .inspectOcclusion)
-        teachingImagingDrawerVisible = true
-        teachingImagingLens = .affectedVessel
+        environmentMode = .surroundings
         anatomyPresentation = .transparent
+        cortexOpacity = 0.52
         pointField = .regions
-        selectedPointEntityName = "clinician-region-point-field-point-0"
-        selectedPointLabel = "Example affected area"
+        lessonPointsVisible = true
+        spatialZoom = 1.18
+        clearPointSelection()
+    }
+
+    func prepareTeachingImagingProof() {
+        prepareMainOverviewProof()
+        selectPoint(
+            entityName: "clinician-region-point-field-point-0",
+            label: "Example affected area"
+        )
     }
 
     func prepareScholarSkullProof() {

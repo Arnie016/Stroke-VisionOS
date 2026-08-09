@@ -395,3 +395,27 @@
   review, and Simulator evidence does not prove XCAT or wearer behavior.
 - Next safe action: make the default lesson field truly dots-first by clearing
   auto-selection and revealing exactly one local label only after pinch.
+
+## 2026-08-09 21:25 SGT — integrated dots-first main explanation
+
+- Target: restore the normal brain, vessels, clot target, point cloud, timeline,
+  and selected teaching reference after the isolated Scholar-skull proof.
+- Bounded action: made region points quietly visible and surface-readable,
+  derived a visible focus beacon from the loaded clot bounds, removed automatic
+  point selection and duplicate image controls, enlarged the top timeline, and
+  made one act-matched registered reference appear only after point selection.
+- Evidence: guarded XCAT receipt
+  `Proof/xcat/20260809-210457/BLOCKED.md` recorded `unavailable` before any
+  physical build; `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 Simulator
+  build ended `** BUILD SUCCEEDED **`; fresh launches returned PIDs 68034 and
+  68202; runtime captures are `Proof/56-main-dots-first-overview-simulator.png`
+  and `Proof/57-main-selected-point-reference-simulator.png`.
+- Verdict: `IMPROVED` — the main scene is visible, dots-first, and causally
+  discloses one teaching reference instead of showing only a skull or a label
+  cloud.
+- Blocker: XCAT remained unavailable, so gaze-and-pinch selection, stereo depth,
+  wearer legibility, comfort, comprehension, and clinical validity are unproven.
+- Next safe action: on an awake and unlocked XCAT, pinch each of the four region
+  points once and record whether its local label and single right reference stay
+  registered while orbiting the anatomy.

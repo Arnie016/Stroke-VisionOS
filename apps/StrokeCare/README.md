@@ -21,6 +21,25 @@ The selected-point hero direction is also captured in
 starts with attached points rather than a permanent label cloud, and a single
 selection reveals one local explanation plus the relevant teaching image.
 
+## Latest verified Simulator composition
+
+The first frame is the quiet Pressure overview: registered-v2 brain and
+arteries, a clot-derived focus beacon, four anatomy-attached lesson points, and
+the revisitable three-act timeline. No label or secondary reference opens until
+the presenter selects a point.
+
+![Dots-first Pressure overview in visionOS Simulator](Proof/56-main-dots-first-overview-simulator.png)
+
+The second frame is the selected-point state: one point gains one local label,
+one concise explanation, and one registered affected-vessel reference at the
+right. It is not a patient scan and remains clinical-review pending.
+
+![Selected point with registered teaching reference in visionOS Simulator](Proof/57-main-selected-point-reference-simulator.png)
+
+These are fresh visionOS Simulator runtime captures, not concept art. They do
+not prove physical XCAT depth, gaze-and-pinch reliability, wearer comfort,
+family comprehension, or clinical validity.
+
 The launch window begins with a two-beat calm prelude, then asks whether the
 purpose is **Doctor → family** or **Clinician teaching**. Inside the immersive
 space, the file itself is the control: carrying it from the exhibit into the
@@ -86,9 +105,9 @@ tear away from the brain.
   no mode is presented as a therapeutic intervention.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
   explicit user or clinician actions. There is no success animation.
-- A compact spatial patient drawer, specimen rail, and family question marker
-  move the explanation into the room. The side rails carry controls and safety
-  boundaries rather than repeating the lesson as text.
+- A compact spatial patient drawer, selection-only point callout, and family
+  question marker move the explanation into the room. The side rails carry
+  controls and safety boundaries rather than repeating the lesson as text.
 
 ## Clinical and privacy boundary
 
@@ -137,15 +156,19 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 ... com.arnav.StrokeTime --proof-pressure
 ... com.arnav.StrokeTime --proof-care-purpose
 ... com.arnav.StrokeTime --proof-clinician-pressure
+
+# Integrated dots-first and selected-point compositions
+... com.arnav.StrokeTime --proof-main-overview
+... com.arnav.StrokeTime --proof-main-selected-point
 ```
 
 Simulator builds and screenshots do not prove XCAT performance, physical
 comfort, clinical accuracy, or clinician acceptance.
 
-Current proof debt is tracked openly: the side-parked files, concise rails, and
-spatial drawer/reticle compile in Simulator, but the newest immersive-room
-capture still needs a user-initiated launch on an unlocked Mac. XCAT wearer and
-clinical review remain separate gates.
+Current proof debt is tracked openly: the integrated overview and selected-point
+states now build, launch, and render in Simulator. XCAT gaze-and-pinch,
+stereo-depth, legibility, comfort, family comprehension, and clinical review
+remain separate gates.
 
 When XCAT is powered on, worn, unlocked, and reachable, run the guarded physical
 deployment receipt:

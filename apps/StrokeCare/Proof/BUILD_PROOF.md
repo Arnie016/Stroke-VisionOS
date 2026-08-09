@@ -234,6 +234,27 @@ launched PID 18592; and the 3840×2160 layout capture is
 This does not prove cross-source anatomical registration, XCAT visibility,
 wearer comfort, interaction quality, or clinical validity.
 
+At 21:25 SGT, the main Pressure composition was rebuilt around the normal
+registered-v2 anatomy rather than the isolated Scholar-skull inspection. The
+overview now begins with four quiet anatomy-attached region points, a
+clot-surface-derived focus beacon, and the revisitable top timeline. Selecting
+one point reveals exactly one local label, one concise explanation, and one
+registered affected-vessel reference; switching act, layer family, or assembly
+clears that disclosure. The duplicated `Images` controls are removed.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`; the
+OS 26.5 visionOS Simulator build ended `** BUILD SUCCEEDED **`; fresh installs
+launched overview PID 68034 and selected-point PID 68202. The 3840×2160 runtime
+captures are `Proof/56-main-dots-first-overview-simulator.png` with SHA-256
+`14cbc4e5ff367ec683b2e3d47dbec83527bd96ebd3e9e912e53eda6573b47d42`
+and `Proof/57-main-selected-point-reference-simulator.png` with SHA-256
+`04587770c4131bd3c84f5f75ecfd5b6f5fd5d7b59f67e59aec15685862152dc9`.
+
+The guarded physical lane ran first at 21:04 SGT and stopped because CoreDevice
+reported paired XCAT `unavailable`; the local machine receipt is
+`Proof/xcat/20260809-210457/BLOCKED.md`. No XCAT build, install, launch, wearer,
+or clinical result is claimed from this pass.
+
 ## Clinical and procedural gates
 
 - `Docs/ISCHEMIC_STROKE_CLINICAL_REVIEW.md` is a versioned review packet, not a

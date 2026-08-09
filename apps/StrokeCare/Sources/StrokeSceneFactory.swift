@@ -511,10 +511,11 @@ enum StrokeSceneFactory {
         // point cannot drift into unrelated world space when staging changes.
         let brainBounds = importedBrain.visualBounds(relativeTo: registered)
         let brainCenter = (brainBounds.min + brainBounds.max) / 2
-        // Keep the landmarks just inside the translucent cortical envelope.
-        // This makes them read as region anchors instead of a decorative halo,
-        // while preserving visibility through the teaching material.
-        let brainRadii = (brainBounds.max - brainBounds.min) / 2 * 0.98
+        // Keep the landmarks approximately 2.5 mm beyond a 10 cm cortical
+        // radius. They remain anatomy-attached rather than becoming a room-
+        // space halo, while staying readable in both opaque and transparent
+        // presentations.
+        let brainRadii = (brainBounds.max - brainBounds.min) / 2 * 1.025
         let registeredRegionPoints = regionPointDirections.map { direction in
             brainCenter + brainRadii * simd_normalize(direction)
         }
@@ -575,12 +576,20 @@ enum StrokeSceneFactory {
 
         let clotTarget = Entity()
         clotTarget.name = importedClotTargetName
-        clotTarget.position = [0.036, 0.026, 0.072]
+        clotTarget.position = clotSurfaceMarker
         clotTarget.components.set(InputTargetComponent())
         clotTarget.components.set(CollisionComponent(shapes: [
             .generateSphere(radius: 0.015)
         ]))
         clotTarget.components.set(HoverEffectComponent())
+
+        let clotBeacon = ModelEntity(
+            mesh: .generateSphere(radius: 0.005),
+            materials: [warningMaterial(opacity: 0.78)]
+        )
+        clotBeacon.name = "registered-clot-focus-beacon"
+        clotBeacon.components.set(OpacityComponent(opacity: 0.82))
+        clotTarget.addChild(clotBeacon)
         blockageLayer.addChild(clotTarget)
 
         return imported
@@ -1286,7 +1295,7 @@ enum StrokeSceneFactory {
     ) -> Entity {
         let field = Entity()
         field.name = name
-        let mesh = MeshResource.generateSphere(radius: 0.0025)
+        let mesh = MeshResource.generateSphere(radius: 0.0032)
 
         for (index, position) in points.enumerated() {
             let point = ModelEntity(mesh: mesh, materials: [material])
@@ -1413,18 +1422,13 @@ enum StrokeSceneFactory {
 
         let active = experience.pointField == .regions ? regionField : procedureField
         if let active {
-            // All region anchors can be inspected through the transparent
-            // cortex because they are bound to the registered brain envelope.
+            // Regional lesson prompts remain quietly discoverable around the
+            // registered brain envelope. They are interaction anchors, not
+            // claims that these generic positions came from a patient scan.
             // Procedure points 0/1/3/4 remain single-focus technical anchors
             // until reviewed FLOW_ANCHOR exports and clinical review replace
             // their unapproved registered-v2 mesh samples.
-            let revealAll = experience.pointField == .regions && (
-                experience.anatomyPresentation == .transparent || (
-                    experience.audienceLens == .family &&
-                    experience.procedureStep == .discussCare &&
-                    experience.careViewPermissionGranted
-                )
-            )
+            let revealAll = experience.pointField == .regions
             for (index, child) in active.children.enumerated() {
                 guard let point = child as? ModelEntity else { continue }
                 let phase = Float(time) * 0.85 + Float(index) * 0.42
@@ -1482,6 +1486,7 @@ enum StrokeSceneFactory {
         let arteriesLayer = imported.findEntity(named: arteriesLayerName)
         let blockageLayer = imported.findEntity(named: blockageLayerName)
         let duraLayer = imported.findEntity(named: duraLayerName)
+        let clotTarget = imported.findEntity(named: importedClotTargetName)
 
         approach(cortexLayer, [-0.026 * separation, 0, 0])
         approach(regionPointAnchor, [-0.026 * separation, 0, 0])
@@ -1529,7 +1534,14 @@ enum StrokeSceneFactory {
         // cross-source fit is approximate and requires specialist review.
         importedSkull?.isEnabled = isolateScholarSkull
 
-        _ = time
+        // This small beacon marks the exact registered clot-derived target. It
+        // is a focus affordance, not a simulated lesion volume or outcome.
+        clotTarget?.isEnabled = !isolateScholarSkull && experience.procedureStep != .chooseCase
+        if let clotBeacon = clotTarget?.findEntity(named: "registered-clot-focus-beacon") {
+            let pulse = Float(1.0 + sin(time * 1.4) * 0.10)
+            clotBeacon.scale = [pulse, pulse, pulse]
+        }
+
     }
 
     private static func updateBrainReveal(

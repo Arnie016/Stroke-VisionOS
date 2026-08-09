@@ -142,7 +142,7 @@ require("clinician-region-point-field" in scene and "clinician-procedure-point-f
 require("regionPointDirections" in scene and "procedurePointPositions" in scene, "sparse spatial reference data is missing")
 require("Example affected area" in scene and "Flow beyond the blockage changes" in scene, "intention-based point labels are missing")
 require("experience.lessonPointsVisible" in scene and "experience.pointField" in scene, "point fields are not discoverable or switchable")
-require("visualBounds(relativeTo: registered)" in scene and "* 0.98" in scene and "radius: 0.0025" in scene, "point fields are not derived from registered anatomy bounds at a precise scale")
+require("visualBounds(relativeTo: registered)" in scene and "* 1.025" in scene and "radius: 0.0032" in scene, "point fields are not derived from registered anatomy bounds at a precise readable scale")
 require("clotSurfaceMarker" in scene and "bounds.max.z + 0.003" in scene and 'selectedPointEntityName = "clinician-procedure-point-field-point-2"' in state, "blockage marker is not bound to the registered clot surface or proof semantics disagree")
 require("frontZ" not in scene and all(anchor in scene for anchor in ("[-0.028297, -0.142271, 0.010944]", "[-0.012158, -0.059836, 0.030163]", "[-0.043842, -0.014646, 0.029223]", "[-0.053607, -0.011508, 0.017754]")), "procedure markers still use a detached screen plane instead of registered-v2 mesh samples")
 require("defaultLessonPointIndex" in state and "case .procedure: 2" in state and "index == experience.pointField.defaultLessonPointIndex" in scene, "Vessel Story does not default to its clot-bound marker")
@@ -233,7 +233,7 @@ require("spatial-family-controls" in immersive and "spatial-presenter-controls" 
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
 require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PRESSURE BUILD?", "WHAT CAN MAKING SPACE DO?")), "top intention questions are missing")
 require("LessonSpecimenRail" in immersive and "lesson-specimen-rail" in immersive and "selectLessonPoint" in state and "Native two-hand magnification remains the only zoom" in state, "role-aware specimen focus rail is missing")
-require("rail.position = [-0.44, 1.82, -0.86]" in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "lesson rail or direct presenter cycle controls are incomplete")
+require("selected.position + [0.038, 0.020, 0.012]" in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "depth-attached lesson disclosure or direct presenter cycle controls are incomplete")
 require(not re.search(r"\bMenu\s*\{", immersive), "immersive controls must not use SwiftUI Menu presentation")
 require("[-0.58, 1.34, -0.92]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
 require("openWindow(id: companion)" not in immersive, "immersive case docking still opens a desktop-like companion window")
@@ -277,12 +277,32 @@ require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatia
 require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 190 : 118" in immersive, "three-act gaze timeline lacks active expansion or quiet inactive nodes")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyTimelineQuestion" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
-require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not CT/MRI · no recovery shown", "Clinician review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
+require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not a patient scan", "Registered-v2 teaching asset · review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
 require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
 require("Canvas" not in immersive and "StrokeTeachingImagingSchematic" not in immersive, "rejected procedural imaging plates remain in the runtime UI")
 require("teachingImagingDrawerVisible = false" in state and "teachingImagingLens" in state and "selectTeachingImagingLens" in state and "careViewPermissionGranted" in state and "present(step: .discussCare" in state, "teaching lens is not explanation-gated or consent-aware")
 require("updateRegisteredTeachingImaging" in scene and "miniature.parent !== stageRoot" in immersive and "registeredTeachingImagingSuggestedStagePosition" in immersive, "registered teaching lens is not mutually selected and world-locked")
 require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" in state, "deterministic teaching imaging proof route is missing")
+require("--proof-main-overview" in launch and "prepareMainOverviewProof" in state, "dots-first main overview proof route is missing")
+require("--proof-main-selected-point" in launch and "prepareTeachingImagingProof" in state, "selected-point main proof route is missing")
+require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0032)" in scene, "regional lesson cloud is not quietly visible around the main anatomy")
+require("selectLessonPoint(initialPoint)" not in state and "clearPointSelection()" in state, "lesson family still auto-selects a label instead of beginning dots-first")
+require("clotTarget.position = clotSurfaceMarker" in scene and 'clotBeacon.name = "registered-clot-focus-beacon"' in scene, "registered clot target is not visibly derived from the loaded clot surface")
+require("experience.selectedPointEntityName != nil" in immersive and "selected.uppercased()" in immersive, "main explanation appears before point selection or fails to identify the selected target")
+require(all(token in state for token in (
+    "The secondary reference is an outcome of selecting a teaching point",
+    "teachingImagingLens = .affectedVessel",
+    "teachingImagingLens = .makingRoomPurpose",
+    "teachingImagingDrawerVisible = careViewPermissionGranted",
+)), "point selection does not drive one consent-aware, act-matched reference")
+require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selected.position + [0.038, 0.020, 0.012]" in immersive, "selected-point disclosure is still a permanent label rail or is not depth-attached")
+require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
+require(all(token in immersive for token in (
+    '"BLOCKED VESSEL · TEACHING VIEW"',
+    '"AFFECTED-VESSEL REFERENCE"',
+    '"Generic anatomy · not a patient scan"',
+    '"Registered-v2 teaching asset · review pending"',
+)), "right-side teaching reference lacks role-safe selected-point captions")
 require(all(copy in state for copy in ("Which layer is this?", "Is this blockage, injury, or swelling?", "What can this surgery change—and not change?")), "family act questions are incomplete")
 require(all(copy in state for copy in ("Generic scenario", "Whole brain first", "Not a patient scan", "Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred", "Ask before transparency", "Room, not repair", "No outcome promise")), "presenter three-point act cues are incomplete")
 require('title: "Act \\(experience.procedureStep.number)"' not in immersive and 'compactControl("Act \\(experience.procedureStep.number)"' not in immersive, "redundant presenter act menu remains after adding the teaching timeline")
