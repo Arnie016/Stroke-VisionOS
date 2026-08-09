@@ -171,6 +171,14 @@ checks = {
         "Both paths", "Frontal route", "Neighbor route",
         "--proof-flow-route-frontal", "--proof-flow-route-neighbor",
     ]),
+    "provenance_tracked_arterial_wall_microtexture": all(token in scene for token in [
+        "firstPhysicallyBasedMaterial", "Combined_Artery_Media",
+        "pbr.baseColor.texture != nil", "pbr.normal.texture != nil",
+        "pbr.roughness.texture != nil", "adaptedArterialWallMaterial",
+        "provenance-tracked-arterial-wall-pbr-microtexture-main",
+        "descriptor.textureCoordinates", "descriptor.tangents",
+        "descriptor.bitangents", "RBC_FLOW_WALL_PBR=READY",
+    ]),
     "paced_family_voyage_guide": all(token in model + hud + immersive for token in [
         "enum RBCFamilyNarrationMoment", "case orientation", "case passage", "case arrival",
         "familyNarration(for moment:", "The fork comes into view",

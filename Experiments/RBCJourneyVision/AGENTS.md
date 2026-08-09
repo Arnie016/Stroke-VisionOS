@@ -15,8 +15,9 @@ video cannot.
   once and one active transfer.
 - Frontal observatory: Locate → X-ray → Flow → optional example clot.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
-  meshes, sparse directional chevrons, tumbling/deforming authored cells,
-  user-selected branch transfers, Pause, Leave, and Exit.
+  meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
+  chevrons, tumbling/deforming authored cells, user-selected branch transfers,
+  Pause, Leave, and Exit.
 - Family guide: optional three-beat orientation → passage → arrival captions;
   voice may read only the exact visible copy through a loopback proxy. It is
   off by default and never a clinician default.

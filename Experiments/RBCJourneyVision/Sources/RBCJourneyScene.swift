@@ -878,6 +878,10 @@ final class RBCJourneyScene {
                 rideHero.position += [0, 1.50, -5.60]
                 flowRideRoot.addChild(rideHero)
 
+                let authoredWallMaterial = firstPhysicallyBasedMaterial(
+                    in: rideHero,
+                    namePrefix: "Combined_Artery_Media"
+                )
                 for outerWall in descendants(in: rideHero, namePrefix: "Combined_Artery_Adventitia") {
                     outerWall.isEnabled = false
                 }
@@ -922,7 +926,10 @@ final class RBCJourneyScene {
                 // produced oversized lines after a route transfer; the native
                 // branching corridor now owns the visible continuous route.
                 flowRideDirectionFieldRoot.isEnabled = false
-                buildInhabitedArterialCorridor(cellPrototype: authoredCellPrototype)
+                buildInhabitedArterialCorridor(
+                    cellPrototype: authoredCellPrototype,
+                    authoredWallMaterial: authoredWallMaterial
+                )
                 flowRideRoot.isEnabled = false
                 print("RBC_FLOW_RIDE=READY authored_cells=\(flowRideCells.count) journey_cells=\(flowRideJourneyCells.count) ribbons=\(flowRideRibbonPaths.count) fork_routes=2 inward_corridor=true")
             }
@@ -1280,7 +1287,10 @@ final class RBCJourneyScene {
         }
     }
 
-    private func buildInhabitedArterialCorridor(cellPrototype: Entity?) {
+    private func buildInhabitedArterialCorridor(
+        cellPrototype: Entity?,
+        authoredWallMaterial: PhysicallyBasedMaterial?
+    ) {
         let mainShellPath = sampleCubicBezier(
             [0.00, 1.49, 3.00],
             [0.12, 1.54, 0.20],
@@ -1344,6 +1354,40 @@ final class RBCJourneyScene {
             material: intimaMaterial,
             name: "inhabited-neighboring-destination-branch"
         )
+
+        if let authoredWallMaterial {
+            let microtextureMaterial = adaptedArterialWallMaterial(authoredWallMaterial)
+            addInwardFacingTube(
+                path: mainShellPath,
+                startRadius: 2.58,
+                endRadius: 1.275,
+                material: microtextureMaterial,
+                name: "provenance-tracked-arterial-wall-pbr-microtexture-main",
+                longitudinalRepeatsPerMeter: 1.9,
+                circumferentialRepeats: 12
+            )
+            addInwardFacingTube(
+                path: frontalShellPath,
+                startRadius: 1.285,
+                endRadius: 0.86,
+                material: microtextureMaterial,
+                name: "provenance-tracked-arterial-wall-pbr-microtexture-frontal",
+                longitudinalRepeatsPerMeter: 2.2,
+                circumferentialRepeats: 9
+            )
+            addInwardFacingTube(
+                path: neighboringShellPath,
+                startRadius: 1.285,
+                endRadius: 0.86,
+                material: microtextureMaterial,
+                name: "provenance-tracked-arterial-wall-pbr-microtexture-neighbor",
+                longitudinalRepeatsPerMeter: 2.2,
+                circumferentialRepeats: 9
+            )
+            print("RBC_FLOW_WALL_PBR=READY source=Combined_Artery_Media maps=albedo+normal+roughness uv_seam=true")
+        } else {
+            print("RBC_FLOW_WALL_PBR=FALLBACK reason=authored_material_unavailable")
+        }
 
         let mainJourneyPath = sampleCubicBezier(
             [0.00, 1.49, -0.72],
@@ -1438,14 +1482,18 @@ final class RBCJourneyScene {
         startRadius: Float,
         endRadius: Float,
         material: RealityKit.Material,
-        name: String
+        name: String,
+        longitudinalRepeatsPerMeter: Float = 1,
+        circumferentialRepeats: Float = 1
     ) {
         guard let mesh = try? makeInwardFacingTubeMesh(
             path: path,
             startRadius: startRadius,
             endRadius: endRadius,
             radialSegments: 56,
-            name: name
+            name: name,
+            longitudinalRepeatsPerMeter: longitudinalRepeatsPerMeter,
+            circumferentialRepeats: circumferentialRepeats
         ) else { return }
         let tube = ModelEntity(mesh: mesh, materials: [material])
         tube.name = name
@@ -1458,7 +1506,9 @@ final class RBCJourneyScene {
         endRadius: Float,
         radialSegments: Int,
         name: String,
-        inwardFacing: Bool = true
+        inwardFacing: Bool = true,
+        longitudinalRepeatsPerMeter: Float = 1,
+        circumferentialRepeats: Float = 1
     ) throws -> MeshResource {
         guard path.count > 1, radialSegments >= 8 else {
             throw NSError(domain: "RBCJourneyTube", code: 1)
@@ -1466,10 +1516,25 @@ final class RBCJourneyScene {
 
         var positions: [SIMD3<Float>] = []
         var normals: [SIMD3<Float>] = []
+        var tangents: [SIMD3<Float>] = []
+        var bitangents: [SIMD3<Float>] = []
+        var textureCoordinates: [SIMD2<Float>] = []
         var indices: [UInt32] = []
-        positions.reserveCapacity(path.count * radialSegments)
-        normals.reserveCapacity(path.count * radialSegments)
+        let ringStride = radialSegments + 1
+        positions.reserveCapacity(path.count * ringStride)
+        normals.reserveCapacity(path.count * ringStride)
+        tangents.reserveCapacity(path.count * ringStride)
+        bitangents.reserveCapacity(path.count * ringStride)
+        textureCoordinates.reserveCapacity(path.count * ringStride)
         indices.reserveCapacity((path.count - 1) * radialSegments * 6)
+
+        var cumulativeDistances = Array(repeating: Float.zero, count: path.count)
+        if path.count > 1 {
+            for index in 1..<path.count {
+                cumulativeDistances[index] = cumulativeDistances[index - 1]
+                    + simd_distance(path[index - 1], path[index])
+            }
+        }
 
         for ringIndex in path.indices {
             let previous = path[max(0, ringIndex - 1)]
@@ -1485,22 +1550,28 @@ final class RBCJourneyScene {
             let progress = Float(ringIndex) / Float(path.count - 1)
             let baseRadius = simd_mix(startRadius, endRadius, progress)
 
-            for radialIndex in 0..<radialSegments {
+            for radialIndex in 0...radialSegments {
                 let angle = Float(radialIndex) / Float(radialSegments) * 2 * .pi
                 let organicRipple = 1 + sin(angle * 5 + progress * 4.2) * 0.018
                 let radialDirection = right * cos(angle) + up * sin(angle)
+                let normal = inwardFacing ? -radialDirection : radialDirection
                 positions.append(path[ringIndex] + radialDirection * baseRadius * organicRipple)
-                normals.append(inwardFacing ? -radialDirection : radialDirection)
+                normals.append(normal)
+                tangents.append(tangent)
+                bitangents.append(simd_normalize(simd_cross(normal, tangent)))
+                textureCoordinates.append([
+                    cumulativeDistances[ringIndex] * longitudinalRepeatsPerMeter,
+                    Float(radialIndex) / Float(radialSegments) * circumferentialRepeats
+                ])
             }
         }
 
         for ringIndex in 0..<(path.count - 1) {
             for radialIndex in 0..<radialSegments {
-                let nextRadial = (radialIndex + 1) % radialSegments
-                let a = UInt32(ringIndex * radialSegments + radialIndex)
-                let b = UInt32(ringIndex * radialSegments + nextRadial)
-                let c = UInt32((ringIndex + 1) * radialSegments + radialIndex)
-                let d = UInt32((ringIndex + 1) * radialSegments + nextRadial)
+                let a = UInt32(ringIndex * ringStride + radialIndex)
+                let b = UInt32(ringIndex * ringStride + radialIndex + 1)
+                let c = UInt32((ringIndex + 1) * ringStride + radialIndex)
+                let d = UInt32((ringIndex + 1) * ringStride + radialIndex + 1)
                 indices.append(contentsOf: [a, b, c, b, d, c])
             }
         }
@@ -1508,6 +1579,9 @@ final class RBCJourneyScene {
         var descriptor = MeshDescriptor(name: name)
         descriptor.positions = MeshBuffers.Positions(positions)
         descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.tangents = MeshBuffers.Tangents(tangents)
+        descriptor.bitangents = MeshBuffers.Tangents(bitangents)
+        descriptor.textureCoordinates = MeshBuffers.TextureCoordinates(textureCoordinates)
         descriptor.primitives = .triangles(indices)
         return try MeshResource.generate(from: [descriptor])
     }
@@ -2251,6 +2325,35 @@ final class RBCJourneyScene {
         material.metallic = .init(floatLiteral: 0)
         material.blending = .transparent(opacity: .init(floatLiteral: opacity))
         material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
+        return material
+    }
+
+    private func firstPhysicallyBasedMaterial(
+        in entity: Entity,
+        namePrefix: String
+    ) -> PhysicallyBasedMaterial? {
+        for candidate in descendants(in: entity, namePrefix: namePrefix) {
+            guard let model = candidate.components[ModelComponent.self] else { continue }
+            for material in model.materials {
+                if let pbr = material as? PhysicallyBasedMaterial,
+                   pbr.baseColor.texture != nil,
+                   pbr.normal.texture != nil,
+                   pbr.roughness.texture != nil {
+                    return pbr
+                }
+            }
+        }
+        return nil
+    }
+
+    private func adaptedArterialWallMaterial(
+        _ source: PhysicallyBasedMaterial
+    ) -> PhysicallyBasedMaterial {
+        var material = source
+        material.faceCulling = .none
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.30))
         material.readsDepth = true
         material.writesDepth = false
         return material

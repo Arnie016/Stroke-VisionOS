@@ -89,6 +89,14 @@ user-triggered spatial transfers: RealityKit recomposes the chosen branch around
 the fixed wearer and suppresses the unselected path. There is no app camera or
 forced locomotion.
 
+The smooth native corridor now carries a second, depth-read/no-depth-write PBR
+microtexture layer. It reuses the provenance-tracked arterial-wall albedo,
+OpenGL tangent-space normal, and roughness maps already packaged in
+`artery_cutaway_complete_v2.usdz`. The generated inward-facing mesh supplies a
+duplicated UV seam plus tangents and bitangents, so the material follows both
+branches without turning the imported cutaway back on. If all three maps cannot
+be recovered, the layer fails closed and the original native corridor remains.
+
 The frontal destination ends in an irregular constellation-like outline plus a
 sparse coral tissue field. The neighboring destination uses a separate teal
 field so route selection changes the spatial relationship, not only a label.
@@ -101,10 +109,11 @@ clear choice at a time.
 
 This is a qualitative direction lesson, not a CFD solve, red-cell-density
 measurement, pressure map, velocity field, patient vessel, or outcome model.
-The current visual is a stylized branching interior. More natural endothelial
-wall optics and microtexture, non-Newtonian rheology, cell collisions,
-patient-derived geometry, and physical-device comfort remain later
-asset-authoring and scientific-validation gates.
+The current visual is still a stylized branching interior: the PBR layer adds
+fibrous breakup but does not claim histology or photoreal endothelium.
+Non-Newtonian rheology, cell collisions, patient-derived geometry, and
+physical-device comfort remain later asset-authoring and scientific-validation
+gates.
 
 ### Optional family guide
 

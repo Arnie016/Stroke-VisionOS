@@ -15,8 +15,9 @@ a window. The short judge path is:
 3. A maximum of three user-controlled portals reveal local lessons.
 4. The frontal observatory can shift between Locate, X-ray, and Flow.
 5. One optional branch ride surrounds a stationary wearer with a native
-   inward-facing fork, a continuous direction mesh, sparse chevrons, and moving
-   biconcave cells. The wearer can explicitly transfer into either path.
+   inward-facing fork, a provenance-tracked PBR wall layer, a continuous
+   direction mesh, sparse chevrons, and moving biconcave cells. The wearer can
+   explicitly transfer into either path.
 6. An optional family guide paces orientation, passage, and arrival captions
    through the ride. A local GPT Realtime proxy may read the exact visible copy;
    captions remain available without it. The guide is off by default and is not
@@ -53,7 +54,11 @@ That launch flag proves only the selected interface state. It does not prove a
 provider call, audio playback, physical-device comfort, hand interaction, or
 clinical accuracy. See
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V4_FAMILY_VOYAGE_RECEIPT.md`
-for the current evidence boundary.
+for the paced-guide evidence boundary,
+`Experiments/RBCJourneyVision/Proof/FAMILY_VOYAGE_PROXY_READINESS_RECEIPT.md`
+for the zero-cost secure-transport check, and
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V5_PBR_WALL_RECEIPT.md`
+for the current wall-material gate.
 
 ## Optional family narration
 
@@ -89,7 +94,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 51-check contract and generic Simulator build before publishing.
+5. Run the 52-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.
