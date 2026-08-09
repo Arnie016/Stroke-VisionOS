@@ -217,6 +217,23 @@ family-display mirroring, comprehension, or clinical validity. The brighter
 six-frame image in `Docs/Images/` remains explicitly labelled as visual
 direction rather than runtime evidence.
 
+At 20:49 SGT, the gated `--proof-scholar-skull` route rendered the existing
+semantic-v2 skull in bright Surroundings while preserving its authored outer
+frame. The state is restricted to clinician + Scholar + the exact catalog ID;
+it hides brain, arteries, clot, dura, lesson points, and the hand toolkit, and
+exposes only viewpoint, environment, evidence, reset, and exit. Moving to a
+different top-timeline act exits the skull inspection and restores the normal
+registered assembly. The visible copy now says `SKULL · REGISTRATION REVIEW`
+and identifies the object as a generic cross-source teaching skull.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`; the
+OS 26.5 visionOS Simulator build ended `** BUILD SUCCEEDED **`; a fresh install
+launched PID 18592; and the 3840×2160 layout capture is
+`Proof/55-scholar-skull-registration-review-simulator.png` with SHA-256
+`641190c1add4f0a6200062f5da37a58222cbf2419d72c914906fd60b3a9759c2`.
+This does not prove cross-source anatomical registration, XCAT visibility,
+wearer comfort, interaction quality, or clinical validity.
+
 ## Clinical and procedural gates
 
 - `Docs/ISCHEMIC_STROKE_CLINICAL_REVIEW.md` is a versioned review packet, not a

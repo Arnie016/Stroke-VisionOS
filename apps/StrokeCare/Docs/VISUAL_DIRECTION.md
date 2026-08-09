@@ -1,5 +1,22 @@
 # Stroke Care visual direction
 
+## Selected-point anatomy target
+
+![Selected-point anatomy direction](Images/stroke-care-selected-point-hero-direction.png)
+
+This is the intended explanation composition: the registered anatomy owns the
+centre, the top timeline remains revisitable, and only quiet anatomy-attached
+points are visible before selection. Selecting one point reveals one local
+lesson or reviewed procedure explanation at the same depth. The right reference
+object changes with the selected act; it is teaching imagery, never an inferred
+patient scan. This is a design target, not an implementation or clinical proof.
+
+The Scholar skull inspection is deliberately separate. It isolates the existing
+generic cross-source skull for shape review and labels its registration as
+specialist-review pending; it never presents that skull as exact patient anatomy.
+
+## Journey storyboard
+
 ![Six-frame Stroke Care journey](Images/stroke-care-six-frame-visual-direction.png)
 
 This generated storyboard is a design target, not implementation, device,

@@ -763,7 +763,9 @@ struct StrokeImmersiveView: View {
         content: RealityViewContent,
         attachments: RealityViewAttachments
     ) {
-        let enabled = experience.spatialPhase == .explanation && experience.audienceLens == .clinician
+        let enabled = experience.spatialPhase == .explanation &&
+            experience.audienceLens == .clinician &&
+            !experience.isClinicianScholarSkullInspectionActive
         if let anchor = content.entities.first(where: { $0.name == clinicianToolWheelAnchorName }),
            let wheel = attachments.entity(for: clinicianToolWheelID) {
             if wheel.parent !== anchor {
@@ -1158,7 +1160,71 @@ private struct SpatialRoleControls: View {
         }
     }
 
+    @ViewBuilder
     private var presenterControls: some View {
+        if experience.isClinicianScholarSkullInspectionActive {
+            scholarSkullControls
+        } else {
+            regularPresenterControls
+        }
+    }
+
+    private var scholarSkullControls: some View {
+        VStack(alignment: .trailing, spacing: 8) {
+            HStack(spacing: 8) {
+                bubbleButton(
+                    experience.anatomyViewpoint.shortTitle,
+                    systemImage: experience.anatomyViewpoint.systemImage,
+                    accent: .cyan,
+                    selected: experience.anatomyViewpoint != .threeQuarter
+                ) {
+                    experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
+                }
+                .accessibilityLabel("Skull viewpoint")
+
+                bubbleButton(
+                    environmentBubbleTitle,
+                    systemImage: experience.environmentMode.systemImage,
+                    accent: .cyan,
+                    selected: experience.environmentMode != .surroundings
+                ) {
+                    cycleEnvironment()
+                }
+                .accessibilityLabel("Environment")
+
+                bubbleButton(
+                    "Evidence",
+                    systemImage: "text.book.closed.fill",
+                    accent: .cyan
+                ) {
+                    openWindow(id: StrokeSpace.evidence)
+                }
+                .accessibilityLabel("Open registration evidence")
+            }
+
+            HStack(spacing: 8) {
+                bubbleButton(
+                    "Reset",
+                    systemImage: "arrow.counterclockwise",
+                    accent: .cyan
+                ) {
+                    experience.resetSpatialView()
+                }
+                .accessibilityLabel("Reset skull view")
+
+                exitButton
+            }
+
+            Label("Generic skull · specialist review pending", systemImage: "exclamationmark.shield")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary.opacity(0.88))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(.regularMaterial, in: Capsule())
+        }
+    }
+
+    private var regularPresenterControls: some View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
                 bubbleButton(
@@ -1636,6 +1702,7 @@ private struct StrokeIntentionAnnotation: View {
 
     private var annotationTitle: String {
         if experience.closingReflectionVisible { return "YOU DO NOT HAVE TO HOLD EVERY ANSWER AT ONCE" }
+        if experience.isClinicianScholarSkullInspectionActive { return "SKULL · REGISTRATION REVIEW" }
         return switch experience.procedureStep {
         case .chooseCase: "WHAT CHANGED?"
         case .inspectOcclusion: "WHY DOES PRESSURE BUILD?"
@@ -1647,6 +1714,9 @@ private struct StrokeIntentionAnnotation: View {
         if experience.closingReflectionVisible {
             return "A clear next step can make uncertainty feel smaller. Your care team will guide what comes next."
         }
+        if experience.isClinicianScholarSkullInspectionActive {
+            return "Generic cross-source teaching skull. Inspect shape only; alignment and landmarks still require specialist review."
+        }
         return switch experience.procedureStep {
         case .chooseCase: "Start with the blockage in this generic teaching model."
         case .inspectOcclusion: "Swelling presses inside the fixed skull."
@@ -1656,6 +1726,7 @@ private struct StrokeIntentionAnnotation: View {
 
     private var annotationIcon: String {
         if experience.closingReflectionVisible { return "sparkles" }
+        if experience.isClinicianScholarSkullInspectionActive { return "view.3d" }
         return switch experience.procedureStep {
         case .chooseCase: "circle.dashed"
         case .inspectOcclusion: "arrow.up.and.down.and.arrow.left.and.right"
@@ -1665,6 +1736,7 @@ private struct StrokeIntentionAnnotation: View {
 
     private var annotationTint: Color {
         if experience.closingReflectionVisible { return .mint }
+        if experience.isClinicianScholarSkullInspectionActive { return .cyan }
         return switch experience.procedureStep {
         case .chooseCase: .orange
         case .inspectOcclusion: .orange

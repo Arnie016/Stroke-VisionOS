@@ -1405,7 +1405,9 @@ enum StrokeSceneFactory {
         let regionField = root.findEntity(named: regionPointFieldName)
         let procedureField = root.findEntity(named: procedurePointFieldName)
 
-        let showLessons = experience.spatialPhase == .explanation && experience.lessonPointsVisible
+        let showLessons = experience.spatialPhase == .explanation &&
+            experience.lessonPointsVisible &&
+            !experience.isClinicianScholarSkullInspectionActive
         regionField?.isEnabled = showLessons && experience.pointField == .regions
         procedureField?.isEnabled = showLessons && experience.pointField == .procedure
 
@@ -1502,10 +1504,17 @@ enum StrokeSceneFactory {
         root.findEntity(named: penumbraName)?.isEnabled = false
         root.findEntity(named: coreName)?.isEnabled = false
 
-        imported.findEntity(named: importedBrainName)?.isEnabled = true
-        imported.findEntity(named: importedArteriesName)?.isEnabled = true
-        imported.findEntity(named: importedClotName)?.isEnabled = experience.procedureStep != .chooseCase || presentation == .exploded
-        imported.findEntity(named: importedDuraName)?.isEnabled = showsPurpose
+        // This is a reversible clinician-only technical inspection. The skull
+        // remains in its authored registered-v2 frame; no transform or exact
+        // cross-source registration is inferred. Changing the audience, detail,
+        // or selected catalog record immediately restores the normal assembly.
+        let importedSkull = imported.findEntity(named: importedSkullName)
+        let isolateScholarSkull = experience.isClinicianScholarSkullInspectionActive && importedSkull != nil
+        imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
+        imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull
+        imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
+            (experience.procedureStep != .chooseCase || presentation == .exploded)
+        imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull && showsPurpose
 
         // These prototype-v1 meshes are intentionally quarantined. The first
         // integration render proved that their coordinate frame does not match
@@ -1516,10 +1525,9 @@ enum StrokeSceneFactory {
         imported.findEntity(named: importedFlapName)?.isEnabled = false
         imported.findEntity(named: importedPatchName)?.isEnabled = false
 
-        // The full semantic skull is kept off in the patient path because its
-        // atlas registration is approximate and its opaque shell would conceal
-        // the brain. The procedural fixed-space shell carries that one message.
-        imported.findEntity(named: importedSkullName)?.isEnabled = false
+        // The full semantic skull stays off in the family path because its
+        // cross-source fit is approximate and requires specialist review.
+        importedSkull?.isEnabled = isolateScholarSkull
 
         _ = time
     }

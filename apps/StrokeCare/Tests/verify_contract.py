@@ -174,6 +174,40 @@ require("--proof-procedure-field" in launch and "prepareProcedureFieldProof" in 
 require("--proof-transparent-layer" in launch and "prepareTransparentLayerProof" in state, "deterministic transparent-anatomy proof route is missing")
 require(all(route in launch for route in ("--proof-environment-surroundings", "--proof-environment-warm", "--proof-environment-focus")), "deterministic environment proof routes are missing")
 require("--proof-clinician-toolkit" in launch and "prepareClinicianToolKitProof" in state, "deterministic clinician tool-kit proof route is missing")
+require("--proof-scholar-skull" in launch and "prepareScholarSkullProof" in state, "deterministic Scholar skull proof route is missing")
+require(all(token in state for token in (
+    'scholarSkullCatalogID = "skull_semantic_realistic_v2"',
+    "isClinicianScholarSkullInspectionActive",
+    "audienceLens == .clinician",
+    "detailLevel == .scholar",
+    "selectedCatalogAssetID == Self.scholarSkullCatalogID",
+    "selectDetailLevel(.scholar)",
+    "selectCatalogAsset(id: Self.scholarSkullCatalogID)",
+    "resetCatalogPresentation()",
+)), "Scholar skull state is not exact-ID, clinician, and Scholar gated")
+require(all(token in scene for token in (
+    "let isolateScholarSkull = experience.isClinicianScholarSkullInspectionActive",
+    "importedSkull != nil",
+    "imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull",
+    "imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull",
+    "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull",
+    "imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull",
+    "importedSkull?.isEnabled = isolateScholarSkull",
+    "no transform or exact",
+)), "Scholar skull isolation does not restore the registered assembly or preserve the authored frame")
+require("REQUIRES_SPECIALIST_REVIEW" in state and "never presented as exact family anatomy" in state, "Scholar skull specialist/family safety boundary is missing")
+require(all(token in state for token in (
+    '"Generic cross-source skull"',
+    '"Inspect shape only"',
+    '"Specialist review pending"',
+    "environmentMode = .surroundings",
+)), "Scholar skull proof is missing its focused review cues or bright surroundings")
+require(all(token in immersive for token in (
+    '"SKULL · REGISTRATION REVIEW"',
+    '"Generic cross-source teaching skull. Inspect shape only; alignment and landmarks still require specialist review."',
+    "scholarSkullControls",
+    "!experience.isClinicianScholarSkullInspectionActive",
+)), "Scholar skull annotation does not expose the registration-review boundary")
 require("--proof-spatial-intake" in launch and "makeSpatialCaseIntake" in scene, "deterministic room-scale case intake is missing")
 require("--proof-spatial-docked-case" in launch and "prepareSpatialDockedCaseProof" in state, "deterministic docked-case constellation proof is missing")
 require("spatialCaseFilePosition" in state and "settleSpatialCaseFile" in state and "isSpatialCaseFileTarget" in scene, "spatial case carry-and-dock loop is incomplete")

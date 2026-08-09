@@ -16,6 +16,11 @@ This image is the **visual-direction target**, not a Simulator or XCAT receipt.
 Its full role, timeline, point-selection, mirrored-family-display, and Scholar
 boundaries are specified in [Docs/VISUAL_DIRECTION.md](Docs/VISUAL_DIRECTION.md).
 
+The selected-point hero direction is also captured in
+[Docs/VISUAL_DIRECTION.md](Docs/VISUAL_DIRECTION.md): the default anatomy view
+starts with attached points rather than a permanent label cloud, and a single
+selection reveals one local explanation plus the relevant teaching image.
+
 The launch window begins with a two-beat calm prelude, then asks whether the
 purpose is **Doctor → family** or **Clinician teaching**. Inside the immersive
 space, the file itself is the control: carrying it from the exhibit into the

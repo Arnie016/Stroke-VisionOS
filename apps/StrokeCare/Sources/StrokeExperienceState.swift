@@ -332,6 +332,8 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 
 @MainActor
 final class StrokeExperienceState: ObservableObject {
+    static let scholarSkullCatalogID = "skull_semantic_realistic_v2"
+
     let teachingCase = TeachingStrokeCase.case78
 
     @Published var procedureStep: StrokeProcedureStep = .chooseCase
@@ -435,6 +437,15 @@ final class StrokeExperienceState: ObservableObject {
 
     var visibleCatalogRecords: [StrokeAssetRecord] {
         StrokeAssetCatalog.visibleRecords(for: audienceLens, detailLevel: detailLevel)
+    }
+
+    /// The imported skull is an approximate cross-source fit marked
+    /// REQUIRES_SPECIALIST_REVIEW. It can therefore be isolated only in the
+    /// clinician Scholar lens; it is never presented as exact family anatomy.
+    var isClinicianScholarSkullInspectionActive: Bool {
+        audienceLens == .clinician &&
+            detailLevel == .scholar &&
+            selectedCatalogAssetID == Self.scholarSkullCatalogID
     }
 
     func resetCatalogPresentation() {
@@ -730,7 +741,15 @@ final class StrokeExperienceState: ObservableObject {
     /// Exactly three glanceable teaching beats for each act. These are
     /// orientation cues, not patient-specific findings or outcome claims.
     var presenterTimelineKeyPoints: [String] {
-        switch procedureStep {
+        if isClinicianScholarSkullInspectionActive {
+            return [
+                "Generic cross-source skull",
+                "Inspect shape only",
+                "Specialist review pending",
+            ]
+        }
+
+        return switch procedureStep {
         case .chooseCase:
             ["Generic scenario", "Whole brain first", "Not a patient scan"]
         case .inspectOcclusion:
@@ -940,6 +959,12 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func present(step: StrokeProcedureStep, reduceMotion: Bool = false) {
+        if isClinicianScholarSkullInspectionActive && step != procedureStep {
+            // The top timeline remains a history control. Leaving the current
+            // Scholar inspection restores the normal registered assembly before
+            // another teaching act introduces its own cues.
+            resetCatalogPresentation()
+        }
         requestedPause = false
         clarificationRequested = false
         clearQuestionMarker()
@@ -1137,6 +1162,17 @@ final class StrokeExperienceState: ObservableObject {
         pointField = .regions
         selectedPointEntityName = "clinician-region-point-field-point-0"
         selectedPointLabel = "Example affected area"
+    }
+
+    func prepareScholarSkullProof() {
+        // Orient is the quietest of the three existing acts: no clot-focus or
+        // care-purpose cue competes with this reversible technical inspection.
+        prepareClinicianProof(step: .chooseCase)
+        selectDetailLevel(.scholar)
+        selectCatalogAsset(id: Self.scholarSkullCatalogID)
+        anatomyPresentation = .assembled
+        environmentMode = .surroundings
+        spatialZoom = 1.15
     }
 
     func prepareEvidenceProof() {

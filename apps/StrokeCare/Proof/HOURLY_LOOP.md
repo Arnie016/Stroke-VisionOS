@@ -373,3 +373,25 @@
   anatomy as if exact.
 - Next safe action: build one isolated, clearly labelled skull inspection state
   for registration review before enabling any skull overlay in the family path.
+
+## 2026-08-09 20:49 SGT — gated Scholar skull inspection
+
+- Target: make the next registered-model increment visible without presenting
+  an approximate cross-source skull as exact patient anatomy.
+- Bounded action: added an exact-ID, clinician-only Scholar inspection that
+  isolates the existing v2 skull in bright Surroundings, supplies focused
+  registration-review copy, removes competing point/tool/voice/image controls,
+  and restores the normal assembly when the presenter moves to another act.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; a fresh install launched PID
+  18592; `Proof/55-scholar-skull-registration-review-simulator.png` records the
+  visible 3840×2160 layout with SHA-256
+  `641190c1add4f0a6200062f5da37a58222cbf2419d72c914906fd60b3a9759c2`.
+- Verdict: `IMPROVED` — the skull is now a falsifiable, calm inspection object
+  with an honest review boundary instead of a hidden catalog entry or a false
+  family overlay.
+- Blocker: the skull/brain cross-source fit still lacks specialist registration
+  review, and Simulator evidence does not prove XCAT or wearer behavior.
+- Next safe action: make the default lesson field truly dots-first by clearing
+  auto-selection and revealing exactly one local label only after pinch.

@@ -463,6 +463,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-toolkit") {
             experience.prepareClinicianToolKitProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-scholar-skull") {
+            experience.prepareScholarSkullProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-spatial-intake") {
             experience.reset()
             experience.audienceLens = .clinician
