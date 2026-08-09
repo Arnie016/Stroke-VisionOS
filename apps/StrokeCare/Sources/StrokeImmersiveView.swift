@@ -410,15 +410,30 @@ struct StrokeImmersiveView: View {
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview
+                        StrokeSceneFactory.updateSpatialCaseIntake(
+                            root: caseRoom,
+                            experience: experience
+                        )
                     }
                     if let caseRoom = stageRoot.findEntity(named: StrokeSceneFactory.spatialCaseRoomName),
                        let file = caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFileName) {
                         let inReview = experience.spatialPhase == .caseReview
-                        file.position = inReview ? [0, 1.23, -0.80] : experience.spatialCaseFilePosition
+                        let reveal = Float(experience.caseReviewRevealProgress)
+                        let lift = min(reveal / 0.34, 1)
+                        let dissolve = min(max((reveal - 0.34) / 0.42, 0), 1)
+                        file.position = inReview
+                            ? simd_mix(
+                                SIMD3<Float>(0, 1.43, -0.82),
+                                SIMD3<Float>(0, 1.54, -0.78),
+                                SIMD3<Float>(repeating: lift)
+                            )
+                            : experience.spatialCaseFilePosition
                         file.orientation = experience.spatialCaseDocked
                             ? simd_quatf(angle: 0, axis: [0, 1, 0])
                             : simd_quatf(angle: -0.16, axis: [0, 1, 0])
-                        file.scale = inReview ? [0.54, 0.54, 0.54] : [1, 1, 1]
+                        let fileScale = inReview ? (1 + 0.12 * lift - 0.46 * dissolve) : 1
+                        file.scale = [fileScale, fileScale, fileScale]
+                        file.components.set(OpacityComponent(opacity: inReview ? 1 - dissolve : 1))
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseDockName)?.isEnabled =
                             experience.spatialPhase == .caseLibrary && !experience.spatialCaseDocked
                     }
@@ -542,16 +557,20 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                     }
                     Attachment(id: speechFactID) {
-                        SpatialCaseFact(title: "SPEECH", value: "Change reported", systemImage: "waveform")
+                        SpatialCaseFact(milestone: .everydayContext)
+                            .environmentObject(experience)
                     }
                     Attachment(id: armFactID) {
-                        SpatialCaseFact(title: "ARM", value: "Right-side weakness", systemImage: "figure.arms.open")
+                        SpatialCaseFact(milestone: .reportedChange)
+                            .environmentObject(experience)
                     }
                     Attachment(id: timeFactID) {
-                        SpatialCaseFact(title: "TIME", value: "70 minutes ago", systemImage: "clock.fill")
+                        SpatialCaseFact(milestone: .teamReview)
+                            .environmentObject(experience)
                     }
                     Attachment(id: questionFactID) {
-                        SpatialCaseFact(title: "SCENARIO", value: "Severe stroke + swelling", systemImage: "brain.head.profile")
+                        SpatialCaseFact(milestone: .sharedQuestions)
+                            .environmentObject(experience)
                     }
                     Attachment(id: caseReviewActionsID) {
                         SpatialCaseReviewActions()
@@ -629,7 +648,7 @@ struct StrokeImmersiveView: View {
                         }
                         .onEnded { value in
                             if StrokeSceneFactory.isSpatialCaseFileTarget(value.entity) {
-                                experience.settleSpatialCaseFile()
+                                experience.settleSpatialCaseFile(reduceMotion: reduceMotion)
                             }
                             previousDragTranslation = .zero
                         }
@@ -715,22 +734,33 @@ struct StrokeImmersiveView: View {
     private func updateSpatialIntakeAttachments(_ attachments: RealityViewAttachments) {
         let inLibrary = experience.spatialPhase == .caseLibrary
         let inReview = experience.spatialPhase == .caseReview
+        let reveal = Float(experience.caseReviewRevealProgress)
         let positions: [(String, SIMD3<Float>, Float, Bool)] = [
             (cabinetLabelID, [-0.64, 1.75, -0.82], 0.72, inLibrary),
             (dockLabelID, [0, 1.16, -0.76], 0.68, inLibrary),
-            (hierarchySpineID, [0, 1.97, -0.66], 0.76, inReview),
-            (speechFactID, [-0.30, 1.80, -0.66], 0.64, inReview),
-            (armFactID, [-0.32, 1.49, -0.66], 0.64, inReview),
-            (timeFactID, [0.30, 1.49, -0.66], 0.64, inReview),
-            (questionFactID, [0.30, 1.80, -0.66], 0.64, inReview),
-            (caseHistoryTimelineID, [0, 1.08, -0.64], 0.62, inReview),
-            (caseReviewActionsID, [0, 0.88, -0.62], 0.58, inReview)
+            (hierarchySpineID, [0, 1.94, -0.72], 0.72, inReview && reveal > 0.70),
+            (speechFactID, [-0.27, 1.76, -0.76], 0.58, inReview && reveal > 0.60),
+            (armFactID, [-0.28, 1.50, -0.76], 0.58, inReview && reveal > 0.67),
+            (timeFactID, [0.28, 1.50, -0.76], 0.58, inReview && reveal > 0.74),
+            (questionFactID, [0.27, 1.76, -0.76], 0.58, inReview && reveal > 0.81),
+            (caseHistoryTimelineID, [0, 1.09, -0.70], 0.60, inReview && reveal > 0.82),
+            (caseReviewActionsID, [0, 0.89, -0.68], 0.56, inReview && reveal > 0.96)
         ]
         for (id, position, scale, visible) in positions {
             guard let entity = attachments.entity(for: id) else { continue }
+            let selectedMilestone: StrokeCaseHistoryMilestone? = switch id {
+            case speechFactID: .everydayContext
+            case armFactID: .reportedChange
+            case timeFactID: .teamReview
+            case questionFactID: .sharedQuestions
+            default: nil
+            }
+            let selected = selectedMilestone == experience.selectedCaseHistoryMilestone
+            let resolvedScale = selectedMilestone == nil ? scale : scale * (selected ? 1 : 0.64)
             entity.position = position
-            entity.scale = [scale, scale, scale]
+            entity.scale = [resolvedScale, resolvedScale, resolvedScale]
             entity.isEnabled = visible
+            entity.components.set(OpacityComponent(opacity: visible ? 1 : 0))
             entity.components.set(BillboardComponent())
         }
     }
@@ -2355,24 +2385,42 @@ private struct SpatialHierarchySpine: View {
 }
 
 private struct SpatialCaseFact: View {
-    let title: String
-    let value: String
-    let systemImage: String
+    @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let milestone: StrokeCaseHistoryMilestone
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Label(title, systemImage: systemImage)
-                .font(.caption2.weight(.bold))
-                .tracking(1.0)
-                .foregroundStyle(.orange)
-            Text(value)
-                .font(.headline)
-                .lineLimit(2)
+        Button {
+            experience.selectCaseHistoryMilestone(milestone)
+        } label: {
+            Group {
+                if milestone == experience.selectedCaseHistoryMilestone {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Label(milestone.shortTitle.uppercased(), systemImage: milestone.systemImage)
+                            .font(.caption2.weight(.bold))
+                            .tracking(0.9)
+                            .foregroundStyle(.orange)
+                        Text(milestone.spatialWebValue)
+                            .font(.headline)
+                            .lineLimit(2)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 11)
+                    .frame(width: 190, alignment: .leading)
+                    .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 18))
+                } else {
+                    Image(systemName: milestone.systemImage)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.72))
+                        .frame(width: 50, height: 50)
+                        .glassBackgroundEffect(in: Circle())
+                }
+            }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-        .frame(width: 175, alignment: .leading)
-        .glassBackgroundEffect(in: RoundedRectangle(cornerRadius: 18))
+        .buttonStyle(.plain)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.26), value: experience.selectedCaseHistoryMilestone)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(milestone.shortTitle), \(milestone.spatialWebValue)")
     }
 }
 

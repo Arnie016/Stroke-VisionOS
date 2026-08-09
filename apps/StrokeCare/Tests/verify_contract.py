@@ -91,8 +91,10 @@ require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixe
 require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 'case focusField')), "three-state spatial environment contract is missing")
 require("How will you use this?" in launch and "Patient / family" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
-require("--proof-case-unfold" in launch and "CaseFactConstellation" in launch, "progressive case-file proof route is missing")
-require("DragGesture" in launch and "caseRevealProgress" in launch, "progressive case-file drag interaction is missing")
+require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
+require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
+require(state.count("guard audienceLens == .clinician else { return }") >= 3, "patient-file intake must remain clinician-only at the state boundary")
+require("experience.selectCaseHistoryMilestone(milestone)" in immersive and "accessibilityReduceMotion" in immersive, "case-history endpoints must be selectable and respect Reduce Motion")
 require("hospital protocol" in launch and "Presenter rail" in launch, "emergency accountability boundary is missing")
 require(all(route in launch for route in ("--proof-orient", "--proof-pressure", "--proof-care-purpose")), "deterministic spatial proof routes are missing")
 require('id: "CASE-078"' in state and 'displayName: "Case 78"' in state, "fictional case contract is missing")
@@ -247,9 +249,16 @@ require("spatialCaseFilePosition" in state and "settleSpatialCaseFile" in state 
 require("StrokeSpatialPhase" in state and "caseLibrary" in state and "caseReview" in state and "explanation" in state, "case room and anatomy are not separated into explicit phases")
 require("root.isEnabled = experience.spatialPhase == .explanation" in immersive and "caseRoom.isEnabled = experience.spatialPhase != .explanation" in immersive, "patient cabinet still persists into the brain explanation")
 require("spatial-case-archive" in scene and "archive-dossier-bay" in scene and "[0.19, 0.25, 0.018]" in scene, "case library is not a single angled dossier archive with an upright selected file")
-require("spatial-case-constellation" in scene and scene.count("case-constellation-filament-") == 4, "selected case does not unfold as a four-signal spatial constellation")
+require("spatial-case-constellation" in scene and all(branch in scene for branch in (
+    "case-constellation-filament-speech",
+    "case-constellation-filament-arm",
+    "case-constellation-filament-time",
+    "case-constellation-filament-open-question",
+)), "selected case does not unfold as a four-signal spatial constellation")
 require("StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary" in immersive and "StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview" in immersive, "archive and case constellation do not hand off by phase")
 require("SpatialCaseReviewActions" in immersive and "beginExplanation" in state, "selected-case review lacks an explicit explanation threshold")
+require("updateSpatialCaseIntake" in scene and "smoothSegment" in scene and "selectedCaseHistoryMilestone" in scene, "selected history branch does not unfold from the dossier")
+require("reveal > 0.96" in immersive and "OpacityComponent(opacity: inReview ? 1 - dissolve : 1)" in immersive, "case card dissolve or explicit Enter threshold is missing")
 patient_history = (ROOT / "Sources" / "PatientHistoryTimelineView.swift").read_text()
 require("PatientHistoryTimelineView" in immersive and 'caseHistoryTimelineID = "spatial-case-history-timeline"' in immersive, "case review lacks a distinct spatial patient-history timeline")
 require("StrokeCaseHistoryMilestone" in patient_history and "selectedCaseHistoryMilestone" in state and "selectCaseHistoryMilestone" in state, "case-history milestones are not interactive state")

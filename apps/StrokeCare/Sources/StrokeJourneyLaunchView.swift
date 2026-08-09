@@ -146,6 +146,10 @@ struct StrokeJourneyLaunchView: View {
         experience.audienceLens = lens
         if lens == .family {
             experience.beginPatientExploration()
+        } else {
+            // Patient-file review belongs in the real room: the clinician can
+            // glance between the case and family without entering a dark set.
+            experience.environmentMode = .surroundings
         }
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
         guard result == .opened else {
@@ -425,8 +429,8 @@ struct StrokeJourneyLaunchView: View {
         proofRouteHasRun = true
         if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
-            caseRevealProgress = 1
-            casePlaced = true
+            experience.prepareCaseHistoryWebProof()
+            Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-evidence-window") {
             experience.prepareEvidenceProof()
             Task { await openEvidenceProofWindow() }

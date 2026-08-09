@@ -68,6 +68,17 @@ enum StrokeCaseHistoryMilestone: String, CaseIterable, Identifiable {
         case .sharedQuestions: "SOURCE SLOT · local reviewed guidance"
         }
     }
+
+    /// Short endpoint copy for the room-scale history web. Detailed context
+    /// remains in the selected timeline ribbon rather than four text panels.
+    var spatialWebValue: String {
+        switch self {
+        case .everydayContext: "Baseline context to confirm"
+        case .reportedChange: "Speech + arm change reported"
+        case .teamReview: "Reviewed pictures · teaching model separate"
+        case .sharedQuestions: "Known · uncertain · next"
+        }
+    }
 }
 
 /// A connected spatial ribbon rather than a dashboard. The selected milestone

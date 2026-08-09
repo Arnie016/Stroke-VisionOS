@@ -464,6 +464,63 @@ enum StrokeSceneFactory {
         return false
     }
 
+    /// Animates the current fictional dossier into a central case anchor and
+    /// reveals only the selected history branch. This owns no anatomy and is
+    /// disabled before the doctor deliberately places the file.
+    static func updateSpatialCaseIntake(
+        root: Entity,
+        experience: StrokeExperienceState
+    ) {
+        guard let constellation = root.findEntity(named: spatialCaseConstellationName) else { return }
+        let progress = Float(experience.caseReviewRevealProgress)
+        let figureProgress = smoothSegment(progress, from: 0.28, to: 0.68)
+
+        constellation.position = [0, 1.52 + 0.08 * figureProgress, -0.82]
+        constellation.components.set(OpacityComponent(opacity: progress))
+
+        if let figure = constellation.findEntity(named: spatialCaseFigureName) {
+            let scale = 0.78 + 0.22 * figureProgress
+            figure.scale = [scale, scale, scale]
+            figure.orientation = simd_quatf(
+                angle: -0.14 * (1 - figureProgress),
+                axis: [0, 1, 0]
+            )
+            figure.components.set(OpacityComponent(opacity: figureProgress))
+        }
+
+        let selectedPrefix = switch experience.selectedCaseHistoryMilestone {
+        case .everydayContext: "case-constellation-filament-speech"
+        case .reportedChange: "case-constellation-filament-arm"
+        case .teamReview: "case-constellation-filament-time"
+        case .sharedQuestions: "case-constellation-filament-open-question"
+        }
+        let prefixes = [
+            "case-constellation-filament-speech",
+            "case-constellation-filament-arm",
+            "case-constellation-filament-time",
+            "case-constellation-filament-open-question"
+        ]
+        for prefix in prefixes {
+            for index in 0..<2 {
+                guard let segment = constellation.findEntity(named: "\(prefix)-\(index)") else { continue }
+                let reveal = smoothSegment(
+                    progress,
+                    from: 0.52 + Float(index) * 0.10,
+                    to: 0.76 + Float(index) * 0.10
+                )
+                let selected = prefix == selectedPrefix
+                segment.isEnabled = selected && reveal > 0.01
+                segment.components.set(OpacityComponent(opacity: selected ? reveal : 0))
+            }
+        }
+    }
+
+    private static func smoothSegment(_ value: Float, from start: Float, to end: Float) -> Float {
+        guard end > start else { return value >= end ? 1 : 0 }
+        let linear = min(max((value - start) / (end - start), 0), 1)
+        return linear * linear * (3 - 2 * linear)
+    }
+
     /// Loads the exact USDZ shortlist from Stroke-VisionOS PR #2. The v2
     /// anatomy remains in its authored registered frame. Three prototype-v1
     /// pressure-purpose cues stay under a distinct legacy root with one manual

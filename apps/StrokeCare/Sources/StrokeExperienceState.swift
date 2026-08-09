@@ -384,6 +384,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var spatialCaseDocked = false
     @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
     @Published var selectedCaseHistoryMilestone: StrokeCaseHistoryMilestone = .reportedChange
+    @Published private(set) var caseReviewRevealProgress: Double = 0
     @Published private(set) var pendingConsentStep: StrokeProcedureStep?
     /// Spatial interaction state follows the proven Heart Field ownership
     /// pattern: the app state owns pose, while RealityKit only renders it.
@@ -397,13 +398,16 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var planPreviewProgress: Double = 0
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
+    private var caseReviewRevealTask: Task<Void, Never>?
 
-    func selectTeachingCase() {
+    func selectTeachingCase(reduceMotion: Bool = false) {
+        guard audienceLens == .clinician else { return }
         spatialCaseDocked = true
         isCaseSelected = true
         spatialPhase = .caseReview
         selectedCaseHistoryMilestone = .reportedChange
         procedureStep = .chooseCase
+        startCaseReviewReveal(reduceMotion: reduceMotion)
     }
 
     func selectCaseHistoryMilestone(_ milestone: StrokeCaseHistoryMilestone) {
@@ -456,6 +460,7 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func moveSpatialCaseFile(to position: SIMD3<Float>) {
+        guard audienceLens == .clinician else { return }
         spatialCaseFilePosition = SIMD3<Float>(
             min(max(position.x, -0.78), 0.32),
             min(max(position.y, 1.18), 1.72),
@@ -466,7 +471,8 @@ final class StrokeExperienceState: ObservableObject {
         isCaseSelected = overDock
     }
 
-    func settleSpatialCaseFile() {
+    func settleSpatialCaseFile(reduceMotion: Bool = false) {
+        guard audienceLens == .clinician else { return }
         if simd_distance(spatialCaseFilePosition, [0, 1.43, -0.82]) < 0.22 {
             withAnimation(.easeInOut(duration: 0.38)) {
                 spatialCaseFilePosition = [0, 1.43, -0.82]
@@ -476,7 +482,9 @@ final class StrokeExperienceState: ObservableObject {
                 procedureStep = .chooseCase
                 brainRevealProgress = 0
             }
+            startCaseReviewReveal(reduceMotion: reduceMotion)
         } else {
+            cancelCaseReviewReveal()
             withAnimation(.easeInOut(duration: 0.32)) {
                 spatialCaseFilePosition = [-0.58, 1.45, -0.82]
                 spatialCaseDocked = false
@@ -484,8 +492,39 @@ final class StrokeExperienceState: ObservableObject {
                 spatialPhase = .caseLibrary
                 procedureStep = .chooseCase
                 brainRevealProgress = 0
+                caseReviewRevealProgress = 0
             }
         }
+    }
+
+    /// The selected dossier becomes a human-scale case anchor before its
+    /// history opens. This is authored presentation motion, not a patient-data
+    /// inference and not a custom hand-wave recognizer.
+    private func startCaseReviewReveal(reduceMotion: Bool) {
+        cancelCaseReviewReveal()
+        caseReviewRevealProgress = 0
+        if reduceMotion {
+            caseReviewRevealProgress = 1
+            return
+        }
+
+        caseReviewRevealTask = Task { [weak self] in
+            guard let self else { return }
+            let frameCount = 58
+            for frame in 1...frameCount {
+                guard !Task.isCancelled else { return }
+                try? await Task.sleep(for: .milliseconds(16))
+                guard !Task.isCancelled else { return }
+                let linear = Double(frame) / Double(frameCount)
+                self.caseReviewRevealProgress = linear * linear * (3 - 2 * linear)
+            }
+            self.caseReviewRevealTask = nil
+        }
+    }
+
+    private func cancelCaseReviewReveal() {
+        caseReviewRevealTask?.cancel()
+        caseReviewRevealTask = nil
     }
 
     /// The patient file is a threshold, not persistent furniture. The case room
@@ -524,11 +563,14 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func returnCaseToLibrary() {
+        cancelCaseReviewReveal()
         spatialPhase = .caseLibrary
         teachingImagingDrawerVisible = false
         spatialCaseDocked = false
         isCaseSelected = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
+        selectedCaseHistoryMilestone = .reportedChange
+        caseReviewRevealProgress = 0
         brainRevealProgress = 0
         vesselFocusProgress = 0
         closingReflectionVisible = false
@@ -1160,6 +1202,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func reset() {
         cancelLayerReveal()
+        cancelCaseReviewReveal()
         procedureStep = .chooseCase
         audienceLens = .family
         resetCatalogPresentation()
@@ -1168,6 +1211,7 @@ final class StrokeExperienceState: ObservableObject {
         spatialCaseDocked = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
         selectedCaseHistoryMilestone = .reportedChange
+        caseReviewRevealProgress = 0
         selectedCareDiscussion = nil
         reportIsVisible = false
         requestedPause = false
@@ -1336,14 +1380,24 @@ final class StrokeExperienceState: ObservableObject {
     func prepareSpatialDockedCaseProof() {
         reset()
         audienceLens = .clinician
+        environmentMode = .surroundings
         spatialPhase = .caseReview
         spatialCaseDocked = true
         spatialCaseFilePosition = [0, 1.43, -0.82]
         isCaseSelected = true
         selectedCaseHistoryMilestone = .reportedChange
+        caseReviewRevealProgress = 1
         procedureStep = .chooseCase
         brainRevealProgress = 0
         pointField = .regions
+    }
+
+    /// Current deterministic case-unfold proof. Unlike the retired window
+    /// mock, this state drives the room-scale dossier-to-history composition.
+    func prepareCaseHistoryWebProof() {
+        prepareSpatialDockedCaseProof()
+        selectedCaseHistoryMilestone = .teamReview
+        caseReviewRevealProgress = 1
     }
 
     func prepareFamilyQuestionProof() {

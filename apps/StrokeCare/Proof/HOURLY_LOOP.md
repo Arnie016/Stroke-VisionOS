@@ -466,3 +466,23 @@
 - Next safe action: on an awake XCAT, run the doctor-presenter route once and
   record four point pinches, one timeline jump, checklist legibility, and Pause
   freezing the authored-flow lesson.
+
+## 2026-08-09 23:32 SGT — case dossier becomes a spatial history web
+
+- Target: replace the retired case-unfold window with one doctor-only spatial
+  transition from fictional dossier to case context.
+- Bounded action: connected `--proof-case-unfold` to the active immersive case
+  review; added a roughly one-second card-to-case reveal, one selected filament
+  branch, directly selectable history endpoints, a Reduce Motion final state,
+  and an explicit Enter-case threshold; kept patient/family out of the archive.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`, clean diff check, successful OS 26.5
+  visionOS Simulator build, and `Proof/69-case-history-unfold-simulator.png`
+  with SHA-256 recorded in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the dossier now has a spatial handoff and the patient
+  history reveals by relationship rather than appearing as four simultaneous
+  cards.
+- Blocker: the neutral procedural anchor is not a licensed diverse patient
+  representation, and Simulator does not prove wearer targeting or comfort.
+- Next safe action: enforce the role-specific voice contract: no synthesized
+  doctor voice, family-only opt-in Realtime narration, and honest tappable
+  question/check-in semantics.

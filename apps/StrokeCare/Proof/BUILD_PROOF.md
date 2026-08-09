@@ -340,3 +340,24 @@ placement, wearer comfort, AirPlay mirroring, comprehension, or clinical validit
   while distribution rights and clinical/device gates remain unresolved.
 
 These gates remain active without marking the continuous product goal blocked.
+
+## 2026-08-09 23:32 SGT — spatial case-history unfold
+
+The legacy `--proof-case-unfold` flag now opens the current immersive doctor
+intake rather than retired window state. A selected fictional dossier lifts to
+the centre, dissolves into a neutral case anchor, and reveals one selected
+history branch before the explicit **Enter case** threshold. The archive and
+case review use passthrough surroundings so a presenter can remain oriented to
+the family and room. Endpoint nodes are directly selectable, patient/family
+state cannot enter the case-library transitions, and Reduce Motion skips the
+travel/stagger choreography.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`;
+`git diff --check` passed; and the OS 26.5 visionOS Simulator build ended
+`** BUILD SUCCEEDED **`. The deterministic composition capture is
+`Proof/69-case-history-unfold-simulator.png`, SHA-256
+`9d14e686839ab5198fcbcd64f95e9a4a14de441aa59e03873b27b5f0325f7b0d`.
+
+The procedural case anchor proves choreography only; it is not a MetaHuman,
+patient likeness, or scan-derived avatar. The capture does not prove physical
+gaze/pinch reliability, room comfort, AirPlay legibility, or clinical meaning.
