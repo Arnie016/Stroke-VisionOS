@@ -255,6 +255,75 @@ reported paired XCAT `unavailable`; the local machine receipt is
 `Proof/xcat/20260809-210457/BLOCKED.md`. No XCAT build, install, launch, wearer,
 or clinical result is claimed from this pass.
 
+At 22:01 SGT, a showcase-readiness slice made the four anatomy-attached region
+points visibly luminous without adding labels, widened the revisitable top
+timeline so all three act names remain readable, and corrected the world-locked
+teaching-reference lookup so it continues updating after reparenting. The
+clinician tool wheel is now a 150-degree, five-target hand-adjacent arc with
+84-point controls, a presenter fallback, and the selected generic forceps shown
+at the opposite hand. The doctor-worn family lens keeps three suggested
+questions and an explicit, presenter-recorded comfort check together at the
+left; it does not infer anxiety or require a second headset.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`;
+`git diff --check` passed; the OS 26.5 visionOS Simulator build ended
+`** BUILD SUCCEEDED **`. Fresh launches returned PIDs 98600, 98741, and 3425.
+Runtime captures are `Proof/59-main-point-cloud-readable-timeline-simulator.png`
+with SHA-256 `b3a8fba31359f31758f497c180051f8159ff941906f858673e13a23328f1d4a3`,
+`Proof/58-clinician-hand-tool-arc-simulator.png` with SHA-256
+`4231215e33c92e645d920fbab420ca845cfaf2375fa0a716f8687af7925fa800`,
+and `Proof/60-doctor-mirrored-family-cues-simulator.png` with SHA-256
+`d22c07cfa1d91ccd9a5732f5ca7b29255bb7598ef960f8635d826d269603baf7`.
+
+These receipts prove Simulator layout and state only. XCAT reach, hand-relative
+placement, gaze-and-pinch reliability, AirPlay mirroring, stereo legibility,
+comfort, family comprehension, and clinical validity remain unproven. The hero
+brain has substantial geometry, but its source USDZ carries only one cortex
+albedo map; the arteries carry no texture maps, so a reviewed normal/roughness
+material pass remains real art debt rather than a missing-feature claim.
+
+## 2026-08-09 22:58 SGT — two-path entry and thirteen-asset anatomy slice
+
+The launch threshold now exposes exactly two plain-language paths. **Patient /
+family** bypasses the fictional record room and opens the calm generic anatomy
+exhibit directly. **Doctor presenter** retains the fictional case library,
+history review, and case-led explanation. The normal explanation keeps the
+three-act top timeline, four quiet region points, one selected-point disclosure,
+and a taller left presentation checklist derived from the Page 2 Figma direction.
+
+The bounded runtime bundle now contains exactly thirteen USDZ files. The added
+registered-v2 deep structures, ventricles, and authored cerebral-flow asset all
+passed `usdchecker --arkit --strict`. Deep structures and ventricles are visible
+only in the clinician's explicit Study-apart region view. The baked blood-flow
+tracks are recursively discovered, play only after selecting a clinician
+procedure point, and pause for the app pause state or Reduce Motion. They remain
+generic qualitative teaching motion—not CFD, perfusion, velocity, or patient
+measurement.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`;
+`git diff --check` passed; and the OS 26.5 visionOS Simulator build ended
+`** BUILD SUCCEEDED **`. The built `.app` contains exactly thirteen `.usdz`
+filenames. Runtime evidence is:
+
+- `Proof/67-patient-doctor-role-threshold-simulator.png`, SHA-256
+  `2460b34999dc38e8d9f18e3398367de44c70b5bb20f3e000bb4382f823a5d753`;
+- `Proof/65-layer-study-internal-anatomy-simulator.png`, SHA-256
+  `3a1b2c7e23c3648d59319dc076212587f3b1caa36a2288329df1f9b5d8e1e0e6`;
+- `Proof/66-authored-bloodflow-point-simulator.png`, SHA-256
+  `1c2b80bb0fda075ff9865a38826a9769ef58b8f5614236432e70b31d9e19a886`;
+- `Proof/66b-authored-bloodflow-motion-simulator.mp4`, 3840×2160, 4.8 seconds,
+  SHA-256 `3f2af50497933eee16a21934857026436e04d7822051d608532f5cae23ae55ef`;
+- `Proof/68-doctor-presentation-checklist-simulator.png`, SHA-256
+  `9333850dd57a960bc108ec92d849fcc19a7d524a7a19dce88efb03009ad04ee6`.
+
+The recording shows visible authored-flow state change between separated frames,
+but does not validate physiology. Figma MCP was rate-limited on the Starter plan,
+so the palette and checklist are screenshot-derived, not claimed as one-to-one
+MCP inspection. The earlier black capture was rejected after Simulator logs
+showed another immersive app restoring and invalidating Stroke Care's scene.
+These receipts do not prove XCAT performance, eye/gaze selection, hand-relative
+placement, wearer comfort, AirPlay mirroring, comprehension, or clinical validity.
+
 ## Clinical and procedural gates
 
 - `Docs/ISCHEMIC_STROKE_CLINICAL_REVIEW.md` is a versioned review packet, not a

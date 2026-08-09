@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 
 enum StrokeAudienceLens: String, CaseIterable, Identifiable {
-    case family = "Family"
-    case clinician = "Presenter"
+    case family = "Patient / family"
+    case clinician = "Doctor presenter"
 
     var id: String { rawValue }
 }
@@ -353,6 +353,8 @@ final class StrokeExperienceState: ObservableObject {
     @Published var reportIsVisible = false
     @Published var requestedPause = false
     @Published var clarificationRequested = false
+    @Published private(set) var familyComfortCheck: Double = 1
+    @Published private(set) var familyComfortWasSet = false
     @Published var questionPlacementArmed = false
     @Published var questionMarkerVisible = false
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
@@ -495,6 +497,26 @@ final class StrokeExperienceState: ObservableObject {
         procedureStep = .chooseCase
         lessonPointsVisible = true
         requestedPause = false
+        withAnimation(.easeInOut(duration: 0.72)) {
+            brainRevealProgress = 0.18
+            vesselFocusProgress = 0
+        }
+    }
+
+    /// The layperson route is an anatomy exhibit, not a patient-record room.
+    /// It enters the same generic teaching brain directly with calm detail and
+    /// quiet discovery points. No fictional record is presented as theirs.
+    func beginPatientExploration() {
+        audienceLens = .family
+        spatialPhase = .explanation
+        spatialCaseDocked = false
+        isCaseSelected = false
+        procedureStep = .chooseCase
+        detailLevel = .calm
+        lessonPointsVisible = true
+        clearPointSelection()
+        requestedPause = false
+        teachingImagingDrawerVisible = false
         withAnimation(.easeInOut(duration: 0.72)) {
             brainRevealProgress = 0.18
             vesselFocusProgress = 0
@@ -649,6 +671,19 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = true
     }
 
+    /// The Vision Pro presenter records a family's explicitly stated,
+    /// session-local conversation cue after asking aloud. It is not an anxiety score
+    /// and is never inferred from gaze, voice, face, physiology,
+    /// diagnosis, or patient data. Choosing Pause uses the same explicit
+    /// clarification path as the family pause control.
+    func setFamilyComfortCheck(_ value: Double) {
+        familyComfortCheck = min(max(value, 0), 2)
+        familyComfortWasSet = true
+        if familyComfortCheck < 0.5 {
+            requestClarification()
+        }
+    }
+
     func toggleQuestionPlacement() {
         questionPlacementArmed.toggle()
         if questionPlacementArmed {
@@ -740,6 +775,24 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    var familyQuestionSuggestions: [String] {
+        switch procedureStep {
+        case .chooseCase:
+            [familyTimelineQuestion, "Can you show where this is?", "What do we know for sure?"]
+        case .inspectOcclusion:
+            [familyTimelineQuestion, "Can we pause at the blockage?", "What remains uncertain?"]
+        case .discussCare:
+            [familyTimelineQuestion, "What is the goal?", "What can this not change?"]
+        }
+    }
+
+    var familyComfortLabel: String {
+        guard familyComfortWasSet else { return "Not shared" }
+        if familyComfortCheck < 0.5 { return "Pause" }
+        if familyComfortCheck < 1.5 { return "Unsure" }
+        return "Okay to continue"
+    }
+
     /// Exactly three glanceable teaching beats for each act. These are
     /// orientation cues, not patient-specific findings or outcome claims.
     var presenterTimelineKeyPoints: [String] {
@@ -795,7 +848,17 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     var presenterLayerStatus: String {
-        switch procedureStep {
+        if anatomyPresentation == .exploded && pointField == .regions {
+            return "Deep structures · ventricles · generic anatomy · review pending"
+        }
+        if pointField == .procedure,
+           selectedPointEntityName?.hasPrefix("clinician-procedure-point-field-point-") == true {
+            return "Authored blood flow · qualitative · not CFD"
+        }
+        if anatomyPresentation == .transparent {
+            return "Cortex · vessels · separated skull reference"
+        }
+        return switch procedureStep {
         case .chooseCase:
             "Cortex · arterial map · fixed skull context"
         case .inspectOcclusion:
@@ -841,6 +904,11 @@ final class StrokeExperienceState: ObservableObject {
 
     func setAnatomyPresentation(_ presentation: StrokeAnatomyPresentation) {
         anatomyPresentation = presentation
+        if presentation == .transparent {
+            // Preserve cortical landmarks when the faint clinician-only skull
+            // context appears around the registered brain.
+            cortexOpacity = max(cortexOpacity, 0.58)
+        }
         if presentation == .assembled {
             clearPointSelection()
         }
@@ -911,7 +979,7 @@ final class StrokeExperienceState: ObservableObject {
         )
         if audienceLens == .clinician {
             anatomyPresentation = .transparent
-            cortexOpacity = 0.40
+            cortexOpacity = 0.58
             selectedClinicianTool = .focus
         }
     }
@@ -979,6 +1047,8 @@ final class StrokeExperienceState: ObservableObject {
         }
         requestedPause = false
         clarificationRequested = false
+        familyComfortCheck = 1
+        familyComfortWasSet = false
         clearQuestionMarker()
         clearPointSelection()
         isConsentPromptVisible = false
@@ -1171,10 +1241,10 @@ final class StrokeExperienceState: ObservableObject {
         prepareClinicianProof(step: .inspectOcclusion)
         environmentMode = .surroundings
         anatomyPresentation = .transparent
-        cortexOpacity = 0.52
+        cortexOpacity = 0.66
         pointField = .regions
         lessonPointsVisible = true
-        spatialZoom = 1.18
+        spatialZoom = 1.28
         clearPointSelection()
     }
 
@@ -1207,6 +1277,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func prepareLayerStudyProof() {
         prepareClinicianProof(step: .discussCare)
+        environmentMode = .surroundings
         anatomyPresentation = .exploded
         cortexOpacity = 0.30
         pointField = .regions
@@ -1216,6 +1287,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func prepareProcedureFieldProof() {
         prepareClinicianProof(step: .inspectOcclusion)
+        environmentMode = .surroundings
         anatomyPresentation = .transparent
         cortexOpacity = 0.40
         regionPortalActive = true

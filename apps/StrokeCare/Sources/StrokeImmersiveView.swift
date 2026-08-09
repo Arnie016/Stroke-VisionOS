@@ -265,7 +265,7 @@ struct StrokeImmersiveView: View {
                     let toolWheelAnchor = Entity()
                     toolWheelAnchor.name = clinicianToolWheelAnchorName
                     if handProof {
-                        toolWheelAnchor.position = [-0.55, 1.50, -0.74]
+                        toolWheelAnchor.position = [-0.61, 1.76, -0.74]
                     } else {
                         toolWheelAnchor.components.set(AnchoringComponent(
                             .hand(.left, location: .palm),
@@ -280,7 +280,7 @@ struct StrokeImmersiveView: View {
                     let heldToolAnchor = Entity()
                     heldToolAnchor.name = clinicianHeldToolAnchorName
                     if handProof {
-                        heldToolAnchor.position = [0.48, 1.48, -0.72]
+                        heldToolAnchor.position = [0.48, 1.68, -0.72]
                     } else {
                         heldToolAnchor.components.set(AnchoringComponent(
                             .hand(.right, location: .palm),
@@ -305,7 +305,10 @@ struct StrokeImmersiveView: View {
                     ))
                     focusLight.orientation = simd_quatf(angle: -0.48, axis: [1, 0, 0])
                         * simd_quatf(angle: 0.52, axis: [0, 1, 0])
-                    focusLight.isEnabled = experience.environmentMode == .focusField
+                    // The warm museum field still needs a sculpting key light;
+                    // otherwise the high-density cortex reads like flat clay.
+                    // Passthrough keeps this off so room lighting remains honest.
+                    focusLight.isEnabled = experience.environmentMode != .surroundings
                     stageRoot.addChild(focusLight)
 
                     if let annotation = attachments.entity(for: annotationID) {
@@ -360,14 +363,19 @@ struct StrokeImmersiveView: View {
                     }
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
-                    StrokeSceneFactory.update(root: root, experience: experience, time: now)
+                    StrokeSceneFactory.update(
+                        root: root,
+                        experience: experience,
+                        time: now,
+                        reduceMotion: reduceMotion
+                    )
 
                     // Keep the secondary registered teaching object world-
                     // locked. Reparenting it out of the hero root prevents the
                     // user's anatomy orbit/zoom gesture from dragging the
                     // reference lens through the room. Only one leaf-only lens
                     // is enabled, so the full head assembly is never doubled.
-                    if let miniature = root.findEntity(
+                    if let miniature = stageRoot.findEntity(
                         named: StrokeSceneFactory.registeredTeachingImagingRootName
                     ) {
                         if miniature.parent !== stageRoot {
@@ -458,7 +466,7 @@ struct StrokeImmersiveView: View {
                         )
                     }
                     stageRoot.findEntity(named: focusLightID)?.isEnabled =
-                        experience.environmentMode == .focusField
+                        experience.environmentMode != .surroundings
                     if let marker = attachments.entity(for: questionMarkerID) {
                         if marker.parent == nil {
                             stageRoot.addChild(marker)
@@ -558,12 +566,12 @@ struct StrokeImmersiveView: View {
                     Attachment(id: teachingTimelineID) {
                         SpatialTeachingTimeline()
                             .environmentObject(experience)
-                            .frame(width: 560, height: 106)
+                            .frame(width: 690, height: 126)
                     }
                     Attachment(id: roleMicroCuesID) {
                         SpatialRoleMicroCues()
                             .environmentObject(experience)
-                            .frame(width: 310)
+                            .frame(width: 360)
                     }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
@@ -583,7 +591,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: clinicianToolWheelID) {
                         ClinicianHandToolWheel()
                             .environmentObject(experience)
-                            .frame(width: 330, height: 390)
+                            .frame(width: 430, height: 460)
                     }
                 }
                 .highPriorityGesture(
@@ -690,6 +698,7 @@ struct StrokeImmersiveView: View {
                 narrator.stop()
                 flowController?.stop()
                 pressureController?.stop()
+                StrokeSceneFactory.stopAuthoredBloodflowAnimations()
                 experience.isImmersivePresented = false
             }
         }
@@ -729,8 +738,8 @@ struct StrokeImmersiveView: View {
     private func updateSpatialTeachingAttachments(_ attachments: RealityViewAttachments) {
         let visible = experience.spatialPhase == .explanation
         let placements: [(String, SIMD3<Float>, Float)] = [
-            (teachingTimelineID, [0, 2.00, -0.90], 0.86),
-            (roleMicroCuesID, [-0.58, 1.72, -0.90], 0.68)
+            (teachingTimelineID, [0, 2.02, -0.88], 0.95),
+            (roleMicroCuesID, [-0.56, 1.72, -0.90], 0.82)
         ]
 
         for (id, position, scale) in placements {
@@ -781,8 +790,11 @@ struct StrokeImmersiveView: View {
                 wheel.removeFromParent()
                 anchor.addChild(wheel)
             }
-            wheel.position = [0, 0.035, 0.085]
-            wheel.scale = [0.42, 0.42, 0.42]
+            // Keep the selector beside and slightly in front of the palm. The
+            // app deliberately avoids palm-roll/cup-pose inference, leaving
+            // Home and Control Center gestures to the system.
+            wheel.position = [0.095, 0.025, 0.110]
+            wheel.scale = [0.78, 0.78, 0.78]
             wheel.isEnabled = enabled
         }
 
@@ -958,22 +970,45 @@ private struct SpatialCaseReviewActions: View {
 /// A palm-anchored, clinician-only instrument selector. It stays as a small
 /// cuff until the clinician deliberately opens it; gaze plus pinch selects a
 /// tool. No raw eye position or custom pinch inference is used.
+private struct HandToolArcGuide: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addArc(
+            center: CGPoint(x: rect.midX - 50, y: rect.midY),
+            radius: min(rect.width, rect.height) * 0.37,
+            startAngle: .degrees(-75),
+            endAngle: .degrees(75),
+            clockwise: false
+        )
+        return path
+    }
+}
+
 private struct ClinicianHandToolWheel: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
+    private let arcOffsets: [CGSize] = [
+        CGSize(width: -12, height: -140),
+        CGSize(width: 65, height: -88),
+        CGSize(width: 95, height: 0),
+        CGSize(width: 65, height: 88),
+        CGSize(width: -12, height: 140)
+    ]
+
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             ZStack {
                 if experience.clinicianToolKitVisible {
-                    Circle()
-                        .fill(.regularMaterial)
-                        .overlay(Circle().stroke(Color.mint.opacity(0.28), lineWidth: 2))
-                        .frame(width: 270, height: 270)
+                    HandToolArcGuide()
+                        .stroke(
+                            Color.mint.opacity(0.30),
+                            style: StrokeStyle(lineWidth: 18, lineCap: .round)
+                        )
+                        .frame(width: 390, height: 390)
 
                     ForEach(Array(StrokeClinicianTool.allCases.enumerated()), id: \.element.id) { index, tool in
-                        let angle = Double(index) / Double(StrokeClinicianTool.allCases.count) * Double.pi * 2 - Double.pi / 2
                         toolButton(tool)
-                            .offset(x: cos(angle) * 98, y: sin(angle) * 98)
+                            .offset(arcOffsets[index])
                     }
                 }
 
@@ -987,13 +1022,15 @@ private struct ClinicianHandToolWheel: View {
                             .font(.caption2.weight(.black))
                             .tracking(0.7)
                     }
-                    .frame(width: 76, height: 76)
+                    .frame(width: 88, height: 88)
                 }
                 .buttonStyle(.plain)
                 .background(Color.mint.opacity(0.20), in: Circle())
                 .overlay(Circle().stroke(Color.mint.opacity(0.52), lineWidth: 2))
+                .offset(x: -72)
+                .accessibilityLabel(experience.clinicianToolKitVisible ? "Close clinician tools" : "Open clinician tools")
             }
-            .frame(width: 290, height: 290)
+            .frame(width: 390, height: 390)
 
             if experience.clinicianToolKitVisible {
                 VStack(spacing: 3) {
@@ -1009,6 +1046,8 @@ private struct ClinicianHandToolWheel: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(.regularMaterial, in: Capsule())
+                .frame(width: 280)
+                .offset(x: 42)
             }
         }
         .accessibilityElement(children: .contain)
@@ -1026,7 +1065,7 @@ private struct ClinicianHandToolWheel: View {
                     .font(.caption2.weight(.bold))
                     .lineLimit(1)
             }
-            .frame(width: 72, height: 72)
+            .frame(width: 84, height: 84)
         }
         .buttonStyle(.plain)
         .foregroundStyle(experience.selectedClinicianTool == tool ? Color.black : Color.white)
@@ -1203,6 +1242,17 @@ private struct SpatialRoleControls: View {
 
             HStack(spacing: 8) {
                 bubbleButton(
+                    experience.clinicianToolKitVisible ? "Tools on" : "Tools",
+                    systemImage: "cross.case.fill",
+                    accent: .mint,
+                    selected: experience.clinicianToolKitVisible
+                ) {
+                    experience.toggleClinicianToolKit()
+                }
+                .accessibilityLabel("Clinician tools")
+                .accessibilityHint("Shows or hides the hand-adjacent tool arc")
+
+                bubbleButton(
                     "Reset",
                     systemImage: "arrow.counterclockwise",
                     accent: .cyan
@@ -1341,6 +1391,17 @@ private struct SpatialRoleControls: View {
                 .padding(.vertical, 6)
                 .background(.regularMaterial, in: Capsule())
                 .accessibilityLabel(experience.presenterBoundary)
+
+            if experience.anatomyPresentation == .transparent,
+               experience.pointField == .regions {
+                Label("Skull reference · separated · review pending", systemImage: "view.3d")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.secondary.opacity(0.86))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.regularMaterial, in: Capsule())
+                    .accessibilityLabel("Generic separated skull reference. Cross-source alignment requires specialist review.")
+            }
         }
     }
 
@@ -1390,7 +1451,7 @@ private struct SpatialRoleControls: View {
     private var layerBubbleTitle: String {
         switch experience.anatomyPresentation {
         case .assembled: "Layers"
-        case .transparent: "Clear"
+        case .transparent: "Skull"
         case .exploded: "Apart"
         }
     }
@@ -1502,7 +1563,8 @@ private struct SpatialTeachingTimeline: View {
                     SpatialTeachingTimelineNode(
                         number: step.number,
                         title: title(for: step),
-                        isActive: isActive
+                        isActive: isActive,
+                        tint: tint(for: step)
                     )
                 }
                 .buttonStyle(.plain)
@@ -1521,50 +1583,65 @@ private struct SpatialTeachingTimeline: View {
         case .discussCare: "Make space"
         }
     }
+
+    /// Page 2's cool-to-warm scale becomes three restrained chapter colors:
+    /// orient in blue, inspect pressure in lavender, and discuss purpose in
+    /// orange-red. Color communicates chapter position, never severity.
+    private func tint(for step: StrokeProcedureStep) -> Color {
+        switch step {
+        case .chooseCase: Color(red: 0.50, green: 0.58, blue: 0.82)
+        case .inspectOcclusion: Color(red: 0.65, green: 0.63, blue: 0.85)
+        case .discussCare: Color(red: 0.95, green: 0.48, blue: 0.29)
+        }
+    }
 }
 
 private struct SpatialTeachingTimelineNode: View {
     let number: Int
     let title: String
     let isActive: Bool
+    let tint: Color
 
     var body: some View {
         HStack(spacing: isActive ? 10 : 6) {
             Text(String(number))
-                .font(.caption.monospacedDigit().weight(.black))
-                .frame(width: 28, height: 28)
-                .background(isActive ? Color.cyan : Color.white.opacity(0.08), in: Circle())
+                .font(.callout.monospacedDigit().weight(.black))
+                .frame(width: 32, height: 32)
+                .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.58))
 
             Text(title)
-                .font(isActive ? .callout.weight(.bold) : .caption.weight(.semibold))
+                .font(isActive ? .body.weight(.bold) : .callout.weight(.semibold))
                 .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.52))
                 .lineLimit(1)
         }
         .padding(.horizontal, isActive ? 16 : 10)
-        .frame(width: isActive ? 190 : 118, height: 58)
+        .frame(width: isActive ? 220 : 154, height: 64)
         .background(
             isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
             in: Capsule()
         )
         .overlay(
             Capsule().stroke(
-                isActive ? Color.cyan.opacity(0.58) : Color.white.opacity(0.08),
+                isActive ? tint.opacity(0.68) : Color.white.opacity(0.08),
                 lineWidth: isActive ? 1.5 : 1
             )
         )
     }
 }
 
-/// A single left-peripheral cue surface whose density follows the audience:
-/// one current family question or exactly three presenter teaching beats.
+/// A single left-peripheral cue surface whose density follows the audience.
+/// Family suggestions and the presenter-recorded comfort check stay together
+/// in the mirrored view; the presenter sees that declared pace plus exactly
+/// three teaching beats. A second headset or shared spatial session is not
+/// implied by this surface.
 private struct SpatialRoleMicroCues: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Label(
-                experience.audienceLens == .family ? "CURRENT QUESTION" : "PRESENTER KEYS",
+                experience.audienceLens == .family ? "QUESTIONS TO ASK" : "PRESENTATION CHECKLIST",
                 systemImage: experience.audienceLens == .family ? "questionmark.bubble.fill" : "list.bullet"
             )
             .font(.caption2.weight(.black))
@@ -1572,20 +1649,93 @@ private struct SpatialRoleMicroCues: View {
             .foregroundStyle(accent)
 
             if experience.audienceLens == .family {
-                Text(experience.familyTimelineQuestion)
-                    .font(.callout.weight(.semibold))
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                ForEach(Array(experience.presenterTimelineKeyPoints.enumerated()), id: \.offset) { index, point in
+                ForEach(Array(experience.familyQuestionSuggestions.enumerated()), id: \.offset) { index, question in
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text("\(index + 1)")
-                            .font(.caption2.monospacedDigit().weight(.bold))
-                            .foregroundStyle(accent)
-                        Text(point)
-                            .font(.caption.weight(.semibold))
+                        Circle()
+                            .fill(index == 0 ? accent : Color.white.opacity(0.36))
+                            .frame(width: 6, height: 6)
+                        Text(question)
+                            .font(index == 0 ? .callout.weight(.semibold) : .caption.weight(.semibold))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+
+                Divider().overlay(Color.white.opacity(0.12))
+
+                HStack {
+                    Text("ASK ALOUD · COMFORT")
+                        .font(.caption2.weight(.black))
+                        .tracking(0.8)
+                    Spacer()
+                    Text(experience.familyComfortLabel)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(accent)
+                }
+
+                Slider(
+                    value: Binding(
+                        get: { experience.familyComfortCheck },
+                        set: { experience.setFamilyComfortCheck($0) }
+                    ),
+                    in: 0...2,
+                    step: 1
+                )
+                .tint(accent)
+                .accessibilityLabel("Record the family's stated explanation comfort")
+                .accessibilityValue(experience.familyComfortLabel)
+
+                HStack {
+                    Text("Pause")
+                    Spacer()
+                    Text("Unsure")
+                    Spacer()
+                    Text("Continue")
+                }
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.58))
+            } else {
+                HStack {
+                    Text("ACT \(experience.procedureStep.number) OF 3")
+                        .font(.caption2.monospacedDigit().weight(.black))
+                        .tracking(0.8)
+                    Spacer()
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(experience.familyComfortWasSet ? accent : Color.white.opacity(0.30))
+                            .frame(width: 7, height: 7)
+                        Text("Family · \(experience.familyComfortLabel)")
+                            .font(.caption.weight(.bold))
+                    }
+                }
+                .foregroundStyle(.white.opacity(0.76))
+
+                ForEach(Array(experience.presenterTimelineKeyPoints.enumerated()), id: \.offset) { index, point in
+                    VStack(alignment: .leading, spacing: 9) {
+                        if index > 0 {
+                            Divider().overlay(Color.white.opacity(0.12))
+                        }
+                        HStack(alignment: .top, spacing: 10) {
+                            ZStack {
+                                Circle()
+                                    .fill(index == 0 ? accent.opacity(0.92) : Color.white.opacity(0.10))
+                                Text("\(index + 1)")
+                                    .font(.caption2.monospacedDigit().weight(.black))
+                                    .foregroundStyle(index == 0 ? Color.black.opacity(0.78) : accent)
+                            }
+                            .frame(width: 23, height: 23)
+
+                            Text(point)
+                                .font(index == 0 ? .callout.weight(.bold) : .callout.weight(.semibold))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(minHeight: 48, alignment: .topLeading)
+                    }
+                }
+
+                Divider().overlay(Color.white.opacity(0.12))
+                Text("Visible to the presenter · concise prompts, not a script")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.54))
             }
         }
         .foregroundStyle(.white.opacity(0.92))
@@ -1593,7 +1743,9 @@ private struct SpatialRoleMicroCues: View {
         .padding(.vertical, 12)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
-        .accessibilityElement(children: .combine)
+        .frame(width: 300)
+        .frame(minHeight: experience.audienceLens == .clinician ? 300 : nil, alignment: .topLeading)
+        .accessibilityElement(children: .contain)
     }
 
     private var accent: Color {

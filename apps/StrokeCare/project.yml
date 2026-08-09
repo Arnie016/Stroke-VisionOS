@@ -29,6 +29,12 @@ targets:
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/dura_mater_cutaway_conceptual_v2.usdz
         buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_deep_structures_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_ventricles_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_bloodflow_animation_v2.usdz
+        buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/edema_swelling.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/craniotomy_bone_flap.usdz

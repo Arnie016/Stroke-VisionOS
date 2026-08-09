@@ -77,14 +77,20 @@ require(not set(held_catalog_ids).intersection(release_catalog_ids), "held sourc
 require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e856897a44df2bbfbe01236f8b142303\"", "nonV1CandidateCount = 105", "candidateMetadata", "quarantinedPrototype", "heldSourceBuildRecords")), "catalog provenance or release gates are incomplete")
 require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
 require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
-require(project_yml.count("buildPhase: resources") == 10 and "asset_manifest" not in project_yml, "catalog change bundled new asset payloads or manifests")
+require(project_yml.count("buildPhase: resources") == 13 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly thirteen explicit USDZ resources")
+require(all(name in project_yml for name in (
+    "brain_deep_structures_v2.usdz",
+    "brain_ventricles_v2.usdz",
+    "cerebral_bloodflow_animation_v2.usdz",
+)), "three reviewed-frame detail assets are not declared in the app bundle")
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
 require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
 require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
 require("ImmersionStyle = .progressive" in app, "progressive immersion is not the default")
 require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixed, .progressive, .full" in app, "three deliberate system immersion styles are not wired")
 require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 'case focusField')), "three-state spatial environment contract is missing")
-require("Who are you guiding today?" in launch and "Doctor → family" in launch and "Clinician teaching" in launch and "enterSpatialCaseRoom" in launch, "role-separated spatial threshold is missing")
+require("How will you use this?" in launch and "Patient / family" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
+require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
 require("--proof-case-unfold" in launch and "CaseFactConstellation" in launch, "progressive case-file proof route is missing")
 require("DragGesture" in launch and "caseRevealProgress" in launch, "progressive case-file drag interaction is missing")
 require("hospital protocol" in launch and "Presenter rail" in launch, "emergency accountability boundary is missing")
@@ -99,6 +105,17 @@ require("not a recommendation, consent discussion, or outcome promise" in state.
 require("not diagnosis, recommendation, consent, or record" in state, "discussion summary overclaims its role")
 require("brain-left" in scene and "brain-right" in scene and "brain-midline-seam" in scene, "separable brain rig is missing")
 require("brain_anatomy_realistic_v2" in scene and "cerebral_arteries_realistic_v2" in scene and "ischemic_mca_clot_v2" in scene, "PR2 v2 hero anatomy is not integrated")
+require(all(token in scene for token in (
+    'importedDeepStructuresName = "brain_deep_structures_v2"',
+    'importedVentriclesName = "brain_ventricles_v2"',
+    'importedBloodflowName = "cerebral_bloodflow_animation_v2"',
+    "startAuthoredBloodflowAnimations",
+    "animation.repeat()",
+    "experience.pointField == .regions",
+    'hasPrefix(\n                "clinician-procedure-point-field-point-"',
+    "experience.requestedPause || reduceMotion",
+    "qualitative authored motion—not CFD",
+)), "registered detail layers are not role/lesson/pause gated or recursively animated")
 require("imported-brain-surface-target" in scene and "generateSphere(radius: 0.112)" in scene, "semantic imported brain collision target is missing")
 require("imported-clot-focus-target" in scene and "isAnatomyInteractionTarget" in scene, "semantic clot interaction target is missing")
 require("legacy-v1-pressure-root" in scene and "craniotomy_bone_flap" in scene and "dural_patch" in scene, "PR2 pressure-purpose assets are not segregated")
@@ -108,6 +125,12 @@ require(all(name in scene for name in ("fixed-skull-context", "bone-flap", "dura
 require("does not restore or shrink established injury" in scene, "non-restoration visual boundary is missing")
 require("authored teaching motion" in scene and "not a patient measurement" in scene, "animation evidence boundary is missing")
 require("TimelineView" in immersive and "focusOcclusion()" in immersive, "runtime spatial animation or focus gesture is missing")
+require(all(color in immersive for color in (
+    "Color(red: 0.50, green: 0.58, blue: 0.82)",
+    "Color(red: 0.65, green: 0.63, blue: 0.85)",
+    "Color(red: 0.95, green: 0.48, blue: 0.29)",
+)), "Figma-derived cool-to-warm three-act timeline palette is missing")
+require("Deep structures · ventricles · generic anatomy · review pending" in state and "Authored blood flow · qualitative · not CFD" in state, "clinician detail boundaries are not visible")
 require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "PressureBed" in immersive, "entity-anchored spatial audio is missing")
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
@@ -192,9 +215,19 @@ require(all(token in scene for token in (
     "imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull",
     "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull",
     "imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull",
-    "importedSkull?.isEnabled = isolateScholarSkull",
+    "let showsClinicianSkullContext = experience.audienceLens == .clinician",
+    "presentation == .transparent",
+    "experience.pointField == .regions",
+    "importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext",
+    "showsClinicianSkullContext ? [0.16, 0, 0] : .zero",
+    "showsClinicianSkullContext ? 0.42 : 0",
     "no transform or exact",
 )), "Scholar skull isolation does not restore the registered assembly or preserve the authored frame")
+require(all(token in immersive for token in (
+    'case .transparent: "Skull"',
+    '"Skull reference · separated · review pending"',
+    '"Generic separated skull reference. Cross-source alignment requires specialist review."',
+)), "normal clinician layer cycle does not expose the reviewed skull-context boundary")
 require("REQUIRES_SPECIALIST_REVIEW" in state and "never presented as exact family anatomy" in state, "Scholar skull specialist/family safety boundary is missing")
 require(all(token in state for token in (
     '"Generic cross-source skull"',
@@ -241,10 +274,22 @@ require("StrokeClinicianTool" in state and "clinicianToolKitVisible" in state an
 require("clinician-hand-tool-wheel" in immersive and "ClinicianHandToolWheel" in immersive, "palm tool selector is missing")
 require(".hand(.left, location: .palm)" in immersive and ".hand(.right, location: .palm)" in immersive, "tool kit and held tool are not hand anchored")
 require("experience.audienceLens == .clinician" in immersive and "enabled && experience.clinicianToolKitVisible" in immersive, "clinician tools may leak into the family lens")
+require(all(token in immersive for token in (
+    "HandToolArcGuide",
+    "CGSize(width: -12, height: -140)",
+    ".frame(width: 84, height: 84)",
+    "wheel.position = [0.095, 0.025, 0.110]",
+    "wheel.scale = [0.78, 0.78, 0.78]",
+    'experience.clinicianToolKitVisible ? "Tools on" : "Tools"',
+)), "clinician selector is not a gaze-sized hand-adjacent arc with a presenter fallback")
 require("makeClinicianHeldTools" in scene and "suction_and_forceps" in scene and "cranial_drill_generic" in scene, "clinician concept tools are not bundled into the held-tool rig")
 require("No selection mutates anatomy or simulates a cut" in scene, "clinician tool safety boundary is missing")
 require("proofRouteHasRun" in launch and "guard !proofRouteHasRun" in launch, "proof routing can open duplicate companion windows")
-require("65 manifest-backed USDZ" in asset_triage and "cerebral_bloodflow_animation_v2" in asset_triage, "expanded asset catalog is not triaged for runtime use")
+require("134 unique USDZ assets" in asset_triage and all(name in asset_triage for name in (
+    "brain_deep_structures_v2",
+    "brain_ventricles_v2",
+    "cerebral_bloodflow_animation_v2",
+)), "expanded asset catalog is not triaged separately from the thirteen-file runtime slice")
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -265,27 +310,45 @@ require("VESSEL STORY" in immersive and "BRAIN ATLAS" in immersive and "let reve
 require("FLOW_ANCHOR exports" in scene, "unreviewed flow markers are not quarantined from all-marker presentation")
 require("registered-region-point-anchor" in scene and "approach(regionPointAnchor" in scene, "region lesson markers remain coupled to cortical opacity or layer motion")
 require("horizon.isEnabled = experience.environmentMode == .warmHorizon" in immersive and "case .focusField: .full" in immersive, "environment state does not control horizon visibility and system immersion")
-require("DirectionalLightComponent" in immersive and "experience.environmentMode == .focusField" in immersive, "focus environment lacks a bounded anatomy key light")
+require("DirectionalLightComponent" in immersive and "experience.environmentMode != .surroundings" in immersive, "warm and focus environments lack a bounded anatomy key light")
 require(all(layer in immersive for layer in ("PRIMARY_FOVEAL", "SECONDARY_PERIPHERAL", "TERTIARY_ATMOSPHERE")), "visual-field hierarchy is not encoded in the immersive room")
 spatial_workspace = (ROOT / "Docs" / "SPATIAL_CASE_WORKSPACE.md").read_text()
 require("top explains, middle demonstrates" in spatial_workspace and "lower acts" in spatial_workspace, "vertical rule-of-three contract is missing")
 require("never communicated by peripheral" in spatial_workspace, "peripheral safety boundary is missing")
 require("--proof-family-question" in launch and "prepareFamilyQuestionProof" in state, "family question proof route is missing")
 require("clarificationRequested" in state and "never infers emotion" in state, "explicit clarification or emotion-inference boundary is missing")
+require(all(token in state for token in (
+    "familyComfortCheck",
+    "familyComfortWasSet",
+    "setFamilyComfortCheck",
+    "It is not an anxiety score",
+    "familyQuestionSuggestions",
+    "familyComfortLabel",
+)), "explicit session-local family comfort check or left-side question suggestions are missing")
+require(all(token in immersive for token in (
+    '"QUESTIONS TO ASK"',
+    '"PRESENTATION CHECKLIST"',
+    '"ASK ALOUD · COMFORT"',
+    '"Family · \\(experience.familyComfortLabel)"',
+    'Slider(',
+    "Record the family's stated explanation comfort",
+)), "role-aware left cue surface does not expose family suggestions and the deliberate comfort check")
 require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
-require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 190 : 118" in immersive, "three-act gaze timeline lacks active expansion or quiet inactive nodes")
-require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyTimelineQuestion" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
+require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 220 : 154" in immersive, "three-act gaze timeline lacks readable active expansion or quiet inactive nodes")
+require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
+require("focusLight.isEnabled = experience.environmentMode != .surroundings" in immersive and "high-density cortex reads like flat clay" in immersive, "warm anatomy field is missing its sculpting key light")
 require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not a patient scan", "Registered-v2 teaching asset · review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
 require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
 require("Canvas" not in immersive and "StrokeTeachingImagingSchematic" not in immersive, "rejected procedural imaging plates remain in the runtime UI")
 require("teachingImagingDrawerVisible = false" in state and "teachingImagingLens" in state and "selectTeachingImagingLens" in state and "careViewPermissionGranted" in state and "present(step: .discussCare" in state, "teaching lens is not explanation-gated or consent-aware")
 require("updateRegisteredTeachingImaging" in scene and "miniature.parent !== stageRoot" in immersive and "registeredTeachingImagingSuggestedStagePosition" in immersive, "registered teaching lens is not mutually selected and world-locked")
+require("let miniature = stageRoot.findEntity(" in immersive and "root.findEntity(\n                        named: StrokeSceneFactory.registeredTeachingImagingRootName" not in immersive, "world-locked teaching reference stops updating after reparenting")
 require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" in state, "deterministic teaching imaging proof route is missing")
 require("--proof-main-overview" in launch and "prepareMainOverviewProof" in state, "dots-first main overview proof route is missing")
 require("--proof-main-selected-point" in launch and "prepareTeachingImagingProof" in state, "selected-point main proof route is missing")
-require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0032)" in scene, "regional lesson cloud is not quietly visible around the main anatomy")
+require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0042)" in scene and "selectedLessonPointMaterial" in scene, "regional lesson cloud is not visibly distinct around the main anatomy")
 require("selectLessonPoint(initialPoint)" not in state and "clearPointSelection()" in state, "lesson family still auto-selects a label instead of beginning dots-first")
 require("clotTarget.position = clotSurfaceMarker" in scene and 'clotBeacon.name = "registered-clot-focus-beacon"' in scene, "registered clot target is not visibly derived from the loaded clot surface")
 require("experience.selectedPointEntityName != nil" in immersive and "selected.uppercased()" in immersive, "main explanation appears before point selection or fails to identify the selected target")
@@ -340,7 +403,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=PR2_EIGHT_ASSET_SHORTLIST")
+print("github_asset_runtime=THIRTEEN_ASSET_STAGED_SLICE")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")
 print("physical_device=NOT_PROVEN")

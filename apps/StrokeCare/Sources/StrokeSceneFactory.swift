@@ -26,6 +26,9 @@ enum StrokeSceneFactory {
     private static let importedArteriesName = "cerebral_arteries_realistic_v2"
     private static let importedClotName = "ischemic_mca_clot_v2"
     private static let importedDuraName = "dura_mater_cutaway_conceptual_v2"
+    private static let importedDeepStructuresName = "brain_deep_structures_v2"
+    private static let importedVentriclesName = "brain_ventricles_v2"
+    private static let importedBloodflowName = "cerebral_bloodflow_animation_v2"
     private static let importedEdemaName = "edema_swelling"
     private static let importedFlapName = "craniotomy_bone_flap"
     private static let importedPatchName = "dural_patch"
@@ -72,6 +75,15 @@ enum StrokeSceneFactory {
     private static let arteriesLayerName = "anatomy-arteries-layer"
     private static let blockageLayerName = "anatomy-blockage-layer"
     private static let duraLayerName = "anatomy-dura-layer"
+    private static let deepStructuresLayerName = "anatomy-deep-structures-layer"
+    private static let ventriclesLayerName = "anatomy-ventricles-layer"
+    private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
+
+    /// Retaining the playback controllers lets the global Pause control freeze
+    /// the imported four-second teaching loop rather than making it disappear.
+    /// Controllers hold their entities weakly, and invalid sessions are purged
+    /// during each update.
+    private static var authoredBloodflowControllers: [AnimationPlaybackController] = []
 
     private enum HemisphereSide: Float {
         case left = -1
@@ -483,12 +495,27 @@ enum StrokeSceneFactory {
             importedSkullName,
             importedArteriesName,
             importedClotName,
-            importedDuraName
+            importedDuraName,
+            importedDeepStructuresName,
+            importedVentriclesName,
+            importedBloodflowName
         ] {
             if let entity = await loadBundledUSDZ(named: name) {
                 entity.name = name
+                if name == importedBloodflowName {
+                    startAuthoredBloodflowAnimations(in: entity)
+                }
                 let layer = Entity()
                 layer.name = semanticLayerName(for: name)
+                if [
+                    importedDeepStructuresName,
+                    importedVentriclesName,
+                    importedBloodflowName
+                ].contains(name) {
+                    // These detail layers are opt-in clinician references, so
+                    // they never flash over the family anatomy while loading.
+                    layer.isEnabled = false
+                }
                 layer.addChild(entity)
                 registered.addChild(layer)
             }
@@ -607,9 +634,67 @@ enum StrokeSceneFactory {
             blockageLayerName
         case importedDuraName:
             duraLayerName
+        case importedDeepStructuresName:
+            deepStructuresLayerName
+        case importedVentriclesName:
+            ventriclesLayerName
+        case importedBloodflowName:
+            authoredBloodflowLayerName
         default:
             "anatomy-context-layer"
         }
+    }
+
+    /// Starts every baked transform track from the authored USDZ and repeats
+    /// it without changing the asset's registered frame. This remains an
+    /// illustrative route: never CFD, perfusion, speed, or a patient reading.
+    private static func startAuthoredBloodflowAnimations(in entity: Entity) {
+        for animation in entity.availableAnimations {
+            authoredBloodflowControllers.append(
+                entity.playAnimation(animation.repeat(), startsPaused: true)
+            )
+        }
+        for child in entity.children {
+            startAuthoredBloodflowAnimations(in: child)
+        }
+    }
+
+    private static func updateAuthoredBloodflowPlayback(
+        layer: Entity?,
+        isVisible: Bool,
+        isPaused: Bool
+    ) {
+        layer?.isEnabled = isVisible
+        authoredBloodflowControllers = authoredBloodflowControllers.filter(\.isValid)
+
+        for controller in authoredBloodflowControllers {
+            guard let controlledEntity = controller.entity,
+                  let layer,
+                  isEntity(controlledEntity, descendantOf: layer)
+            else { continue }
+
+            if isVisible && !isPaused {
+                if controller.isPaused { controller.resume() }
+            } else if !controller.isPaused {
+                controller.pause()
+            }
+        }
+    }
+
+    static func stopAuthoredBloodflowAnimations() {
+        for controller in authoredBloodflowControllers where controller.isValid {
+            controller.stop()
+        }
+        authoredBloodflowControllers.removeAll(keepingCapacity: true)
+    }
+
+    private static func isEntity(_ entity: Entity, descendantOf ancestor: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current === ancestor { return true }
+            candidate = current.parent
+        }
+        return false
     }
 
     private static func loadBundledUSDZ(named name: String) async -> Entity? {
@@ -1028,7 +1113,10 @@ enum StrokeSceneFactory {
 
         // One mesh and one material instance shared across droplets — rebuilding
         // either per frame is what makes RealityKit scenes stutter.
-        let mesh = MeshResource.generateSphere(radius: 0.0032)
+        // The marker is a visible invitation, not just a collision target.
+        // 4.2 mm stays below the existing 6 mm hit radius and keeps the two
+        // closest quarantined flow anchors visually distinct.
+        let mesh = MeshResource.generateSphere(radius: 0.0042)
         for index in 0..<count {
             let droplet = ModelEntity(mesh: mesh, materials: [flowMaterial(opacity: 0.95)])
             droplet.name = "droplet-\(index)"
@@ -1339,7 +1427,12 @@ enum StrokeSceneFactory {
 
     // MARK: - Per-frame update
 
-    static func update(root: Entity, experience: StrokeExperienceState, time: TimeInterval) {
+    static func update(
+        root: Entity,
+        experience: StrokeExperienceState,
+        time: TimeInterval,
+        reduceMotion: Bool = false
+    ) {
         let reveal = Float(experience.brainRevealProgress)
         let focus = Float(experience.vesselFocusProgress)
 
@@ -1403,7 +1496,12 @@ enum StrokeSceneFactory {
 
         updateCarePreview(root: root, experience: experience, time: time)
         updatePointFields(root: root, experience: experience, time: time)
-        updateImportedAnatomy(root: root, experience: experience, time: time)
+        updateImportedAnatomy(
+            root: root,
+            experience: experience,
+            time: time,
+            reduceMotion: reduceMotion
+        )
     }
 
     private static func updatePointFields(
@@ -1441,14 +1539,14 @@ enum StrokeSceneFactory {
                     experience.selectedPointEntityName == nil &&
                     index == experience.pointField.defaultLessonPointIndex
                 )
-                let emphasis: Float = isSelected ? 1.85 : (revealAll ? 1.04 : 1)
+                let emphasis: Float = isSelected ? 1.58 : (revealAll ? 1.08 : 1)
                 child.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
                 point.model?.materials = [
                     isSelected
-                        ? contextMaterial(opacity: 1)
+                        ? selectedLessonPointMaterial(opacity: 1)
                         : (experience.pointField == .regions
-                            ? careMaterial(opacity: revealAll ? 0.68 : 0.92)
-                            : warningMaterial(opacity: revealAll ? 0.68 : 0.92))
+                            ? lessonPointMaterial(opacity: revealAll ? 0.92 : 1)
+                            : warningMaterial(opacity: revealAll ? 0.90 : 1))
                 ]
             }
         }
@@ -1457,7 +1555,8 @@ enum StrokeSceneFactory {
     private static func updateImportedAnatomy(
         root: Entity,
         experience: StrokeExperienceState,
-        time: TimeInterval
+        time: TimeInterval,
+        reduceMotion: Bool
     ) {
         guard let imported = root.findEntity(named: importedRootName) else { return }
 
@@ -1473,7 +1572,7 @@ enum StrokeSceneFactory {
         case .transparent:
             cortexOpacity = Float(experience.cortexOpacity)
         case .exploded:
-            cortexOpacity = max(Float(experience.cortexOpacity), 0.52)
+            cortexOpacity = max(Float(experience.cortexOpacity), 0.30)
         }
 
         func approach(_ entity: Entity?, _ target: SIMD3<Float>) {
@@ -1482,17 +1581,21 @@ enum StrokeSceneFactory {
         }
 
         let cortexLayer = imported.findEntity(named: cortexLayerName)
+        let fixedSpaceLayer = imported.findEntity(named: fixedSpaceLayerName)
         let regionPointAnchor = imported.findEntity(named: regionPointAnchorName)
         let arteriesLayer = imported.findEntity(named: arteriesLayerName)
         let blockageLayer = imported.findEntity(named: blockageLayerName)
         let duraLayer = imported.findEntity(named: duraLayerName)
+        let deepStructuresLayer = imported.findEntity(named: deepStructuresLayerName)
+        let ventriclesLayer = imported.findEntity(named: ventriclesLayerName)
+        let authoredBloodflowLayer = imported.findEntity(named: authoredBloodflowLayerName)
         let clotTarget = imported.findEntity(named: importedClotTargetName)
 
-        approach(cortexLayer, [-0.026 * separation, 0, 0])
-        approach(regionPointAnchor, [-0.026 * separation, 0, 0])
+        approach(cortexLayer, [-0.050 * separation, 0, 0])
+        approach(regionPointAnchor, [-0.050 * separation, 0, 0])
         approach(arteriesLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(blockageLayer, [0.014 * separation, 0, 0.004 * separation])
-        approach(duraLayer, [0.036 * separation, 0, 0])
+        approach(duraLayer, [0.050 * separation, 0, 0])
 
         cortexLayer?.components.set(OpacityComponent(opacity: cortexOpacity))
         arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
@@ -1515,11 +1618,55 @@ enum StrokeSceneFactory {
         // or selected catalog record immediately restores the normal assembly.
         let importedSkull = imported.findEntity(named: importedSkullName)
         let isolateScholarSkull = experience.isClinicianScholarSkullInspectionActive && importedSkull != nil
+        // The normal clinician explanation may reveal the already-bundled skull
+        // as a separated spatial reference while the cortex remains central.
+        // A direct transparent overlap produced depth-sorting that hid cortical
+        // detail, so this reversible offset is both clearer and more honest about
+        // the cross-source fit. It reuses the existing layer control instead of
+        // adding another panel or loading the entire catalog into the hero.
+        // Family mode never receives it, and the exact Scholar inspection stays
+        // a separate, isolated review state.
+        let showsClinicianSkullContext = experience.audienceLens == .clinician &&
+            presentation == .transparent &&
+            experience.pointField == .regions &&
+            !isolateScholarSkull
+        approach(fixedSpaceLayer, showsClinicianSkullContext ? [0.16, 0, 0] : .zero)
         imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
         imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull
         imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
             (experience.procedureStep != .chooseCase || presentation == .exploded)
         imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull && showsPurpose
+
+        // Deep structures and ventricles are real registered-v2 geometry, but
+        // remain a clinician-only, explicit Study-apart reference. They do not
+        // appear in the family explanation or imply a patient scan.
+        let showsInternalStudy = experience.audienceLens == .clinician &&
+            presentation == .exploded &&
+            experience.pointField == .regions &&
+            !isolateScholarSkull
+        deepStructuresLayer?.isEnabled = showsInternalStudy
+        ventriclesLayer?.isEnabled = showsInternalStudy
+        deepStructuresLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.96 : 0))
+        ventriclesLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.88 : 0))
+
+        // The baked four-second route is qualitative authored motion—not CFD,
+        // perfusion, velocity, or a patient measurement. It appears only when
+        // the clinician deliberately chooses the Blood flow lesson. Pause and
+        // Reduce Motion freeze the imported tracks at their current state.
+        let showsAuthoredBloodflow = experience.spatialPhase == .explanation &&
+            experience.audienceLens == .clinician &&
+            experience.lessonPointsVisible &&
+            experience.pointField == .procedure &&
+            experience.selectedPointEntityName?.hasPrefix(
+                "clinician-procedure-point-field-point-"
+            ) == true &&
+            experience.procedureStep != .chooseCase &&
+            !isolateScholarSkull
+        updateAuthoredBloodflowPlayback(
+            layer: authoredBloodflowLayer,
+            isVisible: showsAuthoredBloodflow,
+            isPaused: experience.requestedPause || reduceMotion
+        )
 
         // These prototype-v1 meshes are intentionally quarantined. The first
         // integration render proved that their coordinate frame does not match
@@ -1532,7 +1679,14 @@ enum StrokeSceneFactory {
 
         // The full semantic skull stays off in the family path because its
         // cross-source fit is approximate and requires specialist review.
-        importedSkull?.isEnabled = isolateScholarSkull
+        // Opacity is applied at the semantic wrapper so authored transforms
+        // and nested PBR material resources remain untouched and are restored
+        // exactly. The skull receives no collision or input target, so it
+        // cannot steal gaze-and-pinch selection from anatomy-attached points.
+        importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext
+        fixedSpaceLayer?.components.set(OpacityComponent(
+            opacity: isolateScholarSkull ? 1 : (showsClinicianSkullContext ? 0.42 : 0)
+        ))
 
         // This small beacon marks the exact registered clot-derived target. It
         // is a focus affordance, not a simulated lesion volume or outcome.
@@ -1727,7 +1881,10 @@ enum StrokeSceneFactory {
 
     // MARK: - Materials
 
-    private enum MaterialKind: Hashable { case context, brain, furrow, warning, lost, flow, care, skull }
+    private enum MaterialKind: Hashable {
+        case context, brain, furrow, warning, lost, flow, care, skull
+        case lessonPoint, selectedLessonPoint
+    }
 
     /// The scene touches ~110 entities per frame. Building a fresh
     /// PhysicallyBasedMaterial for each one every frame hitches visibly, so
@@ -1773,6 +1930,14 @@ enum StrokeSceneFactory {
 
     private static func careMaterial(opacity: CGFloat) -> RealityKit.Material {
         cached(.care, opacity: opacity, build: buildCareMaterial)
+    }
+
+    private static func lessonPointMaterial(opacity: CGFloat) -> RealityKit.Material {
+        cached(.lessonPoint, opacity: opacity, build: buildLessonPointMaterial)
+    }
+
+    private static func selectedLessonPointMaterial(opacity: CGFloat) -> RealityKit.Material {
+        cached(.selectedLessonPoint, opacity: opacity, build: buildSelectedLessonPointMaterial)
     }
 
     private static func skullMaterial(opacity: CGFloat) -> RealityKit.Material {
@@ -1844,6 +2009,26 @@ enum StrokeSceneFactory {
         material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
         material.emissiveColor = .init(color: UIColor(red: 0.24, green: 0.68, blue: 0.50, alpha: 1))
         material.emissiveIntensity = 0.24
+        return material
+    }
+
+    private static func buildLessonPointMaterial(opacity: CGFloat) -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: UIColor(red: 0.72, green: 1.0, blue: 0.90, alpha: opacity))
+        material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
+        material.emissiveColor = .init(color: UIColor(red: 0.42, green: 1.0, blue: 0.78, alpha: 1))
+        material.emissiveIntensity = 0.72
+        material.roughness = 0.28
+        return material
+    }
+
+    private static func buildSelectedLessonPointMaterial(opacity: CGFloat) -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: UIColor(white: 1.0, alpha: opacity))
+        material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
+        material.emissiveColor = .init(color: UIColor.white)
+        material.emissiveIntensity = 0.92
+        material.roughness = 0.18
         return material
     }
 

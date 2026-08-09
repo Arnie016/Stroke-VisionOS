@@ -419,3 +419,50 @@
 - Next safe action: on an awake and unlocked XCAT, pinch each of the four region
   points once and record whether its local label and single right reference stay
   registered while orbiting the anatomy.
+
+## 2026-08-09 22:01 SGT — showcase control-agency pass
+
+- Target: make the doctor-worn, mirrored family explanation readable and
+  operable for the three-minute table demo.
+- Bounded action: increased the unlabeled region-marker visibility, widened the
+  three-act timeline, fixed the reparented teaching-reference update path,
+  replaced the palm disk with a gaze-sized semicircle and fallback, and kept
+  family questions plus a presenter-recorded comfort check in one left field.
+- Evidence: guarded receipt `Proof/xcat/20260809-213124/BLOCKED.md` recorded
+  paired XCAT as `unavailable`; `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 Simulator
+  build ended `** BUILD SUCCEEDED **`; launches returned PIDs 98600, 98741, and
+  3425; runtime captures are Proof 58, 59, and 60 with hashes recorded in
+  `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the main point field and timeline now read immediately,
+  clinician tools form an intentional hand arc, and the single-headset family
+  conversation has explicit pacing without inferred anxiety.
+- Blocker: XCAT remained unavailable, and Simulator cannot prove hand-relative
+  reach, AirPlay mirroring, gaze-and-pinch reliability, wearer comfort,
+  comprehension, or clinical validity.
+- Next safe action: run one awake/unlocked XCAT-to-AirPlay dress rehearsal of
+  the three-minute route and record the launch, four point selections, one
+  timeline jump, one comfort response, and clean exit.
+
+## 2026-08-09 22:58 SGT — role split, detailed layers, and presenter checklist
+
+- Target: make the entry purpose unambiguous and replace the basic anatomy proof
+  with a readable, evidence-backed layered view.
+- Bounded action: split launch into **Patient / family** direct anatomy and
+  **Doctor presenter** case-led explanation; staged deep structures, ventricles,
+  and selected-point authored flow inside the existing registered frame; mapped
+  the Page 2 cool-to-warm act colors; and reshaped the left doctor field into a
+  vertical presentation checklist.
+- Evidence: all three added USDZs passed strict ARKit USD validation; the built
+  Simulator app contains exactly thirteen USDZ files; contract and diff checks
+  passed; the visionOS Simulator build succeeded; Proof 65–68 and the 4.8-second
+  Proof 66b motion receipt have hashes recorded in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the first choice now matches the actual audience model,
+  the clinician can inspect named internal layers, the selected vessel story no
+  longer summons an unrelated giant skull, and the left cues read as a spatial
+  checklist rather than a notes card.
+- Blocker: the wider 134-asset catalog is not a license/registration/performance
+  clearance, and Simulator cannot establish XCAT interaction or clinical truth.
+- Next safe action: on an awake XCAT, run the doctor-presenter route once and
+  record four point pinches, one timeline jump, checklist legibility, and Pause
+  freezing the authored-flow lesson.

@@ -6,12 +6,13 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 
 - The expanded catalog is already in the shared history through merge commit
   `b46d133` (`Merge 65-asset visionOS stroke education catalog (#2)`).
-- It contains **65 manifest-backed USDZ packages**: 36 higher-detail v2 assets
-  and 29 prototype-v1 assets.
-- No newer asset delta exists between this feature branch and `origin/main` at
-  the time of the fetch. The current main-only delta concerns XCAT acceptance
-  files, not anatomy or tool assets.
-- Stroke Care deliberately bundles an eight-asset runtime shortlist today. A
+- The merged catalog contains **65 manifest-backed USDZ packages**: 36
+  higher-detail v2 assets and 29 prototype-v1 assets.
+- Draft PR #8 at audited head `12728df2e856897a44df2bbfbe01236f8b142303`
+  adds 69 v3 packages, bringing the repository candidate catalog to **134 unique USDZ assets**.
+  Those draft files are metadata candidates, not current
+  app runtime dependencies.
+- Stroke Care deliberately declares a thirteen-asset runtime slice today. A
   catalog file existing in Git is not proof that it is registered, clinically
   suitable, performant, or visible in the app.
 
@@ -19,9 +20,9 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 
 | Candidate | Size | Best role | Decision |
 |---|---:|---|---|
-| `brain_deep_structures_v2` | 2.2 MB | Clinician Regions field | Next, after opacity/occlusion visual QA. |
-| `brain_ventricles_v2` | 0.8 MB | Clinician Regions field | Next, after specialist label review. |
-| `cerebral_bloodflow_animation_v2` | 0.19 MB | Calm qualitative flow layer | High-value next experiment; play imported animation explicitly and retain non-CFD label. |
+| `brain_deep_structures_v2` | 2.2 MB | Clinician Study-apart field | Bundled and runtime-gated; Simulator opacity/occlusion proof still required. |
+| `brain_ventricles_v2` | 0.8 MB | Clinician Study-apart field | Bundled and runtime-gated; specialist label review still required. |
+| `cerebral_bloodflow_animation_v2` | 0.19 MB | Calm qualitative flow layer | Bundled and explicitly looped only in clinician Blood-flow mode; non-CFD and motion proof remain required. |
 | `artery_cutaway_complete_v2` | 6.5 MB | Magnified vessel close-up | Separate on-demand volume, never permanent centre clutter. |
 | `thrombectomy_device_set_educational_v2` | 2.47 MB | Presenter-only Plan B tool tray | Use only when thrombectomy is the chosen discussion; label magnification and generic-device status. |
 | Individual v2 guidewire/catheters/stent | 0.24–1.05 MB each | Grabbable clinician inventory | Prefer lazy individual loading over the combined set. |
@@ -40,9 +41,11 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 
 ## Recommended next asset slice
 
-Load `cerebral_bloodflow_animation_v2` lazily in presenter Procedure mode and
-compare it against the existing procedural droplets on Simulator and XCAT. If
-the imported animation stays registered, legible, and calm, replace—not stack—
-the fallback flow. Then test one individual generic device in a private tool
-tray. This preserves depth over breadth and avoids turning the central brain
-into an asset gallery.
+Verify the new deep-structures and ventricles layers in the existing
+`--proof-layer-study` route, then verify the baked flow loop in
+`--proof-procedure-field`. The imported animation replaces the hidden
+procedural registered-flow attempt rather than stacking another centreline.
+After Simulator verification, repeat on XCAT and profile frame time before
+considering one individual generic device in the private tool tray. This
+preserves depth over breadth and avoids turning the central brain into an asset
+gallery.

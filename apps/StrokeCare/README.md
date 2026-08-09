@@ -28,7 +28,7 @@ arteries, a clot-derived focus beacon, four anatomy-attached lesson points, and
 the revisitable three-act timeline. No label or secondary reference opens until
 the presenter selects a point.
 
-![Dots-first Pressure overview in visionOS Simulator](Proof/56-main-dots-first-overview-simulator.png)
+![Readable dots-first Pressure overview in visionOS Simulator](Proof/59-main-point-cloud-readable-timeline-simulator.png)
 
 The second frame is the selected-point state: one point gains one local label,
 one concise explanation, and one registered affected-vessel reference at the
@@ -40,12 +40,38 @@ These are fresh visionOS Simulator runtime captures, not concept art. They do
 not prove physical XCAT depth, gaze-and-pinch reliability, wearer comfort,
 family comprehension, or clinical validity.
 
+For the showcase, one doctor wears XCAT and the family watches the mirrored
+view on a Mac or Apple TV. This build does not claim a second-headset or shared
+spatial session. Questions and a presenter-recorded comfort check remain in the
+left family field; the clinician sees that explicitly shared response beside
+three concise presenter cues. No anxiety, emotion, or physiology is inferred.
+
+![Doctor-worn, mirrored family cue field in visionOS Simulator](Proof/60-doctor-mirrored-family-cues-simulator.png)
+
+The clinician's existing layer control can also separate the generic skull to
+the right while preserving the detailed central brain, vessels, point field,
+and timeline. The separation is deliberate: a transparent overlap hid cortex
+detail and could imply an exact cross-source fit that has not been reviewed.
+
+![Clinician skull-separated anatomy in visionOS Simulator](Proof/63-clinician-skull-separated-anatomy-simulator.png)
+
 The launch window begins with a two-beat calm prelude, then asks whether the
-purpose is **Doctor → family** or **Clinician teaching**. Inside the immersive
+purpose is **Patient / family** or **Doctor presenter**. The patient/family path
+enters the calm generic anatomy exhibit directly; the doctor path opens the
+fictional case library before the shared brain. Inside the immersive
 space, the file itself is the control: carrying it from the exhibit into the
 centre opens a distinct case-review constellation. The wearer must explicitly
 enter the selected case before the complete intake room disappears and the
 brain appears. Patient-file furniture never persists beside the anatomy.
+
+![Patient or doctor presenter threshold in visionOS Simulator](Proof/67-patient-doctor-role-threshold-simulator.png)
+
+The doctor's left peripheral surface is a Page 2-inspired presentation
+checklist—not a note editor. It shows three current-act prompts, the explicitly
+shared family comfort state, and the boundary that these are prompts rather
+than a script.
+
+![Doctor presentation checklist in visionOS Simulator](Proof/68-doctor-presentation-checklist-simulator.png)
 
 The companion window has two views over the same spatial state:
 
@@ -71,12 +97,19 @@ tear away from the brain.
 ## Spatial rig
 
 - The default immersive path loads the exact PR #2 registered-v2 brain,
-  cerebral arteries, right-M1 teaching marker, and conceptual dura from the
-  canonical repository asset catalog. The app project references only its
-  eight-file shortlist and does not duplicate the 65-asset source library.
+  cerebral arteries, right-M1 teaching marker, conceptual dura, semantic skull,
+  deep structures, ventricles, and conceptual cerebral-flow animation from the
+  canonical repository asset catalog. The app declares a bounded **13-USDZ**
+  slice: eight registered-v2 anatomy/teaching files, three quarantined v1 files,
+  and two presenter-only tool files. The wider audited GitHub catalog contains
+  134 manifest-backed candidates; they are not all loaded into one scene.
   Authored child transforms are not
   rewritten; one outer placement root owns orbit, zoom, and the initial
   three-quarter presentation.
+- Deep structures and ventricles appear only in the clinician's explicit
+  **Study apart** view. The baked flow asset appears only in the clinician's
+  **Blood flow** lesson and freezes with Pause or Reduce Motion. It is generic,
+  qualitative authored motion—not CFD, perfusion, velocity, or a patient scan.
 - Procedural hemispheres, vessels, clot, at-risk tissue, and flow remain an
   instant-loading fallback when the hero brain cannot load.
 - A sparse fixed-space boundary ring replaces the earlier dark transparent
@@ -160,6 +193,10 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 # Integrated dots-first and selected-point compositions
 ... com.arnav.StrokeTime --proof-main-overview
 ... com.arnav.StrokeTime --proof-main-selected-point
+
+# Doctor-worn hand arc and mirrored family cue field
+... com.arnav.StrokeTime --proof-clinician-toolkit
+... com.arnav.StrokeTime --proof-family-question
 ```
 
 Simulator builds and screenshots do not prove XCAT performance, physical
@@ -176,6 +213,10 @@ deployment receipt:
 ```bash
 Scripts/deploy_xcat.zsh
 ```
+
+For Monday's table demo, mirror the doctor's Vision Pro view to the presentation
+Mac or Apple TV using Apple's current AirPlay instructions:
+[Mirror Apple Vision Pro to another device](https://support.apple.com/en-sg/119944).
 
 The command refuses to build or install while XCAT is unavailable. The machine
 receipt and the separate 90-second wearer protocol are documented in

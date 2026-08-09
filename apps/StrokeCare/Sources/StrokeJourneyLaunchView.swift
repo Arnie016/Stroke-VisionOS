@@ -69,13 +69,13 @@ struct StrokeJourneyLaunchView: View {
 
                 if introBeat >= 2 {
                     HStack(spacing: 14) {
-                        Button("Doctor → family", systemImage: "person.2.fill") {
+                        Button("Patient / family", systemImage: "person.2.fill") {
                             Task { await enterSpatialCaseRoom(as: .family) }
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.orange)
 
-                        Button("Clinician teaching", systemImage: "stethoscope") {
+                        Button("Doctor presenter", systemImage: "stethoscope") {
                             Task { await enterSpatialCaseRoom(as: .clinician) }
                         }
                         .buttonStyle(.bordered)
@@ -110,7 +110,7 @@ struct StrokeJourneyLaunchView: View {
         switch introBeat {
         case 0: "When time is urgent, clarity matters."
         case 1: "One calm shared picture can reduce uncertainty."
-        default: "Who are you guiding today?"
+        default: "How will you use this?"
         }
     }
 
@@ -118,7 +118,7 @@ struct StrokeJourneyLaunchView: View {
         switch introBeat {
         case 0: "A stroke conversation can begin before every answer is known."
         case 1: "See the case, explain the change, and leave with a next step."
-        default: "Choose the purpose first. The room changes with it."
+        default: "Explore the anatomy, or prepare a case-led explanation."
         }
     }
 
@@ -144,6 +144,9 @@ struct StrokeJourneyLaunchView: View {
         prelude.stop()
         experience.reset()
         experience.audienceLens = lens
+        if lens == .family {
+            experience.beginPatientExploration()
+        }
         let result = await openImmersiveSpace(id: StrokeSpace.immersive)
         guard result == .opened else {
             isOpening = false
