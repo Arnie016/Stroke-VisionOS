@@ -731,6 +731,7 @@ final class RBCJourneyModel {
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
         let familyGuideProofRequested = arguments.contains("--proof-family-guide")
+        let regionFamilyCompanionProofRequested = arguments.contains("--proof-region-family-companion")
         let familyGuideBeatArgument = arguments.first { $0.hasPrefix("--proof-family-guide-beat-") }
         let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-family-guide-beat-", with: ""))
@@ -739,7 +740,7 @@ final class RBCJourneyModel {
             nil
         } else if flowRideProofRequested {
             .arterialLumen
-        } else if willisRouteProofRequested {
+        } else if willisRouteProofRequested || regionFamilyCompanionProofRequested {
             .circleOfWillis
         } else {
             regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
@@ -769,8 +770,8 @@ final class RBCJourneyModel {
             .overview
         }
         isCapillaryFieldFocused = capillaryFocusProofRequested
-        familyNarrationEnabled = familyGuideProofRequested
-        familyNarrationConfigured = familyGuideProofRequested
+        familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
+        familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationMoment = familyGuideBeatIndex
             .flatMap(RBCFamilyNarrationMoment.init(rawValue:))
             ?? .orientation
@@ -846,6 +847,7 @@ final class RBCJourneyModel {
             || arguments.contains("--proof-paused")
             || arguments.contains("--proof-frontal-clot")
             || familyGuideProofRequested
+            || regionFamilyCompanionProofRequested
             || familyGuideBeatArgument != nil
             || flowRideProofRequested
             || capillaryFocusProofRequested
@@ -858,10 +860,35 @@ final class RBCJourneyModel {
     }
 
     /// Versioned, family-facing copy. The Realtime provider is instructed to
-    /// read this exact text and may not add medical interpretation.
+    /// read this exact text and may not add medical interpretation. Outside
+    /// the route journey, the companion reads the same title and explanation
+    /// already visible for the selected region—never a hidden model answer.
     var familyNarrationText: String {
-        guard isFlowRideActive else { return "" }
-        return "\(familyNarrationCue.title). \(familyNarrationCue.caption)"
+        guard experienceMode == .regionAtlas,
+              activeRegionDestination != nil
+        else { return "" }
+        if isFlowRideActive {
+            return "\(familyNarrationCue.title). \(familyNarrationCue.caption)"
+        }
+        return "\(regionFamilyCompanionTitle). \(regionFamilyCompanionSubtitle)"
+    }
+
+    var regionFamilyCompanionTitle: String {
+        guard let region = activeRegionDestination else { return "" }
+        if region == .circleOfWillis { return activeWillisTitle }
+        if region == .frontalLobe && isFrontalClotScenarioActive {
+            return "One branch, interrupted"
+        }
+        return region.title
+    }
+
+    var regionFamilyCompanionSubtitle: String {
+        guard let region = activeRegionDestination else { return "" }
+        if region == .circleOfWillis { return activeWillisSubtitle }
+        if region == .frontalLobe && isFrontalClotScenarioActive {
+            return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+        }
+        return region.subtitle
     }
 
     var familyNarrationCue: RBCFamilyNarrationCue {
@@ -1034,6 +1061,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        familyNarrationEnabled = false
         exhibitBeat = .route
         station = exhibitBeat.station
         motionMode = .continuous
@@ -1051,6 +1079,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        familyNarrationEnabled = false
         station = .circleOfWillis
         isPaused = true
         isExhibitFactExpanded = false
@@ -1072,6 +1101,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        familyNarrationEnabled = false
         station = .circleOfWillis
         isPaused = false
         isExhibitFactExpanded = false

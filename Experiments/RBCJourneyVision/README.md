@@ -208,6 +208,15 @@ configured, is never replaced before that exact narration finishes. These
 controls remain inside the existing family guide surface; they do not add a
 second dashboard or appear in a clinician-default mode.
 
+The same opt-in companion is available in the general region view. In the
+Circle, frontal cortex, cortical microarchitecture, and other destinations it
+reads the exact title and explanation already on screen. Changing the Circle
+focus from Whole to Anterior or Posterior updates that reviewed utterance; the
+model does not invent a hidden answer. The control is off by default, adds no
+new panel, requests no microphone permission, and disappears when the wearer
+returns to the main story. Use `--proof-region-family-companion` for the
+deterministic Circle companion state.
+
 On the frontal route, automatic pacing stops at **Follow**. The next family
 action becomes **Enter field**: it expands the capillary environment first and
 only then advances the guide to **Connect**. This keeps the spoken causal order
@@ -222,8 +231,10 @@ configured, the control still offers the caption journey and says plainly that
 the local guide is needed for audio.
 
 The visionOS app never receives a permanent OpenAI key. It sends the visible
-caption to a developer-controlled loopback proxy, then verifies the returned
-model name and SHA-256 of that caption before playing the WAV. There is no
+caption to a developer-controlled loopback proxy. The proxy rejects the audio
+unless the Realtime transcript has the same punctuation-insensitive word
+sequence as the reviewed caption. The app then verifies the returned model,
+exact-copy SHA-256, and transcript SHA-256 before playing the WAV. There is no
 system-voice fallback: if the proxy is absent, the caption remains visible and
 the voice control stays disabled with a short setup explanation.
 

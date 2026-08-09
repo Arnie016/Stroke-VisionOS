@@ -185,9 +185,17 @@ checks = {
         "--proof-family-guide", "Family guide", "familyNarrationEnabled",
         "gpt-realtime-2.1", "RBC_REALTIME_PROXY_URL", "marin",
         "X-RBC-Narration-Model", "X-RBC-Narration-Copy-SHA256",
+        "X-RBC-Narration-Transcript-SHA256", "canonicalNarrationSHA256",
+        "response.output_audio_transcript.delta", "realtime_transcript_mismatch",
         "response.output_audio.delta", "pcm16MonoToWAV",
         "rbc-journey-reviewed-family-caption", "apikey get OPENAI_API_KEY",
     ]) and "AVSpeechSynthesizer" not in narrator + realtime_proxy,
+    "region_family_voice_companion": all(token in model + hud + immersive + narrator for token in [
+        "--proof-region-family-companion", "regionFamilyCompanionTitle",
+        "regionFamilyCompanionSubtitle", "Family companion",
+        "Voice reads this exact view.", "familyNarrationText",
+        "X-RBC-Narration-Transcript-SHA256",
+    ]) and "NSMicrophoneUsageDescription" not in project,
     "inhabited_branching_flow_corridor": all(token in model + scene + hud + immersive for token in [
         "enum RBCFlowRideRoute", "native-inward-facing-arterial-corridor",
         "makeInwardFacingTubeMesh", "flowRideJourneyCells",

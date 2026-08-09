@@ -261,10 +261,15 @@ struct RBCRegionInfoHUD: View {
             let exampleClotActive = region == .frontalLobe && model.isFrontalClotScenarioActive
             let flowRideActive = region == .arterialLumen && model.isFlowRideActive
             let willisRouteActive = region == .circleOfWillis
+            let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
             VStack(alignment: .leading, spacing: 9) {
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationProgressLabel
-                    : (flowRideActive ? "RIDE  ·  ARTERIAL LUMEN" : "INSIDE  ·  \(region.shortTitle.uppercased())"))
+                    : (flowRideActive
+                        ? "RIDE  ·  ARTERIAL LUMEN"
+                        : (regionCompanionActive
+                            ? "FAMILY COMPANION  ·  \(region.shortTitle.uppercased())"
+                            : "INSIDE  ·  \(region.shortTitle.uppercased())")))
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .tracking(1.3)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
@@ -482,6 +487,36 @@ struct RBCRegionInfoHUD: View {
                 }
 
                 if !flowRideActive {
+                    HStack(spacing: 8) {
+                        Button(
+                            model.familyNarrationEnabled ? "End voice" : "Family companion",
+                            systemImage: model.familyNarrationEnabled ? "waveform.slash" : "waveform"
+                        ) {
+                            model.toggleFamilyNarration()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(model.familyNarrationEnabled ? Color.indigo : nil)
+                        .accessibilityLabel(model.familyNarrationEnabled
+                            ? "Turn off the optional family voice companion"
+                            : "Hear the reviewed explanation for this brain region")
+
+                        Text(model.familyNarrationConfigured
+                            ? "Voice reads this exact view."
+                            : "Caption stays visible; voice needs the local guide.")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.62))
+
+                        if model.familyNarrationEnabled && model.familyNarrationConfigured {
+                            Button("Hear again", systemImage: "arrow.counterclockwise") {
+                                model.replayFamilyNarration()
+                            }
+                            .font(.caption.weight(.semibold))
+                            .buttonStyle(.bordered)
+                            .accessibilityLabel("Hear this region explanation again")
+                        }
+                    }
+                    .buttonBorderShape(.capsule)
+
                     HStack(spacing: 8) {
                         Button("Return to story", systemImage: "arrow.uturn.backward") {
                             model.startWondrousJourney()

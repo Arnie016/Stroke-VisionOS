@@ -47,7 +47,8 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
                 guard let http = response as? HTTPURLResponse,
                       (200..<300).contains(http.statusCode),
                       http.value(forHTTPHeaderField: "X-RBC-Narration-Model") == Self.model,
-                      http.value(forHTTPHeaderField: "X-RBC-Narration-Copy-SHA256") == Self.sha256(text)
+                      http.value(forHTTPHeaderField: "X-RBC-Narration-Copy-SHA256") == Self.sha256(text),
+                      http.value(forHTTPHeaderField: "X-RBC-Narration-Transcript-SHA256") == Self.canonicalSHA256(text)
                 else {
                     self?.state = .unavailable
                     return
@@ -101,6 +102,26 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
 
     private static func sha256(_ text: String) -> String {
         SHA256.hash(data: Data(text.utf8)).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// Matches the proxy's punctuation-insensitive word-sequence gate. The
+    /// exact source hash above protects the authored copy; this second hash
+    /// protects what the provider reports it actually spoke.
+    private static func canonicalSHA256(_ text: String) -> String {
+        let locale = Locale(identifier: "en_US_POSIX")
+        let folded = text
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: locale)
+            .lowercased(with: locale)
+        var separated = ""
+        for scalar in folded.unicodeScalars {
+            if CharacterSet.alphanumerics.contains(scalar) {
+                separated.unicodeScalars.append(scalar)
+            } else {
+                separated.append(" ")
+            }
+        }
+        let canonical = separated.split(whereSeparator: \Character.isWhitespace).joined(separator: " ")
+        return sha256(canonical)
     }
 }
 

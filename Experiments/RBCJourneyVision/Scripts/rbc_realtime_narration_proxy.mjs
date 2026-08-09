@@ -67,6 +67,20 @@ function sha256(text) {
   return createHash("sha256").update(text, "utf8").digest("hex");
 }
 
+function canonicalNarration(text) {
+  return text
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .toLocaleLowerCase("en-US")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function canonicalNarrationSHA256(text) {
+  return sha256(canonicalNarration(text));
+}
+
 async function createClientSecret(apiKey) {
   const response = await fetch("https://api.openai.com/v1/realtime/client_secrets", {
     method: "POST",
@@ -116,6 +130,7 @@ async function generateNarration(text) {
 
   return await new Promise((resolve, reject) => {
     const pcmChunks = [];
+    const transcriptChunks = [];
     let settled = false;
     const timeout = setTimeout(() => finish(new Error("realtime_timeout")), 30_000);
 
@@ -151,13 +166,23 @@ async function generateNarration(text) {
         }));
       } else if (event.type === "response.output_audio.delta") {
         pcmChunks.push(Buffer.from(event.delta, "base64"));
+      } else if (event.type === "response.output_audio_transcript.delta") {
+        transcriptChunks.push(event.delta ?? "");
+      } else if (event.type === "response.output_audio_transcript.done" && typeof event.transcript === "string") {
+        transcriptChunks.length = 0;
+        transcriptChunks.push(event.transcript);
       } else if (event.type === "response.done") {
         if (event.response?.status !== "completed") {
           finish(new Error(`realtime_${event.response?.status ?? "incomplete"}`));
         } else if (pcmChunks.length === 0) {
           finish(new Error("realtime_audio_empty"));
+        } else if (canonicalNarrationSHA256(transcriptChunks.join("")) !== canonicalNarrationSHA256(text)) {
+          finish(new Error("realtime_transcript_mismatch"));
         } else {
-          finish(null, pcm16MonoToWAV(Buffer.concat(pcmChunks)));
+          finish(null, {
+            wav: pcm16MonoToWAV(Buffer.concat(pcmChunks)),
+            transcriptSHA256: canonicalNarrationSHA256(text),
+          });
         }
       } else if (event.type === "error") {
         finish(new Error(`realtime_${event.error?.code ?? "error"}`));
@@ -199,16 +224,17 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
-    const wav = await generateNarration(text);
+    const narration = await generateNarration(text);
     response.writeHead(200, {
       "Content-Type": "audio/wav",
-      "Content-Length": wav.length,
+      "Content-Length": narration.wav.length,
       "Cache-Control": "no-store",
       "X-RBC-Narration-Model": MODEL,
       "X-RBC-Narration-Copy-SHA256": sha256(text),
+      "X-RBC-Narration-Transcript-SHA256": narration.transcriptSHA256,
     });
-    response.end(wav);
-    console.log(`RBC_REALTIME_REQUEST=OK model=${MODEL} audioBytes=${wav.length}`);
+    response.end(narration.wav);
+    console.log(`RBC_REALTIME_REQUEST=OK model=${MODEL} audioBytes=${narration.wav.length} transcriptGate=PASS`);
   } catch (error) {
     const reason = error instanceof Error ? error.message : "unknown_error";
     const status = reason === "openai_key_unavailable" ? 503 : 502;
@@ -216,6 +242,19 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`RBC_REALTIME_PROXY=READY url=http://${HOST}:${PORT}/narrate model=${MODEL} voice=${VOICE}`);
-});
+if (process.argv.includes("--integrity-self-test")) {
+  const reviewed = "A crossroads at the brain's base. Follow the moving fronts.";
+  const punctuationVariant = "A CROSSROADS at the brain’s base — follow the moving fronts!";
+  const changedClaim = "A crossroads at the brain's base. Blood can always reroute safely.";
+  if (canonicalNarrationSHA256(reviewed) !== canonicalNarrationSHA256(punctuationVariant)) {
+    throw new Error("canonical_punctuation_case_failed");
+  }
+  if (canonicalNarrationSHA256(reviewed) === canonicalNarrationSHA256(changedClaim)) {
+    throw new Error("canonical_changed_claim_failed");
+  }
+  console.log("RBC_NARRATION_INTEGRITY_SELF_TEST=PASS cases=2");
+} else {
+  server.listen(PORT, HOST, () => {
+    console.log(`RBC_REALTIME_PROXY=READY url=http://${HOST}:${PORT}/narrate model=${MODEL} voice=${VOICE}`);
+  });
+}

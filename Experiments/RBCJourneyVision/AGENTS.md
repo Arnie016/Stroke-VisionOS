@@ -33,9 +33,11 @@ video cannot.
   cells and arrows remain intravascular. It is an orientation/exchange lesson,
   not measured flow, diffusion, oxygen concentration, or patient anatomy.
 - Family guide: optional three-beat orientation → passage → arrival captions;
-  voice may read only the exact visible copy through a loopback proxy. It is
-  off by default and never a clinician default. Entering the capillary field
-  advances the guide to the matching arrival explanation.
+  voice may read only the exact visible copy through a loopback proxy. The same
+  opt-in companion can read a selected region's visible title and explanation.
+  It is off by default and never a clinician default. Reject returned audio if
+  its transcript word sequence differs from the reviewed copy. Entering the
+  capillary field advances the guide to the matching arrival explanation.
 
 ## Non-negotiable constraints
 
