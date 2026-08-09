@@ -633,6 +633,32 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    /// One calm prompt for the family lens. This stays distinct from the
+    /// presenter rail so peripheral copy never turns into a second script.
+    var familyTimelineQuestion: String {
+        switch procedureStep {
+        case .chooseCase:
+            "Which layer is this?"
+        case .inspectOcclusion:
+            "Is this blockage, injury, or swelling?"
+        case .discussCare:
+            "What can this surgery change—and not change?"
+        }
+    }
+
+    /// Exactly three glanceable teaching beats for each act. These are
+    /// orientation cues, not patient-specific findings or outcome claims.
+    var presenterTimelineKeyPoints: [String] {
+        switch procedureStep {
+        case .chooseCase:
+            ["Generic scenario", "Whole brain first", "Not a patient scan"]
+        case .inspectOcclusion:
+            ["Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred"]
+        case .discussCare:
+            ["Ask before transparency", "Room, not repair", "No outcome promise"]
+        }
+    }
+
     var journeyCaption: String {
         switch procedureStep {
         case .chooseCase:

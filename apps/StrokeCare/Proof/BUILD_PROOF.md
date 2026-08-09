@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (9)` in current source; signed XCAT deployment and
+- Version/build: `0.6 (10)` in current source; signed XCAT deployment and
   placement-path receipts are recorded below.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -174,6 +174,16 @@ that the signed build installed, foreground-launched, and existed as a running
 process. They do not establish the wearer-visible scene, lesson-point hover or
 pinch quality, annotation behavior, comfort, comprehension, spatial audio, or
 clinical validity.
+
+Build `0.6 (10)` adds one centered world-space chapter line for
+`Orient → Pressure → Make space`. Each node is a gaze-and-pinch target and
+reuses the existing consent-aware `present(step:)` path. A single left
+peripheral surface shows one family question or exactly three presenter keys;
+the prior duplicate presenter Act menus are removed. The static contract and
+generic physical visionOS build pass. The first guarded deployment attempt at
+17:19 SGT stopped before building because XCAT changed to `unavailable`; that
+gate is recorded in `Proof/xcat/20260809-171918/BLOCKED.md`. No build-10 device
+install or wearer result is claimed yet.
 
 ## Clinical and procedural gates
 

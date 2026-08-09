@@ -292,3 +292,25 @@
   question-marker separation, comfort, comprehension, or clinical meaning.
 - Next safe action: record one XCAT wearer pass confirming point hover, point
   selection, and annotation-mode question placement on build 9.
+
+## 2026-08-09 17:22 SGT — spatial three-act timeline
+
+- Target: let the family or presenter understand and revisit the three calm
+  acts without another tab panel, while keeping anatomy dominant at center.
+- Bounded action: added a centered world-space `Orient → Pressure → Make space`
+  timeline with gaze-and-pinch chapter targets and active-node expansion;
+  added one left-peripheral family question or exactly three presenter keys;
+  removed the duplicate presenter Act menus. Direct chapter selection reuses
+  the existing permission-aware `present(step:)` path.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the generic physical
+  visionOS build for `0.6 (10)` ended `** BUILD SUCCEEDED **`. The first guarded
+  device deployment stopped before build/install because `devicectl` reported
+  XCAT `unavailable`; receipt:
+  `Proof/xcat/20260809-171918/BLOCKED.md`.
+- Verdict: `IMPROVED` — the timeline and role cues compile as one spatial layer,
+  without adding medical breadth or another window.
+- Blocker: XCAT is presently unavailable, and no wearer-view or gaze/pinch
+  result exists for build 10.
+- Next safe action: wear and unlock XCAT, then rerun the guarded build-10
+  deploy/install/foreground-launch lane once.
