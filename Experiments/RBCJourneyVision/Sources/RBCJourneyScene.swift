@@ -52,6 +52,18 @@ final class RBCJourneyScene {
     private var frontalVesselRoot: Entity?
     private var frontalClotRoot: Entity?
     private var frontalDiscoveryTargets: [Entity] = []
+    private var corticalMicroarchitectureOutlineRoot: Entity?
+    private var corticalMicroarchitectureLayerRoot: Entity?
+    private var corticalMicroarchitectureColumnRoot: Entity?
+    private var corticalMicroarchitectureVesselRoot: Entity?
+    private var corticalMicroarchitectureDiscoveryTargets: [Entity] = []
+    private var corticalMicroarchitectureStars: [(entity: ModelEntity, phase: Float)] = []
+    private var corticalMicroarchitectureFlowPaths: [[SIMD3<Float>]] = []
+    private var corticalMicroarchitectureFlowArrows: [(entity: Entity, pathIndex: Int, offset: Float)] = []
+    private var corticalMicroarchitectureRuntimeActive = false
+    private var corticalMicroarchitectureRuntimeHeld = false
+    private var corticalMicroarchitectureRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var corticalMicroarchitectureElapsed: Float = 0
     private var flowRideCells: [(
         entity: Entity,
         origin: SIMD3<Float>,
@@ -164,6 +176,7 @@ final class RBCJourneyScene {
         await buildPortals()
         buildExtendedRegionInteriors()
         buildFrontalRegionInterior()
+        buildCorticalMicroarchitectureInterior()
         buildCausalStoryField()
     }
 
@@ -176,6 +189,7 @@ final class RBCJourneyScene {
         frameUpdateSubscription = scene.subscribe(to: SceneEvents.Update.self) { [weak self] event in
             let deltaTime = Float(event.deltaTime)
             Task { @MainActor [weak self] in
+                self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
         }
@@ -248,6 +262,12 @@ final class RBCJourneyScene {
             active: frontalRegionActive,
             visualization: regionVisualization,
             clotScenarioActive: frontalClotScenarioActive,
+            time: t,
+            motionHeld: motionHeld
+        )
+        updateCorticalMicroarchitectureRegion(
+            active: transferredPortalID == RBCBrainRegionDestination.corticalMicroarchitecture.id,
+            visualization: regionVisualization,
             time: t,
             motionHeld: motionHeld
         )
@@ -1258,6 +1278,412 @@ final class RBCJourneyScene {
         regionInteriors[id] = region
         regionBaseScales[id] = region.scale
         print("RBC_FRONTAL_REGION=READY constellation=prefrontal branches=13 direction_arrows=18")
+    }
+
+    /// A magnified, room-scale teaching section through cortical tissue. The
+    /// six bands show laminar organization, while the radial guides show the
+    /// idea of vertical/columnar connectivity. Their width and spacing are
+    /// deliberately schematic: cortical areas vary and this is not histology,
+    /// a uniform functional-module claim, or patient-specific segmentation.
+    private func buildCorticalMicroarchitectureInterior() {
+        let id = RBCBrainRegionDestination.corticalMicroarchitecture.id
+        let region = Entity()
+        region.name = "transferred-region-interior-\(id)-cortical-microarchitecture"
+
+        let outlineRoot = Entity()
+        outlineRoot.name = "cortical-microarchitecture-constellation-outline-not-segmentation"
+        region.addChild(outlineRoot)
+        corticalMicroarchitectureOutlineRoot = outlineRoot
+
+        let layerRoot = Entity()
+        layerRoot.name = "six-cortical-laminae-magnified-teaching-model-not-to-scale"
+        region.addChild(layerRoot)
+        corticalMicroarchitectureLayerRoot = layerRoot
+
+        let columnRoot = Entity()
+        columnRoot.name = "simplified-radial-columnar-guides-area-variation-explicit"
+        region.addChild(columnRoot)
+        corticalMicroarchitectureColumnRoot = columnRoot
+
+        let vesselRoot = Entity()
+        vesselRoot.name = "pial-to-penetrating-arteriole-to-capillary-direction-field-not-cfd"
+        region.addChild(vesselRoot)
+        corticalMicroarchitectureVesselRoot = vesselRoot
+
+        let outlineMaterial = glowMaterial(
+            color: UIColor(red: 0.47, green: 0.95, blue: 0.80, alpha: 0.78),
+            intensity: 1.8
+        )
+        let starMaterial = glowMaterial(
+            color: UIColor(red: 0.79, green: 1.00, blue: 0.90, alpha: 0.96),
+            intensity: 3.4
+        )
+        let columnMaterial = glowMaterial(
+            color: UIColor(red: 0.36, green: 0.76, blue: 0.92, alpha: 0.30),
+            intensity: 0.72
+        )
+
+        let pialOutline = sampleCubicBezier(
+            [-1.78, 2.40, -1.32],
+            [-1.18, 2.58, -3.26],
+            [1.18, 2.58, -3.26],
+            [1.78, 2.40, -1.32],
+            samples: 32
+        )
+        let deepOutline = sampleCubicBezier(
+            [-1.78, 0.66, -1.32],
+            [-1.18, 0.50, -3.26],
+            [1.18, 0.50, -3.26],
+            [1.78, 0.66, -1.32],
+            samples: 32
+        )
+        addTubePath(
+            pialOutline,
+            to: outlineRoot,
+            radius: 0.0065,
+            material: outlineMaterial,
+            name: "cortical-pial-surface-constellation"
+        )
+        addTubePath(
+            deepOutline,
+            to: outlineRoot,
+            radius: 0.0045,
+            material: outlineMaterial,
+            name: "cortical-deep-boundary-constellation"
+        )
+        addTubePath(
+            [pialOutline[0], deepOutline[0]],
+            to: outlineRoot,
+            radius: 0.0045,
+            material: outlineMaterial,
+            name: "cortical-patch-left-boundary"
+        )
+        addTubePath(
+            [pialOutline[pialOutline.count - 1], deepOutline[deepOutline.count - 1]],
+            to: outlineRoot,
+            radius: 0.0045,
+            material: outlineMaterial,
+            name: "cortical-patch-right-boundary"
+        )
+
+        let outlineStarMesh = MeshResource.generateSphere(radius: 0.011)
+        let starPoints = [
+            pialOutline[0], pialOutline[8], pialOutline[16], pialOutline[24], pialOutline[31],
+            deepOutline[0], deepOutline[8], deepOutline[16], deepOutline[24], deepOutline[31],
+        ]
+        for (index, point) in starPoints.enumerated() {
+            let star = ModelEntity(mesh: outlineStarMesh, materials: [starMaterial])
+            star.name = "cortical-microarchitecture-constellation-star-\(index)"
+            star.position = point
+            outlineRoot.addChild(star)
+            corticalMicroarchitectureStars.append((star, Float(index) * 0.67))
+        }
+
+        let layerColors: [UIColor] = [
+            UIColor(red: 0.23, green: 0.48, blue: 0.61, alpha: 0.42),
+            UIColor(red: 0.29, green: 0.57, blue: 0.67, alpha: 0.44),
+            UIColor(red: 0.36, green: 0.64, blue: 0.69, alpha: 0.46),
+            UIColor(red: 0.43, green: 0.67, blue: 0.64, alpha: 0.48),
+            UIColor(red: 0.50, green: 0.61, blue: 0.58, alpha: 0.50),
+            UIColor(red: 0.39, green: 0.50, blue: 0.61, alpha: 0.52),
+        ]
+        let layerY: [Float] = [2.22, 1.95, 1.68, 1.41, 1.12, 0.82]
+        let cellCounts = [9, 18, 15, 22, 13, 16]
+        for layerIndex in 0..<6 {
+            let bandMaterial = tissueContextMaterial(
+                color: layerColors[layerIndex],
+                emissive: layerColors[layerIndex].withAlphaComponent(0.32)
+            )
+            let bandPath = sampleCubicBezier(
+                [-1.70, layerY[layerIndex], -1.36],
+                [-1.10, layerY[layerIndex] + 0.09, -3.20],
+                [1.10, layerY[layerIndex] + 0.09, -3.20],
+                [1.70, layerY[layerIndex], -1.36],
+                samples: 36
+            )
+            let strandOffsets: [(Float, Float, Float)] = [
+                (-0.072, -0.055, 0.010),
+                (-0.026, 0.020, 0.008),
+                (0.026, -0.012, 0.010),
+                (0.072, 0.045, 0.007),
+            ]
+            for (strandIndex, strandOffset) in strandOffsets.enumerated() {
+                let strandPath = bandPath.enumerated().map { pathIndex, point in
+                    point + SIMD3<Float>(
+                        0,
+                        strandOffset.0 + sin(Float(pathIndex) * 0.52 + Float(layerIndex)) * 0.012,
+                        strandOffset.1 + cos(Float(pathIndex) * 0.47 + Float(strandIndex)) * 0.022
+                    )
+                }
+                addTubePath(
+                    strandPath,
+                    to: layerRoot,
+                    radius: strandOffset.2,
+                    material: bandMaterial,
+                    name: "cortical-lamina-\(layerIndex + 1)-porous-fiber-\(strandIndex)"
+                )
+            }
+
+            let cellMaterial = glowMaterial(
+                color: layerColors[layerIndex].withAlphaComponent(0.86),
+                intensity: layerIndex == 3 ? 1.7 : 1.15
+            )
+            for cellIndex in 0..<cellCounts[layerIndex] {
+                let progress = Float(cellIndex + 1) / Float(cellCounts[layerIndex] + 1)
+                let point = interpolatedPoint(on: bandPath, progress: progress)
+                let depthOffset = sin(Float(cellIndex * 7 + layerIndex * 3)) * 0.095
+                let radius: Float = layerIndex == 4 ? 0.019 : (layerIndex == 0 ? 0.010 : 0.014)
+                let cell = ModelEntity(
+                    mesh: .generateSphere(radius: radius),
+                    materials: [cellMaterial]
+                )
+                cell.name = "cortical-lamina-\(layerIndex + 1)-illustrative-cell-\(cellIndex)"
+                cell.position = point + [0, sin(Float(cellIndex) * 1.91) * 0.048, depthOffset]
+                layerRoot.addChild(cell)
+            }
+        }
+
+        let guideXs: [Float] = [-1.22, -0.61, 0.00, 0.61, 1.22]
+        for (index, x) in guideXs.enumerated() {
+            let guideDepth = -3.02 + abs(x) * 0.82
+            let radialPath = sampleCubicBezier(
+                [x, 2.37, guideDepth],
+                [x - 0.05, 1.96, guideDepth - 0.08],
+                [x + 0.06, 1.12, guideDepth - 0.08],
+                [x, 0.69, guideDepth],
+                samples: 26
+            )
+            addTubePath(
+                radialPath,
+                to: columnRoot,
+                radius: 0.0032,
+                material: columnMaterial,
+                name: "simplified-cortical-radial-guide-\(index)"
+            )
+            for layerIndex in 1..<6 {
+                let point = interpolatedPoint(on: radialPath, progress: Float(layerIndex) / 6)
+                let node = ModelEntity(
+                    mesh: .generateSphere(radius: 0.008),
+                    materials: [columnMaterial]
+                )
+                node.name = "radial-guide-layer-crossing-\(index)-\(layerIndex)"
+                node.position = point
+                columnRoot.addChild(node)
+            }
+        }
+
+        let arterialMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.64, green: 0.022, blue: 0.040, alpha: 0.96),
+            emissive: UIColor(red: 0.90, green: 0.028, blue: 0.034, alpha: 1)
+        )
+        let capillaryMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.48, green: 0.030, blue: 0.060, alpha: 0.90),
+            emissive: UIColor(red: 0.66, green: 0.038, blue: 0.070, alpha: 1)
+        )
+        let vesselCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.20, blue: 0.13, alpha: 0.72),
+            intensity: 2.8
+        )
+        let flowMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.78, blue: 0.40, alpha: 0.96),
+            intensity: 4.0
+        )
+        let pialPath = sampleCubicBezier(
+            [-1.65, 2.31, -1.28],
+            [-1.08, 2.46, -3.12],
+            [1.00, 2.40, -3.18],
+            [1.60, 2.26, -1.30],
+            samples: 42
+        )
+        let penetratingPath = sampleCubicBezier(
+            [0.18, 2.39, -2.99],
+            [0.16, 2.16, -3.10],
+            [0.10, 1.49, -3.08],
+            [0.08, 0.78, -2.92],
+            samples: 44
+        )
+        let vesselPaths: [[SIMD3<Float>]] = [pialPath, penetratingPath]
+        for (index, path) in vesselPaths.enumerated() {
+            corticalMicroarchitectureFlowPaths.append(path)
+            addTaperedTubePath(
+                path,
+                to: vesselRoot,
+                startRadius: index == 0 ? 0.030 : 0.024,
+                endRadius: index == 0 ? 0.020 : 0.009,
+                material: arterialMaterial,
+                name: index == 0 ? "cortical-pial-artery" : "cortical-penetrating-arteriole"
+            )
+            addTaperedTubePath(
+                path,
+                to: vesselRoot,
+                startRadius: index == 0 ? 0.010 : 0.008,
+                endRadius: index == 0 ? 0.006 : 0.0032,
+                material: vesselCoreMaterial,
+                name: index == 0 ? "cortical-pial-flow-core" : "cortical-penetrating-flow-core"
+            )
+        }
+
+        let branchDefinitions: [(Float, SIMD3<Float>, SIMD3<Float>, SIMD3<Float>)] = [
+            (0.25, [-0.22, 1.88, -2.37], [-0.58, 2.00, -2.24], [-0.86, 1.82, -2.18]),
+            (0.33, [ 0.39, 1.78, -2.38], [ 0.74, 1.92, -2.25], [ 1.02, 1.68, -2.17]),
+            (0.45, [-0.20, 1.52, -2.39], [-0.58, 1.61, -2.26], [-0.96, 1.38, -2.18]),
+            (0.53, [ 0.34, 1.38, -2.39], [ 0.67, 1.50, -2.29], [ 0.94, 1.26, -2.20]),
+            (0.62, [-0.17, 1.17, -2.37], [-0.52, 1.23, -2.26], [-0.79, 1.04, -2.19]),
+            (0.71, [ 0.30, 1.01, -2.35], [ 0.61, 1.08, -2.25], [ 0.83, 0.91, -2.18]),
+            (0.80, [-0.14, 0.89, -2.33], [-0.39, 0.82, -2.24], [-0.58, 0.72, -2.17]),
+        ]
+        for (branchIndex, definition) in branchDefinitions.enumerated() {
+            let start = interpolatedPoint(on: penetratingPath, progress: definition.0)
+            let branch = sampleCubicBezier(
+                start,
+                definition.1,
+                definition.2,
+                definition.3,
+                samples: 30
+            )
+            corticalMicroarchitectureFlowPaths.append(branch)
+            addTaperedTubePath(
+                branch,
+                to: vesselRoot,
+                startRadius: 0.0085,
+                endRadius: 0.0032,
+                material: capillaryMaterial,
+                name: "cortical-layer-capillary-branch-\(branchIndex)"
+            )
+            addTaperedTubePath(
+                branch,
+                to: vesselRoot,
+                startRadius: 0.0030,
+                endRadius: 0.0012,
+                material: vesselCoreMaterial,
+                name: "cortical-layer-capillary-flow-core-\(branchIndex)"
+            )
+        }
+
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.085, radius: 0.027)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.110, radius: 0.0070)
+        for pathIndex in corticalMicroarchitectureFlowPaths.indices {
+            let arrowCount = pathIndex < 2 ? 3 : 1
+            for arrowIndex in 0..<arrowCount {
+                let arrow = Entity()
+                arrow.name = "cortical-microarchitecture-flow-arrow-\(pathIndex)-\(arrowIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowMaterial])
+                head.name = "cortical-microarchitecture-flow-arrowhead"
+                head.position.y = 0.052
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowMaterial])
+                tail.name = "cortical-microarchitecture-flow-arrow-tail"
+                tail.position.y = -0.058
+                arrow.addChild(head)
+                arrow.addChild(tail)
+                vesselRoot.addChild(arrow)
+                corticalMicroarchitectureFlowArrows.append((
+                    arrow,
+                    pathIndex,
+                    (Float(arrowIndex) / Float(arrowCount) + Float(pathIndex) * 0.117)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let discovery = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "active",
+            position: [1.24, 1.66, -1.48],
+            collisionRadius: 0.22
+        )
+        region.addChild(discovery)
+        corticalMicroarchitectureDiscoveryTargets.append(discovery)
+
+        region.isEnabled = false
+        regionInteriorRoot.addChild(region)
+        regionInteriors[id] = region
+        regionBaseScales[id] = region.scale
+        print("RBC_CORTICAL_MICROARCHITECTURE=READY laminae=6 radial_guides=5 illustrative_cells=93 vascular_paths=9 direction_arrows=13")
+    }
+
+    private func updateCorticalMicroarchitectureRegion(
+        active: Bool,
+        visualization: RBCRegionVisualizationMode,
+        time _: Float,
+        motionHeld: Bool
+    ) {
+        corticalMicroarchitectureRuntimeActive = active
+        corticalMicroarchitectureRuntimeHeld = motionHeld
+        corticalMicroarchitectureRuntimeVisualization = visualization
+        guard active else {
+            corticalMicroarchitectureElapsed = 0
+            return
+        }
+        let outlineOpacity: Float = switch visualization {
+        case .locate: 0.92
+        case .xray: 0.34
+        case .flow: 0.16
+        }
+        let layerOpacity: Float = switch visualization {
+        case .locate: 0.22
+        case .xray: 0.92
+        case .flow: 0.11
+        }
+        let columnOpacity: Float = switch visualization {
+        case .locate: 0.16
+        case .xray: 0.82
+        case .flow: 0.09
+        }
+        let vesselOpacity: Float = switch visualization {
+        case .locate: 0.20
+        case .xray: 0.32
+        case .flow: 1.0
+        }
+        corticalMicroarchitectureOutlineRoot?.components.set(OpacityComponent(opacity: outlineOpacity))
+        corticalMicroarchitectureLayerRoot?.components.set(OpacityComponent(opacity: layerOpacity))
+        corticalMicroarchitectureColumnRoot?.components.set(OpacityComponent(opacity: columnOpacity))
+        corticalMicroarchitectureVesselRoot?.components.set(OpacityComponent(opacity: vesselOpacity))
+
+        for target in corticalMicroarchitectureDiscoveryTargets {
+            target.components.set(OpacityComponent(opacity: visualization == .locate ? 0.72 : 0.34))
+        }
+        applyCorticalMicroarchitectureMotion()
+    }
+
+    private func advanceCorticalMicroarchitectureFrame(deltaTime: Float) {
+        guard corticalMicroarchitectureRuntimeActive else { return }
+        if !corticalMicroarchitectureRuntimeHeld {
+            corticalMicroarchitectureElapsed += min(max(deltaTime, 0), 0.10)
+        }
+        applyCorticalMicroarchitectureMotion()
+    }
+
+    private func applyCorticalMicroarchitectureMotion() {
+        let time = corticalMicroarchitectureElapsed
+        for item in corticalMicroarchitectureStars {
+            let pulse = corticalMicroarchitectureRuntimeHeld
+                ? 1
+                : 0.84 + sin(time * 1.55 + item.phase) * 0.18
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+        for item in corticalMicroarchitectureFlowArrows {
+            item.entity.isEnabled = corticalMicroarchitectureRuntimeVisualization == .flow
+            guard item.pathIndex < corticalMicroarchitectureFlowPaths.count else { continue }
+            let path = corticalMicroarchitectureFlowPaths[item.pathIndex]
+            let progress = corticalMicroarchitectureRuntimeHeld
+                ? item.offset
+                : (item.offset + time * (item.pathIndex < 2 ? 0.10 : 0.075))
+                    .truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: path, progress: progress)
+            let ahead = interpolatedPoint(on: path, progress: min(progress + 0.022, 1))
+            item.entity.position = point
+            let tangent = ahead - point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: [0, 1, 0],
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = corticalMicroarchitectureRuntimeHeld
+                ? 1
+                : 0.94 + sin(time * 4.2 + item.offset * 7.0) * 0.08
+            item.entity.scale = [pulse, pulse, pulse]
+        }
     }
 
     private func updateFrontalRegion(

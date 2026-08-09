@@ -34,9 +34,9 @@ result.
 
 A lower **Region Portal Reel** provides a second, user-directed exploration
 mode. It shows exactly three destinations at once and scrolls horizontally to
-seven supported local destinations: arterial lumen, Circle of Willis, cortical
-exchange, ventricular system, cerebellum, deep structures, and the frontal
-lobe. Only one region can transfer at a time. The enclosing cortical atmosphere
+eight supported local destinations: arterial lumen, Circle of Willis, cortical
+exchange, ventricular system, cerebellum, deep structures, frontal lobe, and
+cortical microarchitecture. Only one region can transfer at a time. The enclosing cortical atmosphere
 remains present so the foreground lesson changes scale without turning into a
 disconnected model viewer.
 
@@ -70,6 +70,30 @@ teaching obstruction in a single frontal branch and keeps that branch's flow
 glints upstream while the neighboring arterial context remains active. The
 effect is intentionally qualitative: it does not estimate velocity, collateral
 capacity, infarct territory, tissue outcome, or treatment response.
+
+## Cortical microarchitecture room
+
+The **Cortical layers** destination turns one magnified cortical fold into the
+room around the stable wearer. It is not a floating brain or a flat microscopy
+card. Six curved laminar bands, 93 sparse illustrative cell points, and five
+radial guides make superficial-to-deep organization legible while preserving
+the darker enclosing brain atmosphere.
+
+The same Locate → X-ray → Flow grammar is reused rather than adding a new
+control system. Locate emphasizes a constellation boundary around the sampled
+patch. X-ray lifts the six laminae and simplified radial/columnar guides. Flow
+reveals one pial artery, one penetrating arteriole, seven layer-crossing
+capillary branches, and 13 tangent-aligned arrowhead-and-tail fronts. The
+geometry shows that a surface route can turn into a deeper cortical supply
+network; it is not CFD, histology, measured layer thickness, neural activity,
+oxygen concentration, or patient anatomy.
+
+The word “columnar” is deliberately bounded. Cortical areas differ in layer
+thickness, cell density, and circuit organization, so the five guides are an
+orientation device—not five identical functional modules. Pinching the small
+constellation mark cycles the three readings without opening another panel.
+Use `--proof-region-7` with `--proof-region-mode-xray` or
+`--proof-region-mode-flow` for deterministic Simulator review.
 
 ## Travel with the flow — arterial branch ride
 

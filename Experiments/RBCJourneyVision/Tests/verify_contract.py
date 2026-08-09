@@ -206,6 +206,18 @@ checks = {
         "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
         "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
     ]) and "model.flowRideRoute == .frontal && !model.familyNarrationEnabled" in hud,
+    "cortical_microarchitecture_room": all(token in model + scene + hud + medical_canon for token in [
+        "case corticalMicroarchitecture", "Cortical microarchitecture", "Cortical layers",
+        "cortical-microarchitecture-constellation-outline-not-segmentation",
+        "six-cortical-laminae-magnified-teaching-model-not-to-scale",
+        "simplified-radial-columnar-guides-area-variation-explicit",
+        "pial-to-penetrating-arteriole-to-capillary-direction-field-not-cfd",
+        "cortical-microarchitecture-flow-arrowhead", "cortical-microarchitecture-flow-arrow-tail",
+        "laminae=6", "radial_guides=5", "illustrative_cells=93", "vascular_paths=9",
+        "updateCorticalMicroarchitectureRegion", "advanceCorticalMicroarchitectureFrame",
+        "SceneEvents.Update", "region == .corticalMicroarchitecture",
+        "pial arteries distribute blood", "Five radial guides",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "user_triggered_capillary_focus": all(token in model + scene + hud + immersive for token in [
         "--proof-capillary-focus", "isCapillaryFieldFocused",
         "toggleCapillaryFieldFocus", "Enter capillary field", "Return to artery",

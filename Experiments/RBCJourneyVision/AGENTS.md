@@ -14,6 +14,9 @@ video cannot.
 - Exploration: a lower region reel with exactly three visible destinations at
   once and one active transfer.
 - Frontal observatory: Locate → X-ray → Flow → optional example clot.
+- Cortical microarchitecture: a room-scale six-layer teaching fold with five
+  explicitly simplified radial guides and pial → penetrating → capillary Flow;
+  it is not uniform functional modules, histology, CFD, or patient anatomy.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,

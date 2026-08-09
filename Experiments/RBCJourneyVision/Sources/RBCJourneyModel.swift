@@ -278,6 +278,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
     case cerebellum
     case deepStructures
     case frontalLobe
+    case corticalMicroarchitecture
 
     var id: Int { rawValue }
 
@@ -290,6 +291,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .cerebellum: "Cerebellum"
         case .deepStructures: "Deep structures"
         case .frontalLobe: "Frontal lobe"
+        case .corticalMicroarchitecture: "Cortical microarchitecture"
         }
     }
 
@@ -302,6 +304,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .cerebellum: "Cerebellum"
         case .deepStructures: "Deep brain"
         case .frontalLobe: "Frontal"
+        case .corticalMicroarchitecture: "Cortical layers"
         }
     }
 
@@ -321,6 +324,8 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
             "Bring the central deep-brain assembly forward while the outer cortex recedes into environmental context."
         case .frontalLobe:
             "Stand inside the forward cortical region. A restrained outline holds its orientation while illuminated arterial branches make blood-flow direction visible around you."
+        case .corticalMicroarchitecture:
+            "Enter a magnified cortical fold. Six laminar bands and simplified radial guides surround a penetrating arteriole as it branches toward capillary exchange."
         }
     }
 
@@ -333,6 +338,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .cerebellum: "The cerebellum sits posterior and inferior to the cerebral hemispheres and contributes to coordinated movement."
         case .deepStructures: "This is an orientation view of central anatomy, not a diagnostic segmentation or patient scan."
         case .frontalLobe: "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement. The outline is an orientation guide, not diagnostic segmentation."
+        case .corticalMicroarchitecture: "Most cerebral cortex is six-layered neocortex, but layer thickness, cell density, and columnar organization vary across cortical areas."
         }
     }
 
@@ -345,6 +351,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .cerebellum: "brain.head.profile.fill"
         case .deepStructures: "scope"
         case .frontalLobe: "brain.head.profile.fill"
+        case .corticalMicroarchitecture: "square.3.layers.3d"
         }
     }
 
@@ -355,6 +362,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .corticalExchange: .microcirculation
         case .ventricularSystem, .cerebellum, .deepStructures: .circleOfWillis
         case .frontalLobe: .followTheMCA
+        case .corticalMicroarchitecture: .microcirculation
         }
     }
 }

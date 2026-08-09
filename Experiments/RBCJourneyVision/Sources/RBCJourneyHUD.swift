@@ -296,7 +296,7 @@ struct RBCRegionInfoHUD: View {
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
                     .fixedSize(horizontal: false, vertical: true)
 
-                if region == .frontalLobe {
+                if region == .frontalLobe || region == .corticalMicroarchitecture {
                     HStack(spacing: 7) {
                         ForEach(RBCRegionVisualizationMode.allCases) { mode in
                             RBCRegionModeButton(mode: mode, regionTitle: region.title)
