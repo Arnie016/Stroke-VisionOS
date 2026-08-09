@@ -11,6 +11,7 @@ import UIKit
 enum CalmFlowFieldFactory {
     static func makeHorizon() -> Entity {
         let root = Entity()
+        root.components.set(OpacityComponent(opacity: 0.72))
 
         // Apple recommends a ground plane so an immersive environment does not
         // feel like a black void. These low-contrast meshes are atmosphere, not
@@ -64,14 +65,39 @@ enum CalmFlowFieldFactory {
         return root
     }
 
-    static func update(_ root: Entity, time: TimeInterval, isPaused: Bool, reduceMotion: Bool) {
+    static func update(
+        _ root: Entity,
+        time: TimeInterval,
+        act: StrokeProcedureStep,
+        isPaused: Bool,
+        reduceMotion: Bool
+    ) {
         let phase = isPaused || reduceMotion ? 0 : Float(time * 0.16)
+        // The environment quietly follows the teaching intent: open while
+        // orienting, restrained around pressure, and gently reopened when the
+        // purpose of making space is discussed. This is atmosphere, not an
+        // inferred emotional or physiological state.
+        let targetOpacity: Float = switch act {
+        case .chooseCase: 0.58
+        case .inspectOcclusion: 0.76
+        case .discussCare: 0.46
+        }
+        let currentOpacity = root.components[OpacityComponent.self]?.opacity ?? targetOpacity
+        let resolvedOpacity = reduceMotion
+            ? targetOpacity
+            : currentOpacity + (targetOpacity - currentOpacity) * 0.035
+        root.components.set(OpacityComponent(opacity: resolvedOpacity))
 
         let ribbons = root.children.filter { $0.name.hasPrefix("calm-flow-ribbon-") }
         for (index, ribbon) in ribbons.enumerated() {
             let progress = Float(index) / Float(max(ribbons.count - 1, 1))
             let baseY = -0.24 + progress * 0.48
-            let drift = sin(phase + progress * 4.2) * (reduceMotion ? 0 : 0.014)
+            let actAmplitude: Float = switch act {
+            case .chooseCase: 0.012
+            case .inspectOcclusion: 0.006
+            case .discussCare: 0.014
+            }
+            let drift = sin(phase + progress * 4.2) * (reduceMotion ? 0 : actAmplitude)
             ribbon.position.y = baseY + drift
             ribbon.orientation = simd_quatf(
                 angle: -0.08 + progress * 0.14 + drift * 0.9,

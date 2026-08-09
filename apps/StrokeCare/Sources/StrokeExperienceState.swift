@@ -187,7 +187,7 @@ enum StrokeCareDiscussion: String, CaseIterable, Identifiable {
 }
 
 enum StrokeClinicianTool: String, CaseIterable, Identifiable {
-    case focus = "Focus"
+    case focus = "Magnify"
     case transparency = "Lens"
     case layerReveal = "Layers"
     case forceps = "Forceps"
@@ -197,7 +197,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 
     var systemImage: String {
         switch self {
-        case .focus: "scope"
+        case .focus: "magnifyingglass"
         case .transparency: "circle.lefthalf.filled"
         case .layerReveal: "square.3.layers.3d"
         case .forceps: "move.3d"
@@ -207,7 +207,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 
     var boundary: String {
         switch self {
-        case .focus: "Teaching pointer"
+        case .focus: "Region focus · context fades"
         case .transparency: "Reversible transparency"
         case .layerReveal: "Permission-gated layer explanation"
         case .forceps: "Generic concept asset · specialist review pending"
@@ -239,6 +239,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
     @Published var cortexOpacity: Double = 0.34
+    @Published var regionPortalActive = false
     @Published private(set) var selectedPointEntityName: String?
     @Published private(set) var selectedPointLabel: String?
     @Published var selectedEvidenceID: String = StrokeEvidenceSource.library[0].id
@@ -356,6 +357,7 @@ final class StrokeExperienceState: ObservableObject {
         }
         requestedPause = false
         closingReflectionVisible = false
+        regionPortalActive = false
         switch procedureStep {
         case .chooseCase:
             isCaseSelected = true
@@ -404,6 +406,7 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = false
         isConsentPromptVisible = false
         pendingConsentStep = nil
+        regionPortalActive = false
         switch procedureStep {
         case .chooseCase:
             break
@@ -597,6 +600,33 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    /// A reversible museum-like aperture into the affected region. It changes
+    /// the teaching viewpoint only: no teleport, diagnosis, patient scan, CFD,
+    /// tissue cut, or procedural action is implied.
+    func toggleRegionPortal() {
+        withAnimation(.easeInOut(duration: 0.85)) {
+            if audienceLens == .clinician {
+                selectedClinicianTool = .focus
+            }
+            regionPortalActive.toggle()
+            if regionPortalActive {
+                anatomyPresentation = .transparent
+                cortexOpacity = 0.40
+                pointField = .procedure
+                lessonPointsVisible = true
+                spatialZoom = 1.36
+                orbit = [0.14, 0.08]
+                vesselFocusProgress = 1
+            } else {
+                anatomyPresentation = .assembled
+                cortexOpacity = 0.34
+                spatialZoom = 1
+                orbit = .zero
+                clearPointSelection()
+            }
+        }
+    }
+
     func selectPoint(entityName: String, label: String) {
         selectedPointEntityName = entityName
         selectedPointLabel = label
@@ -637,6 +667,7 @@ final class StrokeExperienceState: ObservableObject {
         clarificationRequested = false
         clearQuestionMarker()
         isConsentPromptVisible = false
+        regionPortalActive = false
 
         switch step {
         case .chooseCase:
@@ -763,6 +794,7 @@ final class StrokeExperienceState: ObservableObject {
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
         cortexOpacity = 0.34
+        regionPortalActive = false
         clearPointSelection()
         selectedEvidenceID = StrokeEvidenceSource.library[0].id
         pinnedEvidenceIDs = []
@@ -847,10 +879,13 @@ final class StrokeExperienceState: ObservableObject {
     func prepareTransparentLayerProof() {
         prepareClinicianProof(step: .discussCare)
         anatomyPresentation = .transparent
-        cortexOpacity = 0.32
-        pointField = .regions
-        selectedPointEntityName = "clinician-region-point-field-point-3"
-        selectedPointLabel = "Opposite-side context"
+        cortexOpacity = 0.40
+        regionPortalActive = true
+        spatialZoom = 1.36
+        orbit = [0.14, 0.08]
+        pointField = .procedure
+        selectedPointEntityName = "clinician-procedure-point-field-point-2"
+        selectedPointLabel = "Illustrative clot focus"
     }
 
     func prepareSpatialDockedCaseProof() {
