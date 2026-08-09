@@ -117,6 +117,7 @@ enum StrokeAnatomyFocus: String, CaseIterable, Identifiable, Hashable {
     case whole = "Whole"
     case vessels = "Vessels"
     case internalStructures = "Internal"
+    case surfaceContext = "Surface"
 
     var id: String { rawValue }
 
@@ -128,7 +129,13 @@ enum StrokeAnatomyFocus: String, CaseIterable, Identifiable, Hashable {
             "Arterial + venous teaching atlases · colour convention · review pending"
         case .internalStructures:
             "Deep structures + ventricles · generic teaching anatomy · review pending"
+        case .surfaceContext:
+            "Illustrative scalp cutaway + eye context · approximate cross-source fit · review pending"
         }
+    }
+
+    var requiresScholar: Bool {
+        self == .internalStructures || self == .surfaceContext
     }
 }
 
@@ -545,7 +552,7 @@ final class StrokeExperienceState: ObservableObject {
         }
 
         detailLevel = level
-        if level != .scholar, anatomyFocus == .internalStructures {
+        if level != .scholar, anatomyFocus.requiresScholar {
             anatomyFocus = .whole
             anatomyPresentation = .assembled
             cortexOpacity = 0.66
@@ -564,7 +571,7 @@ final class StrokeExperienceState: ObservableObject {
             anatomyFocus = .whole
             return
         }
-        guard focus != .internalStructures || detailLevel == .scholar else {
+        guard !focus.requiresScholar || detailLevel == .scholar else {
             anatomyFocus = .whole
             return
         }
@@ -579,9 +586,16 @@ final class StrokeExperienceState: ObservableObject {
             anatomyFocus = .whole
             anatomyPresentation = .assembled
             cortexOpacity = 0.66
-            anatomyAvailabilityNotice = focus == .vessels
-                ? "Venous reference unavailable · Whole view restored"
-                : "Internal references unavailable · Whole view restored"
+            anatomyAvailabilityNotice = switch focus {
+            case .vessels:
+                "Venous reference unavailable · Whole view restored"
+            case .internalStructures:
+                "Internal references unavailable · Whole view restored"
+            case .surfaceContext:
+                "Surface context unavailable · Whole view restored"
+            case .whole:
+                nil
+            }
             return
         }
 
@@ -607,9 +621,16 @@ final class StrokeExperienceState: ObservableObject {
             anatomyFocus = .whole
             anatomyPresentation = .assembled
             cortexOpacity = 0.66
-            anatomyAvailabilityNotice = unavailableFocus == .vessels
-                ? "Venous reference unavailable · Whole view restored"
-                : "Internal references unavailable · Whole view restored"
+            anatomyAvailabilityNotice = switch unavailableFocus {
+            case .vessels:
+                "Venous reference unavailable · Whole view restored"
+            case .internalStructures:
+                "Internal references unavailable · Whole view restored"
+            case .surfaceContext:
+                "Surface context unavailable · Whole view restored"
+            case .whole:
+                nil
+            }
         }
     }
 
@@ -638,6 +659,9 @@ final class StrokeExperienceState: ObservableObject {
         case .internalStructures:
             anatomyPresentation = .transparent
             cortexOpacity = 0.12
+        case .surfaceContext:
+            anatomyPresentation = .transparent
+            cortexOpacity = 0.20
         }
     }
 
@@ -1746,6 +1770,13 @@ final class StrokeExperienceState: ObservableObject {
         selectDetailLevel(.scholar)
         selectAnatomyFocus(.vessels)
         spatialZoom = 1.30
+    }
+
+    func prepareAnatomySurfaceFocusProof() {
+        prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
+        selectAnatomyFocus(.surfaceContext)
+        spatialZoom = 1.24
     }
 
     func prepareTeachingImagingProof() {

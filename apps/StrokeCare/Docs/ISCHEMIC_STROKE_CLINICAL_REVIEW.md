@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.8`
-- App version: `0.6 (23)` review candidate
+- Content version: `SC-AIS-001.9`
+- App version: `0.6 (24)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -17,12 +17,18 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.8`, the Pressure scene uses three deliberately
+In content version `SC-AIS-001.9`, the Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
 affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
 positions come from the loaded registered-v2 brain and clot bounds, not a
 patient segmentation or edema measurement. The change remains pending the
 same clinician review required by the 3D-model and Act-2 rows below.
+
+The optional Scholar Surface focus adds an HRA-derived scalp cutaway and a
+separate Visible Human eye context. The viewing window is illustrative—not a
+surgical opening or patient-specific craniotomy—and the eye alignment is an
+approximate cross-source orientation reference. Both remain clinician-only,
+generic teaching anatomy pending specialist review.
 
 The Make-space scene now adds a separate registered-frame conceptual cue at the
 same derived cortical direction: a dashed aperture, a translucent protective

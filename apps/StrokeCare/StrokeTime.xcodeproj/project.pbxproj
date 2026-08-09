@@ -16,6 +16,7 @@
 		2123AE673EDD66EB6548837A /* PatientHistoryTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */; };
 		21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */; };
 		23EC9E6A57D4A0B27EC1F000 /* brain_deep_structures_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = ED879D21EF18EF183C3B9DA4 /* brain_deep_structures_v2.usdz */; };
+		2C2C4ED17C38C6DA4163B85F /* external_head_scalp_cutaway_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */; };
 		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
 		3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */; };
 		44DD9315D7655FD2CD86D1D2 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4DCA91CA49F7E270C5C9AD1B /* cerebral_bloodflow_animation_v2.usdz */; };
@@ -31,6 +32,7 @@
 		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
 		B082C5DFC240F4CE817288FA /* StrokeAssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */; };
 		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
+		C1B24B4B1F460FFEC4F3DD15 /* eyes_context_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */; };
 		CECA5EDE58ADB678673F208A /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E2573F23F677A6A203F5EFA /* THIRD_PARTY_NOTICES.txt */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
@@ -63,6 +65,7 @@
 		B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoryTimelineView.swift; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
+		C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = external_head_scalp_cutaway_v2.usdz; sourceTree = "<group>"; };
 		C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = circle_of_willis_flow_overlay_v2.usdz; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeJourneyLaunchView.swift; sourceTree = "<group>"; };
 		ED879D21EF18EF183C3B9DA4 /* brain_deep_structures_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_deep_structures_v2.usdz; sourceTree = "<group>"; };
 		F64750DC74A14E49DFEDF063 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
+		FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = eyes_context_realistic_v2.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -155,6 +159,8 @@
 				C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */,
 				4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */,
 				3173F69C23E7838AD8B6FF4C /* dural_sinuses_jugulars_realistic_v2.usdz */,
+				C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */,
+				FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */,
 				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
 				CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */,
 			);
@@ -238,6 +244,8 @@
 				7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */,
 				9A3017927B6F685AC3386F83 /* dural_sinuses_jugulars_realistic_v2.usdz in Resources */,
 				6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */,
+				2C2C4ED17C38C6DA4163B85F /* external_head_scalp_cutaway_v2.usdz in Resources */,
+				C1B24B4B1F460FFEC4F3DD15 /* eyes_context_realistic_v2.usdz in Resources */,
 				9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */,
 				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,
 				3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */,
@@ -341,7 +349,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -401,7 +409,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = VV6YGTA587;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

@@ -88,9 +88,9 @@ require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e
 require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
 require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
-require(len(declared_usdz_paths) == 15 and len(set(declared_usdz_paths)) == 15 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly fifteen unique explicit USDZ resources")
+require(len(declared_usdz_paths) == 17 and len(set(declared_usdz_paths)) == 17 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly seventeen unique explicit USDZ resources")
 require(
-    len({Path(path).name for path in declared_usdz_paths}) == 15
+    len({Path(path).name for path in declared_usdz_paths}) == 17
     and all((ROOT / path).resolve().exists() for path in declared_usdz_paths),
     "every explicit USDZ resource must exist and have a unique bundle basename",
 )
@@ -100,14 +100,18 @@ require(all(name in project_yml for name in (
     "cerebral_bloodflow_animation_v2.usdz",
     "dural_sinuses_jugulars_realistic_v2.usdz",
     "circle_of_willis_flow_overlay_v2.usdz",
-)), "five reviewed-frame detail assets are not declared in the app bundle")
+    "external_head_scalp_cutaway_v2.usdz",
+    "eyes_context_realistic_v2.usdz",
+)), "seven reviewed-frame detail/context assets are not declared in the app bundle")
 require(all(token in catalog for token in (
     "dural_sinuses_jugulars_realistic_v2",
     "circle_of_willis_flow_overlay_v2",
-    "fifteen resources",
-)), "registered-v2 venous or qualitative flow reference is not recorded in the explicit bundle catalog")
+    "external_head_scalp_cutaway_v2",
+    "eyes_context_realistic_v2",
+    "seventeen resources",
+)), "registered-v2 detail/context references are not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
-require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
+require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices and "HRA Skin" in third_party_notices and "Visible Human eye context" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
 require(all(token in immersive for token in (
     'Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")',
     'Text("ATLAS · Z-ANATOMY + BODYPARTS3D · CC BY-SA")',
@@ -470,7 +474,7 @@ require("134 unique USDZ assets" in asset_triage and all(name in asset_triage fo
     "brain_deep_structures_v2",
     "brain_ventricles_v2",
     "cerebral_bloodflow_animation_v2",
-)), "expanded asset catalog is not triaged separately from the fifteen-file runtime slice")
+)), "expanded asset catalog is not triaged separately from the seventeen-file runtime slice")
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -478,7 +482,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.8" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.9" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -621,12 +625,14 @@ require(all(token in state for token in (
     'case whole = "Whole"',
     'case vessels = "Vessels"',
     'case internalStructures = "Internal"',
+    'case surfaceContext = "Surface"',
     "func selectAnatomyFocus(_ focus: StrokeAnatomyFocus)",
     "func updateAvailableAnatomyFocuses(_ focuses: Set<StrokeAnatomyFocus>)",
     "availableAnatomyFocuses.contains(focus)",
     "Venous reference unavailable · Whole view restored",
     "Internal references unavailable · Whole view restored",
-    "focus != .internalStructures || detailLevel == .scholar",
+    "Surface context unavailable · Whole view restored",
+    "focus.requiresScholar",
     "anatomyFocus = .whole",
     "prepareAnatomyInternalFocusProof",
 )), "clinician anatomy focus lacks guarded Whole, Vessels, and Internal states")
@@ -643,6 +649,7 @@ require(all(token in scene for token in (
     "let anatomyFocus = experience.anatomyFocus",
     "anatomyFocus == .vessels",
     "anatomyFocus == .internalStructures",
+    "anatomyFocus == .surfaceContext",
     "anatomyFocus != .internalStructures",
     "experience.detailLevel == .scholar",
 )), "registered arterial, venous, deep-structure, and ventricular geometry does not follow anatomy focus")
@@ -651,6 +658,8 @@ require(all(token in launch for token in (
     "prepareAnatomyInternalFocusProof",
     '"--proof-anatomy-vessels"',
     "prepareAnatomyVesselsFocusProof",
+    '"--proof-anatomy-surface"',
+    "prepareAnatomySurfaceFocusProof",
 )), "deterministic vessels/internal anatomy-focus proof routes are missing")
 require(all(token in launch for token in (
     '"--proof-anatomy-vessels-unavailable"',
@@ -698,7 +707,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.8" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.9" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
@@ -722,7 +731,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=FIFTEEN_ASSET_STAGED_SLICE")
+print("github_asset_runtime=SEVENTEEN_ASSET_STAGED_SLICE")
 print("required_asset_failure=VISIBLE_COMPLETE_PROCEDURAL_FALLBACK")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")

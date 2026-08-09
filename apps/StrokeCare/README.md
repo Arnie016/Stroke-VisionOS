@@ -23,7 +23,21 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
-Build `0.6 (23)` turns the doctor-presenter's six checkpoints into six distinct
+Build `0.6 (24)` preserves the doctor-presenter's six distinct checkpoints and
+adds a Scholar-only **Surface** focus: an authored HRA scalp cutaway and a
+separate eye-context reference restore exterior orientation without closing the
+view over the central brain. The cutaway is illustrative—not an incision or
+patient-specific craniotomy—and the eye fit remains approximate pending review.
+
+![Clinician Surface context in visionOS Simulator](Proof/90-clinician-surface-context-build24-simulator.png)
+
+The exterior shell is deliberately faint: it restores head and eye orientation
+while the registered teaching brain, arterial atlas, optional venous atlas,
+attached points, and six-step timeline remain the lesson hierarchy. This is a
+Simulator composition receipt, not evidence of patient-specific registration,
+wearer legibility, or specialist approval.
+
+Build `0.6 (23)` turned the doctor-presenter's six checkpoints into six distinct
 spatial compositions over the same bounded anatomy. **Access** separates the
 generic skull reference; **Protective covering** offsets the conceptual dura
 after explicit permission; **Purpose** alone reveals the reversible room-making
@@ -47,7 +61,7 @@ calm teaching assembly.
 
 ![Clinician vessel focus in visionOS Simulator](Proof/87-clinician-vessels-focus-build21-simulator.png)
 
-The app currently stages exactly 15 reviewed-or-gated USDZ resources. The
+The app currently stages exactly 17 reviewed-or-gated USDZ resources. The
 larger 134-item repository catalog remains metadata and review inventory—not a
 claim that every differently framed, licensed, or specialist-gated asset is
 registered and visible. This capture proves Simulator composition only; it

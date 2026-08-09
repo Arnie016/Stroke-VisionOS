@@ -37,6 +37,8 @@ enum StrokeSceneFactory {
     private static let importedVentriclesName = "brain_ventricles_v2"
     private static let importedBloodflowName = "cerebral_bloodflow_animation_v2"
     private static let importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"
+    private static let importedScalpCutawayName = "external_head_scalp_cutaway_v2"
+    private static let importedEyesName = "eyes_context_realistic_v2"
     private static let importedEdemaName = "edema_swelling"
     private static let importedFlapName = "craniotomy_bone_flap"
     private static let importedPatchName = "dural_patch"
@@ -93,6 +95,8 @@ enum StrokeSceneFactory {
     private static let ventriclesLayerName = "anatomy-ventricles-layer"
     private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
     private static let qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"
+    private static let surfaceContextLayerName = "anatomy-surface-context-layer"
+    private static let eyesContextLayerName = "anatomy-eyes-context-layer"
     private static let registeredPressureStoryName = "registered-pressure-story"
     private static let registeredPressureBlockageCueName = "registered-pressure-blockage-cue"
     private static let registeredPressureAffectedCueName = "registered-pressure-affected-tissue-cue"
@@ -239,6 +243,10 @@ enum StrokeSceneFactory {
         if imported.findEntity(named: importedDeepStructuresName) != nil,
            imported.findEntity(named: importedVentriclesName) != nil {
             focuses.insert(.internalStructures)
+        }
+        if imported.findEntity(named: importedScalpCutawayName) != nil,
+           imported.findEntity(named: importedEyesName) != nil {
+            focuses.insert(.surfaceContext)
         }
         return focuses
     }
@@ -620,7 +628,9 @@ enum StrokeSceneFactory {
             importedDeepStructuresName,
             importedVentriclesName,
             importedBloodflowName,
-            importedFlowOverlayName
+            importedFlowOverlayName,
+            importedScalpCutawayName,
+            importedEyesName
         ] {
             if let entity = await loadBundledUSDZ(named: name) {
                 entity.name = name
@@ -634,7 +644,9 @@ enum StrokeSceneFactory {
                     importedDeepStructuresName,
                     importedVentriclesName,
                     importedBloodflowName,
-                    importedFlowOverlayName
+                    importedFlowOverlayName,
+                    importedScalpCutawayName,
+                    importedEyesName
                 ].contains(name) {
                     // These detail layers are opt-in clinician references, so
                     // they never flash over the family anatomy while loading.
@@ -936,6 +948,10 @@ enum StrokeSceneFactory {
             authoredBloodflowLayerName
         case importedFlowOverlayName:
             qualitativeFlowOverlayLayerName
+        case importedScalpCutawayName:
+            surfaceContextLayerName
+        case importedEyesName:
+            eyesContextLayerName
         default:
             "anatomy-context-layer"
         }
@@ -1988,6 +2004,8 @@ enum StrokeSceneFactory {
         let ventriclesLayer = imported.findEntity(named: ventriclesLayerName)
         let authoredBloodflowLayer = imported.findEntity(named: authoredBloodflowLayerName)
         let qualitativeFlowOverlayLayer = imported.findEntity(named: qualitativeFlowOverlayLayerName)
+        let surfaceContextLayer = imported.findEntity(named: surfaceContextLayerName)
+        let eyesContextLayer = imported.findEntity(named: eyesContextLayerName)
         let clotTarget = imported.findEntity(named: importedClotTargetName)
         let pressureStory = imported.findEntity(named: registeredPressureStoryName)
         let carePurposeStory = imported.findEntity(named: registeredCarePurposeStoryName)
@@ -2024,6 +2042,7 @@ enum StrokeSceneFactory {
         case .whole: cortexOpacity
         case .vessels: min(cortexOpacity, 0.18)
         case .internalStructures: min(cortexOpacity, 0.12)
+        case .surfaceContext: min(cortexOpacity, 0.20)
         }
         cortexLayer?.components.set(OpacityComponent(opacity: focusedCortexOpacity))
         arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
@@ -2101,6 +2120,28 @@ enum StrokeSceneFactory {
         ventriclesLayer?.isEnabled = showsInternalStudy
         deepStructuresLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.96 : 0))
         ventriclesLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.88 : 0))
+
+        // Scholar Surface is an authored HRA scalp cutaway with a separate
+        // opaque eye reference. It restores exterior orientation without
+        // hiding the brain behind a closed head. The cutaway is illustrative,
+        // not a surgical opening; eye alignment is approximate and both remain
+        // generic, non-patient teaching context pending specialist review.
+        let showsSurfaceContext = experience.audienceLens == .clinician &&
+            experience.detailLevel == .scholar &&
+            anatomyFocus == .surfaceContext &&
+            experience.pointField == .regions &&
+            !isolateScholarSkull
+        surfaceContextLayer?.isEnabled = showsSurfaceContext
+        eyesContextLayer?.isEnabled = showsSurfaceContext
+        surfaceContextLayer?.components.set(
+            // The exterior is orientation context, not the lesson hero. Keep it
+            // faint enough that cortex, vasculature, and authored points remain
+            // readable through the illustrative cutaway.
+            OpacityComponent(opacity: showsSurfaceContext ? 0.22 : 0)
+        )
+        eyesContextLayer?.components.set(
+            OpacityComponent(opacity: showsSurfaceContext ? 0.62 : 0)
+        )
 
         // The baked four-second route and the registered Circle-of-Willis
         // overlay are qualitative teaching cues—not CFD, perfusion, velocity,

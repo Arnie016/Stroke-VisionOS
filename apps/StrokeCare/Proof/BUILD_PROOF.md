@@ -4,12 +4,12 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (23)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (24)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.8`; clinician review pending.
+- Clinical content version: `SC-AIS-001.9`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
@@ -851,3 +851,33 @@ reached its MCP call limit. XCAT was also still `unavailable`. This therefore
 proves Simulator build, process, resource count, and composition only—not
 physical targeting, stereo depth, wearer comfort, AirPlay legibility,
 anatomical registration, specialist approval, or clinical validity.
+
+## 2026-08-10 07:12 SGT — Scholar Surface orientation context
+
+Build `0.6 (24)` adds two licensed v2 references to the clinician-only Scholar
+anatomy hierarchy: `external_head_scalp_cutaway_v2.usdz` and
+`eyes_context_realistic_v2.usdz`. They remain in their authored frames and are
+shown as a faint **Surface** context around the central teaching anatomy. The
+cutaway is illustrative—not an incision or patient-specific craniotomy—and the
+eye fit is approximate. Both remain pending specialist review.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build24` ended `** BUILD SUCCEEDED **`. The built app reports
+`0.6 (24)`, contains 17 unique USDZ resources, and its debug implementation
+dylib has SHA-256
+`aeb75d63377ec126ce09de8cbdd9229a49ac2891bdca9f9fc70eb471ce4fbbfd`.
+
+`Proof/90-clinician-surface-context-build24-simulator.png`, 3840×2160,
+SHA-256
+`fbff13b453354fa3e042cf6fd47f3025bee90f671f79e176c8dae0436faa3136`,
+was captured from the installed build on route `--proof-anatomy-surface` after
+terminating competing immersive apps. It visibly shows the faint exterior and
+eye context, central vasculature, attached points, six-stop timeline, direct
+view controls, Scholar depth, and the Surface review boundary.
+
+This proves Simulator build, process, resource count, and composition only. It
+does not prove physical gaze-and-pinch selection, stereo depth, wearer comfort,
+AirPlay legibility, patient-specific registration, specialist approval, or
+clinical validity. XCAT remained `unavailable`. The 134-item GitHub catalog is
+still a review inventory; it is not represented as 134 registered live layers.
