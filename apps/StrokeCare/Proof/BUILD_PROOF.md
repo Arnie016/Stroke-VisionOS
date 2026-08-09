@@ -709,3 +709,22 @@ the repository and are not evidence. XCAT remained exactly `unavailable` in
 CoreDevice. These captures prove Simulator composition only—not wearer
 legibility, depth comfort, targeting, AirPlay quality, registration accuracy,
 specialist approval, or clinical validity.
+
+## 2026-08-10 05:21 SGT — build 20 idle-performance check
+
+The phase-aware animation timeline in build `0.6 (20)` was measured on the
+visionOS 26.5 Simulator using six one-second `ps` samples after an eight-second
+settle. The case archive averaged 8.08% CPU, the unfolded case review averaged
+0.33%, and the active clinician Pressure lesson averaged 28.17%. Two active-
+lesson screenshots eight seconds apart had different hashes, so the idle gate
+did not freeze visible lesson motion.
+
+A five-second intake `sample` pass found the main thread waiting in `mach_msg`
+for 3,462 of 3,742 samples and no Stroke Care function in the collapsed hot-
+stack list. The full method, raw values, limitations, and verdict are in
+`Proof/performance/20260810-build20-simulator-idle.md`.
+
+This materially improves on issue #30's historical 67.3–78.4% Simulator idle
+samples, but the historical command was not preserved and XCAT remains
+`unavailable`; this is therefore partial Simulator evidence, not a controlled
+hardware benchmark or release-performance proof.

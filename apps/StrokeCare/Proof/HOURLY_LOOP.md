@@ -745,3 +745,22 @@
 - Next safe action: on an awake and unlocked XCAT, compare Calm and Scholar from
   the default presenter position and record whether the added skull remains a
   clearly optional reference rather than competing with the brain.
+
+## 2026-08-10 05:21 SGT — idle timeline verification
+
+- Target: GitHub issue #30; verify that the case archive/review no longer run
+  the display-rate teaching animation loop while preserving active lessons.
+- Bounded action: measured six one-second process samples on the archive,
+  unfolded review, and active Pressure routes; ran a five-second stack sample;
+  compared two active-lesson screenshots eight seconds apart.
+- Evidence: archive averaged 8.08% CPU, unfolded review 0.33%, active Pressure
+  28.17%; active screenshot hashes differed; the intake main thread waited in
+  `mach_msg` for 3,462/3,742 sampled stacks. Full receipt:
+  `Proof/performance/20260810-build20-simulator-idle.md`.
+- Verdict: `IMPROVED` — the historical 67.3–78.4% idle behavior is not
+  reproduced and the active lesson remains animated.
+- Blocker: the original benchmark command is absent, XCAT is unavailable, and
+  hardware frame pacing, thermals, battery impact, and residual intake cost are
+  not proven.
+- Next safe action: repeat the archive, review, and Pressure routes with
+  Instruments on an awake and unlocked XCAT before closing issue #30.
