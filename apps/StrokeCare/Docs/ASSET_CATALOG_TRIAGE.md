@@ -1,6 +1,6 @@
 # Stroke asset catalog runtime triage
 
-Updated after `git fetch --all --prune` on 8 August 2026.
+Updated after `git fetch --all --prune` on 10 August 2026.
 
 ## Repository comparison
 
@@ -12,7 +12,7 @@ Updated after `git fetch --all --prune` on 8 August 2026.
   adds 69 v3 packages, bringing the repository candidate catalog to **134 unique USDZ assets**.
   Those draft files are metadata candidates, not current
   app runtime dependencies.
-- Stroke Care deliberately declares a thirteen-asset runtime slice today. A
+- Stroke Care deliberately declares a fourteen-asset runtime slice today. A
   catalog file existing in Git is not proof that it is registered, clinically
   suitable, performant, or visible in the app.
 
@@ -23,6 +23,7 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 | `brain_deep_structures_v2` | 2.2 MB | Clinician Study-apart field | Bundled and runtime-gated; Simulator opacity/occlusion proof still required. |
 | `brain_ventricles_v2` | 0.8 MB | Clinician Study-apart field | Bundled and runtime-gated; specialist label review still required. |
 | `cerebral_bloodflow_animation_v2` | 0.19 MB | Calm qualitative flow layer | Bundled and explicitly looped only in clinician Blood-flow mode; non-CFD and motion proof remain required. |
+| `dural_sinuses_jugulars_realistic_v2` | 4.22 MB | Clinician Guided/Scholar venous reference | Bundled in the registered-v2 frame; generic atlas only. Z-Anatomy/BodyParts3D ShareAlike attribution and specialist review are mandatory. Blue/purple is a UI convention, not venous blood colour or flow. |
 | `artery_cutaway_complete_v2` | 6.5 MB | Magnified vessel close-up | Separate on-demand volume, never permanent centre clutter. |
 | `thrombectomy_device_set_educational_v2` | 2.47 MB | Presenter-only Plan B tool tray | Use only when thrombectomy is the chosen discussion; label magnification and generic-device status. |
 | Individual v2 guidewire/catheters/stent | 0.24–1.05 MB each | Grabbable clinician inventory | Prefer lazy individual loading over the combined set. |

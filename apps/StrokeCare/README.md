@@ -110,8 +110,8 @@ tear away from the brain.
 - The default immersive path loads the exact PR #2 registered-v2 brain,
   cerebral arteries, right-M1 teaching marker, conceptual dura, semantic skull,
   deep structures, ventricles, and conceptual cerebral-flow animation from the
-  canonical repository asset catalog. The app declares a bounded **13-USDZ**
-  slice: eight registered-v2 anatomy/teaching files, three quarantined v1 files,
+  canonical repository asset catalog. The app declares a bounded **14-USDZ**
+  slice: nine registered-v2 anatomy/teaching files, three quarantined v1 files,
   and two presenter-only tool files. The wider audited GitHub catalog contains
   134 manifest-backed candidates; they are not all loaded into one scene.
   Authored child transforms are not
@@ -121,6 +121,11 @@ tear away from the brain.
   **Study apart** view. The baked flow asset appears only in the clinician's
   **Blood flow** lesson and freezes with Pause or Reduce Motion. It is generic,
   qualitative authored motion—not CFD, perfusion, velocity, or a patient scan.
+- The registered-v2 dural-sinus/jugular reference appears only for a clinician
+  who deliberately selects Guided or Scholar detail. Its blue/purple treatment
+  is an educational display convention—not venous blood colour, oxygenation,
+  direction, velocity, or patient-specific imaging—and specialist review is
+  still pending.
 - Procedural hemispheres, vessels, clot, at-risk tissue, and flow remain an
   instant-loading fallback when the hero brain cannot load.
 - A sparse fixed-space boundary ring replaces the earlier dark transparent
@@ -166,6 +171,9 @@ acute ischemic stroke materials and the team's merged open cranial stroke surger
 research, but remains **clinician review pending**. It does not establish whether
 decompressive surgery, thrombolysis, thrombectomy, or any other intervention is
 appropriate for a person.
+
+The screenshot-derived six-beat Figma translation and its safety gates are in
+[`Docs/CRANIOTOMY_TEACHING_SEQUENCE.md`](Docs/CRANIOTOMY_TEACHING_SEQUENCE.md).
 
 - [2026 AHA/ASA acute ischemic stroke guideline hub](https://professional.heart.org/en/science-news/2026-guideline-for-the-early-management-of-patients-with-acute-ischemic-stroke)
 - [AHA key patient messages](https://professional.heart.org/en/-/media/PHD-Files-2/Science-News/k/Key-Patient-Messages-The-2026-Acute-Ischemic-Stroke-Guideline.pdf)

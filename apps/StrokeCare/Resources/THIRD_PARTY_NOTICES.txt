@@ -1,0 +1,24 @@
+Stroke Care — Third-Party Anatomy Notices
+==========================================
+
+This prototype includes atlas-derived teaching anatomy from Z-Anatomy and
+BodyParts3D. The derived geometry remains subject to the upstream attribution
+and ShareAlike terms:
+
+- Z-Anatomy — Creative Commons Attribution-ShareAlike 4.0 International
+  https://www.z-anatomy.com/
+  https://creativecommons.org/licenses/by-sa/4.0/
+- BodyParts3D — Creative Commons Attribution-ShareAlike 2.1 Japan
+  https://lifesciencedb.jp/bp3d/
+  https://creativecommons.org/licenses/by-sa/2.1/jp/
+
+The registered-v2 dural venous sinus and internal jugular reference is a
+generic atlas-derived educational model. Purple/blue is a display convention;
+it does not depict blood colour, oxygenation, flow direction, velocity,
+pressure, stenosis, collateral status, perfusion, or a patient scan. The asset
+must not be used for diagnosis, treatment planning, navigation, device sizing,
+procedural rehearsal, or a clinical decision. Anatomical identity,
+registration, terminology, and patient-facing use require specialist review.
+
+Project asset manifest: vision_pro_stroke_kit_v2 /
+asset_manifest_cranial_vascular_v2.json, version 0.4.0-cranial-vascular.

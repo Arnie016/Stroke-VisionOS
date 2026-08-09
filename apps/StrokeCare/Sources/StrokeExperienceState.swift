@@ -1392,6 +1392,14 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
     }
 
+    func prepareClinicianLayerHierarchyProof() {
+        prepareMainOverviewProof()
+        // Scholar keeps the generic registered-v2 venous reference visible and
+        // also proves the peripheral reference hierarchy. This remains a
+        // presenter-only composition, not a patient scan or flow state.
+        selectDetailLevel(.scholar)
+    }
+
     func prepareTeachingImagingProof() {
         prepareMainOverviewProof()
         selectPoint(

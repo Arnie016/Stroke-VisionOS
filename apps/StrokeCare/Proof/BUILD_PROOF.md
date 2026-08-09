@@ -4,11 +4,12 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (11)` on the current feature branch; signed XCAT deployment and
-  placement-path receipts are recorded below.
+- Current source/build candidate: `0.6 (12)` on the feature branch. Older signed
+  XCAT deployment receipts are versioned separately below and do not prove this
+  candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.4`; clinician review pending.
+- Clinical content version: `SC-AIS-001.5`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old
@@ -404,3 +405,37 @@ RSS was not improved. The `--proof-case-unfold` route still reached its final
 state after the cadence change. These are Simulator process and render-state
 receipts only; XCAT performance, thermals, battery, wearer targeting, AirPlay,
 comfort, comprehension, and clinical validity remain unproven.
+
+## 2026-08-10 01:22 SGT — clinician layered-anatomy hierarchy
+
+This bounded slice adds a registered-v2 venous reference to the clinician
+Regions lesson and exposes direct `Front`, `Side A`, and `Top` views plus
+`Calm`, `Guided`, and `Scholar` reference depth. Scholar mode shows a peripheral
+reference rail: Anatomy is available; Imaging becomes available only after a
+deliberate point selection; unsupported clinical lanes remain visibly locked.
+The three-act `Orient → Pressure → Make space` timeline and four quiet regional
+points remain visible around the dominant central anatomy.
+
+The generated application contains exactly fourteen top-level USDZ resources
+and `THIRD_PARTY_NOTICES.txt`. The venous asset is displayed only for a
+clinician, during explanation, in Guided or Scholar detail, with the Regions
+family selected. Its visible label says `GENERIC VENOUS ATLAS · COLOUR
+CONVENTION · REVIEW PENDING`. The app is 50 MB; its version is `0.6 (12)`; and
+the Simulator executable SHA-256 is
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-layer-hierarchy-14-final` ended `** BUILD SUCCEEDED **`.
+The clean deterministic `--proof-clinician-layer-hierarchy` launch ran with
+only `com.arnav.StrokeTime` present. The resulting
+`Proof/72-clinician-guided-venous-layer-simulator.png` is 3840×2160 with
+SHA-256
+`5d0c3f443ebb305cc8087fab49f88f658489c02642d6e381309ce38f98c651dd`.
+
+This is Simulator render/composition proof only. XCAT remained `unavailable`.
+The separated skull reference deliberately avoids implying approved
+cross-source registration. The screenshot does not prove gaze/pinch accuracy,
+depth, performance, AirPlay legibility, haptics, family comprehension,
+specialist registration, or clinical validity. The 134-item repository catalog
+is source inventory, not 134 loaded or approved runtime assets.

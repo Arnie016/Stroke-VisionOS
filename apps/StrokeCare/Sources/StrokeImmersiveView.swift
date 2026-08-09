@@ -237,6 +237,7 @@ struct StrokeImmersiveView: View {
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let roleMicroCuesID = "spatial-role-micro-cues"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
+    private let scholarReferenceRailID = "spatial-scholar-reference-rail"
     private let familyControlsID = "spatial-family-controls"
     private let presenterControlsID = "spatial-presenter-controls"
     private let clinicianToolWheelID = "clinician-hand-tool-wheel"
@@ -346,6 +347,7 @@ struct StrokeImmersiveView: View {
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
                         caseHistoryTimelineID,
                         teachingTimelineID, roleMicroCuesID, teachingImagingDrawerID,
+                        scholarReferenceRailID,
                         familyControlsID, presenterControlsID
                     ] {
                         if let attachment = attachments.entity(for: id) {
@@ -612,6 +614,11 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                             .frame(width: 330)
                     }
+                    Attachment(id: scholarReferenceRailID) {
+                        StrokeScholarReferenceRail()
+                            .environmentObject(experience)
+                            .frame(width: 250)
+                    }
                     Attachment(id: familyControlsID) {
                         SpatialRoleControls(role: .family)
                             .environmentObject(experience)
@@ -816,6 +823,15 @@ struct StrokeImmersiveView: View {
             drawer.scale = [0.64, 0.64, 0.64]
             drawer.isEnabled = visible && experience.teachingImagingDrawerVisible
             drawer.components.set(BillboardComponent())
+        }
+
+        if let scholarRail = attachments.entity(for: scholarReferenceRailID) {
+            scholarRail.position = [0.70, 1.76, -0.94]
+            scholarRail.scale = [0.86, 0.86, 0.86]
+            scholarRail.isEnabled = visible &&
+                experience.audienceLens == .clinician &&
+                experience.detailLevel == .scholar
+            scholarRail.components.set(BillboardComponent())
         }
     }
 
@@ -1574,6 +1590,14 @@ private struct StrokeTeachingImagingDrawer: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
+            if let selectedPointLabel = experience.selectedPointLabel {
+                Text("FROM POINT · \(selectedPointLabel.uppercased())")
+                    .font(.caption2.monospaced().weight(.semibold))
+                    .tracking(0.55)
+                    .foregroundStyle(.white.opacity(0.58))
+                    .lineLimit(1)
+            }
+
             Text(referenceTitle)
                 .font(.caption2.monospaced().weight(.black))
                 .tracking(0.8)
@@ -1607,6 +1631,152 @@ private struct StrokeTeachingImagingDrawer: View {
 
     private var referenceTint: Color {
         experience.teachingImagingLens == .affectedVessel ? .orange : .mint
+    }
+}
+
+/// A clinician-only index of technically denser reference lanes. The two
+/// enabled rows route to registered teaching content already in the app. The
+/// remaining rows are honest scaffolding: visibly unavailable until reviewed
+/// data and interactions exist, rather than inert controls that imply content.
+private struct StrokeScholarReferenceRail: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("SCHOLAR REFERENCES")
+                .font(.caption2.weight(.black))
+                .tracking(1.0)
+                .foregroundStyle(.mint)
+
+            ForEach(StrokeScholarReferenceLane.allCases) { lane in
+                if isActionable(lane) {
+                    Button {
+                        select(lane)
+                    } label: {
+                        row(for: lane, isSelected: isSelected(lane), isEnabled: true)
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel(lane.title)
+                    .accessibilityValue(isSelected(lane) ? "Selected" : "Available")
+                } else {
+                    row(for: lane, isSelected: false, isEnabled: false)
+                        .opacity(0.38)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(unavailableLabel(for: lane))
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 11)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
+        .accessibilityElement(children: .contain)
+    }
+
+    private func row(
+        for lane: StrokeScholarReferenceLane,
+        isSelected: Bool,
+        isEnabled: Bool
+    ) -> some View {
+        HStack(spacing: 9) {
+            Image(systemName: lane.systemImage)
+                .font(.caption.weight(.bold))
+                .frame(width: 20, height: 20)
+                .foregroundStyle(isSelected ? Color.black.opacity(0.78) : Color.white.opacity(0.78))
+                .background(isSelected ? Color.mint : Color.white.opacity(0.08), in: Circle())
+
+            Text(lane.title)
+                .font(.caption.weight(isSelected ? .bold : .semibold))
+                .foregroundStyle(.white.opacity(isEnabled ? 0.90 : 0.64))
+
+            Spacer(minLength: 5)
+
+            if isEnabled {
+                Image(systemName: isSelected ? "checkmark" : "chevron.right")
+                    .font(.caption2.weight(.black))
+                    .foregroundStyle(isSelected ? Color.mint : Color.white.opacity(0.38))
+            } else {
+                Image(systemName: "lock.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.52))
+            }
+        }
+        .padding(.horizontal, 9)
+        .frame(minHeight: 48)
+        .background(
+            isSelected ? Color.mint.opacity(0.13) : Color.white.opacity(0.025),
+            in: RoundedRectangle(cornerRadius: 11)
+        )
+    }
+
+    private func isSelected(_ lane: StrokeScholarReferenceLane) -> Bool {
+        switch lane {
+        case .anatomy:
+            experience.pointField == .regions && !experience.teachingImagingDrawerVisible
+        case .imaging:
+            experience.teachingImagingDrawerVisible
+        case .interventions, .medications, .outcomes, .guidelines:
+            false
+        }
+    }
+
+    private func isActionable(_ lane: StrokeScholarReferenceLane) -> Bool {
+        switch lane {
+        case .anatomy:
+            true
+        case .imaging:
+            experience.selectedPointEntityName != nil
+        case .interventions, .medications, .outcomes, .guidelines:
+            false
+        }
+    }
+
+    private func unavailableLabel(for lane: StrokeScholarReferenceLane) -> String {
+        if lane == .imaging && experience.selectedPointEntityName == nil {
+            return "Imaging, select an anatomy point first"
+        }
+        return "\(lane.title), unavailable in this prototype"
+    }
+
+    private func select(_ lane: StrokeScholarReferenceLane) {
+        switch lane {
+        case .anatomy:
+            experience.selectLessonFamily(.regions)
+        case .imaging:
+            experience.selectTeachingImagingLens(.affectedVessel, reduceMotion: reduceMotion)
+        case .interventions, .medications, .outcomes, .guidelines:
+            break
+        }
+    }
+}
+
+private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
+    case anatomy
+    case imaging
+    case interventions
+    case medications
+    case outcomes
+    case guidelines
+
+    var id: String { rawValue }
+    var title: String { rawValue.capitalized }
+
+    var isAvailable: Bool {
+        self == .anatomy || self == .imaging
+    }
+
+    var systemImage: String {
+        switch self {
+        case .anatomy: "brain.head.profile"
+        case .imaging: "viewfinder"
+        case .interventions: "cross.case"
+        case .medications: "pills"
+        case .outcomes: "chart.line.uptrend.xyaxis"
+        case .guidelines: "text.book.closed"
+        }
     }
 }
 
@@ -1700,6 +1870,7 @@ private struct SpatialTeachingTimelineNode: View {
 /// implied by this surface.
 private struct SpatialRoleMicroCues: View {
     @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
@@ -1770,6 +1941,10 @@ private struct SpatialRoleMicroCues: View {
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.58))
             } else {
+                clinicianLensControls
+
+                Divider().overlay(Color.white.opacity(0.12))
+
                 HStack {
                     Text("ACT \(experience.procedureStep.number) OF 3")
                         .font(.caption2.monospacedDigit().weight(.black))
@@ -1849,6 +2024,88 @@ private struct SpatialRoleMicroCues: View {
 
     private var accent: Color {
         experience.audienceLens == .family ? .orange : .mint
+    }
+
+    private var clinicianLensControls: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text("CLINICIAN LENS")
+                .font(.caption2.weight(.black))
+                .tracking(0.8)
+                .foregroundStyle(accent)
+
+            HStack(spacing: 6) {
+                ForEach(directViewpoints) { viewpoint in
+                    let isSelected = experience.anatomyViewpoint == viewpoint
+                    Button {
+                        experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)
+                    } label: {
+                        Label(viewpoint.shortTitle, systemImage: viewpoint.systemImage)
+                            .font(.caption2.weight(.bold))
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(isSelected ? Color.black.opacity(0.80) : Color.white.opacity(0.76))
+                            .background(
+                                isSelected ? accent : Color.white.opacity(0.06),
+                                in: Capsule()
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel("Show \(viewpoint.rawValue)")
+                    .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                }
+            }
+
+            HStack {
+                Text("REFERENCE DEPTH")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.65)
+                Spacer()
+                Text(experience.detailLevel.rawValue.uppercased())
+                    .font(.caption2.monospaced().weight(.bold))
+                    .foregroundStyle(accent)
+            }
+            .foregroundStyle(.white.opacity(0.62))
+
+            HStack(spacing: 6) {
+                ForEach(StrokeDetailLevel.allCases) { level in
+                    let isSelected = experience.detailLevel == level
+                    Button {
+                        experience.selectDetailLevel(level)
+                    } label: {
+                        Text(level.rawValue.capitalized)
+                            .font(.caption2.weight(.bold))
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .foregroundStyle(isSelected ? Color.black.opacity(0.80) : Color.white.opacity(0.70))
+                            .background(
+                                isSelected ? accent : Color.white.opacity(0.05),
+                                in: Capsule()
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel("Reference depth \(level.rawValue)")
+                    .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                }
+            }
+
+            if experience.detailLevel >= .guided && experience.pointField == .regions {
+                Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")
+                    .font(.caption2.monospaced().weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.62))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel(
+                        "Generic venous atlas. Colour is a display convention. Specialist review pending."
+                    )
+            }
+        }
+    }
+
+    private var directViewpoints: [StrokeAnatomyViewpoint] {
+        [.anterior, .lateralA, .superior]
     }
 }
 
@@ -2148,13 +2405,17 @@ private struct JourneyCaption: View {
                 .accessibilityLabel("Exit to patient files")
             }
 
-            if experience.audienceLens == .clinician {
+            if experience.closingReflectionVisible {
+                sharedDiscussion
+            } else if experience.audienceLens == .clinician {
                 clinicianPresenter
             } else {
                 patientExplanation
             }
 
-            if experience.isConsentPromptVisible {
+            if experience.closingReflectionVisible {
+                sharedDiscussionNavigation
+            } else if experience.isConsentPromptVisible {
                 consentChoice
             } else if experience.audienceLens == .family {
                 familyFeedback
@@ -2169,6 +2430,70 @@ private struct JourneyCaption: View {
         .padding(experience.audienceLens == .clinician ? 22 : 18)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 26))
         .overlay(RoundedRectangle(cornerRadius: 26).stroke(Color.white.opacity(0.12)))
+    }
+
+    private var sharedDiscussion: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("SHARED DISCUSSION")
+                .font(.caption.weight(.black))
+                .tracking(1.2)
+                .foregroundStyle(.mint)
+
+            discussionRow(
+                "SHOWN",
+                "Generic anatomy, blockage, pressure, and the purpose of making space.",
+                systemImage: "eye.fill"
+            )
+            discussionRow(
+                "CANNOT ANSWER",
+                "This teaching view does not diagnose or recommend care.",
+                systemImage: "minus.circle"
+            )
+            discussionRow(
+                "QUESTIONS",
+                "What did imaging show? What are the options? What happens next?",
+                systemImage: "questionmark.bubble.fill"
+            )
+        }
+        .padding(12)
+        .background(Color.mint.opacity(0.075), in: RoundedRectangle(cornerRadius: 17))
+        .overlay(RoundedRectangle(cornerRadius: 17).stroke(Color.mint.opacity(0.18)))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Shared discussion summary")
+    }
+
+    private func discussionRow(_ title: String, _ text: String, systemImage: String) -> some View {
+        HStack(alignment: .top, spacing: 9) {
+            Image(systemName: systemImage)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.mint)
+                .frame(width: 18)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption2.weight(.black))
+                    .tracking(0.7)
+                    .foregroundStyle(.white.opacity(0.62))
+                Text(text)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.90))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var sharedDiscussionNavigation: some View {
+        Button {
+            experience.advanceJourney()
+        } label: {
+            Label(
+                experience.audienceLens == .clinician ? "Return to patient files" : "Restart exhibit",
+                systemImage: experience.audienceLens == .clinician ? "folder" : "arrow.counterclockwise"
+            )
+            .font(.callout.weight(.semibold))
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.mint)
     }
 
     private var patientExplanation: some View {

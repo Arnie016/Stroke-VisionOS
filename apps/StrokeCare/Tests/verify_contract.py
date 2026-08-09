@@ -77,12 +77,17 @@ require(not set(held_catalog_ids).intersection(release_catalog_ids), "held sourc
 require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e856897a44df2bbfbe01236f8b142303\"", "nonV1CandidateCount = 105", "candidateMetadata", "quarantinedPrototype", "heldSourceBuildRecords")), "catalog provenance or release gates are incomplete")
 require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
 require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
-require(project_yml.count("buildPhase: resources") == 13 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly thirteen explicit USDZ resources")
+declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
+require(len(declared_usdz_paths) == 14 and len(set(declared_usdz_paths)) == 14 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly fourteen unique explicit USDZ resources")
 require(all(name in project_yml for name in (
     "brain_deep_structures_v2.usdz",
     "brain_ventricles_v2.usdz",
     "cerebral_bloodflow_animation_v2.usdz",
-)), "three reviewed-frame detail assets are not declared in the app bundle")
+    "dural_sinuses_jugulars_realistic_v2.usdz",
+)), "four reviewed-frame detail assets are not declared in the app bundle")
+require("dural_sinuses_jugulars_realistic_v2" in catalog and "fourteen resources" in catalog, "registered-v2 venous reference is not recorded in the explicit bundle catalog")
+third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
+require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
 require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
 require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
@@ -147,6 +152,17 @@ require(all(token in scene for token in (
     "experience.requestedPause || reduceMotion",
     "qualitative authored motion—not CFD",
 )), "registered detail layers are not role/lesson/pause gated or recursively animated")
+require(all(token in scene for token in (
+    'importedVenousName = "dural_sinuses_jugulars_realistic_v2"',
+    'venousLayerName = "anatomy-venous-layer"',
+    "registeredVenousReviewStateName",
+    "experience.audienceLens == .clinician",
+    "experience.detailLevel >= .guided",
+    "experience.spatialPhase == .explanation",
+    "experience.pointField == .regions",
+    "venousLayer?.isEnabled = showsVenousReference",
+    "Blue/purple is an educational convention",
+)), "registered-v2 venous reference is not explicitly role/detail gated or review bounded")
 require("imported-brain-surface-target" in scene and "generateSphere(radius: 0.112)" in scene, "semantic imported brain collision target is missing")
 require("imported-clot-focus-target" in scene and "isAnatomyInteractionTarget" in scene, "semantic clot interaction target is missing")
 require("legacy-v1-pressure-root" in scene and "craniotomy_bone_flap" in scene and "dural_patch" in scene, "PR2 pressure-purpose assets are not segregated")
@@ -170,6 +186,14 @@ require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Fie
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior")), "named registered model-frame viewpoints are missing")
 require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)" in immersive and '.accessibilityLabel("Anatomy viewpoint")' in immersive, "named views and direct free-orbit handoff are not wired into the anatomy control")
+require(all(token in immersive for token in (
+    'Text("CLINICIAN LENS")',
+    'Text("REFERENCE DEPTH")',
+    '[.anterior, .lateralA, .superior]',
+    'experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)',
+    'experience.selectDetailLevel(level)',
+    'GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING',
+)), "clinician left rail lacks direct viewpoints or progressive detail controls")
 require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior")), "deterministic anatomy-viewpoint proof routes are missing")
 require("true medial view is intentionally not" in state, "single-surface anatomy is mislabeled as a medial view")
 require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
@@ -337,7 +361,7 @@ require("134 unique USDZ assets" in asset_triage and all(name in asset_triage fo
     "brain_deep_structures_v2",
     "brain_ventricles_v2",
     "cerebral_bloodflow_animation_v2",
-)), "expanded asset catalog is not triaged separately from the thirteen-file runtime slice")
+)), "expanded asset catalog is not triaged separately from the fourteen-file runtime slice")
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -345,7 +369,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.4" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.5" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -409,6 +433,7 @@ require("updateRegisteredTeachingImaging" in scene and "miniature.parent !== sta
 require("let miniature = stageRoot.findEntity(" in immersive and "root.findEntity(\n                        named: StrokeSceneFactory.registeredTeachingImagingRootName" not in immersive, "world-locked teaching reference stops updating after reparenting")
 require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" in state, "deterministic teaching imaging proof route is missing")
 require("--proof-main-overview" in launch and "prepareMainOverviewProof" in state, "dots-first main overview proof route is missing")
+require("--proof-clinician-layer-hierarchy" in launch and "prepareClinicianLayerHierarchyProof" in state and "selectDetailLevel(.scholar)" in state, "scholar clinician layer-hierarchy proof route is missing")
 require("--proof-main-selected-point" in launch and "prepareTeachingImagingProof" in state, "selected-point main proof route is missing")
 require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0042)" in scene and "selectedLessonPointMaterial" in scene, "regional lesson cloud is not visibly distinct around the main anatomy")
 require("selectLessonPoint(initialPoint)" not in state and "clearPointSelection()" in state, "lesson family still auto-selects a label instead of beginning dots-first")
@@ -427,7 +452,27 @@ require(all(token in immersive for token in (
     '"AFFECTED-VESSEL REFERENCE"',
     '"Generic anatomy · not a patient scan"',
     '"Registered-v2 teaching asset · review pending"',
+    '"FROM POINT · \\(selectedPointLabel.uppercased())"',
 )), "right-side teaching reference lacks role-safe selected-point captions")
+require(all(token in immersive for token in (
+    "StrokeScholarReferenceRail",
+    'Text("SCHOLAR REFERENCES")',
+    "case anatomy",
+    "case imaging",
+    "case interventions",
+    "case medications",
+    "case outcomes",
+    "case guidelines",
+    "self == .anatomy || self == .imaging",
+    "experience.selectedPointEntityName != nil",
+    'Image(systemName: "lock.fill")',
+)), "Scholar rail does not expose the reviewed reference lanes or visibly lock unsupported lanes")
+require(all(token in immersive for token in (
+    'Text("SHARED DISCUSSION")',
+    '"This teaching view does not diagnose or recommend care."',
+    '"What did imaging show? What are the options? What happens next?"',
+    'experience.closingReflectionVisible',
+)), "closing state lacks an honest shared-discussion summary in the active companion")
 require(all(copy in state for copy in ("Which layer is this?", "Is this blockage, injury, or swelling?", "What can this surgery change—and not change?")), "family act questions are incomplete")
 require(all(copy in state for copy in ("Generic scenario", "Whole brain first", "Not a patient scan", "Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred", "Ask before transparency", "Room, not repair", "No outcome promise")), "presenter three-point act cues are incomplete")
 require('title: "Act \\(experience.procedureStep.number)"' not in immersive and 'compactControl("Act \\(experience.procedureStep.number)"' not in immersive, "redundant presenter act menu remains after adding the teaching timeline")
@@ -441,7 +486,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.4" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.5" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
@@ -465,7 +510,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=THIRTEEN_ASSET_STAGED_SLICE")
+print("github_asset_runtime=FOURTEEN_ASSET_STAGED_SLICE")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")
 print("physical_device=NOT_PROVEN")

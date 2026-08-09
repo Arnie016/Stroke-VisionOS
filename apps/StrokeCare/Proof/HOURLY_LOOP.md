@@ -528,3 +528,25 @@
 - Next safe action: when XCAT is awake and unlocked, run one doctor intake →
   case unfold → explanation transition while recording launch, pinch response,
   and device frame/thermal evidence.
+
+## 2026-08-10 01:22 SGT — registered clinician anatomy hierarchy
+
+- Target: make the doctor explanation visibly richer without bulk-loading the
+  mixed-frame 134-asset catalog or adding another modal dashboard.
+- Bounded action: added the same-frame venous atlas to the clinician Regions
+  lesson, direct Front/Side/Top and Calm/Guided/Scholar controls, a point-gated
+  Scholar reference rail, shipped atlas attribution, and a visible review
+  boundary.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; built app contains exactly 14
+  USDZs plus `THIRD_PARTY_NOTICES.txt`; clean proof 72 SHA-256 is
+  `5d0c3f443ebb305cc8087fab49f88f658489c02642d6e381309ce38f98c651dd`.
+- Verdict: `IMPROVED` — arteries, veins, brain, regional points, direct views,
+  top timeline, and the bounded reference hierarchy now read together in one
+  spatial composition.
+- Blocker: XCAT is unavailable; specialist registration, wearer interaction,
+  AirPlay legibility, performance, haptics, comprehension, and clinical
+  validity are not proven.
+- Next safe action: on an awake XCAT, pinch each of the four region points once
+  and verify that exactly one point-local reference appears without the skull
+  or Scholar rail stealing focus.

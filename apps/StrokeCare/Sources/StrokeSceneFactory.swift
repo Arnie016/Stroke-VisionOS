@@ -24,6 +24,7 @@ enum StrokeSceneFactory {
     private static let importedBrainName = "brain_anatomy_realistic_v2"
     private static let importedSkullName = "skull_semantic_realistic_v2"
     private static let importedArteriesName = "cerebral_arteries_realistic_v2"
+    private static let importedVenousName = "dural_sinuses_jugulars_realistic_v2"
     private static let importedClotName = "ischemic_mca_clot_v2"
     private static let importedDuraName = "dura_mater_cutaway_conceptual_v2"
     private static let importedDeepStructuresName = "brain_deep_structures_v2"
@@ -34,6 +35,11 @@ enum StrokeSceneFactory {
     private static let importedPatchName = "dural_patch"
     static let importedBrainTargetName = "imported-brain-surface-target"
     static let importedClotTargetName = "imported-clot-focus-target"
+    /// Empty semantic marker for a future presenter label. Finding this entity
+    /// means the generic venous teaching reference is loaded; it never means
+    /// that the layer is diagnostic, patient-specific, or specialist-reviewed.
+    static let registeredVenousReviewStateName =
+        "venous-reference-generic-nondiagnostic-specialist-review-pending"
     static let spatialCaseRoomName = "spatial-case-intake-room"
     static let spatialCaseArchiveName = "spatial-case-archive"
     static let spatialCaseConstellationName = "spatial-case-constellation"
@@ -73,6 +79,7 @@ enum StrokeSceneFactory {
     private static let cortexLayerName = "anatomy-cortex-layer"
     private static let fixedSpaceLayerName = "anatomy-fixed-space-layer"
     private static let arteriesLayerName = "anatomy-arteries-layer"
+    private static let venousLayerName = "anatomy-venous-layer"
     private static let blockageLayerName = "anatomy-blockage-layer"
     private static let duraLayerName = "anatomy-dura-layer"
     private static let deepStructuresLayerName = "anatomy-deep-structures-layer"
@@ -551,6 +558,7 @@ enum StrokeSceneFactory {
             importedBrainName,
             importedSkullName,
             importedArteriesName,
+            importedVenousName,
             importedClotName,
             importedDuraName,
             importedDeepStructuresName,
@@ -565,6 +573,7 @@ enum StrokeSceneFactory {
                 let layer = Entity()
                 layer.name = semanticLayerName(for: name)
                 if [
+                    importedVenousName,
                     importedDeepStructuresName,
                     importedVentriclesName,
                     importedBloodflowName
@@ -572,6 +581,14 @@ enum StrokeSceneFactory {
                     // These detail layers are opt-in clinician references, so
                     // they never flash over the family anatomy while loading.
                     layer.isEnabled = false
+                }
+                if name == importedVenousName {
+                    // The wrapper is the semantic boundary. The USDZ remains
+                    // untouched in the registered-v2 frame with authored PBR
+                    // materials and transforms intact beneath it.
+                    let reviewState = Entity()
+                    reviewState.name = registeredVenousReviewStateName
+                    layer.addChild(reviewState)
                 }
                 layer.addChild(entity)
                 registered.addChild(layer)
@@ -687,6 +704,8 @@ enum StrokeSceneFactory {
             fixedSpaceLayerName
         case importedArteriesName:
             arteriesLayerName
+        case importedVenousName:
+            venousLayerName
         case importedClotName:
             blockageLayerName
         case importedDuraName:
@@ -1641,6 +1660,7 @@ enum StrokeSceneFactory {
         let fixedSpaceLayer = imported.findEntity(named: fixedSpaceLayerName)
         let regionPointAnchor = imported.findEntity(named: regionPointAnchorName)
         let arteriesLayer = imported.findEntity(named: arteriesLayerName)
+        let venousLayer = imported.findEntity(named: venousLayerName)
         let blockageLayer = imported.findEntity(named: blockageLayerName)
         let duraLayer = imported.findEntity(named: duraLayerName)
         let deepStructuresLayer = imported.findEntity(named: deepStructuresLayerName)
@@ -1656,6 +1676,7 @@ enum StrokeSceneFactory {
 
         cortexLayer?.components.set(OpacityComponent(opacity: cortexOpacity))
         arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
+        venousLayer?.components.set(OpacityComponent(opacity: 0.88))
         blockageLayer?.components.set(OpacityComponent(opacity: 1))
         duraLayer?.components.set(OpacityComponent(opacity: presentation == .exploded ? 0.20 : 0.14))
 
@@ -1690,6 +1711,17 @@ enum StrokeSceneFactory {
         approach(fixedSpaceLayer, showsClinicianSkullContext ? [0.16, 0, 0] : .zero)
         imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
         imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull
+        // Blue/purple is an educational convention, not the colour of venous
+        // blood. The generic registered-v2 reference is presenter-only and
+        // requires an explicit Guided or Scholar detail choice. Its semantic
+        // review-state child lets a future label surface that limitation
+        // without coupling scene loading to UI or clinical state.
+        let showsVenousReference = experience.audienceLens == .clinician &&
+            experience.detailLevel >= .guided &&
+            experience.spatialPhase == .explanation &&
+            experience.pointField == .regions &&
+            !isolateScholarSkull
+        venousLayer?.isEnabled = showsVenousReference
         imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
             (experience.procedureStep != .chooseCase || presentation == .exploded)
         imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull && showsPurpose
