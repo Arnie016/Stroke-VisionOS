@@ -66,6 +66,22 @@ struct StrokeTimeApp: App {
             }
         }
 
+        WindowGroup(id: StrokeSpace.xray) {
+            StrokeXrayWorkspaceView()
+                .environmentObject(experience)
+        }
+        .defaultSize(width: 872, height: 510)
+        .windowResizability(.contentSize)
+        .defaultWindowPlacement { _, context in
+            if let presenter = context.windows.first(where: { $0.id == StrokeSpace.presenter }) {
+                WindowPlacement(.above(presenter))
+            } else if let family = context.windows.first(where: { $0.id == StrokeSpace.family }) {
+                WindowPlacement(.above(family))
+            } else {
+                WindowPlacement(.utilityPanel)
+            }
+        }
+
         ImmersiveSpace(id: StrokeSpace.immersive) {
             StrokeImmersiveView(immersionStyle: $immersionStyle)
                 .environmentObject(experience)
@@ -79,5 +95,6 @@ enum StrokeSpace {
     static let family = "stroke-family-questions"
     static let presenter = "stroke-presenter-rail"
     static let evidence = "stroke-clinical-evidence"
+    static let xray = "stroke-shared-teaching-xray"
     static let immersive = "stroke-time-immersive"
 }

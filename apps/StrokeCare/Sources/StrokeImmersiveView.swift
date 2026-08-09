@@ -982,6 +982,7 @@ private struct SpatialRoleControls: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let role: StrokeAudienceLens
@@ -1058,6 +1059,10 @@ private struct SpatialRoleControls: View {
                     selected: true
                 ) {
                     experience.advanceJourney()
+                }
+
+                bubbleButton("X-ray", systemImage: "xray", accent: .orange) {
+                    openWindow(id: StrokeSpace.xray)
                 }
             }
 
@@ -1160,6 +1165,9 @@ private struct SpatialRoleControls: View {
                     Button("Evidence", systemImage: "text.book.closed.fill") {
                         openWindow(id: StrokeSpace.evidence)
                     }
+                    Button("X-ray", systemImage: "xray") {
+                        openWindow(id: StrokeSpace.xray)
+                    }
                     Button("Reset view", systemImage: "arrow.counterclockwise") {
                         experience.resetSpatialView()
                     }
@@ -1172,7 +1180,7 @@ private struct SpatialRoleControls: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Environment, evidence, and view options")
+                .accessibilityLabel("Environment, evidence, X-ray, and view options")
             }
 
             HStack(spacing: 8) {
@@ -1275,6 +1283,7 @@ private struct SpatialRoleControls: View {
         await dismissImmersiveSpace()
         experience.isImmersivePresented = false
         experience.reset()
+        dismissWindow(id: StrokeSpace.xray)
         openWindow(id: StrokeSpace.window)
     }
 }
@@ -1771,6 +1780,16 @@ private struct JourneyCaption: View {
                 .buttonStyle(.bordered)
                 .tint(.cyan)
                 .accessibilityLabel("Open clinical evidence space")
+
+                Button {
+                    openWindow(id: StrokeSpace.xray)
+                } label: {
+                    Image(systemName: "xray")
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                .accessibilityLabel("Open shared teaching X-ray")
             }
 
             if experience.anatomyPresentation != .assembled {
@@ -1877,6 +1896,12 @@ private struct JourneyCaption: View {
             }
             .buttonStyle(.bordered)
             .tint(.orange)
+
+            Button("X-ray", systemImage: "xray") {
+                openWindow(id: StrokeSpace.xray)
+            }
+            .buttonStyle(.bordered)
+            .tint(.cyan)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Family pace and clarification controls")
@@ -1927,6 +1952,7 @@ private struct JourneyCaption: View {
         experience.isImmersivePresented = false
         openWindow(id: StrokeSpace.window)
         dismissWindow(id: StrokeSpace.evidence)
+        dismissWindow(id: StrokeSpace.xray)
         dismissWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
     }
 
