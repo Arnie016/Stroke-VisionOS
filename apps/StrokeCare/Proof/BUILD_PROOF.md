@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (12)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (13)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -439,3 +439,29 @@ cross-source registration. The screenshot does not prove gaze/pinch accuracy,
 depth, performance, AirPlay legibility, haptics, family comprehension,
 specialist registration, or clinical validity. The 134-item repository catalog
 is source inventory, not 134 loaded or approved runtime assets.
+
+## 2026-08-10 01:57 SGT — role-aware six-beat presenter timeline
+
+Build `0.6 (13)` preserves the three-act patient/family story while giving the
+doctor presenter six directly revisitable checkpoints: Confirm context, Discuss
+access, Protective covering, Explain purpose, Team checks, and Explain closure.
+The third through sixth checkpoints reuse the existing explicit permission gate;
+the final checkpoint returns the teaching layers to their assembled state. The
+left presenter prompts change with each checkpoint and remain authored cues, not
+a clinical script or generated recommendation.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-six-beat-build13` ended `** BUILD SUCCEEDED **`. A clean launch
+of `--proof-clinician-six-beat-timeline` produced
+`Proof/73-clinician-six-beat-timeline-simulator.png` at 3840×2160 with SHA-256
+`32995ff96325f5ec61bfe002ddc829d6f1f0ed48520bcae552f390a6984e667e`.
+The built Simulator executable SHA-256 is
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`.
+
+The implementation follows the supplied Figma Page 2 screenshots. Structured
+Figma context and 1:1 validation were not available because the authenticated
+Starter plan had reached its MCP call limit. XCAT was paired but `unavailable`;
+the dated reachability receipt is
+`Proof/xcat/20260810-015706/BLOCKED.md`. No device build, install, launch, wearer,
+AirPlay, interaction, comprehension, specialist, or clinical proof occurred.

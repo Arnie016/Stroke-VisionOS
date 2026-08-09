@@ -550,3 +550,22 @@
 - Next safe action: on an awake XCAT, pinch each of the four region points once
   and verify that exactly one point-local reference appears without the skull
   or Scholar rail stealing focus.
+
+## 2026-08-10 01:57 SGT — role-aware presenter timeline
+
+- Target: turn the supplied six-frame doctor story into revisitable spatial
+  checkpoints without complicating the patient/family three-act path.
+- Bounded action: added six doctor-presenter checkpoints with direct selection,
+  Next/Back traversal, existing consent continuity for beats 3–6, beat-specific
+  left cues, and assembled-layer closure; increased the build to `0.6 (13)`.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; clean proof 73 SHA-256 is
+  `32995ff96325f5ec61bfe002ddc829d6f1f0ed48520bcae552f390a6984e667e`.
+- Verdict: `IMPROVED` — the doctor can now revisit one of six concise teaching
+  checkpoints while the patient/family path keeps the simpler three-act story.
+- Blocker: XCAT remained paired but `unavailable`; Figma structured context was
+  Starter-plan rate-limited; wearer interaction, AirPlay, comprehension,
+  specialist review, and clinical validity are not proven.
+- Next safe action: on an awake XCAT, pinch checkpoints 1, 3, 5, and 6 and verify
+  direct targeting, the permission/refusal path, assembled closure, and mirrored
+  legibility without opening a second control surface.

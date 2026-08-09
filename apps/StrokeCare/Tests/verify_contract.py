@@ -42,9 +42,19 @@ xcat_deploy = (ROOT / "Scripts" / "deploy_xcat.zsh").read_text()
 xcat_stage_collect = (ROOT / "Scripts" / "collect_xcat_stage_placement.zsh").read_text()
 xcat_acceptance = (ROOT / "Proof" / "XCAT_ACCEPTANCE.md").read_text()
 
-step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
+step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("enum StrokePresenterTeachingBeat", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
 require(step_contract.count("\n    case ") == 3, "procedure must remain exactly three steps")
+presenter_beat_contract = state.split("enum StrokePresenterTeachingBeat", 1)[1].split("struct PlacedStrokeQuestion", 1)[0]
+require(all(case in presenter_beat_contract for case in (
+    "case confirmContext",
+    "case discussAccess",
+    "case protectiveCovering",
+    "case explainPurpose",
+    "case teamChecks",
+    "case explainClosure",
+)), "clinician six-beat teaching sequence is incomplete")
+require(presenter_beat_contract.count("\n    case ") == 6, "presenter teaching sequence must remain exactly six nested beats")
 detail_contract = catalog.split("enum StrokeDetailLevel", 1)[1].split("enum StrokeAssetFamily", 1)[0]
 require(all(case in detail_contract for case in ("case calm", "case guided", "case scholar")), "presentation detail levels are incomplete")
 require(detail_contract.count("\n    case ") == 3, "detail level must remain a three-state presentation filter")
@@ -422,6 +432,18 @@ require("ASK ALOUD" not in immersive and "familyComfort" not in state and "famil
 require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
 require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 220 : 154" in immersive, "three-act gaze timeline lacks readable active expansion or quiet inactive nodes")
+require(all(token in immersive for token in (
+    "ForEach(StrokePresenterTeachingBeat.allCases)",
+    "experience.selectPresenterTeachingBeat(beat)",
+    "SpatialPresenterTeachingBeatNode",
+    "isActive ? 158 : 94",
+)), "doctor presenter timeline does not expose six compact direct checkpoints")
+require(all(token in state for token in (
+    "pendingPresenterTeachingBeat",
+    "beat.procedureStep == .discussCare, !careViewPermissionGranted",
+    "selectPresenterTeachingBeat(requestedBeat",
+    "beat == .explainClosure",
+)), "presenter beat navigation bypasses permission continuity or reversible closure")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
 require("focusLight.isEnabled = experience.environmentMode != .surroundings" in immersive and "high-density cortex reads like flat clay" in immersive, "warm anatomy field is missing its sculpting key light")
@@ -477,6 +499,7 @@ require(all(copy in state for copy in ("Which layer is this?", "Is this blockage
 require(all(copy in state for copy in ("Generic scenario", "Whole brain first", "Not a patient scan", "Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred", "Ask before transparency", "Room, not repair", "No outcome promise")), "presenter three-point act cues are incomplete")
 require('title: "Act \\(experience.procedureStep.number)"' not in immersive and 'compactControl("Act \\(experience.procedureStep.number)"' not in immersive, "redundant presenter act menu remains after adding the teaching timeline")
 require("--proof-clinician-pressure" in launch, "deterministic presenter proof route is missing")
+require("--proof-clinician-six-beat-timeline" in launch and "prepareClinicianSixBeatTimelineProof" in state and "selectPresenterTeachingBeat(.teamChecks" in state, "deterministic six-beat presenter timeline proof is missing")
 require("isImmersivePresented = false\n        advanceJourney()" not in state, "permission incorrectly resets the companion window")
 require("pendingConsentStep" in state and "present(step: .discussCare" in state, "presenter direct-jump consent continuation is missing")
 require("StrokeModelBoardView()" in deck, "the dominant embedded 3D model is missing from the case board")

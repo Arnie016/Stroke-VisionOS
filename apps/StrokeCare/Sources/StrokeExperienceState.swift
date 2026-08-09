@@ -235,6 +235,70 @@ enum StrokeProcedureStep: Int, CaseIterable, Identifiable {
     }
 }
 
+/// Six clinician-controlled checkpoints nested inside the same three calm
+/// teaching acts. They translate Page 2's procedure frames into a non-graphic
+/// explanation; they are not an operative workflow or surgical-training SOP.
+enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
+    case confirmContext
+    case discussAccess
+    case protectiveCovering
+    case explainPurpose
+    case teamChecks
+    case explainClosure
+
+    var id: Int { rawValue }
+    var number: Int { rawValue + 1 }
+
+    var title: String {
+        switch self {
+        case .confirmContext: "Confirm context"
+        case .discussAccess: "Discuss access"
+        case .protectiveCovering: "Protective covering"
+        case .explainPurpose: "Explain purpose"
+        case .teamChecks: "Team checks"
+        case .explainClosure: "Explain closure"
+        }
+    }
+
+    var shortTitle: String {
+        switch self {
+        case .confirmContext: "Context"
+        case .discussAccess: "Access"
+        case .protectiveCovering: "Covering"
+        case .explainPurpose: "Purpose"
+        case .teamChecks: "Checks"
+        case .explainClosure: "Closure"
+        }
+    }
+
+    var procedureStep: StrokeProcedureStep {
+        switch self {
+        case .confirmContext:
+            .chooseCase
+        case .discussAccess:
+            .inspectOcclusion
+        case .protectiveCovering, .explainPurpose, .teamChecks, .explainClosure:
+            .discussCare
+        }
+    }
+
+    static func firstBeat(for step: StrokeProcedureStep) -> Self {
+        switch step {
+        case .chooseCase: .confirmContext
+        case .inspectOcclusion: .discussAccess
+        case .discussCare: .protectiveCovering
+        }
+    }
+
+    var next: Self? {
+        Self(rawValue: rawValue + 1)
+    }
+
+    var previous: Self? {
+        Self(rawValue: rawValue - 1)
+    }
+}
+
 /// A question is stored in the anatomy root's coordinate space, not as a
 /// screen point. It therefore stays on the same teaching landmark when the
 /// wearer orbits or magnifies the model.
@@ -337,7 +401,13 @@ final class StrokeExperienceState: ObservableObject {
 
     let teachingCase = TeachingStrokeCase.case78
 
-    @Published var procedureStep: StrokeProcedureStep = .chooseCase
+    @Published var procedureStep: StrokeProcedureStep = .chooseCase {
+        didSet {
+            guard audienceLens == .clinician,
+                  presenterTeachingBeat.procedureStep != procedureStep else { return }
+            presenterTeachingBeat = .firstBeat(for: procedureStep)
+        }
+    }
     @Published var audienceLens: StrokeAudienceLens = .family {
         didSet {
             if audienceLens == .clinician {
@@ -345,6 +415,7 @@ final class StrokeExperienceState: ObservableObject {
                 // synthesized-narration eligibility at the state boundary.
                 narrationEnabled = false
                 selectedFamilyQuestion = nil
+                presenterTeachingBeat = .firstBeat(for: procedureStep)
                 return
             }
             detailLevel = .calm
@@ -365,6 +436,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var familyClarityWasSet = false
     @Published private(set) var selectedFamilyQuestion: String?
     @Published private(set) var selectedPresenterKeyPointIndex: Int?
+    @Published private(set) var presenterTeachingBeat: StrokePresenterTeachingBeat = .confirmContext
     @Published var questionPlacementArmed = false
     @Published var questionMarkerVisible = false
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
@@ -397,6 +469,7 @@ final class StrokeExperienceState: ObservableObject {
         StrokeExperienceState.authoredCaseHistoryMilestone
     @Published private(set) var caseReviewRevealProgress: Double = 0
     @Published private(set) var pendingConsentStep: StrokeProcedureStep?
+    @Published private(set) var pendingPresenterTeachingBeat: StrokePresenterTeachingBeat?
     /// Spatial interaction state follows the proven Heart Field ownership
     /// pattern: the app state owns pose, while RealityKit only renders it.
     @Published var spatialZoom: Double = 1
@@ -554,6 +627,7 @@ final class StrokeExperienceState: ObservableObject {
         spatialPhase = .explanation
         clearPointSelection()
         procedureStep = .chooseCase
+        presenterTeachingBeat = .confirmContext
         lessonPointsVisible = true
         requestedPause = false
         withAnimation(.easeInOut(duration: 0.72)) {
@@ -592,6 +666,7 @@ final class StrokeExperienceState: ObservableObject {
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
         selectedCaseHistoryMilestone = Self.authoredCaseHistoryMilestone
         caseReviewRevealProgress = 0
+        presenterTeachingBeat = .confirmContext
         brainRevealProgress = 0
         vesselFocusProgress = 0
         closingReflectionVisible = false
@@ -659,6 +734,15 @@ final class StrokeExperienceState: ObservableObject {
             }
             return
         }
+        if audienceLens == .clinician, spatialPhase == .explanation {
+            if let nextBeat = presenterTeachingBeat.next {
+                selectPresenterTeachingBeat(nextBeat)
+            } else {
+                requestedPause = false
+                closingReflectionVisible = true
+            }
+            return
+        }
         requestedPause = false
         selectedFamilyQuestion = nil
         selectedPresenterKeyPointIndex = nil
@@ -695,8 +779,12 @@ final class StrokeExperienceState: ObservableObject {
         careViewPermissionGranted = true
         isConsentPromptVisible = false
         let requestedStep = pendingConsentStep
+        let requestedBeat = pendingPresenterTeachingBeat
         pendingConsentStep = nil
-        if requestedStep == .discussCare {
+        pendingPresenterTeachingBeat = nil
+        if let requestedBeat {
+            selectPresenterTeachingBeat(requestedBeat, reduceMotion: reduceMotion)
+        } else if requestedStep == .discussCare {
             present(step: .discussCare, reduceMotion: reduceMotion)
         } else {
             advanceJourney()
@@ -706,15 +794,24 @@ final class StrokeExperienceState: ObservableObject {
     func declineCareView() {
         isConsentPromptVisible = false
         pendingConsentStep = nil
+        pendingPresenterTeachingBeat = nil
         requestedPause = true
     }
 
     func retreatJourney() {
+        if audienceLens == .clinician,
+           spatialPhase == .explanation,
+           let previousBeat = presenterTeachingBeat.previous {
+            selectPresenterTeachingBeat(previousBeat)
+            return
+        }
         requestedPause = false
         selectedFamilyQuestion = nil
         selectedPresenterKeyPointIndex = nil
+        presenterTeachingBeat = .confirmContext
         isConsentPromptVisible = false
         pendingConsentStep = nil
+        pendingPresenterTeachingBeat = nil
         regionPortalActive = false
         switch procedureStep {
         case .chooseCase:
@@ -784,6 +881,34 @@ final class StrokeExperienceState: ObservableObject {
               presenterTimelineKeyPoints.indices.contains(index),
               presenterPlainLanguagePoints.indices.contains(index) else { return }
         selectedPresenterKeyPointIndex = selectedPresenterKeyPointIndex == index ? nil : index
+    }
+
+    /// Directly revisits one authored presenter checkpoint. The six beats are
+    /// nested inside the same three acts, so all existing anatomy, consent,
+    /// and non-graphic boundaries remain authoritative.
+    func selectPresenterTeachingBeat(
+        _ beat: StrokePresenterTeachingBeat,
+        reduceMotion: Bool = false
+    ) {
+        guard audienceLens == .clinician, spatialPhase == .explanation else { return }
+
+        if beat.procedureStep == .discussCare, !careViewPermissionGranted {
+            pendingPresenterTeachingBeat = beat
+            present(step: .discussCare, reduceMotion: reduceMotion)
+            return
+        }
+
+        pendingPresenterTeachingBeat = nil
+        present(step: beat.procedureStep, reduceMotion: reduceMotion)
+        guard procedureStep == beat.procedureStep else { return }
+        presenterTeachingBeat = beat
+        if beat == .explainClosure {
+            cancelLayerReveal()
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.55)) {
+                anatomyPresentation = .assembled
+                brainRevealProgress = 0.28
+            }
+        }
     }
 
     func toggleQuestionPlacement() {
@@ -906,13 +1031,19 @@ final class StrokeExperienceState: ObservableObject {
             ]
         }
 
-        return switch procedureStep {
-        case .chooseCase:
+        return switch presenterTeachingBeat {
+        case .confirmContext:
             ["Generic scenario", "Whole brain first", "Not a patient scan"]
-        case .inspectOcclusion:
+        case .discussAccess:
             ["Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred"]
-        case .discussCare:
+        case .protectiveCovering:
+            ["Ask before transparency", "Dura is protective", "Conceptual layer only"]
+        case .explainPurpose:
             ["Ask before transparency", "Room, not repair", "No outcome promise"]
+        case .teamChecks:
+            ["Pressure and bleeding", "Imaging and monitoring", "No pass/fail result"]
+        case .explainClosure:
+            ["Return layers together", "No suturing shown", "End with questions"]
         }
     }
 
@@ -926,24 +1057,42 @@ final class StrokeExperienceState: ObservableObject {
             ]
         }
 
-        return switch procedureStep {
-        case .chooseCase:
+        return switch presenterTeachingBeat {
+        case .confirmContext:
             [
                 "This is a teaching example, not the person's scan.",
                 "Start with the whole brain before moving closer.",
                 "The anatomy explains the idea, not an individual diagnosis.",
             ]
-        case .inspectOcclusion:
+        case .discussAccess:
             [
                 "The blockage, tissue injury, and swelling are different changes.",
                 "Point to each change separately before connecting them.",
                 "This model does not predict what will happen.",
             ]
-        case .discussCare:
+        case .protectiveCovering:
+            [
+                "Ask before making the protective covering transparent.",
+                "The dura is shown as a protective layer around the brain.",
+                "This is a conceptual view, not an operative opening.",
+            ]
+        case .explainPurpose:
             [
                 "Ask permission before revealing deeper layers.",
                 "The goal shown is more room, not repaired tissue.",
                 "This view does not promise an outcome.",
+            ]
+        case .teamChecks:
+            [
+                "The clinical team may check pressure and bleeding.",
+                "Imaging and monitoring help the team reassess the situation.",
+                "This teaching view does not report a result.",
+            ]
+        case .explainClosure:
+            [
+                "The model returns the teaching layers to an assembled view.",
+                "It does not demonstrate stitches, plates, or fixation.",
+                "Finish with the family's questions and the limits of the model.",
             ]
         }
     }
@@ -1301,6 +1450,7 @@ final class StrokeExperienceState: ObservableObject {
         cancelCaseReviewReveal()
         procedureStep = .chooseCase
         audienceLens = .family
+        presenterTeachingBeat = .confirmContext
         resetCatalogPresentation()
         isCaseSelected = false
         spatialPhase = .caseLibrary
@@ -1337,6 +1487,7 @@ final class StrokeExperienceState: ObservableObject {
         careViewPermissionGranted = false
         isConsentPromptVisible = false
         pendingConsentStep = nil
+        pendingPresenterTeachingBeat = nil
         resetSpatialView()
         withAnimation(.easeInOut(duration: 0.6)) {
             brainRevealProgress = 0
@@ -1390,6 +1541,17 @@ final class StrokeExperienceState: ObservableObject {
         lessonPointsVisible = true
         spatialZoom = 1.28
         clearPointSelection()
+    }
+
+    func prepareClinicianSixBeatTimelineProof() {
+        prepareClinicianProof(step: .discussCare)
+        environmentMode = .surroundings
+        selectDetailLevel(.guided)
+        pointField = .regions
+        lessonPointsVisible = true
+        clearPointSelection()
+        selectPresenterTeachingBeat(.teamChecks, reduceMotion: true)
+        spatialZoom = 1.18
     }
 
     func prepareClinicianLayerHierarchyProof() {

@@ -9,6 +9,24 @@ This sequence translates the six Page 2 Figma frames into one non-graphic,
 reversible spatial explanation. It is not a procedural simulator, treatment
 recommendation, consent flow, patient scan, or surgical-training SOP.
 
+## Implemented role contract
+
+- **Patient / family** retains the original three calm acts: `Orient`,
+  `Pressure`, and `Make space`.
+- **Doctor presenter** sees six compact, directly revisitable checkpoints at
+  the top of the spatial scene. `Next` and `Back` traverse those checkpoints,
+  while a direct pinch returns to any earlier checkpoint.
+- Checkpoints 3–6 reuse the existing explicit permission prompt before any
+  layer separation. Refusal pauses the explanation without advancing.
+- The left presenter cues change with the active checkpoint. They remain
+  concise prompts, not a script or generated clinical recommendation.
+- Checkpoint 6 returns the teaching layers to their assembled state. It does
+  not show suturing, fixation, a wound, or a success animation.
+
+This implementation is derived from the user-supplied Page 2 screenshots.
+Figma MCP structured context was unavailable because the authenticated Starter
+plan had reached its tool-call limit, so 1:1 Figma validation remains pending.
+
 | Beat | Spatial teaching state | Presenter language boundary |
 | --- | --- | --- |
 | 1. Confirm context | Registered-v2 brain, arteries, illustrative clot, optional skull context, and quiet anatomy points. | Explain what the generic model can show. Do not claim an exact patient position or imaging finding. |
@@ -18,10 +36,10 @@ recommendation, consent flow, patient scan, or surgical-training SOP.
 | 5. What the team checks | A static authored checklist names pressure, bleeding, imaging, and monitoring as discussion topics. | Do not show pass/fail, automated escalation, outcome prediction, or a “controlled” animation. |
 | 6. Explain closure | The same teaching layers return to the assembled state. | Explain the concept of returning layers; do not animate suturing, fixation, wound closure, or success. |
 
-The top `Orient → Pressure → Make space` timeline remains the primary story.
-These six beats are nested presenter checkpoints, not six additional permanent
-tabs. A selected anatomy point may reveal one depth-linked teaching reference;
-all other labels remain quiet.
+The top `Orient → Pressure → Make space` timeline remains the patient/family
+story. In doctor-presenter mode it becomes the six nested checkpoints above,
+not six additional permanent tabs. A selected anatomy point may reveal one
+depth-linked teaching reference; all other labels remain quiet.
 
 ## Post-explanation handoff
 

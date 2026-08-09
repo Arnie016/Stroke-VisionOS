@@ -23,6 +23,19 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Doctor-presenter mode now maps the Page 2 procedure story into six compact,
+revisitable checkpoints: **Confirm context**, **Discuss access**, **Protective
+covering**, **Explain purpose**, **Team checks**, and **Explain closure**. The
+patient/family path remains the simpler three-act story. Checkpoints 3–6 retain
+the explicit permission gate, and the final checkpoint reassembles the teaching
+layers without presenting an operative success state.
+
+![Doctor-presenter six-beat timeline in visionOS Simulator](Proof/73-clinician-six-beat-timeline-simulator.png)
+
+This is a screenshot-derived implementation of the supplied Figma Page 2
+frames; Figma MCP structured-context access was rate-limited, so 1:1 Figma
+validation remains pending.
+
 The first frame is the quiet Pressure overview: registered-v2 brain and
 arteries, a clot-derived focus beacon, four anatomy-attached lesson points, and
 the revisitable three-act timeline. No label or secondary reference opens until

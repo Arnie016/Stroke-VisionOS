@@ -1786,6 +1786,17 @@ private struct SpatialTeachingTimeline: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
+        Group {
+            if experience.audienceLens == .clinician {
+                presenterTimeline
+            } else {
+                familyTimeline
+            }
+        }
+        .padding(8)
+    }
+
+    private var familyTimeline: some View {
         HStack(spacing: 10) {
             ForEach(StrokeProcedureStep.allCases) { step in
                 let isActive = step == experience.procedureStep
@@ -1806,7 +1817,30 @@ private struct SpatialTeachingTimeline: View {
                 .accessibilityValue(isActive ? "Current act" : "Inactive act")
             }
         }
-        .padding(8)
+    }
+
+    /// The presenter can revisit any of six authored checkpoints without
+    /// losing the three-act patient story. Beats 3–6 continue to use the
+    /// existing explicit permission gate before any layer separation.
+    private var presenterTimeline: some View {
+        HStack(spacing: 6) {
+            ForEach(StrokePresenterTeachingBeat.allCases) { beat in
+                let isActive = beat == experience.presenterTeachingBeat
+                Button {
+                    experience.selectPresenterTeachingBeat(beat)
+                } label: {
+                    SpatialPresenterTeachingBeatNode(
+                        beat: beat,
+                        isActive: isActive,
+                        tint: tint(for: beat.procedureStep)
+                    )
+                }
+                .buttonStyle(.plain)
+                .hoverEffect(.highlight)
+                .accessibilityLabel("Presenter beat \(beat.number), \(beat.title)")
+                .accessibilityValue(isActive ? "Current checkpoint" : "Available checkpoint")
+            }
+        }
     }
 
     private func title(for step: StrokeProcedureStep) -> String {
@@ -1826,6 +1860,41 @@ private struct SpatialTeachingTimeline: View {
         case .inspectOcclusion: Color(red: 0.65, green: 0.63, blue: 0.85)
         case .discussCare: Color(red: 0.95, green: 0.48, blue: 0.29)
         }
+    }
+}
+
+private struct SpatialPresenterTeachingBeatNode: View {
+    let beat: StrokePresenterTeachingBeat
+    let isActive: Bool
+    let tint: Color
+
+    var body: some View {
+        HStack(spacing: isActive ? 8 : 4) {
+            Text(String(beat.number))
+                .font(.caption.monospacedDigit().weight(.black))
+                .frame(width: 28, height: 28)
+                .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
+                .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.62))
+
+            Text(isActive ? beat.title : beat.shortTitle)
+                .font(isActive ? .callout.weight(.bold) : .caption2.weight(.semibold))
+                .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.52))
+                .lineLimit(1)
+                .minimumScaleFactor(isActive ? 0.72 : 0.62)
+        }
+        .padding(.horizontal, isActive ? 12 : 7)
+        .frame(width: isActive ? 158 : 94, height: 58)
+        .contentShape(Capsule())
+        .background(
+            isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
+            in: Capsule()
+        )
+        .overlay(
+            Capsule().stroke(
+                isActive ? tint.opacity(0.72) : Color.white.opacity(0.08),
+                lineWidth: isActive ? 1.5 : 1
+            )
+        )
     }
 }
 

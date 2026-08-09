@@ -483,6 +483,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-pressure") {
             experience.prepareClinicianProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-six-beat-timeline") {
+            experience.prepareClinicianSixBeatTimelineProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-main-overview") {
             experience.prepareMainOverviewProof()
             Task { await openProofSpace() }
