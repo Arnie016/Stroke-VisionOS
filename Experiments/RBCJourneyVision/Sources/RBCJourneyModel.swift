@@ -598,6 +598,8 @@ final class RBCJourneyModel {
     var exhibitBeat: RBCExhibitBeat
     var entryPreludeChapter: RBCEntryPreludeChapter
     var activeRegionDestination: RBCBrainRegionDestination?
+    var pendingRegionDestination: RBCBrainRegionDestination?
+    var regionTransferRun = 0
     var regionVisualization: RBCRegionVisualizationMode
     var flowRideRoute: RBCFlowRideRoute = .overview
     var isFrontalClotScenarioActive = false
@@ -623,6 +625,7 @@ final class RBCJourneyModel {
     var isExhibitFactExpanded = false
     var handTrackingStatus = "Hand gestures require Apple Vision Pro"
     let proofMode: Bool
+    let regionTransferProofProgress: Float?
 
     init(arguments: [String] = CommandLine.arguments) {
         let proofArgument = arguments.first { $0.hasPrefix("--proof-station-") }
@@ -650,9 +653,28 @@ final class RBCJourneyModel {
             Int($0.replacingOccurrences(of: "--proof-prelude-", with: ""))
         }
         let initialPreludeChapter = preludeIndex.flatMap(RBCEntryPreludeChapter.init(rawValue:))
-        let regionArgument = arguments.first { $0.hasPrefix("--proof-region-") }
+        let regionArgument = arguments.first {
+            guard $0.hasPrefix("--proof-region-") else { return false }
+            return Int($0.replacingOccurrences(of: "--proof-region-", with: "")) != nil
+        }
         let regionIndex = regionArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-region-", with: ""))
+        }
+        let regionTransitionArgument = arguments.first {
+            $0.hasPrefix("--proof-region-transition-")
+                && !$0.hasPrefix("--proof-region-transition-progress-")
+        }
+        let regionTransitionIndex = regionTransitionArgument.flatMap {
+            Int($0.replacingOccurrences(of: "--proof-region-transition-", with: ""))
+        }
+        let initialPendingRegionDestination = regionTransitionIndex.flatMap(
+            RBCBrainRegionDestination.init(rawValue:)
+        )
+        let regionTransitionProgressArgument = arguments.first {
+            $0.hasPrefix("--proof-region-transition-progress-")
+        }
+        let requestedRegionTransitionProgress = regionTransitionProgressArgument.flatMap {
+            Float($0.replacingOccurrences(of: "--proof-region-transition-progress-", with: ""))
         }
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
@@ -662,9 +684,11 @@ final class RBCJourneyModel {
         let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-family-guide-beat-", with: ""))
         }
-        let initialRegionDestination = flowRideProofRequested
+        let initialRegionDestination = initialPendingRegionDestination == nil && flowRideProofRequested
             ? RBCBrainRegionDestination.arterialLumen
-            : regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
+            : (initialPendingRegionDestination == nil
+                ? regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
+                : nil)
         regionVisualization = if arguments.contains("--proof-region-mode-xray") {
             .xray
         } else if arguments.contains("--proof-region-mode-flow") {
@@ -700,23 +724,32 @@ final class RBCJourneyModel {
         exhibitBeat = initialExhibitBeat ?? .route
         entryPreludeChapter = initialPreludeChapter ?? .threshold
         activeRegionDestination = initialRegionDestination
+        pendingRegionDestination = initialPendingRegionDestination
+        regionTransferProofProgress = requestedRegionTransitionProgress.map {
+            min(max($0 / 100, 0), 1)
+        }
         let legacyProofRequested = proofArgument != nil
             || portalArgument != nil
             || initialFocus != nil
             || initialTransfer != nil
         experienceMode = if initialPreludeChapter != nil {
             .entryPrelude
-        } else if initialRegionDestination != nil {
+        } else if initialRegionDestination != nil || initialPendingRegionDestination != nil {
             .regionAtlas
         } else {
             legacyProofRequested ? .openAtlas : .wondrousJourney
         }
-        station = initialRegionDestination?.station
+        station = initialPendingRegionDestination?.station
+            ?? initialRegionDestination?.station
             ?? initialExhibitBeat?.station
             ?? proofIndex.flatMap(RBCJourneyStation.init(rawValue:))
             ?? .circleOfWillis
         motionMode = arguments.contains("--proof-comfort-still") ? .comfort : .continuous
-        if let initialRegionDestination {
+        if initialPendingRegionDestination != nil {
+            openPortalIDs = []
+            focusedPortalID = nil
+            transferredPortalID = nil
+        } else if let initialRegionDestination {
             openPortalIDs = []
             focusedPortalID = nil
             transferredPortalID = initialRegionDestination.id
@@ -743,6 +776,8 @@ final class RBCJourneyModel {
             || portalArgument != nil
             || exhibitArgument != nil
             || regionArgument != nil
+            || regionTransitionArgument != nil
+            || regionTransitionProgressArgument != nil
             || preludeArgument != nil
             || arguments.contains("--proof-comfort-still")
             || arguments.contains("--proof-paused")
@@ -790,6 +825,14 @@ final class RBCJourneyModel {
 
     var familyNarrationSequenceKey: String {
         "\(isFlowRideActive)-\(familyNarrationEnabled)-\(flowRideRoute.rawValue)-\(familyNarrationRun)"
+    }
+
+    var regionTransferSequenceKey: String {
+        "\(pendingRegionDestination?.rawValue ?? -1)-\(regionTransferRun)"
+    }
+
+    var regionTransferDurationMilliseconds: Int {
+        effectiveReducedMotion ? 420 : 1_450
     }
 
     var familyNarrationProgressLabel: String {
@@ -920,6 +963,7 @@ final class RBCJourneyModel {
 
     func startWondrousJourney() {
         experienceMode = .wondrousJourney
+        pendingRegionDestination = nil
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
@@ -936,6 +980,7 @@ final class RBCJourneyModel {
     func startEntryPrelude() {
         experienceMode = .entryPrelude
         entryPreludeChapter = .threshold
+        pendingRegionDestination = nil
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
@@ -956,6 +1001,7 @@ final class RBCJourneyModel {
 
     func startOpenAtlas() {
         experienceMode = .openAtlas
+        pendingRegionDestination = nil
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
@@ -967,6 +1013,7 @@ final class RBCJourneyModel {
 
     func enterRegion(_ destination: RBCBrainRegionDestination) {
         experienceMode = .regionAtlas
+        pendingRegionDestination = nil
         activeRegionDestination = destination
         station = destination.station
         openPortalIDs = []
@@ -979,12 +1026,33 @@ final class RBCJourneyModel {
         isExhibitFactExpanded = false
     }
 
+    /// Region selection opens a spatial threshold first. The destination is
+    /// committed only after that threshold finishes, so the wearer controls
+    /// when a region appears without being moved through an app camera.
+    func requestRegion(_ destination: RBCBrainRegionDestination) {
+        guard pendingRegionDestination == nil else { return }
+        guard activeRegionDestination != destination || experienceMode != .regionAtlas else { return }
+        experienceMode = .regionAtlas
+        pendingRegionDestination = destination
+        regionTransferRun += 1
+        isFrontalClotScenarioActive = false
+        isFlowRideActive = false
+        isCapillaryFieldFocused = false
+        isPaused = false
+        isExhibitFactExpanded = false
+    }
+
+    func completePendingRegionTransfer() {
+        guard let destination = pendingRegionDestination else { return }
+        enterRegion(destination)
+    }
+
     /// Standard gaze + pinch discovery: first pinch enters a region; later
     /// pinches cycle the three readings without adding another floating panel.
     func activateRegionDiscovery(_ id: Int) {
         guard let destination = RBCBrainRegionDestination(rawValue: id) else { return }
         guard activeRegionDestination == destination, experienceMode == .regionAtlas else {
-            enterRegion(destination)
+            requestRegion(destination)
             return
         }
         regionVisualization = switch regionVisualization {

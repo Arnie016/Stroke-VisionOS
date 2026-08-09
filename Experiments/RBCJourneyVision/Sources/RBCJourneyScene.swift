@@ -19,6 +19,7 @@ final class RBCJourneyScene {
     private let downstreamTerritoryRoot = Entity()
     private let regionInteriorRoot = Entity()
     private let regionGuideRoot = Entity()
+    private let regionTransferThresholdRoot = Entity()
     private let flowRideRoot = Entity()
     private let flowRideDirectionFieldRoot = Entity()
     private let flowRideInteriorShellRoot = Entity()
@@ -64,6 +65,23 @@ final class RBCJourneyScene {
     private var corticalMicroarchitectureRuntimeHeld = false
     private var corticalMicroarchitectureRuntimeVisualization: RBCRegionVisualizationMode = .locate
     private var corticalMicroarchitectureElapsed: Float = 0
+    private var regionTransferRings: [(
+        entity: Entity,
+        phase: Float,
+        baseOrientation: simd_quatf
+    )] = []
+    private var regionTransferShards: [(
+        entity: Entity,
+        origin: SIMD3<Float>,
+        direction: SIMD3<Float>,
+        baseOrientation: simd_quatf,
+        phase: Float
+    )] = []
+    private var regionTransferRuntimeID: Int?
+    private var regionTransferRuntimeProofProgress: Float?
+    private var regionTransferElapsed: Float = 0
+    private var regionTransferReducedMotion = false
+    private var regionTransferVisualProgress: Float = 0
     private var flowRideCells: [(
         entity: Entity,
         origin: SIMD3<Float>,
@@ -140,6 +158,7 @@ final class RBCJourneyScene {
         downstreamTerritoryRoot.name = "illustrative-downstream-consequence-field-not-segmentation"
         regionInteriorRoot.name = "user-controlled-region-transfer"
         regionGuideRoot.name = "surrounding-brain-orientation-guides"
+        regionTransferThresholdRoot.name = "region-transfer-threshold-stationary-wearer-no-camera-locomotion"
         flowRideRoot.name = "inside-arterial-lumen-flow-ride"
         flowRideDirectionFieldRoot.name = "continuous-intraluminal-direction-field-not-cfd"
         flowRideInteriorShellRoot.name = "native-inward-facing-arterial-corridor"
@@ -167,6 +186,7 @@ final class RBCJourneyScene {
         flowRideFrontalDestinationRoot.addChild(flowRideFrontalOutlineRoot)
         worldRoot.addChild(portalRoot)
         worldRoot.addChild(regionGuideRoot)
+        worldRoot.addChild(regionTransferThresholdRoot)
         corticalVaultRoot.addChild(registeredContent)
 
         buildLightingRig()
@@ -177,6 +197,7 @@ final class RBCJourneyScene {
         buildExtendedRegionInteriors()
         buildFrontalRegionInterior()
         buildCorticalMicroarchitectureInterior()
+        buildRegionTransferThreshold()
         buildCausalStoryField()
     }
 
@@ -189,6 +210,7 @@ final class RBCJourneyScene {
         frameUpdateSubscription = scene.subscribe(to: SceneEvents.Update.self) { [weak self] event in
             let deltaTime = Float(event.deltaTime)
             Task { @MainActor [weak self] in
+                self?.advanceRegionTransferFrame(deltaTime: deltaTime)
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
@@ -203,6 +225,8 @@ final class RBCJourneyScene {
         openPortalIDs: Set<Int>,
         focusedPortalID: Int?,
         transferredPortalID: Int?,
+        pendingRegionID: Int?,
+        regionTransferProofProgress: Float?,
         regionVisualization: RBCRegionVisualizationMode,
         frontalClotScenarioActive: Bool,
         flowRideActive: Bool,
@@ -220,14 +244,30 @@ final class RBCJourneyScene {
         let t = Float(time)
         let preludeActive = preludeChapter != nil
         let transferActive = transferredPortalID != nil && !preludeActive
-        let frontalRegionActive = transferredPortalID == RBCBrainRegionDestination.frontalLobe.id
+        let regionTransferPending = pendingRegionID != nil && !preludeActive
+        let renderedRegionID = pendingRegionID ?? transferredPortalID
+        let frontalRegionActive = renderedRegionID == RBCBrainRegionDestination.frontalLobe.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
-        portalRoot.isEnabled = !transferActive && !preludeActive
-        regionInteriorRoot.isEnabled = transferActive
-        regionGuideRoot.isEnabled = showTeachingPoints && !transferActive && !preludeActive && focusedPortalID == nil
+        portalRoot.isEnabled = !transferActive && !regionTransferPending && !preludeActive
+        regionInteriorRoot.isEnabled = transferActive || regionTransferPending
+        regionGuideRoot.isEnabled = showTeachingPoints
+            && !transferActive
+            && !regionTransferPending
+            && !preludeActive
+            && focusedPortalID == nil
         observationRoot.isEnabled = !preludeActive
+
+        updateRegionTransferThreshold(
+            pendingRegionID: pendingRegionID,
+            proofProgress: regionTransferProofProgress,
+            reducedMotion: reducedMotion
+        )
+        let arrivingRegionOpacity: Float = regionTransferPending
+            ? 0.08 + regionTransferVisualProgress * 0.42
+            : 1
+        regionInteriorRoot.components.set(OpacityComponent(opacity: arrivingRegionOpacity))
 
         updatePreludeComposition(
             chapter: preludeChapter,
@@ -236,6 +276,8 @@ final class RBCJourneyScene {
 
         let identityOpacity: Float = if preludeActive {
             0.035
+        } else if regionTransferPending {
+            0.055
         } else if transferActive {
             0.34
         } else {
@@ -252,7 +294,7 @@ final class RBCJourneyScene {
         }
 
         for (id, region) in regionInteriors {
-            let active = transferredPortalID == id && !(lumenRideActive && id == RBCBrainRegionDestination.arterialLumen.id)
+            let active = renderedRegionID == id && !(lumenRideActive && id == RBCBrainRegionDestination.arterialLumen.id)
             region.isEnabled = active
             guard active, let baseScale = regionBaseScales[id] else { continue }
             let breath: Float = motionHeld ? 1 : 1 + sin(t * 0.55) * 0.012
@@ -266,7 +308,7 @@ final class RBCJourneyScene {
             motionHeld: motionHeld
         )
         updateCorticalMicroarchitectureRegion(
-            active: transferredPortalID == RBCBrainRegionDestination.corticalMicroarchitecture.id,
+            active: renderedRegionID == RBCBrainRegionDestination.corticalMicroarchitecture.id,
             visualization: regionVisualization,
             time: t,
             motionHeld: motionHeld
@@ -475,6 +517,173 @@ final class RBCJourneyScene {
         entity.scale = [0.72, 0.72, 0.72]
         entity.components.set(BillboardComponent())
         regionGuideRoot.addChild(entity)
+    }
+
+    /// A bounded, front-facing threshold communicates a region change while
+    /// the wearer remains at the same observation origin. The broken laminar
+    /// contours and outward fibers borrow the language of the surrounding
+    /// tissue without pretending to be anatomy.
+    private func buildRegionTransferThreshold() {
+        regionTransferThresholdRoot.position = [0, 1.28, -1.34]
+
+        let teal = glowMaterial(
+            color: UIColor(red: 0.30, green: 0.92, blue: 0.74, alpha: 0.88),
+            intensity: 3.0
+        )
+        let crimson = glowMaterial(
+            color: UIColor(red: 0.94, green: 0.16, blue: 0.25, alpha: 0.82),
+            intensity: 2.7
+        )
+
+        for ringIndex in 0..<4 {
+            let ring = Entity()
+            ring.name = "irregular-laminar-region-threshold-contour-\(ringIndex)"
+            let ringPhase = Float(ringIndex) * 0.73
+            let xRadius: Float = 0.43 + Float(ringIndex) * 0.047
+            let yRadius: Float = 0.31 + Float(ringIndex) * 0.039
+            var points: [SIMD3<Float>] = []
+            for index in 0..<72 {
+                let angle = Float(index) / 72 * .pi * 2
+                let irregularity = 1
+                    + sin(angle * 3 + ringPhase) * 0.072
+                    + cos(angle * 5 - ringPhase) * 0.032
+                points.append([
+                    cos(angle) * xRadius * irregularity + sin(angle * 2 + ringPhase) * 0.018,
+                    sin(angle) * yRadius * irregularity + cos(angle * 3 - ringPhase) * 0.014,
+                    sin(angle * 4 + ringPhase) * 0.024 + (Float(ringIndex) - 1.5) * 0.028,
+                ])
+            }
+            // Four separated arcs keep this from reading as a flat bullseye.
+            for arcIndex in 0..<4 {
+                let start = arcIndex * 18 + 1 + ((ringIndex + arcIndex) % 3)
+                let end = min(start + 13 + ((ringIndex + arcIndex) % 2), points.count - 1)
+                addTubePath(
+                    Array(points[start...end]),
+                    to: ring,
+                    radius: 0.0024 - Float(ringIndex) * 0.00022,
+                    material: ringIndex == 2 ? crimson : teal,
+                    name: "region-threshold-broken-laminar-filament-\(ringIndex)-\(arcIndex)"
+                )
+            }
+            let baseOrientation = simd_quatf(
+                angle: (Float(ringIndex) - 1) * 0.035,
+                axis: [0, 0, 1]
+            )
+            ring.orientation = baseOrientation
+            regionTransferThresholdRoot.addChild(ring)
+            regionTransferRings.append((ring, ringPhase, baseOrientation))
+        }
+
+        for index in 0..<32 {
+            let phase = Float(index) / 32
+            let angle = phase * .pi * 2
+            let xRadius: Float = 0.52 + sin(Float(index) * 1.7) * 0.035
+            let yRadius: Float = 0.39 + cos(Float(index) * 1.3) * 0.028
+            let origin = SIMD3<Float>(
+                cos(angle) * xRadius,
+                sin(angle) * yRadius,
+                sin(Float(index) * 0.91) * 0.028
+            )
+            let direction = simd_normalize(SIMD3<Float>(origin.x, origin.y, origin.z * 0.35))
+            let length: Float = 0.026 + Float(index % 5) * 0.007
+            let shard = ModelEntity(
+                mesh: .generateBox(
+                    size: [0.004 + Float(index % 3) * 0.001, length, 0.003],
+                    cornerRadius: 0.0015
+                ),
+                materials: [index.isMultiple(of: 7) ? crimson : teal]
+            )
+            shard.name = "outward-cortical-fiber-threshold-shard-\(index)"
+            let baseOrientation = simd_quatf(angle: angle, axis: [0, 0, 1])
+                * simd_quatf(angle: sin(Float(index) * 1.41) * 0.16, axis: [1, 0, 0])
+            shard.position = origin
+            shard.orientation = baseOrientation
+            regionTransferThresholdRoot.addChild(shard)
+            regionTransferShards.append((shard, origin, direction, baseOrientation, phase))
+        }
+
+        regionTransferThresholdRoot.components.set(OpacityComponent(opacity: 0))
+        regionTransferThresholdRoot.isEnabled = false
+        print("RBC_REGION_THRESHOLD=READY contours=4 broken_arcs=16 fibers=32 camera_motion=none")
+    }
+
+    private func updateRegionTransferThreshold(
+        pendingRegionID: Int?,
+        proofProgress: Float?,
+        reducedMotion: Bool
+    ) {
+        guard let pendingRegionID else {
+            regionTransferRuntimeID = nil
+            regionTransferRuntimeProofProgress = nil
+            regionTransferElapsed = 0
+            regionTransferVisualProgress = 0
+            regionTransferThresholdRoot.isEnabled = false
+            return
+        }
+
+        if regionTransferRuntimeID != pendingRegionID {
+            regionTransferRuntimeID = pendingRegionID
+            regionTransferElapsed = 0
+        }
+        regionTransferRuntimeProofProgress = proofProgress
+        regionTransferReducedMotion = reducedMotion
+        regionTransferThresholdRoot.isEnabled = true
+
+        if let proofProgress {
+            applyRegionTransferThreshold(progress: proofProgress, reducedMotion: reducedMotion)
+        } else if reducedMotion {
+            applyRegionTransferThreshold(progress: 0.56, reducedMotion: true)
+        }
+    }
+
+    private func advanceRegionTransferFrame(deltaTime: Float) {
+        guard regionTransferRuntimeID != nil,
+              regionTransferRuntimeProofProgress == nil,
+              !regionTransferReducedMotion
+        else { return }
+
+        regionTransferElapsed = min(regionTransferElapsed + deltaTime, 1.45)
+        applyRegionTransferThreshold(
+            progress: regionTransferElapsed / 1.45,
+            reducedMotion: false
+        )
+    }
+
+    private func applyRegionTransferThreshold(progress rawProgress: Float, reducedMotion: Bool) {
+        let progress = min(max(rawProgress, 0), 1)
+        regionTransferVisualProgress = progress
+        let eased = progress * progress * (3 - 2 * progress)
+        let apertureScale: Float = reducedMotion
+            ? 1.18
+            : 0.34 + eased * 1.95
+        regionTransferThresholdRoot.scale = [apertureScale, apertureScale, apertureScale]
+        let opacity: Float = reducedMotion
+            ? 0.72
+            : max(0.04, sin(progress * .pi) * 0.96)
+        regionTransferThresholdRoot.components.set(OpacityComponent(opacity: opacity))
+
+        for ring in regionTransferRings {
+            let pulse = reducedMotion
+                ? 1
+                : 1 + sin(progress * .pi * 2 + ring.phase) * 0.035
+            ring.entity.scale = [pulse, pulse, 1]
+            ring.entity.orientation = ring.baseOrientation * simd_quatf(
+                angle: reducedMotion ? 0 : (eased - 0.5) * 0.10 * sin(ring.phase + 0.8),
+                axis: [0, 0, 1]
+            )
+        }
+
+        for shard in regionTransferShards {
+            let stagger = min(max((progress - shard.phase * 0.10) / 0.90, 0), 1)
+            let travel: Float = reducedMotion ? 0.035 : stagger * stagger * 0.38
+            shard.entity.position = shard.origin + shard.direction * travel
+            shard.entity.orientation = shard.baseOrientation * simd_quatf(
+                angle: reducedMotion ? 0 : stagger * 0.24 * sin(shard.phase * 17),
+                axis: [0, 0, 1]
+            )
+            let stretch: Float = 0.72 + stagger * 0.82
+            shard.entity.scale = [1, stretch, 1]
+        }
     }
 
     func installSpatialAudio() async {

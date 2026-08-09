@@ -40,6 +40,14 @@ cortical microarchitecture. Only one region can transfer at a time. The enclosin
 remains present so the foreground lesson changes scale without turning into a
 disconnected model viewer.
 
+Selecting a new destination no longer swaps scenes instantly. It first opens a
+1.45-second **region threshold**: three irregular laminar contours and 28
+outward cortical fibers expand while the previous room yields, then the chosen
+region arrives around the unchanged observation origin. The reel reports
+**Opening…** and temporarily locks competing destinations. Reduce Motion uses a
+short, nearly static threshold. This is an authored spatial transition, not
+physical travel or camera locomotion.
+
 ## Brain Observatory — frontal region slice
 
 The frontal destination is a bounded prototype of a broader **brain
@@ -336,11 +344,14 @@ Deterministic proof routes use `--proof-station-0` through
 Resume control without pretending a Simulator launch is wearer interaction.
 The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 `--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
-The region reel uses `--proof-region-0` through `--proof-region-6` for its seven
+The region reel uses `--proof-region-0` through `--proof-region-7` for its eight
 single-active-region states. Add `--proof-region-mode-xray` or
 `--proof-region-mode-flow` to deterministically select the frontal observatory
-view. Add `--proof-frontal-clot` to hold the bounded illustrative obstruction
-state. The entry ritual uses `--proof-prelude-0` through `--proof-prelude-3` for
+view. Use `--proof-region-transition-7
+--proof-region-transition-progress-55` to hold the Cortical layers threshold at
+55 percent without committing the destination. Add `--proof-frontal-clot` to
+hold the bounded illustrative obstruction state. The entry ritual uses
+`--proof-prelude-0` through `--proof-prelude-3` for
 Threshold, Anatomy, Problem, and Invitation.
 Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
 `--proof-flow-route-frontal` or `--proof-flow-route-neighbor` for deterministic

@@ -48,6 +48,8 @@ struct RBCJourneyImmersiveView: View {
                     openPortalIDs: model.openPortalIDs,
                     focusedPortalID: model.focusedPortalID,
                     transferredPortalID: model.transferredPortalID,
+                    pendingRegionID: model.pendingRegionDestination?.id,
+                    regionTransferProofProgress: model.regionTransferProofProgress,
                     regionVisualization: model.regionVisualization,
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
                     flowRideActive: model.isFlowRideActive,
@@ -61,7 +63,10 @@ struct RBCJourneyImmersiveView: View {
                 )
             } attachments: {
                 Attachment(id: "journeyInfo") {
-                    if model.experienceMode == .entryPrelude {
+                    if model.pendingRegionDestination != nil {
+                        RBCRegionTransferHUD()
+                            .environment(model)
+                    } else if model.experienceMode == .entryPrelude {
                         RBCEntryPreludeHUD()
                             .environment(model)
                     } else if model.experienceMode == .wondrousJourney {
@@ -116,6 +121,18 @@ struct RBCJourneyImmersiveView: View {
             if model.familyNarrationEnabled && familyNarrator.isConfigured {
                 familyNarrator.speakExactCaption(model.familyNarrationText)
             }
+        }
+        .task(id: model.regionTransferSequenceKey) {
+            guard let destination = model.pendingRegionDestination,
+                  model.regionTransferProofProgress == nil
+            else { return }
+            let run = model.regionTransferRun
+            try? await Task.sleep(for: .milliseconds(model.regionTransferDurationMilliseconds))
+            guard !Task.isCancelled,
+                  model.regionTransferRun == run,
+                  model.pendingRegionDestination == destination
+            else { return }
+            model.completePendingRegionTransfer()
         }
         .task(id: model.familyNarrationSequenceKey) {
             guard model.isFlowRideActive,

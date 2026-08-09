@@ -122,6 +122,15 @@ checks = {
         "ventricular-system-region-portal", "cerebellum-region-portal",
         "deep-structures-region-portal", "--proof-region-", "ONE ACTIVE",
     ]),
+    "stationary_wearer_region_threshold": all(token in model + hud + immersive + scene for token in [
+        "pendingRegionDestination", "requestRegion", "completePendingRegionTransfer",
+        "regionTransferSequenceKey", "--proof-region-transition-",
+        "--proof-region-transition-progress-", "RBCRegionTransferHUD", "Opening…",
+        "The room moves. You stay.", "Watch the next region gather around your point of view.",
+        "region-transfer-threshold-stationary-wearer-no-camera-locomotion",
+        "irregular-laminar-region-threshold-contour-", "outward-cortical-fiber-threshold-shard-",
+        "advanceRegionTransferFrame", "pendingRegionID", "regionTransferProofProgress",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "spatial_entry_prologue": all(token in model + hud + immersive + scene for token in [
         "RBCEntryPreludeChapter", "Entering the brain.", "No region works alone.",
         "A blockage changes more than one point.", "Follow one route.",

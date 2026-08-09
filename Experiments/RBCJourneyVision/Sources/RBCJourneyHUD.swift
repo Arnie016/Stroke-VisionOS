@@ -510,6 +510,35 @@ private struct RBCRegionModeButton: View {
     }
 }
 
+struct RBCRegionTransferHUD: View {
+    @Environment(RBCJourneyModel.self) private var model
+
+    var body: some View {
+        if let destination = model.pendingRegionDestination {
+            VStack(spacing: 10) {
+                Text("ENTERING  ·  \(destination.shortTitle.uppercased())")
+                    .font(.caption.monospacedDigit().weight(.bold))
+                    .tracking(1.8)
+                    .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
+
+                Text("The room moves. You stay.")
+                    .font(.system(size: 38, weight: .medium, design: .rounded))
+                    .multilineTextAlignment(.center)
+
+                Text("Watch the next region gather around your point of view.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.70))
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.vertical, 12)
+            .frame(width: 590)
+            .shadow(color: .black.opacity(0.86), radius: 18, y: 4)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Entering \(destination.title). The room moves while you stay in place.")
+        }
+    }
+}
+
 struct RBCRegionPortalReelHUD: View {
     @Environment(RBCJourneyModel.self) private var model
 
@@ -530,18 +559,28 @@ struct RBCRegionPortalReelHUD: View {
                 HStack(spacing: 12) {
                     ForEach(RBCBrainRegionDestination.allCases) { destination in
                         let selected = model.activeRegionDestination == destination
+                        let opening = model.pendingRegionDestination == destination
                         Button {
-                            model.enterRegion(destination)
+                            model.requestRegion(destination)
                         } label: {
                             HStack(spacing: 11) {
                                 ZStack {
                                     Circle()
-                                        .fill(selected ? Color.pink.opacity(0.28) : Color.white.opacity(0.06))
+                                        .fill(opening
+                                            ? Color(red: 0.23, green: 0.67, blue: 0.60).opacity(0.28)
+                                            : (selected ? Color.pink.opacity(0.28) : Color.white.opacity(0.06)))
                                     Circle()
-                                        .stroke(selected ? Color.pink : Color.white.opacity(0.18), lineWidth: selected ? 2 : 1)
+                                        .stroke(
+                                            opening
+                                                ? Color(red: 0.48, green: 0.93, blue: 0.78)
+                                                : (selected ? Color.pink : Color.white.opacity(0.18)),
+                                            lineWidth: selected || opening ? 2 : 1
+                                        )
                                     Image(systemName: destination.systemImage)
                                         .font(.title3)
-                                        .foregroundStyle(selected ? .pink : .white.opacity(0.78))
+                                        .foregroundStyle(opening
+                                            ? Color(red: 0.48, green: 0.93, blue: 0.78)
+                                            : (selected ? .pink : .white.opacity(0.78)))
                                 }
                                 .frame(width: 46, height: 46)
 
@@ -549,7 +588,7 @@ struct RBCRegionPortalReelHUD: View {
                                     Text(destination.shortTitle)
                                         .font(.subheadline.weight(.semibold))
                                         .lineLimit(1)
-                                    Text(selected ? "Inside now" : "Enter region")
+                                    Text(opening ? "Opening…" : (selected ? "Inside now" : "Enter region"))
                                         .font(.caption2)
                                         .foregroundStyle(.white.opacity(0.48))
                                 }
@@ -557,11 +596,19 @@ struct RBCRegionPortalReelHUD: View {
                             }
                             .padding(10)
                             .frame(width: 180, height: 68)
-                            .background(selected ? Color.pink.opacity(0.12) : Color.white.opacity(0.035), in: .rect(cornerRadius: 18))
+                            .background(
+                                opening
+                                    ? Color(red: 0.23, green: 0.67, blue: 0.60).opacity(0.12)
+                                    : (selected ? Color.pink.opacity(0.12) : Color.white.opacity(0.035)),
+                                in: .rect(cornerRadius: 18)
+                            )
                         }
                         .buttonStyle(.plain)
                         .hoverEffect()
-                        .accessibilityLabel("Enter \(destination.title)")
+                        .disabled(model.pendingRegionDestination != nil || selected)
+                        .accessibilityLabel(opening
+                            ? "Opening \(destination.title)"
+                            : (selected ? "Inside \(destination.title)" : "Enter \(destination.title)"))
                     }
                 }
             }
