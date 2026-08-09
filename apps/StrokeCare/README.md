@@ -10,6 +10,12 @@ tell one difficult story in three visual acts:
    expansion view explains mechanical purpose without implying that established
    injury is restored.
 
+![Six-frame Stroke Care visual direction](Docs/Images/stroke-care-six-frame-visual-direction.png)
+
+This image is the **visual-direction target**, not a Simulator or XCAT receipt.
+Its full role, timeline, point-selection, mirrored-family-display, and Scholar
+boundaries are specified in [Docs/VISUAL_DIRECTION.md](Docs/VISUAL_DIRECTION.md).
+
 The launch window begins with a two-beat calm prelude, then asks whether the
 purpose is **Doctor → family** or **Clinician teaching**. Inside the immersive
 space, the file itself is the control: carrying it from the exhibit into the

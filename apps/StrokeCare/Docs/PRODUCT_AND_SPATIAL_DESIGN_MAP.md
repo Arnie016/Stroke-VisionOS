@@ -1,0 +1,174 @@
+# Stroke Care product and spatial-design map
+
+Living product/design contract. Snapshot inspected **9 August 2026** on
+`feat/teaching-imaging-drawer`. The worktree already contained uncommitted
+source and proof changes, so “source present” below means only that the behavior
+is represented in the current files; it does not mean the change has built,
+rendered, reached XCAT, passed a wearer session, or received clinical review.
+
+## Product promise and boundary
+
+**Promise:** one clinician and one patient or family use a calm shared spatial
+object to understand one fictional stroke explanation, one change at a time.
+The family controls pace and questions; the presenter receives private precision
+without covering the central anatomy.
+
+**Primary demo topology:** the clinician wears Apple Vision Pro and presents a
+mirrored, family-safe composition on an Apple TV or room display. The family
+does not need a headset. Family questions and annotations are explicit actions
+the presenter can place on the shared object. Multi-headset co-presence is a
+separate future architecture, not an implied feature of this prototype.
+
+This is a case-conversation explainer, not a patient-management system, medical
+record, patient scan, diagnostic or prognostic tool, treatment ranking,
+eligibility calculator, escalation system, consent form, or surgical simulator.
+It stores no PHI and must not infer anxiety, attention, disease, intent, or
+physiology from appearance, face, voice, gaze, gesture, or behavior. Generic
+teaching anatomy and any future clinician-reviewed patient imaging must remain
+visibly and technically distinct.
+
+The supplied Figma screenshots are local visual references for a transparent
+head, anatomy-anchored regions, and the doctor/family split. A fresh Figma node
+payload was not available in the inspected record, so Figma parity remains a
+design gate rather than implementation proof.
+
+## Evidence labels
+
+- **Source present:** implemented or scaffolded in the inspected Swift/RealityKit
+  files; build and runtime behavior are not implied.
+- **Simulator proof:** can establish one deterministic layout/render state only.
+- **XCAT machine proof:** can establish signed install, launch, process state, and
+  a dated receipt only.
+- **Wearer proof:** is required for visibility, legibility, comfort, depth,
+  gesture reliability, occlusion, and spatial-audio perception.
+- **Human/clinical proof:** is required for comprehension, empathy, wording,
+  anatomical meaning, and clinical acceptability.
+
+## Living feature matrix
+
+| Stage / feature | Family experience | Presenter experience | Spatial / control-agency behavior | Intention / empathy | Current implementation evidence | Asset(s) used | Missing / gate | Proof required |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Intro and role threshold | Two calm beats and a plain fictional-case boundary on the mirrored family display. | Chooses **Doctor → family** or the separate **Clinician review** lane before entering Vision Pro. | Small system window is only a threshold; no patient dashboard or anatomy controls. Standard buttons remain reversible until immersive entry. | Establish purpose without urgency theatre and make the wearer/display relationship explicit. | **Source present:** `StrokeJourneyLaunchView` has the two-beat prelude, role choice, reduced-motion branch, and no-patient-data line. | `FlowBed.wav`; SF Symbols; app-native materials. | Update exact role wording and mirrored-display preview; confirm keyboard/VoiceOver order, role-switch recovery, and Figma doorway frame. | Contract + Simulator route; XCAT target/legibility; Apple TV/display mirroring check; family and clinician language review. |
+| Single-compartment 3D case browser; three-fictional-case goal | Browses or steps through left-side dossiers without leaving the room; sees only a short fictional summary such as age band and explicitly entered sex/gender fields. | Can keep scrolling/stepping the same compartment, select one dossier, or return it before anatomy begins. No EMR controls. | One sculptural compartment, three independently targetable dossiers, standard gaze + pinch scroll/step, optional direct carry, and a clear return harness. Selection occupies the centre; unselected files remain quiet at the left edge. | Make the case feel human without exposing PHI or turning people into diagnosis cards. | **Partial:** `makeSpatialCaseIntake()` has one draggable `FILE 78`, five noninteractive archive shapes, a centre dock, and one generic procedural bust. `TeachingStrokeCase` defines only `CASE-078`. | Procedural cabinet/file/dock/figure; no current MetaHuman asset. | Implement exactly three fictional selectable cases and neutral data schema; make age/sex/gender optional, explicit teaching fields rather than inference. A MetaHuman or equivalent is only a quality goal after license, export, performance, diversity, likeness, and accessibility review. Cabinet material/resolution pass pending. | Static selection-state tests; three deterministic Simulator routes; XCAT browsing/carry/return; privacy and representation review. |
+| Selected-case constellation and patient-history timeline | Sees a compact “what we know so far” ribbon framed as questions, not conclusions. | Sees concise conversation cues and provenance slots. | Docking replaces the browser with a centred generic figure, four fact clusters, relationship filaments, and a four-milestone ribbon; entering anatomy removes the complete intake room. | Preserve context and uncertainty while preventing a crime-board aesthetic or information overload. | **Source present:** `SpatialCaseFact`, `PatientHistoryTimelineView`, `selectCaseHistoryMilestone(_:)`, `caseLibrary → caseReview → explanation`. Timeline has Before today / 70 min ago / Now / Next states. | Procedural figure and filaments; SF Symbols; app-native text/materials. | Current facts are one hard-coded fictional scenario; provenance fields are placeholders. Typography, constellation spacing, file-to-history linkage, and final source ownership need review. | Contract + narrow build; case-review Simulator capture; XCAT reach/legibility; clinician and family comprehension review. |
+| Explicit entry into the selected explanation | Chooses to begin only after reviewing the case; can return to files. | Chooses presenter view without bypassing the same threshold. | File furniture disappears before anatomy appears; one task owns the centre at a time. | Reduce cognitive load and keep control visible. | **Source present:** `beginExplanation()` gates on a docked/selected case and disables case-room content during `.explanation`. | No new asset; state transition and procedural room. | Test interruption, failed immersive-open recovery, role switch, and return state. | State tests, Simulator transition capture, XCAT transition and recovery test. |
+| Dominant central registered anatomy and clot focus | Shares one large model with the presenter; can orbit, magnify, select a point, or mark a question. | Uses the same model and can choose viewpoint, layer presentation, and focus. | One outer root owns world placement, orbit, and scale. Registered-v2 children remain in their authored frame. The procedural model is fallback only. | Keep a shared object—not a wall of controls—at the centre of the conversation. | **Source present:** `makeImportedAnatomy()`, `updateImportedAnatomy(...)`, filtered point targets, drag orbit, magnification, and occlusion focus. Registered brain/arteries load; clot visibility follows the act. | `brain_anatomy_realistic_v2`, `cerebral_arteries_realistic_v2`, `ischemic_mca_clot_v2`; procedural fallback geometry. | Laterality, labels, registration, load failure, frame time, scale, and stereo readability remain gates. The model is generic teaching anatomy, never a patient scan. | USD validation + contract + Simulator build/render; XCAT load/performance/orbit/magnify; specialist anatomy review. |
+| Point families and portal lessons | Chooses **Brain regions** or **Blood flow**, then one quiet point; a selected point invites self-discovery at the anatomy’s actual depth. | Can reveal the field, select a reviewed teaching path, or clear focus. | Points remain parented to the registered anatomy. A future portal may be a reversible magnified aperture around the selected region, not a teleport or detached window. | Let the wearer ask “what is this?” without surrounding the brain with labels. | **Partial:** region and flow point families, selection, orbit, and magnification are source-present. `regionPortalActive` changes viewpoint/transparency/zoom state, but no distinct portal surface or portal visual is rendered. Several positions are explicitly technical anchors pending review. | Procedural point entities plus registered brain/artery/clot anchors. | Replace technical anchors with reviewed authored anchors; define a calm aperture visual, reset behavior, occlusion, and family wording. | Static anchor checks; Simulator occlusion/selection states; XCAT gaze/pinch/depth; specialist landmark and wording review. |
+| Three-act teaching timeline; hand-ring exploration | Always sees **Orient → Pressure → Make space** above the anatomy; the active act may be revisited. | Can directly target the same acts; no hidden autoplay. | The top-centred world-space line is the story timeline. **Calm / Guided / Scholar is a separate, clearly labelled Detail control in the presenter periphery and never replaces the timeline.** A “magic hand” ring may later select tools or acts, but the visible top timeline remains the fallback. | Give time and agency without implying that a family must keep pace or confusing depth with progress. | **Source present:** `SpatialTeachingTimeline` is attached above the central model; `present(step:)` keeps Make-space behind consent. Calm/guided/scholar metadata state exists; no final spatial Detail control or hand-ring timeline exists. | SwiftUI attachment; SF Symbols; no catalog asset. | Verify timeline size/contrast in the mirrored composition; implement and test the separate Detail control; hand-ring reach, accidental activation, semantics, and reduced-motion design remain open. | Contract + narrow build + three Simulator act routes; XCAT target/reach/comfort; mirrored-display legibility; family comprehension review. |
+| Role micro-cues and self-discovery nudges | One current question, optionally phrased as a calm “Did you know?” invitation only after copy review; never inferred from anxiety or gaze. | Exactly three glanceable teaching beats for the current act. | One left-peripheral cluster changes density by role and remains subordinate to the brain. | Support curiosity without nagging, gamification, or pretending to know the wearer’s emotional state. | **Source present:** `SpatialRoleMicroCues`, `familyTimelineQuestion`, and `presenterTimelineKeyPoints`. | SwiftUI attachment; SF Symbols; app-native materials. | Current family cue is a question, not a reviewed “Did you know?” system. Need cadence, dismissal, repeat suppression, and copy review. | Simulator density states; XCAT peripheral readability; family comprehension and burden testing. |
+| Family pace, clarification, and question marker | Pause/resume, ask for clarification, place one point on the brain, clear it, and exit. | Receives a clarification cue and can acknowledge it; no emotion score or automated escalation. | Question coordinates are stored in the anatomy root so the marker follows orbit and magnification. All actions are explicit and reversible. | Give the patient/family a respectful way to slow the conversation or point without needing medical vocabulary. | **Source present:** `requestClarification()`, `toggleQuestionPlacement()`, `PlacedStrokeQuestion`, `FamilyQuestionMarker`, and family controls. | Procedural marker; SwiftUI attachment; SF Symbols. | Multi-wearer synchronization is not implemented. Gaze/pinch accuracy, accidental placement, undo discoverability, and accessibility need testing. | State tests; Simulator marker route; XCAT point/clear/reorientation; observed family usability session. |
+| Presenter headset, mirrored family display, and co-presence boundary | Watches a family-safe mirrored composition on Apple TV or a room display; asks the presenter to pause, clarify, circle, or place a question. No headset is required. | Wears Vision Pro, controls the private precision layer, and keeps the mirrored view paced and non-graphic. | Current app is single-device state and does not yet implement a dedicated broadcast composition or family-input channel. Any later shared Vision Pro session needs explicit join/leave, roles, sync, conflict, latency, and privacy states. Vive Pro interoperability is separate. | Let the family participate without requiring expensive hardware or exposing private controls. | **Partial:** role-aware family/presenter compositions and explicit question state exist. **Not implemented:** Apple TV broadcast composition, GroupActivities, cross-device transport, identity, or PHI channel. | No asset. | Define the exact mirrored output, privacy-safe presenter-only occlusion, and a simple verbal/remote annotation handoff; keep multi-headset networking out of the core demo. | Simulator/window capture; AirPlay or Apple TV room-display test; XCAT presenter test; family comprehension session; separate future two-device architecture review. |
+| Anatomy annotation, evidence, and citation space | Sees only the selected, role-appropriate teaching annotation and its explicit review boundary. | Opens an upper **Clinical evidence** plane, searches a fixed catalog, pins sources, and composes a source-bound draft. | Annotations stay at object depth; citations remain above the presenter and never form a wall around the brain. | Keep “why this is here” attached to every claim while protecting the shared focal field. | **Source present:** `StrokeIntentionAnnotation`, `StrokeEvidenceWorkspaceView`, three fixed evidence records, pin/unpin, support/limit text, and deterministic draft state. | No 3D catalog asset; SwiftUI window/attachments and stable external links. | Fixed sources and wording remain review-pending; “compose” must never become unsourced medical generation. Authentication/privacy are not supplied by role UI. | Contract + evidence-window build/Simulator route; link audit; accessibility; clinical/editorial source review. |
+| Right registered teaching lens | Opens one small secondary view labelled generic teaching anatomy, not CT/MRI. | Switches between **Stroke effect** and permission-gated **Making-room purpose**. | World-locked right-secondary object reuses rendered leaves from the already-loaded registered anatomy; only one lens is visible and it does not inherit hero orbit. | Offer comparison without competing with the shared model or implying before/after recovery. | **Source present in current worktree:** `TeachingImagingMiniatureFactory` clones registered arteries/clot/dura leaves, strips interactions, and exposes two mutually exclusive lenses. | Reuses `cerebral_arteries_realistic_v2`, `ischemic_mca_clot_v2`, `dura_mater_cutaway_conceptual_v2`; no duplicate load intended. | Narrow build/render verification pending; naming, scale, occlusion, right-field legibility, and clinical meaning need review. | Contract + build + two Simulator lens states; XCAT stereo/legibility; specialist and family wording review. |
+| Presenter-only side rail | Hidden. Family gets its own smaller control cluster. | Compact bubbles for viewpoint/layers, point family, environment/evidence, pause, narration, next, images, and exit. | Right-secondary rail remains outside the central foveal object; no stacked modal tabs. Every change has a reset or inverse. | Private precision should help the presenter, not make the family watch a control console. | **Source present:** `SpatialRoleControls(role: .clinician)` and role-gated placement. | SwiftUI attachments; SF Symbols; native materials. | Still dense; reduce after XCAT reach/target testing. Role selection is presentation state, not authentication. | Simulator role-isolation states; XCAT reach/legibility; presenter task test. |
+| Hand-adjacent clinician tool arc and fallback | Never sees surgical props. Shared effects remain semantic and non-graphic. | Left-palm radial selector for Focus/Lens/Layers plus generic display-only Forceps/Drill; selected prop appears near right palm. Side rail is the accessible fallback. | Public hand anchors follow palms. Standard gaze + pinch selects the arc; no raw gaze coordinates, cutting, collision, anatomy mutation, or claimed wrist-roll gesture. | Keep tools private and subordinate; translate any shared effect into family-safe meaning. | **Source present:** left/right palm anchors, `ClinicianHandToolWheel`, `makeClinicianHeldTools()`, and role gating. Current wheel is not a proven cup-gesture reveal. | Procedural Focus/Lens/Layers; `suction_and_forceps`, `cranial_drill_generic`. | Generic tool fidelity, scale, provenance, specialist review, hand occlusion, fallback parity, authorization, accidental selection, and actual palm tracking remain gates. Detailed doctor training is a separate future lane. | Build + deterministic Simulator placement only; XCAT palm tracking/gaze/pinch/occlusion/comfort; specialist tool review. |
+| Perspectives, transparency, and environment | Keeps a stable shared orientation; family transparency appears only through the permitted explanation. | Selects free/three-quarter/front/side A/side B/top, Layers/See through/Study apart, and Surroundings/Warm horizon/Focus field. | Whole registered root rotates; semantic wrappers fade or offset reversibly. Environment state is independent of pathology, family state, and audio. | Improve visibility without using atmosphere as therapy or mood detection. | **Source present:** `StrokeAnatomyViewpoint`, `StrokeAnatomyPresentation`, `StrokeEnvironmentMode`, registered wrapper offsets/opacities, and native calm horizon. | Registered anatomy; procedural `CalmFlowFieldFactory`; directional light. | Laterality labels intentionally remain nonclinical (“Side A/B”). Transparent overlap, reset drift, full-immersion comfort, and reduced-motion parity need review. | State tests + Simulator states; XCAT Digital Crown/orientation/comfort; accessibility and specialist review. |
+| Calm qualitative flow, arrows, and anchored audio | Sees a restrained direction cue and may pause/mute; no numbers or patient physiology. | Uses flow only as a teaching layer, never as CFD, perfusion, collateral flow, velocity, or treatment evidence. | Motion follows a shared vessel centreline; downstream behavior is a fixed qualitative cue. Reduced motion and pause must stop or simplify movement without losing meaning. | Show cause-and-effect calmly without spectacle or false precision. | **Partial:** procedural droplets/chevrons and `FlowBed.wav`/`PressureBed.wav` are source-present. When registered anatomy loads, procedural flow is hidden and registered arrows are explicitly disabled because their frame is unreviewed; calm flow on the hero model is therefore still a gate. | Procedural droplets/arrows; `FlowBed.wav`; `PressureBed.wav`. | Author and review registered flow anchors or a replacement animation; test silence, reduced motion, spatial mix, and non-visual equivalent. | Contract + fallback Simulator route; registered-route visual receipt; XCAT motion/audio perception; clinical meaning review. |
+| Explicit permission before layer separation | May say **Not now**; the story pauses and remains understandable. | Cannot bypass the same gate through act targeting, imaging lens, or tool controls. | Permission precedes transparency/separation; changes are reversible and non-graphic. Prototype-v1 meshes never enter the registered-v2 frame. | Preserve agency and prevent surprise during a sensitive explanation. | **Source present:** `careViewPermissionGranted`, pending-step gate, consent prompt, `grantNonGraphicCareViewPermission`, and `declineCareView`. Legacy edema/flap/patch are loaded under a disabled root and explicitly hidden. | Registered cortex/arteries/clot/dura; procedural non-graphic fallback cues. | Confirm every entry path obeys the gate; copy, timing, and refusal recovery need family/clinical review. | Contract tests for every entry path; Simulator consent/refusal routes; XCAT usability; specialist/family review. |
+| GPT-Realtime-only optional narration | Explicitly turns voice on/off; silence is the fallback. It hears only the exact current reviewed family caption. | Can enable the same locked caption, not generate medical answers. | Client sends model ID plus caption to a developer-controlled proxy. No permanent key, patient data, system-speech fallback, improvisation, or listening loop belongs in the app. | Add accessibility without making a synthetic voice the authority. | **Source present:** `StrokeNarrationEngine` locks `gpt-realtime-2.1`; proxy locks the same model and `marin`; errors remain silent. Prior proof is machine/audio-path evidence only. | Generated WAV response; no bundled voice model. | Production proxy security, retention, outage UI, captions, consent, latency, and reviewed-copy versioning remain open. No medical Q&A. | Proxy contract/integration receipt; app playback test; XCAT audibility/spatial perception; accessibility and clinical copy review. |
+| Calm closing and return to cases | Receives one reflection, then explicitly returns to the case browser; no score, celebration, or “success” animation. | Closes the conversation or returns to cases; does not output a recommendation. | Closing state keeps the model calm, then reverses to the library and clears narration/question/transient state. | End with agency and a next conversation, not a promised outcome. | **Source present:** `closingReflectionVisible`, `advanceJourney()`, and `returnCaseToLibrary()`. | App-native text/materials; no celebration asset. | Copy remains human/clinical review pending; verify complete state reset and interrupted exit. | State tests; Simulator closing/reset route; XCAT legibility; family/clinician debrief. |
+
+## Asset-use accounting
+
+“In GitHub” is not the same as “used.” The required ladder is:
+
+`catalogued → provenance/licence reviewed → selected for a lane → bundled → load succeeded → visible in a named route → interacted with → device/human reviewed`
+
+| Asset layer | Count/status verified in this snapshot | What it means | Missing / next audit |
+| --- | --- | --- | --- |
+| Current Stroke Care USDZ build declarations | **10 unique USDZ paths** in both `project.yml` and the Xcode Resources phase: five registered-v2 anatomy/context assets and five prototype/tool assets. | Static bundle intent only. It does not prove the files copied, loaded, rendered, fit, or were clinically appropriate. | Reconcile generated project vs `project.yml`, hashes, provenance/licence, package size, and clean-build product contents. |
+| Current runtime load paths | Source attempts the eight anatomy/context names in `makeImportedAnatomy()` and the two generic tool names in `makeClinicianHeldTools()`. **Successful-load count: pending instrumented audit.** | Static reachability; `try?` means a missing or invalid file may silently fall back. | Add a non-PHI runtime receipt listing load success/fallback by asset and route. |
+| Current route-visible USDZ assets | **Exact count pending route-specific runtime audit.** Source intends brain + arteries centrally, clot after the relevant act, dura only after permission, and tools only for the presenter. Skull and prototype-v1 edema/flap/patch are explicitly hidden in the patient path. | Visibility is state-dependent; a single total would be misleading. | Capture named Simulator routes and a runtime entity/asset receipt, then repeat on XCAT without inferring wearer quality. |
+| Current procedural/runtime-native visuals | Cabinet, dossiers, generic bust, constellation threads, dock, fallback brain/vessels/clot/flow, point markers, horizon, control surfaces, and annotations are generated in code. | These advance the experience but are not GitHub USDZ catalog usage. | Track them separately from file assets and profile entity count/frame time. |
+| Current non-USDZ media | Two WAV beds and the layered app icon are declared current resources. The Paper Shader source/reference directory is not a substitute for the native RealityKit horizon. | Audio/icon/reference assets need their own provenance and runtime accounting. | Include audio, icon, preview, and reference-only files in the formal catalog schema without inflating “3D assets used.” |
+| GitHub PR #8 catalog | [PR #8](https://github.com/Arnie016/Stroke-VisionOS/pull/8) is an open draft and its v3 catalog files are **reference-only for Stroke Care**. No PR #8 v3 USDZ path is declared in the current app project. **Authoritative unique-asset count: pending catalog audit.** | A PR title, file list, preview, or author-reported total is not runtime use, license clearance, registration, performance, or clinical acceptance. Do not report “135+ assets used.” | Audit exact head commit, manifests, hashes, assemblies vs components, duplicates, provenance/licence, registration families, intended lane, and exclusion rationale before updating any count. |
+
+The goal is not to place every catalog asset in the patient path. Every audited
+asset should receive one explicit disposition: **central runtime**, **lazy
+replacement lesson**, **presenter-only**, **later doctor-training lane**,
+**separate RBC side app**, **reference-only**, **quarantined**, or **rejected**.
+That is meaningful use of the catalog without turning the central brain into an
+asset gallery.
+
+## Figma page handshake
+
+These are required design lanes, not claims about current Figma page names.
+When access is restored, map each lane to the exact file/page/frame/node ID and
+store a dated screenshot before implementation.
+
+| Figma lane | Design package expected from the team/friend | Code handoff and acceptance |
+| --- | --- | --- |
+| 1. Promise and role threshold | Two calm beats, family/presenter role states, copy hierarchy, reduced-motion state. | Map to `StrokeJourneyLaunchView`; compare exact screenshot, target sizes, type scale, and focus order. |
+| 2. Case browser and surfaces | One-compartment cabinet, three fictional dossiers, selected/unselected/return states, neutral bust/MetaHuman candidate, materials, lighting, depth, and brief demographic-field rules. | Provide asset IDs, provenance/licence, dimensions, and state diagram; test browser at seated and standing eye heights. |
+| 3. Case constellation and history | Selected figure, relationship harnesses, four timeline states, family vs presenter density, source placeholders, empty/error states. | Map to `makeSpatialCaseIntake()` and `PatientHistoryTimelineView`; no tabs or patient-record imitation. |
+| 4. Central anatomy and three acts | Dominant registered model, clot focus, top act line, point families, portal aperture, consent/refusal, closing state. | Every frame names the act, role, visible asset set, annotation intent, and required review; preserve authored registration. |
+| 5. Family agency | Pause, clarify, point, voice, images, exit, optional self-discovery cue, undo/recovery, VoiceOver, and reduced motion. | Map to family `SpatialRoleControls`; validate one concise question cluster at a time. |
+| 6. Presenter precision | Right rail, upper evidence plane, right teaching lens, left-palm tool arc, right-palm prop, and side-rail fallback. | Map to presenter controls/toolkit/evidence; verify family-hidden states and no graphic or mutating tool behavior. |
+| 7. Components, tokens, and proof | Type/material/color/depth tokens; ≥60 pt-equivalent targets; loading/empty/failure states; proof-frame names and device review checklist. | Record component variants and node IDs; Figma screenshots guide parity but never prove build, XCAT behavior, empathy, comprehension, or clinical validity. |
+
+For every Figma update, record: `file → page → frame/node → date → role → state →
+asset IDs/provenance → interaction → reduced-motion variant → implementation
+owner → proof route`. This keeps design improvements mergeable instead of
+leaving them as ambiguous screenshots.
+
+## Spatial and surface rules
+
+1. **Central / primary vision:** one dominant brain, current vessel focus, and
+   at most one selected annotation or family question. No paragraphs.
+2. **Secondary vision:** role controls and the optional registered teaching lens
+   sit on opposite readable edges. They remain smaller and lower-motion than the
+   anatomy.
+3. **Peripheral vision:** the case browser appears only during intake; ambient
+   motion remains subtle. Safety, permission, uncertainty, and exit are never
+   conveyed only in the periphery, by color, by motion, or by audio.
+4. **Top–middle–bottom rule of three:** top explains the current act; middle
+   demonstrates with anatomy; bottom/near-body space acts through pause,
+   consent, question, back, and exit.
+5. **Text:** use large clustered phrases with one unmistakable title and one
+   current question. Avoid small scattered labels, duplicated copy, and a
+   second script in depth.
+6. **No modal dashboard or tab stack:** use spatial thresholds, mutually
+   exclusive lesson families, compact bubbles, and one upper evidence plane.
+   A system window may open the experience; it must not become the product.
+7. **Input:** standard targeted gaze + pinch is primary; direct manipulation is
+   optional where safe. Do not read or display raw gaze. Visible interactive
+   surfaces target **at least 60 pt-equivalent** size, keep spacing sufficient
+   for indirect input, provide VoiceOver names/hints, and retain a conventional
+   fallback for every hand-adjacent experiment.
+8. **Responsiveness:** each selection produces immediate visible state, has an
+   inverse/reset, survives interruption, and does not advance automatically.
+   World placement is sampled once and room-fixed; the model is not head-locked.
+9. **Reduced motion:** replace springing, pulsing, portal zoom, flowing arrows,
+   and layer travel with direct state changes or restrained cross-fades while
+   preserving meaning. Pause and mute remain independent.
+10. **Surface grammar:** use one sculpted dark cabinet shell, warm paper dossiers,
+    fine provenance threads, quiet native glass at the edges, and denser cool
+    glass only in the presenter evidence plane. Every object needs a harness:
+    dossier-to-cradle, fact-to-case, point-to-anatomy, lens-to-world, tool-to-palm,
+    or citation-to-evidence plane. Avoid orphan floating cards.
+
+## Separate lanes and non-goals
+
+| Lane | Decision |
+| --- | --- |
+| Red-blood-cell inside-vessel ride and portals | **Separate side app.** It may share audited educational assets and qualitative visual principles, but it must not appear as a hidden mode, portal, or navigation branch inside Stroke Care. |
+| Detailed doctor training | **Later, distinct authenticated lane/product.** Operative sequencing, realistic instruments, scoring, or procedure rehearsal require separate specialist, licensing, fidelity, safety, and device gates. |
+| Hugging Face/neurophysiology models or scan AI | **Research-only until gated.** No endpoint/checkpoint enters the patient path without intended-use, dataset licence/consent, privacy, registration, external validation, error/failure display, clinician oversight, and institutional/regulatory review. |
+| Generative features | Only the bounded GPT-Realtime narration route is currently allowed: exact reviewed caption in, audio out. No generated diagnosis, prognosis, treatment ranking, eligibility, escalation, patient profile, citation, or medical answer. |
+| Graphic procedure or reward loop | No cutting, drilling, blood, peeling, “repair,” outcome animation, score, celebration, or success state. Layer changes remain transparent, reversible, and permission-gated. |
+
+## Design-review pulse
+
+| Question | Current read | Nearest honest gap |
+| --- | --- | --- |
+| Is it beautiful and simple? | The central registered anatomy, one-act focus, and role-separated edges form a coherent system. | The cabinet/constellation remain geometric, the presenter rail is dense, and current Figma parity is unverified. |
+| Is it empathetic? | Family pause, clarification, point placement, refusal, exit, and silence-as-fallback establish agency. | Empathy and comprehension require observed patient/family sessions; copy and nudges remain review-pending. |
+| Is every element intentional? | Most objects have an explicit spatial owner, role, reveal condition, and inverse. | Portal state lacks a distinct visual; PR #8 assets lack lane-level disposition; generic tools risk breadth without a separate training story. |
+| Is it genuinely spatial? | Case carry, room-phase replacement, world-locked anatomy, depth-anchored points, right lens, upper evidence plane, and palm anchors use space structurally. | Simulator cannot prove depth, comfort, gaze, hand behavior, occlusion, or audio; XCAT wearer proof remains required. |
+| Is it responsive and controllable? | State changes are explicit and generally reversible; reduced-motion hooks exist. | Interrupted transitions, target separation, role switching, hand-ring concepts, and fallback parity need device testing. |
+| Are the assets really integrated? | Ten current USDZ build declarations have named runtime roles; registered-v2 and prototype-v1 frames remain separated. | Successful-load and route-visible counts are not instrumented; PR #8 remains reference-only pending a full catalog audit. |
+
+This map should change only when the corresponding implementation, design frame,
+asset disposition, or proof state changes. A schedule, PR title, screenshot, build,
+machine receipt, or Figma frame never substitutes for the higher evidence rung it
+does not measure.
