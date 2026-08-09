@@ -93,6 +93,19 @@ final class RBCJourneyScene {
     private var cerebellumRuntimeHeld = false
     private var cerebellumRuntimeVisualization: RBCRegionVisualizationMode = .locate
     private var cerebellumElapsed: Float = 0
+    private var deepStructuresAuthoredHero: Entity?
+    private var deepStructuresOutlineRoot: Entity?
+    private var deepStructuresNucleiRoot: Entity?
+    private var deepStructuresCapsuleRoot: Entity?
+    private var deepStructuresVesselRoot: Entity?
+    private var deepStructuresDiscoveryTargets: [Entity] = []
+    private var deepStructuresGuideStars: [(entity: ModelEntity, phase: Float)] = []
+    private var deepStructuresFlowPaths: [[SIMD3<Float>]] = []
+    private var deepStructuresFlowArrows: [(entity: Entity, pathIndex: Int, offset: Float)] = []
+    private var deepStructuresRuntimeActive = false
+    private var deepStructuresRuntimeHeld = false
+    private var deepStructuresRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var deepStructuresElapsed: Float = 0
     private var regionTransferRings: [(
         entity: Entity,
         phase: Float,
@@ -259,6 +272,7 @@ final class RBCJourneyScene {
                 self?.advanceWillisNetworkFrame(deltaTime: deltaTime)
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceCerebellumFrame(deltaTime: deltaTime)
+                self?.advanceDeepStructuresFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
         }
@@ -297,6 +311,7 @@ final class RBCJourneyScene {
         let frontalRegionActive = renderedRegionID == RBCBrainRegionDestination.frontalLobe.id
         let willisRegionActive = renderedRegionID == RBCBrainRegionDestination.circleOfWillis.id
         let cerebellumRegionActive = renderedRegionID == RBCBrainRegionDestination.cerebellum.id
+        let deepStructuresRegionActive = renderedRegionID == RBCBrainRegionDestination.deepStructures.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
@@ -365,6 +380,11 @@ final class RBCJourneyScene {
         )
         updateCerebellumRegion(
             active: cerebellumRegionActive,
+            visualization: regionVisualization,
+            motionHeld: motionHeld
+        )
+        updateDeepStructuresRegion(
+            active: deepStructuresRegionActive,
             visualization: regionVisualization,
             motionHeld: motionHeld
         )
@@ -1304,12 +1324,7 @@ final class RBCJourneyScene {
         }
 
         if let deepLayer {
-            installExtendedRegionInterior(
-                id: RBCBrainRegionDestination.deepStructures.id,
-                source: deepLayer,
-                name: "deep-structures-region-portal",
-                targetExtent: 1.90
-            )
+            buildDeepStructuresRegionInterior(source: deepLayer)
         }
     }
 
@@ -1603,6 +1618,336 @@ final class RBCJourneyScene {
         regionInteriors[id] = region
         regionBaseScales[id] = region.scale
         print("RBC_CEREBELLAR_OBSERVATORY=READY folia_bands=47 arbor_paths=13 arterial_paths=15 moving_fronts=22 registered_reference=true")
+    }
+
+    /// A surrounding relationship lesson for central anatomy. The imported
+    /// mesh is one combined source without semantic submeshes, so it remains a
+    /// dim registered reference. Native constellations identify only broad
+    /// relationships among thalamus, basal ganglia, and the internal capsule;
+    /// they are not segmentation, tractography, or patient anatomy.
+    private func buildDeepStructuresRegionInterior(source: Entity) {
+        let id = RBCBrainRegionDestination.deepStructures.id
+        let region = Entity()
+        region.name = "transferred-region-interior-\(id)-deep-structures-region-portal-observatory"
+
+        let authoredHero = source.clone(recursive: true)
+        authoredHero.name = "registered-combined-deep-structures-reference-expanded-environment-not-segmentation"
+        normalize(authoredHero, targetExtent: 2.52)
+        authoredHero.position += [0, 1.42, -2.04]
+        authoredHero.components.set(OpacityComponent(opacity: 0.12))
+        region.addChild(authoredHero)
+        deepStructuresAuthoredHero = authoredHero
+
+        let outlineRoot = Entity()
+        outlineRoot.name = "deep-nuclei-constellation-outlines-not-segmentation"
+        region.addChild(outlineRoot)
+        deepStructuresOutlineRoot = outlineRoot
+
+        let nucleiRoot = Entity()
+        nucleiRoot.name = "thalamus-caudate-lentiform-relational-guides-not-measured-anatomy"
+        region.addChild(nucleiRoot)
+        deepStructuresNucleiRoot = nucleiRoot
+
+        let capsuleRoot = Entity()
+        capsuleRoot.name = "internal-capsule-corridor-orientation-abstraction-not-tractography"
+        region.addChild(capsuleRoot)
+        deepStructuresCapsuleRoot = capsuleRoot
+
+        let vesselRoot = Entity()
+        vesselRoot.name = "qualitative-deep-perforator-approaches-not-fixed-territories"
+        region.addChild(vesselRoot)
+        deepStructuresVesselRoot = vesselRoot
+
+        let outlineMaterial = glowMaterial(
+            color: UIColor(red: 0.46, green: 0.92, blue: 0.82, alpha: 0.80),
+            intensity: 1.8
+        )
+        let starMaterial = glowMaterial(
+            color: UIColor(red: 0.82, green: 1.0, blue: 0.94, alpha: 0.96),
+            intensity: 2.8
+        )
+        let thalamusMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.34, green: 0.22, blue: 0.48, alpha: 0.46),
+            emissive: UIColor(red: 0.50, green: 0.30, blue: 0.72, alpha: 1)
+        )
+        let basalGangliaMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.42, green: 0.18, blue: 0.30, alpha: 0.46),
+            emissive: UIColor(red: 0.66, green: 0.26, blue: 0.46, alpha: 1)
+        )
+        let capsuleMaterial = glowMaterial(
+            color: UIColor(red: 0.91, green: 0.85, blue: 0.66, alpha: 0.84),
+            intensity: 1.6
+        )
+
+        func irregularLoop(
+            center: SIMD3<Float>,
+            radii: SIMD2<Float>,
+            phase: Float,
+            depth: Float
+        ) -> [SIMD3<Float>] {
+            (0..<12).map { index in
+                let angle = Float(index) / 12 * .pi * 2
+                let irregularity = 1 + sin(angle * 3 + phase) * 0.055
+                return [
+                    center.x + cos(angle) * radii.x * irregularity,
+                    center.y + sin(angle) * radii.y * (1 + cos(angle * 2 + phase) * 0.045),
+                    center.z + sin(angle * 2 + phase) * depth,
+                ]
+            }
+        }
+
+        typealias NucleusGuide = (
+            name: String,
+            center: SIMD3<Float>,
+            radii: SIMD2<Float>,
+            phase: Float,
+            depth: Float,
+            material: RealityKit.Material
+        )
+        let nucleusGuides: [NucleusGuide] = [
+            ("left-thalamus", [-0.30, 1.39, -1.91], [0.30, 0.42], 0.2, 0.16, thalamusMaterial),
+            ("right-thalamus", [0.30, 1.39, -1.95], [0.30, 0.42], 1.1, 0.16, thalamusMaterial),
+            ("left-lentiform", [-0.84, 1.40, -1.88], [0.38, 0.54], 0.8, 0.22, basalGangliaMaterial),
+            ("right-lentiform", [0.84, 1.40, -1.92], [0.38, 0.54], 1.7, 0.22, basalGangliaMaterial),
+        ]
+        for (guideIndex, guide) in nucleusGuides.enumerated() {
+            let controls = irregularLoop(
+                center: guide.center,
+                radii: guide.radii,
+                phase: guide.phase,
+                depth: guide.depth * 0.56
+            )
+            let path = sampleClosedCatmullRom(controls, samplesPerSegment: 6)
+            addContinuousTubePath(
+                path,
+                to: nucleiRoot,
+                startRadius: 0.0028,
+                endRadius: 0.0028,
+                material: guide.material,
+                name: "deep-nucleus-relational-contour-\(guide.name)",
+                radialSegments: 9
+            )
+            for (pointIndex, point) in controls.enumerated() where pointIndex.isMultiple(of: 3) {
+                let star = ModelEntity(
+                    mesh: .generateSphere(radius: 0.0065),
+                    materials: [starMaterial]
+                )
+                star.name = "deep-nucleus-constellation-star-\(guide.name)-\(pointIndex)"
+                star.position = point
+                outlineRoot.addChild(star)
+                deepStructuresGuideStars.append((star, Float(guideIndex * 4 + pointIndex) * 0.37))
+            }
+
+            // A deterministic Fibonacci shell gives the nuclei readable
+            // volume from changing viewpoints without claiming a segmented
+            // surface or packing the scene with solid toy shapes.
+            let pointMesh = MeshResource.generateSphere(radius: 0.0046)
+            for pointIndex in 0..<48 {
+                let unitY = 1 - (Float(pointIndex) + 0.5) / 48 * 2
+                let radial = sqrt(max(0, 1 - unitY * unitY))
+                let theta = Float(pointIndex) * 2.399_963 + guide.phase
+                let point = ModelEntity(mesh: pointMesh, materials: [guide.material])
+                point.name = "deep-nucleus-sparse-point-cloud-orientation-not-segmentation-\(guide.name)-\(pointIndex)"
+                point.position = guide.center + [
+                    cos(theta) * radial * guide.radii.x,
+                    unitY * guide.radii.y,
+                    sin(theta) * radial * guide.depth,
+                ]
+                point.scale = [
+                    0.80 + Float(pointIndex % 5) * 0.07,
+                    0.80 + Float((pointIndex + 2) % 5) * 0.06,
+                    0.80 + Float((pointIndex + 4) % 5) * 0.05,
+                ]
+                nucleiRoot.addChild(point)
+            }
+        }
+
+        // The caudate is represented as an open C-like orientation arc on each
+        // side instead of a closed region boundary.
+        for side: Float in [-1, 1] {
+            let caudatePath = sampleCubicBezier(
+                [side * 0.24, 1.92, -1.86],
+                [side * 0.68, 2.13, -2.00],
+                [side * 0.84, 1.72, -2.13],
+                [side * 0.56, 1.34, -2.02],
+                samples: 48
+            )
+            addContinuousTubePath(
+                caudatePath,
+                to: nucleiRoot,
+                startRadius: 0.0050,
+                endRadius: 0.0026,
+                material: basalGangliaMaterial,
+                name: "deep-nucleus-relational-contour-\(side < 0 ? "left" : "right")-caudate-open-arc",
+                radialSegments: 9
+            )
+            for progress: Float in [0.08, 0.34, 0.62, 0.90] {
+                let star = ModelEntity(
+                    mesh: .generateSphere(radius: 0.008),
+                    materials: [starMaterial]
+                )
+                star.name = "deep-nucleus-constellation-star-\(side < 0 ? "left" : "right")-caudate-\(Int(progress * 100))"
+                star.position = interpolatedPoint(on: caudatePath, progress: progress)
+                outlineRoot.addChild(star)
+                deepStructuresGuideStars.append((star, progress * 7 + side))
+            }
+        }
+
+        // Ten luminous fibers define a narrow capsule corridor with a superior
+        // fan and inferior convergence. They are not individual tracts.
+        for side: Float in [-1, 1] {
+            for fiberIndex in 0..<5 {
+                let offset = Float(fiberIndex - 2) * 0.035
+                let capsulePath = sampleCubicBezier(
+                    [side * (0.45 + offset * 1.8), 2.20, -2.14 + offset * 1.6],
+                    [side * (0.64 + offset * 1.2), 1.88, -2.01 - offset * 0.9],
+                    [side * (0.50 + offset * 0.3), 1.12, -1.75 + offset * 0.8],
+                    [side * (0.32 + offset * 0.7), 0.66, -1.53 - offset * 0.5],
+                    samples: 52
+                )
+                addContinuousTubePath(
+                    capsulePath,
+                    to: capsuleRoot,
+                    startRadius: 0.0035 - Float(abs(fiberIndex - 2)) * 0.00035,
+                    endRadius: 0.0017,
+                    material: capsuleMaterial,
+                    name: "internal-capsule-simplified-fiber-guide-\(side < 0 ? "left" : "right")-\(fiberIndex)",
+                    radialSegments: 8
+                )
+            }
+        }
+
+        let vesselMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.48, green: 0.012, blue: 0.030, alpha: 0.68),
+            emissive: UIColor(red: 0.68, green: 0.016, blue: 0.038, alpha: 1)
+        )
+        let flowCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.24, blue: 0.15, alpha: 0.30),
+            intensity: 1.2
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.78, blue: 0.42, alpha: 0.98),
+            intensity: 4.2
+        )
+        typealias DeepPathSpec = (
+            name: String,
+            points: [SIMD3<Float>],
+            startRadius: Float,
+            endRadius: Float,
+            fronts: Int
+        )
+        var vesselSpecs: [DeepPathSpec] = []
+        for side: Float in [-1, 1] {
+            let sideName = side < 0 ? "left" : "right"
+            let m1Path = sampleCubicBezier(
+                [side * 0.16, 0.64, -1.49],
+                [side * 0.52, 0.66, -1.51],
+                [side * 1.04, 0.71, -1.56],
+                [side * 1.54, 0.77, -1.63],
+                samples: 56
+            )
+            vesselSpecs.append(("\(sideName)-m1-parent-approach", m1Path, 0.017, 0.012, 2))
+
+            for branchIndex in 0..<6 {
+                let branchProgress = 0.25 + Float(branchIndex) * 0.11
+                let start = interpolatedPoint(on: m1Path, progress: branchProgress)
+                let endX = side * (0.34 + Float(branchIndex) * 0.11)
+                let endY = 1.24 + Float(branchIndex) * 0.105
+                let endZ = -1.78 - sin(Float(branchIndex) * 0.72) * 0.14
+                let perforatorPath = sampleCubicBezier(
+                    start,
+                    start + SIMD3<Float>(side * 0.15, 0.23, -0.15),
+                    [endX - side * 0.18, endY - 0.24, endZ + 0.16],
+                    [endX, endY, endZ],
+                    samples: 44
+                )
+                vesselSpecs.append(("\(sideName)-m1-lenticulostriate-\(branchIndex)", perforatorPath, 0.0044, 0.0017, 1))
+            }
+
+            let anteriorChoroidal = sampleCubicBezier(
+                [side * 0.22, 0.58, -1.48],
+                [side * 0.34, 0.82, -1.60],
+                [side * 0.51, 1.10, -1.82],
+                [side * 0.55, 1.34, -1.98],
+                samples: 48
+            )
+            vesselSpecs.append(("\(sideName)-anterior-choroidal-approach", anteriorChoroidal, 0.0070, 0.0027, 1))
+
+            let posteriorPerforator = sampleCubicBezier(
+                [side * 0.08, 0.70, -1.56],
+                [side * 0.12, 0.94, -1.66],
+                [side * 0.25, 1.25, -1.86],
+                [side * 0.30, 1.51, -1.98],
+                samples: 48
+            )
+            vesselSpecs.append(("\(sideName)-posterior-thalamic-perforator-approach", posteriorPerforator, 0.0065, 0.0025, 1))
+        }
+
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.019, radius: 0.0058)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.027, radius: 0.0017)
+        for (pathIndex, spec) in vesselSpecs.enumerated() {
+            deepStructuresFlowPaths.append(spec.points)
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius,
+                endRadius: spec.endRadius,
+                material: vesselMaterial,
+                name: "deep-structure-\(spec.name)-continuous-wall",
+                radialSegments: 14
+            )
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius * 0.30,
+                endRadius: spec.endRadius * 0.32,
+                material: flowCoreMaterial,
+                name: "deep-structure-\(spec.name)-continuous-flow-core",
+                radialSegments: 8
+            )
+            for frontIndex in 0..<spec.fronts {
+                let arrow = Entity()
+                arrow.name = "deep-perforator-tangent-flow-front-\(spec.name)-\(frontIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                head.name = "deep-perforator-flow-front-arrowhead"
+                head.position.y = 0.021
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                tail.name = "deep-perforator-flow-front-tail"
+                tail.position.y = -0.021
+                arrow.addChild(head)
+                arrow.addChild(tail)
+                vesselRoot.addChild(arrow)
+                deepStructuresFlowArrows.append((
+                    arrow,
+                    pathIndex,
+                    (Float(frontIndex) / Float(max(spec.fronts, 1)) + Float(pathIndex) * 0.097)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let overviewTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "overview",
+            position: [-1.12, 1.14, -1.50],
+            collisionRadius: 0.20
+        )
+        regionGuideRoot.addChild(overviewTarget)
+        deepStructuresDiscoveryTargets.append(overviewTarget)
+        let activeTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "active",
+            position: [-1.22, 1.29, -1.60],
+            collisionRadius: 0.22
+        )
+        region.addChild(activeTarget)
+        deepStructuresDiscoveryTargets.append(activeTarget)
+
+        region.isEnabled = false
+        regionInteriorRoot.addChild(region)
+        regionInteriors[id] = region
+        regionBaseScales[id] = region.scale
+        print("RBC_DEEP_OBSERVATORY=READY nuclei_guides=6 nucleus_points=192 capsule_fibers=10 arterial_paths=18 moving_fronts=20 registered_reference=true")
     }
 
     /// A room-scale teaching map of the arterial crossroads. The authored
@@ -2674,6 +3019,101 @@ final class RBCJourneyScene {
             let pulse = cerebellumRuntimeHeld
                 ? 1
                 : 0.94 + sin(cerebellumElapsed * 4.0 + item.offset * 7.2) * 0.08
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+    }
+
+    private func updateDeepStructuresRegion(
+        active: Bool,
+        visualization: RBCRegionVisualizationMode,
+        motionHeld: Bool
+    ) {
+        deepStructuresRuntimeActive = active
+        deepStructuresRuntimeHeld = motionHeld
+        deepStructuresRuntimeVisualization = visualization
+        guard active else {
+            deepStructuresElapsed = 0
+            return
+        }
+
+        let referenceOpacity: Float
+        let outlineOpacity: Float
+        let nucleiOpacity: Float
+        let capsuleOpacity: Float
+        let vesselOpacity: Float
+        switch visualization {
+        case .locate:
+            referenceOpacity = 0.18
+            outlineOpacity = 0.56
+            nucleiOpacity = 0.34
+            capsuleOpacity = 0.035
+            vesselOpacity = 0.018
+        case .xray:
+            referenceOpacity = 0.045
+            outlineOpacity = 0.16
+            nucleiOpacity = 0.78
+            capsuleOpacity = 0.66
+            vesselOpacity = 0.030
+        case .flow:
+            referenceOpacity = 0.025
+            outlineOpacity = 0.065
+            nucleiOpacity = 0.34
+            capsuleOpacity = 0.12
+            vesselOpacity = 1.0
+        }
+        deepStructuresAuthoredHero?.components.set(OpacityComponent(opacity: referenceOpacity))
+        deepStructuresOutlineRoot?.components.set(OpacityComponent(opacity: outlineOpacity))
+        deepStructuresNucleiRoot?.components.set(OpacityComponent(opacity: nucleiOpacity))
+        deepStructuresCapsuleRoot?.components.set(OpacityComponent(opacity: capsuleOpacity))
+        deepStructuresVesselRoot?.components.set(OpacityComponent(opacity: vesselOpacity))
+        for target in deepStructuresDiscoveryTargets where target.name.hasSuffix("-active") {
+            let opacity: Float = switch visualization {
+            case .locate: 0.72
+            case .xray: 0.40
+            case .flow: 0.28
+            }
+            target.components.set(OpacityComponent(opacity: opacity))
+        }
+        applyDeepStructuresMotion()
+    }
+
+    private func advanceDeepStructuresFrame(deltaTime: Float) {
+        guard deepStructuresRuntimeActive else { return }
+        if !deepStructuresRuntimeHeld {
+            deepStructuresElapsed += min(max(deltaTime, 0), 0.10)
+        }
+        applyDeepStructuresMotion()
+    }
+
+    private func applyDeepStructuresMotion() {
+        for item in deepStructuresGuideStars {
+            let pulse = deepStructuresRuntimeHeld
+                ? 1
+                : 0.86 + sin(deepStructuresElapsed * 1.48 + item.phase) * 0.16
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+        for item in deepStructuresFlowArrows {
+            item.entity.isEnabled = deepStructuresRuntimeVisualization == .flow
+            guard deepStructuresFlowPaths.indices.contains(item.pathIndex) else { continue }
+            let path = deepStructuresFlowPaths[item.pathIndex]
+            let speed: Float = item.pathIndex == 0 || item.pathIndex == 9 ? 0.11 : 0.080
+            let progress = deepStructuresRuntimeHeld
+                ? item.offset
+                : (item.offset + deepStructuresElapsed * speed).truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: path, progress: progress)
+            let ahead = interpolatedPoint(on: path, progress: min(progress + 0.018, 1))
+            let behind = interpolatedPoint(on: path, progress: max(progress - 0.018, 0))
+            let tangent = ahead - behind
+            item.entity.position = point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: [0, 1, 0],
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = deepStructuresRuntimeHeld
+                ? 1
+                : 0.94 + sin(deepStructuresElapsed * 4.1 + item.offset * 7.4) * 0.08
             item.entity.scale = [pulse, pulse, pulse]
         }
     }

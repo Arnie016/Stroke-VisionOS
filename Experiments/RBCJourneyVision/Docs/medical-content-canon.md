@@ -95,6 +95,34 @@ not specialist review and does not make the app clinical software.
 - UI limit: Locate, X-ray, and Flow reveal the same stable surrounding place.
   The app does not move a camera or infer a region from eye gaze.
 
+## Deep-structures observatory
+
+- Source: NCBI Bookshelf, *Neuroanatomy, Internal Capsule*.
+  https://www.ncbi.nlm.nih.gov/books/NBK542181/
+- Supported wording: the internal capsule is a subcortical white-matter
+  structure situated between the caudate nucleus and thalamus medially and the
+  lentiform nucleus laterally. Its vascular supply includes perforating
+  branches associated with the anterior, middle, and internal carotid systems,
+  including anterior choroidal contributions.
+- Source: NCBI Bookshelf, *Neuroanatomy, Cerebral Blood Supply*.
+  https://www.ncbi.nlm.nih.gov/books/NBK532297/
+- Supported wording: M1 gives rise to lateral lenticulostriate perforators that
+  supply deep structures including basal ganglia and internal capsule; proximal
+  posterior cerebral circulation gives rise to perforating branches associated
+  with the thalamus.
+- Source: NCBI Bookshelf, *Neuroanatomy, Basal Ganglia*.
+  https://www.ncbi.nlm.nih.gov/books/NBK537141/
+- Supported wording: lenticulostriate arteries are a principal supply to the
+  basal ganglia.
+- Representation limit: the six relational guides, 192 sparse nucleus points,
+  ten capsule fibers, 18 arterial paths, and 20 moving fronts are enlarged
+  qualitative geometry. They are not semantic segmentation of the combined
+  source mesh, tractography, histology, fixed arterial territories, complete
+  branching, vessel dominance, patient anatomy, physiological timing,
+  perfusion, pressure, CFD, tissue outcome, or treatment guidance.
+- UI limit: Locate, X-ray, and Flow reveal one stationary observation field.
+  No app camera, gaze vector, or forced locomotion selects the anatomy.
+
 ## Review status
 
 - Source-reviewed copy: complete for the narrow claims above.

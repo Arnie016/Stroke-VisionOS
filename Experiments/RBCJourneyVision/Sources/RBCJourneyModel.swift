@@ -321,7 +321,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .cerebellum:
             "Shift behind and below the cerebral hemispheres to study the cerebellar form without leaving the enclosing cortical world."
         case .deepStructures:
-            "Bring the central deep-brain assembly forward while the outer cortex recedes into environmental context."
+            "Stand among central deep-brain relationships while the enclosing cortex recedes into environmental context."
         case .frontalLobe:
             "Stand inside the forward cortical region. A restrained outline holds its orientation while illuminated arterial branches make blood-flow direction visible around you."
         case .corticalMicroarchitecture:
@@ -336,7 +336,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .corticalExchange: "Oxygen crosses from capillary blood into tissue; red blood cells remain inside the vessel."
         case .ventricularSystem: "The ventricular system contains cerebrospinal fluid and is not part of the arterial blood-flow network."
         case .cerebellum: "The cerebellum sits posterior and inferior to the cerebral hemispheres and contributes to coordinated movement."
-        case .deepStructures: "This is an orientation view of central anatomy, not a diagnostic segmentation or patient scan."
+        case .deepStructures: "Deep structures receive blood from several small perforator families; this is not diagnostic segmentation or a patient scan."
         case .frontalLobe: "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement. The outline is an orientation guide, not diagnostic segmentation."
         case .corticalMicroarchitecture: "Most cerebral cortex is six-layered neocortex, but layer thickness, cell density, and columnar organization vary across cortical areas."
         }
@@ -877,6 +877,7 @@ final class RBCJourneyModel {
         guard let region = activeRegionDestination else { return "" }
         if region == .circleOfWillis { return activeWillisTitle }
         if region == .cerebellum { return activeCerebellumTitle }
+        if region == .deepStructures { return activeDeepStructuresTitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "One branch, interrupted"
         }
@@ -887,6 +888,7 @@ final class RBCJourneyModel {
         guard let region = activeRegionDestination else { return "" }
         if region == .circleOfWillis { return activeWillisSubtitle }
         if region == .cerebellum { return activeCerebellumSubtitle }
+        if region == .deepStructures { return activeDeepStructuresSubtitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
         }
@@ -958,6 +960,36 @@ final class RBCJourneyModel {
             "Its cortex forms many folia around branching white matter known as the arbor vitae."
         case .flow:
             "SCA, AICA, and PICA arise from the vertebrobasilar system; their anatomy and relative size vary."
+        }
+    }
+
+    var activeDeepStructuresTitle: String {
+        switch regionVisualization {
+        case .locate: "Structures beneath the cortex"
+        case .xray: "The corridor between the nuclei"
+        case .flow: "Small branches, deep consequences"
+        }
+    }
+
+    var activeDeepStructuresSubtitle: String {
+        switch regionVisualization {
+        case .locate:
+            "The thalamus, caudate, and lentiform nuclei gather around a narrow central passage. Their outlines orient the relationship without claiming segmentation."
+        case .xray:
+            "The internal capsule carries dense white-matter pathways between deep gray structures. This enlarged luminous corridor is a spatial guide, not tractography or measured anatomy."
+        case .flow:
+            "Gold fronts follow illustrative M1 lenticulostriate, anterior choroidal, and posterior perforator approaches. They show routes into deep tissue, not fixed territories or individual blood supply."
+        }
+    }
+
+    var activeDeepStructuresFact: String {
+        switch regionVisualization {
+        case .locate:
+            "The internal capsule lies between the caudate and thalamus medially and the lentiform nucleus laterally."
+        case .xray:
+            "Its fibers connect the cerebral cortex with subcortical structures, brainstem, and spinal cord."
+        case .flow:
+            "Deep structures receive blood from several small perforator families; anatomy and territories vary."
         }
     }
 

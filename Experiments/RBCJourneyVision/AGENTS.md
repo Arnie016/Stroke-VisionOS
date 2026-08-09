@@ -23,6 +23,11 @@ video cannot.
   with 22 tangent fronts. Locate/X-ray/Flow reveal one stable place; it is not
   histology, territory segmentation, complete vasculature, CFD, or patient
   anatomy.
+- Deep-structures observatory: one combined registered source retained as dim
+  context, six relational nucleus guides, 192 sparse volume points, ten
+  internal-capsule fibers, and 18 qualitative perforator approaches with 20
+  moving fronts. Treat Locate/X-ray/Flow as relationship views—not semantic
+  segmentation, tractography, fixed territories, CFD, or patient anatomy.
 - Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an

@@ -142,6 +142,28 @@ CFD. Use `--proof-region-4`, optionally followed by
 `--proof-region-mode-xray` or `--proof-region-mode-flow`, for deterministic
 Simulator review.
 
+## Deep-structures observatory — routes below the cortex
+
+The **Deep brain** destination no longer presents its one-piece imported asset
+as if it were semantic anatomy. That registered source remains as dim spatial
+context. Six constellation guides and 192 sparse volumetric points orient the
+bilateral thalamic, caudate, and lentiform relationships without claiming
+segmentation. Ten depth-weaving luminous fibers reveal the internal capsule as
+the narrow corridor between those guides.
+
+**Locate** keeps the combined reference readable. **X-ray** recedes it and
+lifts the nucleus point clouds plus the internal-capsule corridor. **Flow**
+reveals 18 continuous M1, lenticulostriate, anterior choroidal, and posterior
+perforator approach paths with 20 tangent-aligned fronts. Two successive proof
+frames retain the same world while the fronts change position; no app camera
+or forced locomotion is used.
+
+The lesson is not segmentation, tractography, histology, a complete or fixed
+territory map, patient anatomy, measured speed, pressure, perfusion, CFD,
+tissue prediction, or treatment guidance. Use `--proof-region-5`, optionally
+followed by `--proof-region-mode-xray` or `--proof-region-mode-flow`, for
+deterministic Simulator review.
+
 ## Travel with the flow — arterial branch ride
 
 Frontal **Flow** now offers one opt-in **Enter this branch** action. The wearer
