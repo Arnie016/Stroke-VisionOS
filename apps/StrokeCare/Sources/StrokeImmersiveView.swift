@@ -82,6 +82,7 @@ private enum SpatialVisualField {
 
 struct StrokeImmersiveView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
+    @Binding var immersionStyle: ImmersionStyle
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) private var dismissWindow
@@ -94,6 +95,7 @@ struct StrokeImmersiveView: View {
     private let annotationID = "stroke-intention-annotation"
     private let annotationAnchorName = "stroke-intention-annotation-anchor"
     private let calmHorizonID = "stroke-calm-paper-horizon"
+    private let focusLightID = "stroke-focus-key-light"
     private let questionMarkerID = "family-question-marker"
     private let caseDrawerID = "spatial-patient-drawer"
     private let lessonSpecimenRailID = "lesson-specimen-rail"
@@ -154,7 +156,19 @@ struct StrokeImmersiveView: View {
                     horizon.name = calmHorizonID
                     horizon.position = SpatialVisualField.tertiaryHorizon
                     horizon.scale = [SpatialVisualField.tertiaryScale, SpatialVisualField.tertiaryScale, 1]
+                    horizon.isEnabled = experience.environmentMode == .warmHorizon
                     content.add(horizon)
+
+                    let focusLight = Entity()
+                    focusLight.name = focusLightID
+                    focusLight.components.set(DirectionalLightComponent(
+                        color: UIColor(red: 1.0, green: 0.84, blue: 0.72, alpha: 1),
+                        intensity: 1_150
+                    ))
+                    focusLight.orientation = simd_quatf(angle: -0.48, axis: [1, 0, 0])
+                        * simd_quatf(angle: 0.52, axis: [0, 1, 0])
+                    focusLight.isEnabled = experience.environmentMode == .focusField
+                    content.add(focusLight)
 
                     if let annotation = attachments.entity(for: annotationID) {
                         annotation.name = annotationID
@@ -252,6 +266,7 @@ struct StrokeImmersiveView: View {
                     if let horizon = content.entities.first(where: { $0.name == calmHorizonID }) {
                         // Environmental mood stays behind the anatomy and is
                         // never attached to a vessel or pathology state.
+                        horizon.isEnabled = experience.environmentMode == .warmHorizon
                         horizon.position = SpatialVisualField.tertiaryHorizon
                         horizon.scale = [SpatialVisualField.tertiaryScale, SpatialVisualField.tertiaryScale, 1]
                         CalmFlowFieldFactory.update(
@@ -262,6 +277,8 @@ struct StrokeImmersiveView: View {
                             reduceMotion: reduceMotion
                         )
                     }
+                    content.entities.first(where: { $0.name == focusLightID })?.isEnabled =
+                        experience.environmentMode == .focusField
                     if let marker = attachments.entity(for: questionMarkerID) {
                         if marker.parent == nil {
                             content.add(marker)
@@ -423,9 +440,13 @@ struct StrokeImmersiveView: View {
                 )
             .onChange(of: experience.soundEnabled) { _, _ in updateAudioMix() }
             .onAppear {
+                synchronizeImmersionStyle()
                 if experience.narrationEnabled {
                     narrator.speak(experience.journeyCaption)
                 }
+            }
+            .onChange(of: experience.environmentMode) { _, _ in
+                synchronizeImmersionStyle()
             }
             .onChange(of: experience.narrationEnabled) { _, enabled in
                 enabled ? narrator.speak(experience.journeyCaption) : narrator.stop()
@@ -611,6 +632,14 @@ struct StrokeImmersiveView: View {
 
         flowController?.fade(to: flowGain, duration: 0.8)
         pressureController?.fade(to: pressureGain, duration: 0.8)
+    }
+
+    private func synchronizeImmersionStyle() {
+        immersionStyle = switch experience.environmentMode {
+        case .surroundings: .mixed
+        case .warmHorizon: .progressive
+        case .focusField: .full
+        }
     }
 }
 
@@ -920,6 +949,23 @@ private struct SpatialRoleControls: View {
                 bubbleButton("Evidence", systemImage: "text.book.closed.fill", accent: .mint) {
                     openWindow(id: StrokeSpace.evidence)
                 }
+
+                Menu {
+                    ForEach(StrokeEnvironmentMode.allCases) { mode in
+                        Button(mode.rawValue, systemImage: mode.systemImage) {
+                            experience.setEnvironmentMode(mode)
+                        }
+                    }
+                } label: {
+                    SpatialControlBubbleLabel(
+                        title: experience.environmentMode.shortTitle,
+                        systemImage: experience.environmentMode.systemImage,
+                        accent: .mint,
+                        selected: experience.environmentMode != .surroundings
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Environment: \(experience.environmentMode.rawValue)")
             }
 
             HStack(spacing: 8) {

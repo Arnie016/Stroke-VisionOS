@@ -439,6 +439,15 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-transparent-layer") {
             experience.prepareTransparentLayerProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-environment-surroundings") {
+            experience.prepareEnvironmentProof(.surroundings)
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-environment-warm") {
+            experience.prepareEnvironmentProof(.warmHorizon)
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-environment-focus") {
+            experience.prepareEnvironmentProof(.focusField)
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-clinician-toolkit") {
             experience.prepareClinicianToolKitProof()
             Task { await openProofSpace() }

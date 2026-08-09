@@ -117,3 +117,30 @@
   `SC-AIS-001.4` clinician decision remain unproven.
 - Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
   rerun `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-09 12:32 SGT — deliberate environments and transparent lesson family
+
+- Target: let the presenter change environmental depth without coupling mood,
+  anatomy, or patient state, and make see-through anatomy reveal the complete
+  intended point family.
+- Bounded action: added presenter-only Surroundings, Warm horizon, and Focus
+  field bubbles mapped to native mixed, progressive, and full immersion. The
+  warm field now uses stable unlit paper geometry; the focus field has one
+  bounded key light. In see-through mode all five vessel-story markers remain
+  visible while one selected point stays dominant. Region markers now live in
+  the registered-v2 frame rather than inheriting cortex opacity.
+- Evidence: guarded XCAT attempt created
+  `Proof/xcat/20260809-121143/BLOCKED.md` with the paired device unavailable;
+  no device build/install/launch was attempted. `python3
+  Tests/verify_contract.py` passed and the narrow visionOS Simulator build
+  exited `0`. Simulator routes produced
+  `Proof/42-environment-surroundings-simulator.png`,
+  `Proof/43-environment-warm-simulator.png`, and
+  `Proof/44-environment-focus-simulator.png` from the same transparent anatomy
+  state.
+- Verdict: `IMPROVED` — the three environments are visibly distinct and the
+  transparent lesson-family contract is rendered rather than implied.
+- Blocker: XCAT visibility, gesture precision, comfort, audio perception,
+  comprehension, and `SC-AIS-001.4` clinical review remain unproven.
+- Next safe action: when XCAT is awake, worn, unlocked, and reachable, run the
+  three environment states and select each of the five vessel-story points once.

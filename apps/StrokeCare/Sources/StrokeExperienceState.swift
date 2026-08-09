@@ -14,6 +14,30 @@ enum StrokeSpatialPhase: String {
     case explanation
 }
 
+enum StrokeEnvironmentMode: String, CaseIterable, Identifiable {
+    case surroundings = "Surroundings"
+    case warmHorizon = "Warm horizon"
+    case focusField = "Focus field"
+
+    var id: String { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .surroundings: "Room"
+        case .warmHorizon: "Warm"
+        case .focusField: "Focus"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .surroundings: "viewfinder"
+        case .warmHorizon: "sun.horizon.fill"
+        case .focusField: "circle.fill"
+        }
+    }
+}
+
 enum StrokePointField: String, CaseIterable, Identifiable {
     case regions = "Brain regions"
     case procedure = "Blood flow"
@@ -273,6 +297,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
+    @Published var environmentMode: StrokeEnvironmentMode = .warmHorizon
     @Published var cortexOpacity: Double = 0.34
     @Published var regionPortalActive = false
     @Published private(set) var selectedPointEntityName: String?
@@ -637,6 +662,10 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    func setEnvironmentMode(_ mode: StrokeEnvironmentMode) {
+        environmentMode = mode
+    }
+
     /// A reversible museum-like aperture into the affected region. It changes
     /// the teaching viewpoint only: no teleport, diagnosis, patient scan, CFD,
     /// tissue cut, or procedural action is implied.
@@ -846,6 +875,7 @@ final class StrokeExperienceState: ObservableObject {
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
+        environmentMode = .warmHorizon
         cortexOpacity = 0.34
         regionPortalActive = false
         clearPointSelection()
@@ -939,6 +969,11 @@ final class StrokeExperienceState: ObservableObject {
         pointField = .procedure
         selectedPointEntityName = "clinician-procedure-point-field-point-2"
         selectedPointLabel = "Illustrative clot focus"
+    }
+
+    func prepareEnvironmentProof(_ mode: StrokeEnvironmentMode) {
+        prepareTransparentLayerProof()
+        environmentMode = mode
     }
 
     func prepareSpatialDockedCaseProof() {

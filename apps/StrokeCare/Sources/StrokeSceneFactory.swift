@@ -48,6 +48,7 @@ enum StrokeSceneFactory {
     private static let layerRevealSeamName = "calm-layer-reveal-seam"
     private static let regionPointFieldName = "clinician-region-point-field"
     private static let procedurePointFieldName = "clinician-procedure-point-field"
+    private static let regionPointAnchorName = "registered-region-point-anchor"
     private static let cortexLayerName = "anatomy-cortex-layer"
     private static let fixedSpaceLayerName = "anatomy-fixed-space-layer"
     private static let arteriesLayerName = "anatomy-arteries-layer"
@@ -440,7 +441,10 @@ enum StrokeSceneFactory {
             [brainCenter.x + brainRadii.x * 0.40, brainCenter.y + brainRadii.y * 0.24, frontZ]
         ]
 
-        cortexLayer.addChild(makePointField(
+        let regionPointAnchor = Entity()
+        regionPointAnchor.name = regionPointAnchorName
+        registered.addChild(regionPointAnchor)
+        regionPointAnchor.addChild(makePointField(
             name: regionPointFieldName,
             points: registeredRegionPoints,
             labels: regionPointLabels,
@@ -1303,23 +1307,28 @@ enum StrokeSceneFactory {
 
         let active = experience.pointField == .regions ? regionField : procedureField
         if let active {
+            let revealAll = experience.anatomyPresentation == .transparent || (
+                experience.audienceLens == .family &&
+                experience.procedureStep == .discussCare &&
+                experience.careViewPermissionGranted
+            )
             for (index, child) in active.children.enumerated() {
                 guard let point = child as? ModelEntity else { continue }
                 let phase = Float(time) * 0.85 + Float(index) * 0.42
                 let pulse = 0.96 + sin(phase) * 0.045
                 let isSelected = child.name == experience.selectedPointEntityName
-                // The rail is the index; the anatomy shows one precise focus.
-                // This avoids a cloud of unrelated floating markers while
-                // preserving direct gaze + pinch on the selected point.
-                child.isEnabled = isSelected || (experience.selectedPointEntityName == nil && index == 0)
-                let emphasis: Float = isSelected ? 1.85 : 1
+                // Opaque anatomy keeps one precise focus. See-through anatomy
+                // reveals the complete lesson family while retaining one
+                // dominant selected marker for gaze + pinch control agency.
+                child.isEnabled = revealAll || isSelected || (experience.selectedPointEntityName == nil && index == 0)
+                let emphasis: Float = isSelected ? 1.85 : (revealAll ? 1.04 : 1)
                 child.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
                 point.model?.materials = [
                     isSelected
                         ? contextMaterial(opacity: 1)
                         : (experience.pointField == .regions
-                            ? careMaterial(opacity: 0.92)
-                            : warningMaterial(opacity: 0.92))
+                            ? careMaterial(opacity: revealAll ? 0.68 : 0.92)
+                            : warningMaterial(opacity: revealAll ? 0.68 : 0.92))
                 ]
             }
         }
@@ -1353,11 +1362,13 @@ enum StrokeSceneFactory {
         }
 
         let cortexLayer = imported.findEntity(named: cortexLayerName)
+        let regionPointAnchor = imported.findEntity(named: regionPointAnchorName)
         let arteriesLayer = imported.findEntity(named: arteriesLayerName)
         let blockageLayer = imported.findEntity(named: blockageLayerName)
         let duraLayer = imported.findEntity(named: duraLayerName)
 
         approach(cortexLayer, [-0.026 * separation, 0, 0])
+        approach(regionPointAnchor, [-0.026 * separation, 0, 0])
         approach(arteriesLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(blockageLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(duraLayer, [0.036 * separation, 0, 0])
@@ -1546,7 +1557,8 @@ enum StrokeSceneFactory {
         let shouldShow = experience.spatialPhase == .explanation
             && experience.lessonPointsVisible
             && experience.pointField == .procedure
-        arrows.isEnabled = shouldShow
+        let hasRegisteredAnatomy = root.findEntity(named: importedRootName) != nil
+        arrows.isEnabled = shouldShow && !hasRegisteredAnatomy
         if let registeredArrows = root.findEntity(named: registeredFlowArrowName) {
             // These authored-frame glyphs read as detached vessel fragments
             // around the imported brain. Keep them quarantined until their
@@ -1554,7 +1566,10 @@ enum StrokeSceneFactory {
             // remain constrained to the qualitative vessel path.
             registeredArrows.isEnabled = false
         }
-        guard shouldShow else { return }
+        // Procedural arrows do not share the registered-v2 authored frame.
+        // Hiding them is safer than showing detached vessel fragments around
+        // the hero brain; registered qualitative flow remains a review gate.
+        guard shouldShow && !hasRegisteredAnatomy else { return }
 
         let count = Float(max(arrows.children.count, 1))
         for (index, arrow) in arrows.children.enumerated() {

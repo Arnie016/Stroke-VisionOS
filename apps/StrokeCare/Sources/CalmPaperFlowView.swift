@@ -17,10 +17,10 @@ enum CalmFlowFieldFactory {
         // feel like a black void. These low-contrast meshes are atmosphere, not
         // a literal clinic, office, or claimed therapeutic environment.
         let ground = ModelEntity(
-            mesh: .generateBox(width: 3.4, height: 0.012, depth: 3.4, cornerRadius: 0.006),
+            mesh: .generateBox(width: 4.8, height: 0.012, depth: 4.8, cornerRadius: 0.006),
             materials: [environmentMaterial(
-                color: UIColor(red: 0.30, green: 0.28, blue: 0.25, alpha: 0.30),
-                opacity: 0.30
+                color: UIColor(red: 0.72, green: 0.58, blue: 0.43, alpha: 0.24),
+                opacity: 0.24
             )]
         )
         ground.name = "calm-ground-plane"
@@ -28,10 +28,10 @@ enum CalmFlowFieldFactory {
         root.addChild(ground)
 
         let horizonVeil = ModelEntity(
-            mesh: .generateBox(width: 3.2, height: 1.85, depth: 0.012, cornerRadius: 0.18),
+            mesh: .generateBox(width: 5.2, height: 3.0, depth: 0.012, cornerRadius: 0.28),
             materials: [environmentMaterial(
-                color: UIColor(red: 0.18, green: 0.17, blue: 0.16, alpha: 0.18),
-                opacity: 0.18
+                color: UIColor(red: 0.76, green: 0.64, blue: 0.52, alpha: 0.30),
+                opacity: 0.30
             )]
         )
         horizonVeil.name = "calm-horizon-veil"
@@ -47,7 +47,7 @@ enum CalmFlowFieldFactory {
                     depth: 0.008,
                     cornerRadius: 0.014
                 ),
-                materials: [ribbonMaterial(index: index, opacity: 0.07 + CGFloat(progress) * 0.025)]
+                materials: [ribbonMaterial(index: index, opacity: 0.10 + CGFloat(progress) * 0.03)]
             )
             ribbon.name = "calm-flow-ribbon-\(index)"
             ribbon.position = [
@@ -114,19 +114,15 @@ enum CalmFlowFieldFactory {
             UIColor(red: 0.82, green: 0.71, blue: 0.60, alpha: opacity)
         ]
 
-        var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: palette[index % palette.count])
-        material.roughness = 1.0
-        material.metallic = 0.0
+        var material = UnlitMaterial(color: palette[index % palette.count])
         material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
         return material
     }
 
     private static func environmentMaterial(color: UIColor, opacity: CGFloat) -> RealityKit.Material {
-        var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: color)
-        material.roughness = 1.0
-        material.metallic = 0.0
+        // Unlit translucent material keeps the dawn tint stable across room
+        // lighting without pretending that this plane is physical scenery.
+        var material = UnlitMaterial(color: color)
         material.blending = .transparent(opacity: .init(floatLiteral: Float(opacity)))
         return material
     }
