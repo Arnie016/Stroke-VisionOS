@@ -221,6 +221,15 @@ checks = {
         "SceneEvents.Update", "installFrameUpdates", "advanceFlowRideFrame",
         "streamline.isEnabled = false", "arrow.isEnabled = false",
     ]),
+    "layered_directional_blood_current": all(token in scene + model + immersive + medical_canon + readme for token in [
+        "--proof-flow-phase-", "flowRideProofPhase", "flowRideRuntimeProofPhase",
+        "buildFlowCurrentChoreography", "offsetFlowStrandPath", "bloodCurrentMaterial",
+        "continuous-layered-blood-current-not-cfd-strand-", "flow_strands=",
+        "tangent-aligned-blood-current-front-not-velocity-field-",
+        "blood-current-direction-arrowhead", "blood-current-direction-fading-wake",
+        "Twenty-eight clones", "for index in 0..<28", "warm amber", "Teal remains destination navigation only",
+        "velocity profile", "hematocrit", "multi-cell simulation",
+    ]),
     "opt_in_family_realtime_guide": all(token in model + immersive + hud + narrator + realtime_proxy + realtime_runner for token in [
         "--proof-family-guide", "Family guide", "familyNarrationEnabled",
         "gpt-realtime-2.1", "RBC_REALTIME_PROXY_URL", "marin",

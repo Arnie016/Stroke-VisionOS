@@ -595,11 +595,11 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
     var subtitle: String {
         switch self {
         case .overview:
-            "The vessel surrounds you and divides ahead. Red cells and traveling light reveal both downstream directions while you remain physically still."
+            "The artery surrounds you. Wide red currents and moving cells show one source dividing into two downstream routes while your body stays still."
         case .frontal:
             "The coral branch narrows toward penetrating arterioles and an interconnected capillary field. The expanded scale makes the relationship visible without claiming patient anatomy."
         case .neighboring:
-            "The second branch stays visible to show that a vascular journey belongs to a network, not a single isolated tube. This route is illustrative rather than patient anatomy."
+            "The warm guide follows a second branch, showing that circulation belongs to a network rather than one isolated tube. This route is illustrative, not patient anatomy."
         }
     }
 
@@ -619,12 +619,12 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         case (.overview, .orientation):
             RBCFamilyNarrationCue(
                 title: "The fork comes into view",
-                caption: "You are inside a teaching model of a cerebral artery. The moving light shows which way blood is traveling."
+                caption: "You are inside a teaching model of a cerebral artery. Broad currents, arrow fronts, and red cells all move downstream."
             )
         case (.overview, .passage):
             RBCFamilyNarrationCue(
                 title: "Two paths share one source",
-                caption: "Red cells divide between the branches. This is a direction lesson, not a measurement of speed, pressure, or your anatomy."
+                caption: "Red cells divide between the branches. The layered motion makes direction visible; it does not measure speed, pressure, or your anatomy."
             )
         case (.overview, .arrival):
             RBCFamilyNarrationCue(
@@ -649,7 +649,7 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         case (.neighboring, .orientation):
             RBCFamilyNarrationCue(
                 title: "Turn toward the neighboring route",
-                caption: "Teal light marks a second route through the same branching network. The surrounding corridor moves; you do not."
+                caption: "Warm amber light marks a second route through the same branching network. The surrounding corridor moves; you do not."
             )
         case (.neighboring, .passage):
             RBCFamilyNarrationCue(
@@ -801,6 +801,7 @@ final class RBCJourneyModel {
     let proofMode: Bool
     let regionTransferProofProgress: Float?
     let anteriorGatewayTransitionProofProgress: Float?
+    let flowRideProofPhase: Float?
 
     init(arguments: [String] = CommandLine.arguments) {
         let proofArgument = arguments.first { $0.hasPrefix("--proof-station-") }
@@ -855,8 +856,15 @@ final class RBCJourneyModel {
             || arguments.contains("--proof-willis-route-anterior")
             || arguments.contains("--proof-willis-route-posterior")
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
+        let flowRideProofPhaseArgument = arguments.first {
+            $0.hasPrefix("--proof-flow-phase-")
+        }
+        let requestedFlowRideProofPhase = flowRideProofPhaseArgument.flatMap {
+            Float($0.replacingOccurrences(of: "--proof-flow-phase-", with: ""))
+        }.map { min(max($0 / 100, 0), 1) }
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
+            || requestedFlowRideProofPhase != nil
         let anteriorGatewayTransitionArgument = arguments.first {
             $0.hasPrefix("--proof-anterior-gateway-transition-")
         }
@@ -938,6 +946,7 @@ final class RBCJourneyModel {
         anteriorPassagePhase = anteriorPassageProofPhase
         isAnteriorGatewayTransitionActive = anteriorGatewayTransitionProofRequested
         anteriorGatewayTransitionProofProgress = requestedAnteriorGatewayTransitionProgress
+        flowRideProofPhase = requestedFlowRideProofPhase
         posteriorVoyagePhase = posteriorVoyageProofPhase
         familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested

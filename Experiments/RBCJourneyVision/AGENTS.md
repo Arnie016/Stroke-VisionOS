@@ -68,10 +68,13 @@ video cannot.
   the 1.65-second default, the 480-millisecond Reduce Motion dissolve,
   deterministic progress flags, concise exact-caption copy, and the no-camera
   boundary. Do not introduce another threshold asset or floating control.
-- Arterial ride: fixed wearer, native inward-facing fork, continuous route
-  meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
-  chevrons, tumbling/deforming authored cells, user-selected branch transfers,
-  Pause, Leave, and Exit.
+- Arterial ride: fixed wearer, native inward-facing fork, provenance-tracked
+  PBR arterial-wall microtexture, eight low-opacity offset 3D current strands,
+  14 compact tangent-aligned fronts with fading wakes, and 28 authored
+  biconcave cells with bounded qualitative lane variation. The blood cues stay
+  crimson/coral/amber; teal is destination navigation only. Preserve explicit
+  branch selection, deterministic flow phases, Pause, Leave, and Exit. This is
+  direction choreography, never a velocity profile, hematocrit model, or CFD.
 - Frontal destination: constellation outline around an authored artery →
   penetrating arteriole → 34-node capillary-field scale transition with sparse
   tangent-aligned arrow fronts. The wearer may pinch the field or use one

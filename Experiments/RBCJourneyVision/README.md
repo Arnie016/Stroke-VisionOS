@@ -280,13 +280,24 @@ authored reference, but its wall, opaque volume, yellow arrows, and streamlines
 are hidden in this composition because Simulator review showed them as a sealed
 model and oversized streaks.
 
-One thin continuous route mesh and sparse chevrons establish direction without
-forming a bead chain. Eighteen clones of an authored biconcave cell translate,
-tumble, and deform mildly as they divide between the two paths. **Both paths**
+The current is now legible in three layers. Eight low-opacity offset round
+strands make a continuous plasma-like volume without sealing the lumen or
+introducing a flat card. Fourteen compact
+tangent-aligned fronts add an arrowhead, tail, and fading wake so downstream
+direction is readable from a still or in motion. Twenty-eight clones of an
+authored biconcave cell translate, tumble, deform mildly, and divide between the
+two branches. The neighboring intravascular cue is warm amber rather than teal;
+teal remains outside the vessel as destination navigation only. **Both paths**
 keeps the fork legible. **Frontal route** and **Neighbor route** are explicit,
 user-triggered spatial transfers: RealityKit recomposes the chosen branch around
 the fixed wearer and suppresses the unselected path. There is no app camera or
 forced locomotion.
+
+The strands, wake spacing, cell count, and small lane-speed differences are
+designed for room-scale legibility. They are not a velocity profile, wall-shear
+estimate, hematocrit distribution, pressure field, or CFD result. This boundary
+is especially important because real blood is a cell suspension and realistic
+cell interactions require a materially different scientific model.
 
 The smooth native corridor now carries a second, depth-read/no-depth-write PBR
 microtexture layer. It reuses the provenance-tracked arterial-wall albedo,
@@ -544,9 +555,16 @@ hold the bounded illustrative obstruction state. The entry ritual uses
 Threshold, Anatomy, Problem, and Invitation.
 Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
 `--proof-flow-route-frontal` or `--proof-flow-route-neighbor` for deterministic
-user-selected transfers. Combine any ride state with `--proof-paused` to render
+user-selected transfers. Add `--proof-flow-phase-18` or
+`--proof-flow-phase-68` to hold two reproducible points in the same canonical
+12-second current cycle. Combine any ride state with `--proof-paused` to render
 the exact held-flow and **Resume ride** state. The optional guide state is
 `--proof-flow-ride --proof-family-guide`.
+
+The promoted V23 Simulator evidence is
+[`Proof/INHABIT_THE_FLOW_V23_LAYERED_CURRENT_RECEIPT.md`](Proof/INHABIT_THE_FLOW_V23_LAYERED_CURRENT_RECEIPT.md).
+It records two deterministic phases, a live 7.69-second motion proof, the two
+rejected composition attempts, and the separate XCAT/medical proof gates.
 The Circle network uses `--proof-willis-route-overview`,
 `--proof-willis-route-anterior`, and `--proof-willis-route-posterior` for its
 three deterministic focus states.

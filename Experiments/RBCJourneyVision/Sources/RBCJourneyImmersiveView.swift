@@ -60,6 +60,7 @@ struct RBCJourneyImmersiveView: View {
                     flowRideActive: model.isFlowRideActive,
                     flowRideRoute: model.flowRideRoute,
                     capillaryFieldFocused: model.isCapillaryFieldFocused,
+                    flowRideProofPhase: model.flowRideProofPhase,
                     time: timeline.date.timeIntervalSinceReferenceDate,
                     paused: model.isPaused,
                     reducedMotion: model.effectiveReducedMotion,

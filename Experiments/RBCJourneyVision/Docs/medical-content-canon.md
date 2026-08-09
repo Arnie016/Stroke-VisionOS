@@ -54,6 +54,31 @@ not specialist review and does not make the app clinical software.
   macro-to-micro destination expands scale for legibility and is not a literal
   geometric transition or patient-specific cortical bed.
 
+## Room-scale arterial current choreography
+
+- Source: NCBI Bookshelf, *Physiology, Cardiovascular Hemodynamics*.
+  https://www.ncbi.nlm.nih.gov/books/NBK470310/
+- Supported wording: blood normally has laminar-flow behavior in many vessels,
+  with velocity varying across a vessel because friction reduces motion closest
+  to the wall. This supports layered direction cues in a teaching scene, but it
+  does not supply this app with patient values or a computed profile.
+- Source: Secomb, *Mechanics and computational simulation of blood flow in
+  microvessels* (Medical Engineering & Physics; PMC).
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC3115406/
+- Supported wording: blood is a concentrated suspension of flexible biconcave
+  red cells; cell shape, deformation, and interactions materially affect flow,
+  particularly in microvessels. Realistic multi-cell simulation is a distinct
+  computational problem.
+- Representation limit: offset current strands, arrow fronts, wakes, cell density,
+  deformation, and the small difference among animation lanes are qualitative
+  choreography for room-scale readability. They are not plasma, measured
+  velocity, a wall-shear gradient, hematocrit, collision dynamics, turbulence,
+  non-Newtonian rheology, or CFD. The enlarged cerebral artery must not borrow
+  microvessel-specific effects as literal anatomy.
+- Color limit: crimson, coral, and amber are all intravascular direction cues.
+  Teal remains destination navigation only and does not represent venous or
+  deoxygenated blood.
+
 ## Brain orientation
 
 - Source: NIH/NINDS, *Brain Basics: Know Your Brain*.
