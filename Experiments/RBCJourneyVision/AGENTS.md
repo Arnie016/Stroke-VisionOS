@@ -53,7 +53,11 @@ video cannot.
   opt-in companion can read a selected region's visible title and explanation.
   It is off by default and never a clinician default. Reject returned audio if
   its transcript word sequence differs from the reviewed copy. Entering the
-  capillary field advances the guide to the matching arrival explanation.
+  capillary field advances the guide to the matching arrival explanation. If
+  the companion is already on when a new region is chosen, it reads the short
+  visible threshold before the destination copy; the flow ambience ducks under
+  active narration and a bounded timeout prevents a failed provider from
+  holding the spatial transfer.
 
 ## Non-negotiable constraints
 

@@ -24,6 +24,13 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
 
     var isConfigured: Bool { realtimeProxyEndpoint != nil }
 
+    /// The authored cerebral-flow bed remains audible at a lower level while
+    /// narration is loading or speaking. Paused and failed narration do not
+    /// keep the ambience ducked indefinitely.
+    var shouldDuckAmbientAudio: Bool {
+        state == .loading || state == .speaking
+    }
+
     func speakExactCaption(_ text: String) {
         stop()
         guard !text.isEmpty else { return }

@@ -196,6 +196,11 @@ checks = {
         "Voice reads this exact view.", "familyNarrationText",
         "X-RBC-Narration-Transcript-SHA256",
     ]) and "NSMicrophoneUsageDescription" not in project,
+    "family_voice_spatial_thresholds": all(token in model + hud + immersive + scene + narrator for token in [
+        "regionTransferFamilyTitle", "regionTransferFamilySubtitle",
+        "regionTransferNarrationWaitLimitMilliseconds", "shouldDuckAmbientAudio",
+        "narrationWaitMilliseconds", "narrationDucking", "min(exhibitGain, -42.0)",
+    ]),
     "inhabited_branching_flow_corridor": all(token in model + scene + hud + immersive for token in [
         "enum RBCFlowRideRoute", "native-inward-facing-arterial-corridor",
         "makeInwardFacingTubeMesh", "flowRideJourneyCells",

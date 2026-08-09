@@ -60,6 +60,7 @@ struct RBCJourneyImmersiveView: View {
                     paused: model.isPaused,
                     reducedMotion: model.effectiveReducedMotion,
                     soundEnabled: model.soundEnabled,
+                    narrationDucking: familyNarrator.shouldDuckAmbientAudio,
                     showTeachingPoints: model.showTeachingPoints
                 )
             } attachments: {
@@ -129,6 +130,18 @@ struct RBCJourneyImmersiveView: View {
             else { return }
             let run = model.regionTransferRun
             try? await Task.sleep(for: .milliseconds(model.regionTransferDurationMilliseconds))
+            var narrationWaitMilliseconds = 0
+            while model.familyNarrationEnabled,
+                  familyNarrator.isConfigured,
+                  familyNarrator.shouldDuckAmbientAudio,
+                  narrationWaitMilliseconds < model.regionTransferNarrationWaitLimitMilliseconds {
+                try? await Task.sleep(for: .milliseconds(250))
+                narrationWaitMilliseconds += 250
+                guard !Task.isCancelled,
+                      model.regionTransferRun == run,
+                      model.pendingRegionDestination == destination
+                else { return }
+            }
             guard !Task.isCancelled,
                   model.regionTransferRun == run,
                   model.pendingRegionDestination == destination

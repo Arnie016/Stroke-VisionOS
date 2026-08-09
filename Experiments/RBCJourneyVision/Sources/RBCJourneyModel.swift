@@ -872,6 +872,9 @@ final class RBCJourneyModel {
     /// the route journey, the companion reads the same title and explanation
     /// already visible for the selected region—never a hidden model answer.
     var familyNarrationText: String {
+        if pendingRegionDestination != nil {
+            return "\(regionTransferFamilyTitle). \(regionTransferFamilySubtitle)"
+        }
         guard experienceMode == .regionAtlas,
               activeRegionDestination != nil
         else { return "" }
@@ -879,6 +882,18 @@ final class RBCJourneyModel {
             return "\(familyNarrationCue.title). \(familyNarrationCue.caption)"
         }
         return "\(regionFamilyCompanionTitle). \(regionFamilyCompanionSubtitle)"
+    }
+
+    /// These two lines are shared verbatim by the spatial threshold and the
+    /// family narrator. They stay deliberately short so a region transfer can
+    /// feel paced without becoming a spoken lecture.
+    var regionTransferFamilyTitle: String {
+        guard let destination = pendingRegionDestination else { return "" }
+        return "Entering \(destination.shortTitle)"
+    }
+
+    var regionTransferFamilySubtitle: String {
+        pendingRegionDestination == nil ? "" : "The room moves. You stay."
     }
 
     var regionFamilyCompanionTitle: String {
@@ -938,6 +953,11 @@ final class RBCJourneyModel {
     var regionTransferDurationMilliseconds: Int {
         effectiveReducedMotion ? 420 : 1_450
     }
+
+    /// Live voice may hold the visual threshold long enough to finish its
+    /// short reviewed line, but network or provider failure can never trap the
+    /// wearer between regions.
+    var regionTransferNarrationWaitLimitMilliseconds: Int { 7_000 }
 
     var activeWillisTitle: String { willisRouteFocus.title }
     var activeWillisSubtitle: String { willisRouteFocus.subtitle }

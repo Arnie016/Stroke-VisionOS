@@ -286,6 +286,15 @@ new panel, requests no microphone permission, and disappears when the wearer
 returns to the main story. Use `--proof-region-family-companion` for the
 deterministic Circle companion state.
 
+If that family companion is already on when the wearer chooses another region,
+the portal threshold speaks its two short visible lines—for example, **Entering
+visual cortex. The room moves. You stay.** The destination's reviewed title and
+paragraph follow only after the threshold settles. The threshold has a bounded
+seven-second narration wait, so a slow or failed provider cannot trap the wearer
+between regions. The cerebral-flow ambience ducks while speech is loading or
+playing, then returns to its authored level. This is a patient/family orientation
+mode, not a clinician default, diagnostic assistant, or open-ended medical chat.
+
 On the frontal route, automatic pacing stops at **Follow**. The next family
 action becomes **Enter field**: it expands the capillary environment first and
 only then advances the guide to **Connect**. This keeps the spoken causal order

@@ -608,14 +608,14 @@ struct RBCRegionTransferHUD: View {
     @Environment(RBCJourneyModel.self) private var model
 
     var body: some View {
-        if let destination = model.pendingRegionDestination {
+        if model.pendingRegionDestination != nil {
             VStack(spacing: 10) {
-                Text("ENTERING  ·  \(destination.shortTitle.uppercased())")
+                Text(model.regionTransferFamilyTitle.uppercased())
                     .font(.caption.monospacedDigit().weight(.bold))
                     .tracking(1.8)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
 
-                Text("The room moves. You stay.")
+                Text(model.regionTransferFamilySubtitle)
                     .font(.system(size: 38, weight: .medium, design: .rounded))
                     .multilineTextAlignment(.center)
 
@@ -628,7 +628,7 @@ struct RBCRegionTransferHUD: View {
             .frame(width: 590)
             .shadow(color: .black.opacity(0.86), radius: 18, y: 4)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Entering \(destination.title). The room moves while you stay in place.")
+            .accessibilityLabel("\(model.regionTransferFamilyTitle). \(model.regionTransferFamilySubtitle)")
         }
     }
 }

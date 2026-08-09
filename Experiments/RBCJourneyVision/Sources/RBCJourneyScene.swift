@@ -313,6 +313,7 @@ final class RBCJourneyScene {
         paused: Bool,
         reducedMotion: Bool,
         soundEnabled: Bool,
+        narrationDucking: Bool,
         showTeachingPoints: Bool
     ) {
         let motionHeld = paused || reducedMotion
@@ -516,7 +517,8 @@ final class RBCJourneyScene {
         case .consequence: -35
         case nil: -25
         }
-        flowController?.gain = soundEnabled ? exhibitGain : -96
+        let mixedGain = narrationDucking ? min(exhibitGain, -42.0) : exhibitGain
+        flowController?.gain = soundEnabled ? mixedGain : -96
     }
 
     func portalID(for entity: Entity) -> Int? {
