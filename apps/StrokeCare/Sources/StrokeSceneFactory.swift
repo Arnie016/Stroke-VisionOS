@@ -23,6 +23,8 @@ enum StrokeSceneFactory {
     static let importedBrainTargetName = "imported-brain-surface-target"
     static let importedClotTargetName = "imported-clot-focus-target"
     static let spatialCaseRoomName = "spatial-case-intake-room"
+    static let spatialCaseArchiveName = "spatial-case-archive"
+    static let spatialCaseConstellationName = "spatial-case-constellation"
     static let spatialCaseFileName = "spatial-case-file-78"
     static let spatialCaseDockName = "spatial-case-dock"
     static let spatialCaseFigureName = "spatial-case-review-figure"
@@ -237,47 +239,82 @@ enum StrokeSceneFactory {
             roughness: 0.72,
             isMetallic: false
         )
+        let filament = SimpleMaterial(
+            color: UIColor(red: 0.72, green: 0.39, blue: 0.19, alpha: 0.46),
+            roughness: 0.66,
+            isMetallic: true
+        )
+
+        let archive = Entity()
+        archive.name = spatialCaseArchiveName
+        archive.position = [-0.62, 1.43, -0.92]
+        archive.orientation = simd_quatf(angle: 0.16, axis: [0, 1, 0])
+        room.addChild(archive)
 
         let cabinet = Entity()
         cabinet.name = "case-cabinet"
-        cabinet.position = [-0.62, 1.43, -0.92]
+        let bay = ModelEntity(
+            mesh: .generateBox(size: [0.40, 0.30, 0.026], cornerRadius: 0.024),
+            materials: [rail]
+        )
+        bay.name = "archive-dossier-bay"
+        cabinet.addChild(bay)
 
-        for (name, size, position) in [
-            ("archive-spine", SIMD3<Float>(0.016, 0.52, 0.020), SIMD3<Float>(-0.18, 0, -0.02)),
-            ("archive-rail-low", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, -0.18, 0)),
-            ("archive-rail-mid", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, 0, 0)),
-            ("archive-rail-high", SIMD3<Float>(0.36, 0.012, 0.052), SIMD3<Float>(0, 0.18, 0)),
-            ("archive-title-line", SIMD3<Float>(0.30, 0.006, 0.018), SIMD3<Float>(0.01, 0.25, -0.01))
-        ] {
-            let panel = ModelEntity(mesh: .generateBox(size: size, cornerRadius: 0.006), materials: [rail])
-            panel.name = name
-            panel.position = position
-            cabinet.addChild(panel)
-        }
+        let cradle = ModelEntity(
+            mesh: .generateBox(size: [0.42, 0.020, 0.078], cornerRadius: 0.010),
+            materials: [rail]
+        )
+        cradle.name = "archive-dossier-cradle"
+        cradle.position = [0, -0.16, 0.030]
+        cabinet.addChild(cradle)
 
-        let archiveSlots: [SIMD3<Float>] = [
-            [-0.095, -0.115, 0.020], [0.020, -0.115, 0.025],
-            [-0.080, 0.065, 0.020], [0.045, 0.065, 0.025],
-            [-0.020, 0.245, 0.022]
+        let dossierColors: [UIColor] = [
+            UIColor(red: 0.20, green: 0.17, blue: 0.15, alpha: 1),
+            UIColor(red: 0.30, green: 0.22, blue: 0.17, alpha: 1),
+            UIColor(red: 0.23, green: 0.24, blue: 0.20, alpha: 1),
+            UIColor(red: 0.39, green: 0.28, blue: 0.19, alpha: 1),
+            UIColor(red: 0.25, green: 0.20, blue: 0.18, alpha: 1)
         ]
-        for index in 0..<5 {
-            let archive = ModelEntity(
-                mesh: .generateBox(size: [0.090, 0.135, 0.018], cornerRadius: 0.008),
-                materials: [contextMaterial(opacity: 0.40)]
+        let dossierPositions: [SIMD3<Float>] = [
+            [-0.055, -0.022, 0.030], [-0.034, -0.014, 0.043],
+            [-0.012, -0.006, 0.056], [0.012, 0.002, 0.069],
+            [0.036, 0.010, 0.082]
+        ]
+        for index in dossierPositions.indices {
+            let material = SimpleMaterial(
+                color: dossierColors[index],
+                roughness: 0.80,
+                isMetallic: false
             )
-            archive.name = "archived-case-\(index + 1)"
-            archive.position = archiveSlots[index]
-            archive.orientation = simd_quatf(angle: -0.05 + Float(index) * 0.018, axis: [0, 1, 0])
-            cabinet.addChild(archive)
+            let dossier = ModelEntity(
+                mesh: .generateBox(size: [0.23, 0.17, 0.012], cornerRadius: 0.014),
+                materials: [material]
+            )
+            dossier.name = "archived-case-\(index + 1)"
+            dossier.position = dossierPositions[index]
+            dossier.orientation = simd_quatf(
+                angle: -0.10 + Float(index) * 0.050,
+                axis: [0, 0, 1]
+            )
+            cabinet.addChild(dossier)
         }
-        room.addChild(cabinet)
+        archive.addChild(cabinet)
+
+        // The selected case unfolds around one central human-scale anchor.
+        // This root starts hidden so the archive remains the only visible
+        // intake affordance until FILE 78 has been deliberately placed.
+        let constellation = Entity()
+        constellation.name = spatialCaseConstellationName
+        constellation.position = [0, 1.60, -0.82]
+        constellation.isEnabled = false
+        room.addChild(constellation)
 
         // A deliberately generic 3D case figure: it gives the selected file a
         // human-scale anchor without claiming a MetaHuman, patient likeness, or
         // scan-derived avatar. It is shown only during case review.
         let figure = Entity()
         figure.name = spatialCaseFigureName
-        figure.position = [0.53, 1.48, -0.90]
+        figure.position = [0, -0.02, -0.06]
 
         let head = ModelEntity(
             mesh: .generateSphere(radius: 0.085),
@@ -308,18 +345,39 @@ enum StrokeSceneFactory {
         )
         status.position = [0, -0.29, 0]
         figure.addChild(status)
-        figure.isEnabled = false
-        room.addChild(figure)
+        constellation.addChild(figure)
+
+        let caseFilaments: [(String, [SIMD3<Float>])] = [
+            (
+                "case-constellation-filament-speech",
+                [[-0.02, 0.04, 0.015], [-0.15, 0.14, 0.025], [-0.34, 0.25, 0.040]]
+            ),
+            (
+                "case-constellation-filament-arm",
+                [[-0.03, -0.03, 0.015], [-0.17, -0.07, 0.025], [-0.36, -0.13, 0.040]]
+            ),
+            (
+                "case-constellation-filament-time",
+                [[0.03, -0.03, 0.015], [0.17, -0.07, 0.025], [0.36, -0.13, 0.040]]
+            ),
+            (
+                "case-constellation-filament-open-question",
+                [[0.02, 0.04, 0.015], [0.15, 0.14, 0.025], [0.34, 0.25, 0.040]]
+            )
+        ]
+        for (name, path) in caseFilaments {
+            addTubePath(path, radius: 0.00135, material: filament, to: constellation, prefix: name)
+        }
 
         let file = ModelEntity(
-            mesh: .generateBox(size: [0.19, 0.018, 0.25], cornerRadius: 0.012),
+            mesh: .generateBox(size: [0.19, 0.25, 0.018], cornerRadius: 0.014),
             materials: [paper]
         )
         file.name = spatialCaseFileName
         file.position = [-0.58, 1.45, -0.82]
         file.orientation = simd_quatf(angle: -0.16, axis: [0, 1, 0])
         file.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
-        file.components.set(CollisionComponent(shapes: [.generateBox(size: [0.21, 0.045, 0.27])]))
+        file.components.set(CollisionComponent(shapes: [.generateBox(size: [0.21, 0.27, 0.045])]))
         file.components.set(HoverEffectComponent())
         room.addChild(file)
 
