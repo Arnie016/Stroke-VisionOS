@@ -279,6 +279,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
     case deepStructures
     case frontalLobe
     case corticalMicroarchitecture
+    case occipitalLobe
 
     var id: Int { rawValue }
 
@@ -292,6 +293,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .deepStructures: "Deep structures"
         case .frontalLobe: "Frontal lobe"
         case .corticalMicroarchitecture: "Cortical microarchitecture"
+        case .occipitalLobe: "Occipital lobe"
         }
     }
 
@@ -305,6 +307,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .deepStructures: "Deep brain"
         case .frontalLobe: "Frontal"
         case .corticalMicroarchitecture: "Cortical layers"
+        case .occipitalLobe: "Visual cortex"
         }
     }
 
@@ -326,6 +329,8 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
             "Stand inside the forward cortical region. A restrained outline holds its orientation while illuminated arterial branches make blood-flow direction visible around you."
         case .corticalMicroarchitecture:
             "Enter a magnified cortical fold. Six laminar bands and simplified radial guides surround a penetrating arteriole as it branches toward capillary exchange."
+        case .occipitalLobe:
+            "Stand inside the posterior cortical vault. A constellation locates the calcarine region while qualitative posterior-cerebral branches reveal how arterial routes approach visual cortex."
         }
     }
 
@@ -339,6 +344,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .deepStructures: "Deep structures receive blood from several small perforator families; this is not diagnostic segmentation or a patient scan."
         case .frontalLobe: "The frontal lobe contributes to planning, inhibition, speech, and voluntary movement. The outline is an orientation guide, not diagnostic segmentation."
         case .corticalMicroarchitecture: "Most cerebral cortex is six-layered neocortex, but layer thickness, cell density, and columnar organization vary across cortical areas."
+        case .occipitalLobe: "Primary visual cortex lies along the banks of the calcarine sulcus. This scene is an orientation abstraction, not functional mapping or diagnostic segmentation."
         }
     }
 
@@ -352,6 +358,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .deepStructures: "scope"
         case .frontalLobe: "brain.head.profile.fill"
         case .corticalMicroarchitecture: "square.3.layers.3d"
+        case .occipitalLobe: "eye.fill"
         }
     }
 
@@ -363,6 +370,7 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
         case .ventricularSystem, .cerebellum, .deepStructures: .circleOfWillis
         case .frontalLobe: .followTheMCA
         case .corticalMicroarchitecture: .microcirculation
+        case .occipitalLobe: .circleOfWillis
         }
     }
 }
@@ -878,6 +886,7 @@ final class RBCJourneyModel {
         if region == .circleOfWillis { return activeWillisTitle }
         if region == .cerebellum { return activeCerebellumTitle }
         if region == .deepStructures { return activeDeepStructuresTitle }
+        if region == .occipitalLobe { return activeOccipitalTitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "One branch, interrupted"
         }
@@ -889,6 +898,7 @@ final class RBCJourneyModel {
         if region == .circleOfWillis { return activeWillisSubtitle }
         if region == .cerebellum { return activeCerebellumSubtitle }
         if region == .deepStructures { return activeDeepStructuresSubtitle }
+        if region == .occipitalLobe { return activeOccipitalSubtitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
         }
@@ -990,6 +1000,36 @@ final class RBCJourneyModel {
             "Its fibers connect the cerebral cortex with subcortical structures, brainstem, and spinal cord."
         case .flow:
             "Deep structures receive blood from several small perforator families; anatomy and territories vary."
+        }
+    }
+
+    var activeOccipitalTitle: String {
+        switch regionVisualization {
+        case .locate: "The cortex that receives sight"
+        case .xray: "A folded shoreline for vision"
+        case .flow: "Posterior routes enter the visual cortex"
+        }
+    }
+
+    var activeOccipitalSubtitle: String {
+        switch regionVisualization {
+        case .locate:
+            "One medial occipital wall opens around you while the opposite hemisphere remains in the dim registered cortex. A sparse constellation locates the calcarine region without pretending to segment visual cortex."
+        case .xray:
+            "The upper and lower banks of the calcarine sulcus hold primary visual cortex. The luminous fold is enlarged for orientation, not measured anatomy or retinotopic mapping."
+        case .flow:
+            "Gold fronts follow illustrative posterior-cerebral, calcarine, parieto-occipital, and lingual approaches. They show route relationships, not fixed territories or individual blood supply."
+        }
+    }
+
+    var activeOccipitalFact: String {
+        switch regionVisualization {
+        case .locate:
+            "The occipital lobe is the posterior part of the cerebral hemisphere and is central to visual processing."
+        case .xray:
+            "Primary visual cortex lies along the calcarine sulcus on the medial occipital surface."
+        case .flow:
+            "Cortical branches of the posterior cerebral artery supply most of the occipital lobe; branch patterns and territories vary."
         }
     }
 

@@ -106,6 +106,19 @@ final class RBCJourneyScene {
     private var deepStructuresRuntimeHeld = false
     private var deepStructuresRuntimeVisualization: RBCRegionVisualizationMode = .locate
     private var deepStructuresElapsed: Float = 0
+    private var occipitalAuthoredHero: Entity?
+    private var occipitalOutlineRoot: Entity?
+    private var occipitalFoldRoot: Entity?
+    private var occipitalCalcarineRoot: Entity?
+    private var occipitalVesselRoot: Entity?
+    private var occipitalDiscoveryTargets: [Entity] = []
+    private var occipitalGuideStars: [(entity: ModelEntity, phase: Float)] = []
+    private var occipitalFlowPaths: [[SIMD3<Float>]] = []
+    private var occipitalFlowArrows: [(entity: Entity, pathIndex: Int, offset: Float)] = []
+    private var occipitalRuntimeActive = false
+    private var occipitalRuntimeHeld = false
+    private var occipitalRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var occipitalElapsed: Float = 0
     private var regionTransferRings: [(
         entity: Entity,
         phase: Float,
@@ -255,6 +268,7 @@ final class RBCJourneyScene {
         buildWillisNetworkInterior()
         buildFrontalRegionInterior()
         buildCorticalMicroarchitectureInterior()
+        buildOccipitalRegionInterior()
         buildRegionTransferThreshold()
         buildCausalStoryField()
     }
@@ -273,6 +287,7 @@ final class RBCJourneyScene {
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceCerebellumFrame(deltaTime: deltaTime)
                 self?.advanceDeepStructuresFrame(deltaTime: deltaTime)
+                self?.advanceOccipitalFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
         }
@@ -312,6 +327,7 @@ final class RBCJourneyScene {
         let willisRegionActive = renderedRegionID == RBCBrainRegionDestination.circleOfWillis.id
         let cerebellumRegionActive = renderedRegionID == RBCBrainRegionDestination.cerebellum.id
         let deepStructuresRegionActive = renderedRegionID == RBCBrainRegionDestination.deepStructures.id
+        let occipitalRegionActive = renderedRegionID == RBCBrainRegionDestination.occipitalLobe.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
@@ -385,6 +401,11 @@ final class RBCJourneyScene {
         )
         updateDeepStructuresRegion(
             active: deepStructuresRegionActive,
+            visualization: regionVisualization,
+            motionHeld: motionHeld
+        )
+        updateOccipitalRegion(
+            active: occipitalRegionActive,
             visualization: regionVisualization,
             motionHeld: motionHeld
         )
@@ -1950,6 +1971,390 @@ final class RBCJourneyScene {
         print("RBC_DEEP_OBSERVATORY=READY nuclei_guides=6 nucleus_points=192 capsule_fibers=10 arterial_paths=18 moving_fronts=20 registered_reference=true")
     }
 
+    /// A posterior cortical observatory inspired by a night-sky finder. The
+    /// authored cortex is enlarged around the wearer as positional context;
+    /// sparse constellation guides locate the occipital poles and calcarine
+    /// banks. Native posterior-cerebral paths add legible direction without
+    /// claiming segmentation, retinotopy, patient anatomy, or measured flow.
+    private func buildOccipitalRegionInterior() {
+        guard let cortexLayer else { return }
+        let id = RBCBrainRegionDestination.occipitalLobe.id
+        let region = Entity()
+        region.name = "transferred-region-interior-\(id)-occipital-visual-cortex-observatory"
+
+        let authoredHero = cortexLayer.clone(recursive: true)
+        authoredHero.name = "registered-cortex-expanded-around-wearer-occipital-context-not-segmentation"
+        normalize(authoredHero, targetExtent: 5.35)
+        authoredHero.position = [0, 1.10, -0.16]
+        authoredHero.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+        authoredHero.components.set(OpacityComponent(opacity: 0.10))
+        region.addChild(authoredHero)
+        occipitalAuthoredHero = authoredHero
+
+        let outlineRoot = Entity()
+        outlineRoot.name = "occipital-pole-constellation-outline-not-segmentation"
+        region.addChild(outlineRoot)
+        occipitalOutlineRoot = outlineRoot
+
+        let calcarineRoot = Entity()
+        calcarineRoot.name = "calcarine-upper-lower-bank-orientation-guide-not-retinotopy"
+        region.addChild(calcarineRoot)
+        occipitalCalcarineRoot = calcarineRoot
+
+        let foldRoot = Entity()
+        foldRoot.name = "occipital-surface-fold-fragments-orientation-not-histology"
+        region.addChild(foldRoot)
+        occipitalFoldRoot = foldRoot
+
+        let vesselRoot = Entity()
+        vesselRoot.name = "qualitative-pca-calcarine-parieto-occipital-lingual-routes-not-fixed-territories"
+        region.addChild(vesselRoot)
+        occipitalVesselRoot = vesselRoot
+
+        let outlineMaterial = glowMaterial(
+            color: UIColor(red: 0.46, green: 0.78, blue: 1.00, alpha: 0.18),
+            intensity: 0.24
+        )
+        let starMaterial = glowMaterial(
+            color: UIColor(red: 0.74, green: 0.92, blue: 1.00, alpha: 0.96),
+            intensity: 2.75
+        )
+        let fieldPointMaterial = glowMaterial(
+            color: UIColor(red: 0.49, green: 0.31, blue: 0.88, alpha: 0.58),
+            intensity: 0.76
+        )
+        let calcarineMaterial = glowMaterial(
+            color: UIColor(red: 0.93, green: 0.72, blue: 0.98, alpha: 0.74),
+            intensity: 1.35
+        )
+        let calcarinePointMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.88, blue: 0.98, alpha: 0.96),
+            intensity: 2.85
+        )
+        let foldMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.23, green: 0.08, blue: 0.29, alpha: 0.42),
+            emissive: UIColor(red: 0.44, green: 0.16, blue: 0.54, alpha: 1)
+        )
+
+        let outlineStarMesh = MeshResource.generateSphere(radius: 0.010)
+        let fieldPointMesh = MeshResource.generateSphere(radius: 0.0042)
+        let calcarineStarMesh = MeshResource.generateSphere(radius: 0.0075)
+        let goldenAngle: Float = 2.399_963
+
+        // Open one selected medial occipital wall at exhibit scale. The
+        // opposite hemisphere remains in the dim registered cortex; drawing
+        // two equal outlines made the lesson read like an eye-mask icon.
+        for sideIndex in 0..<1 {
+            let side: Float = -1
+            let sideName = "left"
+            let lateralScale: Float = 1.0
+            let verticalShift: Float = 0.0
+            let depthShift: Float = 0.0
+            let lateralOffset: Float = 0.72
+            let place: (Float, Float, Float) -> SIMD3<Float> = { x, y, z in
+                [lateralOffset + side * x * lateralScale, y + verticalShift, z + depthShift]
+            }
+            let boundaryControls: [[SIMD3<Float>]] = [
+                [
+                    place(0.16, 1.56, -1.70), place(0.32, 1.94, -1.90),
+                    place(0.72, 2.33, -2.00), place(1.10, 2.22, -1.80),
+                ],
+                [
+                    place(1.10, 2.22, -1.80), place(1.32, 1.94, -1.68),
+                    place(1.32, 1.38, -1.70), place(1.08, 1.12, -1.82),
+                ],
+                [
+                    place(1.08, 1.12, -1.82), place(0.82, 0.91, -1.98),
+                    place(0.42, 0.99, -2.00), place(0.24, 1.20, -1.86),
+                ],
+            ]
+            for (arcIndex, controls) in boundaryControls.enumerated() {
+                let boundaryArc = sampleCubicBezier(
+                    controls[0], controls[1], controls[2], controls[3], samples: 34
+                )
+                addTubePath(
+                    boundaryArc,
+                    to: outlineRoot,
+                    radius: 0.0009,
+                    material: outlineMaterial,
+                    name: "\(sideName)-occipital-pole-broken-constellation-arc-\(arcIndex)"
+                )
+            }
+            let poleGuidePoints = boundaryControls.flatMap { $0 }.enumerated().compactMap { index, point in
+                (!index.isMultiple(of: 4) || index == 0) ? point : nil
+            }
+            for (index, point) in poleGuidePoints.enumerated() {
+                let star = ModelEntity(mesh: outlineStarMesh, materials: [starMaterial])
+                star.name = "\(sideName)-occipital-pole-guide-star-\(index)"
+                star.position = point + SIMD3<Float>(0, 0, 0.010)
+                outlineRoot.addChild(star)
+                occipitalGuideStars.append((star, Float(sideIndex * poleGuidePoints.count + index) * 0.61))
+            }
+
+            // Sparse volume points make the region read as a place around the
+            // wearer rather than a single drawn outline. Distribution is
+            // deterministic and purely orienting—not functional parcellation.
+            for index in 0..<168 {
+                let fraction = (Float(index) + 0.5) / 168
+                let angle = Float(index) * goldenAngle + Float(sideIndex) * 0.41
+                let radial = sqrt(fraction)
+                let point = SIMD3<Float>(
+                    lateralOffset + side * (0.28 + radial * 0.82 * abs(cos(angle))) * lateralScale,
+                    1.18 + verticalShift + radial * 0.94 * sin(angle) * 0.72 + fraction * 0.22,
+                    -1.68 + depthShift - 0.30 * sin(angle * 1.73) - 0.18 * fraction
+                )
+                let mote = ModelEntity(mesh: fieldPointMesh, materials: [fieldPointMaterial])
+                mote.name = "occipital-sparse-point-cloud-orientation-not-retinotopy-\(sideName)-\(index)"
+                mote.position = point
+                let scale = 0.64 + Float(index % 7) * 0.07
+                mote.scale = [scale, scale, scale]
+                outlineRoot.addChild(mote)
+            }
+
+            let upperBank = sampleCubicBezier(
+                place(0.14, 1.66, -1.64),
+                place(0.38, 1.86, -1.71),
+                place(0.76, 1.94, -1.84),
+                place(1.12, 1.81, -1.74),
+                samples: 54
+            )
+            let lowerBank = sampleCubicBezier(
+                place(0.14, 1.52, -1.66),
+                place(0.37, 1.35, -1.75),
+                place(0.77, 1.30, -1.87),
+                place(1.11, 1.43, -1.76),
+                samples: 54
+            )
+            for bankIndex in 0..<2 {
+                let bank = bankIndex == 0 ? upperBank : lowerBank
+                let bankName = bankIndex == 0 ? "upper-bank-cuneus" : "lower-bank-lingual"
+                for layerIndex in 0..<3 {
+                    let startProgress = 0.03 + Float(layerIndex) * 0.08
+                    let endProgress = 0.97 - Float(layerIndex) * 0.08
+                    let layerPath = (0..<42).map { sampleIndex in
+                        let fraction = Float(sampleIndex) / 41
+                        let progress = startProgress + (endProgress - startProgress) * fraction
+                        let base = interpolatedPoint(on: bank, progress: progress)
+                        let lift: Float = bankIndex == 0 ? 1 : -1
+                        return base + SIMD3<Float>(
+                            0,
+                            lift * Float(layerIndex) * (0.026 + sin(fraction * .pi) * 0.018),
+                            -Float(layerIndex) * 0.058
+                        )
+                    }
+                    addContinuousTubePath(
+                        layerPath,
+                        to: calcarineRoot,
+                        startRadius: layerIndex == 0 ? 0.0052 : 0.0022,
+                        endRadius: layerIndex == 0 ? 0.0028 : 0.0013,
+                        material: calcarineMaterial,
+                        name: "\(sideName)-calcarine-\(bankName)-depth-layer-\(layerIndex)",
+                        radialSegments: layerIndex == 0 ? 12 : 8
+                    )
+                }
+                for starIndex in 0..<7 {
+                    let progress = 0.08 + Float(starIndex) * 0.14
+                    let point = interpolatedPoint(on: bank, progress: progress)
+                    let star = ModelEntity(mesh: calcarineStarMesh, materials: [calcarinePointMaterial])
+                    star.name = "calcarine-bank-guide-star-\(sideName)-\(bankIndex)-\(starIndex)"
+                    star.position = point
+                    calcarineRoot.addChild(star)
+                    occipitalGuideStars.append((star, Float(sideIndex * 14 + bankIndex * 7 + starIndex) * 0.47 + 0.33))
+                }
+            }
+
+            // Irregular short ridges suggest the folded posterior surface in
+            // depth without drawing a fake sulcal atlas. They deliberately do
+            // not connect into named boundaries or functional parcels.
+            for foldIndex in 0..<28 {
+                let fraction = (Float(foldIndex) + 0.5) / 28
+                let angle = Float(foldIndex) * goldenAngle + 0.37
+                let radial = sqrt(fraction)
+                let center = SIMD3<Float>(
+                    lateralOffset - 0.34 + cos(angle) * radial * 0.52,
+                    1.58 + sin(angle) * radial * 0.64,
+                    -1.87 - 0.18 * sin(angle * 1.43) - 0.10 * fraction
+                )
+                let tangent = simd_normalize(SIMD3<Float>(
+                    cos(angle * 1.71),
+                    sin(angle * 1.23) * 0.62,
+                    sin(angle * 0.79) * 0.22
+                ))
+                let normal = simd_normalize(SIMD3<Float>(-tangent.y, tangent.x, 0.24))
+                let halfLength = 0.11 + Float(foldIndex % 5) * 0.024
+                let bend = (Float(foldIndex % 7) - 3) * 0.010
+                let foldPath = sampleCubicBezier(
+                    center - tangent * halfLength,
+                    center - tangent * halfLength * 0.30 + normal * bend + SIMD3<Float>(0, 0, -0.035),
+                    center + tangent * halfLength * 0.30 - normal * bend + SIMD3<Float>(0, 0, 0.035),
+                    center + tangent * halfLength,
+                    samples: 30
+                )
+                addContinuousTubePath(
+                    foldPath,
+                    to: foldRoot,
+                    startRadius: 0.0064,
+                    endRadius: 0.0038,
+                    material: foldMaterial,
+                    name: "occipital-fold-fragment-orientation-only-\(foldIndex)",
+                    radialSegments: 10
+                )
+            }
+        }
+
+        let vesselMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.30, green: 0.012, blue: 0.034, alpha: 0.70),
+            emissive: UIColor(red: 0.63, green: 0.025, blue: 0.065, alpha: 1)
+        )
+        let flowCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.26, blue: 0.20, alpha: 0.16),
+            intensity: 0.58
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.00, green: 0.84, blue: 0.48, alpha: 0.98),
+            intensity: 3.65
+        )
+        var vesselSpecs: [(name: String, points: [SIMD3<Float>], startRadius: Float, endRadius: Float, fronts: Int)] = []
+
+        for _ in 0..<1 {
+            let side: Float = -1
+            let sideName = "left"
+            let lateralOffset: Float = 0.72
+            let place: (Float, Float, Float) -> SIMD3<Float> = { x, y, z in
+                [lateralOffset + side * x, y, z]
+            }
+            let pcaTrunk = sampleCubicBezier(
+                place(0.08, 0.52, -1.46),
+                place(0.18, 0.79, -1.58),
+                place(0.37, 1.06, -1.88),
+                place(0.54, 1.29, -2.02),
+                samples: 54
+            )
+            vesselSpecs.append(("\(sideName)-posterior-cerebral-approach", pcaTrunk, 0.0140, 0.0080, 2))
+
+            let calcarine = sampleCubicBezier(
+                pcaTrunk.last ?? place(0.54, 1.29, -2.02),
+                place(0.67, 1.45, -2.04),
+                place(0.91, 1.61, -1.90),
+                place(1.16, 1.63, -1.72),
+                samples: 56
+            )
+            vesselSpecs.append(("\(sideName)-calcarine-approach", calcarine, 0.0080, 0.0032, 2))
+
+            let parietoOccipital = sampleCubicBezier(
+                interpolatedPoint(on: pcaTrunk, progress: 0.79),
+                place(0.61, 1.50, -1.98),
+                place(0.77, 1.91, -1.88),
+                place(0.91, 2.24, -1.78),
+                samples: 48
+            )
+            vesselSpecs.append(("\(sideName)-parieto-occipital-approach", parietoOccipital, 0.0067, 0.0024, 1))
+
+            let lingual = sampleCubicBezier(
+                interpolatedPoint(on: pcaTrunk, progress: 0.70),
+                place(0.61, 1.18, -1.98),
+                place(0.76, 1.00, -1.87),
+                place(0.94, 0.93, -1.70),
+                samples: 48
+            )
+            vesselSpecs.append(("\(sideName)-lingual-gyrus-approach", lingual, 0.0064, 0.0023, 1))
+
+            let posteriorTemporal = sampleCubicBezier(
+                interpolatedPoint(on: pcaTrunk, progress: 0.56),
+                place(0.50, 1.10, -1.91),
+                place(0.80, 1.06, -1.76),
+                place(1.13, 1.13, -1.58),
+                samples: 48
+            )
+            vesselSpecs.append(("\(sideName)-posterior-temporal-approach", posteriorTemporal, 0.0058, 0.0022, 1))
+
+            for twigIndex in 0..<5 {
+                let progress = 0.32 + Float(twigIndex) * 0.13
+                let start = interpolatedPoint(on: calcarine, progress: progress)
+                let upper = twigIndex.isMultiple(of: 2)
+                let end = SIMD3<Float>(
+                    lateralOffset + side * (0.70 + Float(twigIndex) * 0.105),
+                    upper ? 1.80 + Float(twigIndex) * 0.045 : 1.36 - Float(twigIndex) * 0.018,
+                    -1.69 - Float(twigIndex) * 0.035
+                )
+                let twig = sampleCubicBezier(
+                    start,
+                    start + SIMD3<Float>(side * 0.08, upper ? 0.12 : -0.10, 0.02),
+                    end + SIMD3<Float>(-side * 0.08, upper ? -0.05 : 0.06, -0.03),
+                    end,
+                    samples: 38
+                )
+                vesselSpecs.append(("\(sideName)-calcarine-cortical-twig-\(twigIndex)", twig, 0.0037, 0.0014, 1))
+            }
+        }
+
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.020, radius: 0.0060)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.030, radius: 0.0018)
+        for (pathIndex, spec) in vesselSpecs.enumerated() {
+            occipitalFlowPaths.append(spec.points)
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius,
+                endRadius: spec.endRadius,
+                material: vesselMaterial,
+                name: "occipital-\(spec.name)-continuous-wall",
+                radialSegments: 14
+            )
+            addContinuousTubePath(
+                spec.points,
+                to: vesselRoot,
+                startRadius: spec.startRadius * 0.30,
+                endRadius: spec.endRadius * 0.32,
+                material: flowCoreMaterial,
+                name: "occipital-\(spec.name)-continuous-flow-core",
+                radialSegments: 8
+            )
+            for frontIndex in 0..<spec.fronts {
+                let arrow = Entity()
+                arrow.name = "occipital-posterior-route-tangent-flow-front-\(spec.name)-\(frontIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                head.name = "occipital-flow-front-arrowhead"
+                head.position.y = 0.022
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                tail.name = "occipital-flow-front-tail"
+                tail.position.y = -0.022
+                arrow.addChild(head)
+                arrow.addChild(tail)
+                vesselRoot.addChild(arrow)
+                occipitalFlowArrows.append((
+                    arrow,
+                    pathIndex,
+                    (Float(frontIndex) / Float(max(spec.fronts, 1)) + Float(pathIndex) * 0.083)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let overviewTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "overview",
+            position: [1.17, 1.12, -1.48],
+            collisionRadius: 0.20
+        )
+        regionGuideRoot.addChild(overviewTarget)
+        occipitalDiscoveryTargets.append(overviewTarget)
+        let activeTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "active",
+            position: [1.22, 1.30, -1.54],
+            collisionRadius: 0.22
+        )
+        region.addChild(activeTarget)
+        occipitalDiscoveryTargets.append(activeTarget)
+
+        region.isEnabled = false
+        regionInteriorRoot.addChild(region)
+        regionInteriors[id] = region
+        regionBaseScales[id] = region.scale
+        print("RBC_OCCIPITAL_OBSERVATORY=READY selected_medial_wall=left broken_boundary_arcs=3 field_points=168 fold_fragments=28 calcarine_bank_layers=6 arterial_paths=10 moving_fronts=12 registered_reference=true")
+    }
+
     /// A room-scale teaching map of the arterial crossroads. The authored
     /// asset remains as dim anatomical context; these continuous native paths
     /// provide readable direction and a user-controlled anterior/posterior
@@ -3114,6 +3519,101 @@ final class RBCJourneyScene {
             let pulse = deepStructuresRuntimeHeld
                 ? 1
                 : 0.94 + sin(deepStructuresElapsed * 4.1 + item.offset * 7.4) * 0.08
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+    }
+
+    private func updateOccipitalRegion(
+        active: Bool,
+        visualization: RBCRegionVisualizationMode,
+        motionHeld: Bool
+    ) {
+        occipitalRuntimeActive = active
+        occipitalRuntimeHeld = motionHeld
+        occipitalRuntimeVisualization = visualization
+        guard active else {
+            occipitalElapsed = 0
+            return
+        }
+
+        let referenceOpacity: Float
+        let outlineOpacity: Float
+        let foldOpacity: Float
+        let calcarineOpacity: Float
+        let vesselOpacity: Float
+        switch visualization {
+        case .locate:
+            referenceOpacity = 0.10
+            outlineOpacity = 0.62
+            foldOpacity = 0.54
+            calcarineOpacity = 0.13
+            vesselOpacity = 0.025
+        case .xray:
+            referenceOpacity = 0.035
+            outlineOpacity = 0.16
+            foldOpacity = 0.68
+            calcarineOpacity = 0.92
+            vesselOpacity = 0.055
+        case .flow:
+            referenceOpacity = 0.020
+            outlineOpacity = 0.075
+            foldOpacity = 0.16
+            calcarineOpacity = 0.16
+            vesselOpacity = 1.0
+        }
+        occipitalAuthoredHero?.components.set(OpacityComponent(opacity: referenceOpacity))
+        occipitalOutlineRoot?.components.set(OpacityComponent(opacity: outlineOpacity))
+        occipitalFoldRoot?.components.set(OpacityComponent(opacity: foldOpacity))
+        occipitalCalcarineRoot?.components.set(OpacityComponent(opacity: calcarineOpacity))
+        occipitalVesselRoot?.components.set(OpacityComponent(opacity: vesselOpacity))
+        for target in occipitalDiscoveryTargets where target.name.hasSuffix("-active") {
+            let opacity: Float = switch visualization {
+            case .locate: 0.72
+            case .xray: 0.40
+            case .flow: 0.28
+            }
+            target.components.set(OpacityComponent(opacity: opacity))
+        }
+        applyOccipitalMotion()
+    }
+
+    private func advanceOccipitalFrame(deltaTime: Float) {
+        guard occipitalRuntimeActive else { return }
+        if !occipitalRuntimeHeld {
+            occipitalElapsed += min(max(deltaTime, 0), 0.10)
+        }
+        applyOccipitalMotion()
+    }
+
+    private func applyOccipitalMotion() {
+        for item in occipitalGuideStars {
+            let pulse = occipitalRuntimeHeld
+                ? 1
+                : 0.84 + sin(occipitalElapsed * 1.36 + item.phase) * 0.18
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+        for item in occipitalFlowArrows {
+            item.entity.isEnabled = occipitalRuntimeVisualization == .flow
+            guard occipitalFlowPaths.indices.contains(item.pathIndex) else { continue }
+            let path = occipitalFlowPaths[item.pathIndex]
+            let speed: Float = item.pathIndex.isMultiple(of: 8) ? 0.108 : 0.082
+            let progress = occipitalRuntimeHeld
+                ? item.offset
+                : (item.offset + occipitalElapsed * speed).truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: path, progress: progress)
+            let ahead = interpolatedPoint(on: path, progress: min(progress + 0.017, 1))
+            let behind = interpolatedPoint(on: path, progress: max(progress - 0.017, 0))
+            let tangent = ahead - behind
+            item.entity.position = point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: [0, 1, 0],
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = occipitalRuntimeHeld
+                ? 1
+                : 0.94 + sin(occipitalElapsed * 4.3 + item.offset * 7.6) * 0.08
             item.entity.scale = [pulse, pulse, pulse]
         }
     }

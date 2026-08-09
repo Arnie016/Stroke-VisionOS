@@ -28,6 +28,11 @@ video cannot.
   internal-capsule fibers, and 18 qualitative perforator approaches with 20
   moving fronts. Treat Locate/X-ray/Flow as relationship views—not semantic
   segmentation, tractography, fixed territories, CFD, or patient anatomy.
+- Occipital observatory: one selected medial wall inside the registered cortex,
+  three broken constellation arcs, 168 sparse points, 28 irregular fold
+  fragments, six calcarine-bank layers, and ten qualitative posterior routes
+  with 12 moving fronts. It is not segmentation, a sulcal atlas, retinotopy,
+  visual-field mapping, fixed territories, CFD, or patient anatomy.
 - Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an

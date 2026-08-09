@@ -123,6 +123,32 @@ not specialist review and does not make the app clinical software.
 - UI limit: Locate, X-ray, and Flow reveal one stationary observation field.
   No app camera, gaze vector, or forced locomotion selects the anatomy.
 
+## Occipital visual-cortex observatory
+
+- Source: NCBI Bookshelf, *Neuroanatomy, Occipital Lobe*.
+  https://www.ncbi.nlm.nih.gov/books/NBK544320/
+- Supported wording: the occipital lobe is the posterior part of the cerebral
+  hemisphere and is central to visual processing. Primary visual cortex lies
+  along the upper and lower banks of the calcarine sulcus on the medial
+  occipital surface.
+- Supported wording: cortical branches of the posterior cerebral artery (PCA)
+  supply most of the occipital lobe; named distal branches include calcarine,
+  parieto-occipital, lingual, and posterior temporal routes.
+- Source: NCBI Bookshelf, *Neuroanatomy, Cerebral Blood Supply*.
+  https://www.ncbi.nlm.nih.gov/books/NBK532297/
+- Supported wording: distal PCA segments extend toward the calcarine fissure
+  and supply the occipital lobe plus parts of adjacent posterior cortex.
+- Representation limit: one selected medial-wall orientation, three broken
+  boundary arcs, 168 sparse points, 28 fold fragments, six calcarine-bank
+  layers, ten arterial paths, and 12 moving fronts are enlarged qualitative
+  geometry. They are not lobe segmentation, a sulcal atlas, histology,
+  retinotopic or visual-field mapping, a fixed arterial territory, complete
+  branching, patient anatomy, measured vessel calibre, physiological timing,
+  perfusion, pressure, CFD, tissue outcome, diagnosis, or treatment guidance.
+- UI limit: the opposite hemisphere remains only in the dim registered
+  context. Locate, X-ray, and Flow reveal one stationary selected wall; the
+  app does not move a camera or infer a region from eye gaze.
+
 ## Review status
 
 - Source-reviewed copy: complete for the narrow claims above.

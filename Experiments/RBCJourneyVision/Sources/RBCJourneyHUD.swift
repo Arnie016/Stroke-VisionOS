@@ -263,6 +263,7 @@ struct RBCRegionInfoHUD: View {
             let willisRouteActive = region == .circleOfWillis
             let cerebellumActive = region == .cerebellum
             let deepStructuresActive = region == .deepStructures
+            let occipitalActive = region == .occipitalLobe
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
             VStack(alignment: .leading, spacing: 9) {
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -286,7 +287,9 @@ struct RBCRegionInfoHUD: View {
                                 ? model.activeCerebellumTitle
                                 : (deepStructuresActive
                                     ? model.activeDeepStructuresTitle
-                                    : (exampleClotActive ? "One branch, interrupted" : region.title))))))
+                                    : (occipitalActive
+                                        ? model.activeOccipitalTitle
+                                        : (exampleClotActive ? "One branch, interrupted" : region.title)))))))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -299,9 +302,11 @@ struct RBCRegionInfoHUD: View {
                                 ? model.activeCerebellumSubtitle
                                 : (deepStructuresActive
                                     ? model.activeDeepStructuresSubtitle
-                                    : (exampleClotActive
-                                        ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                                        : region.subtitle))))))
+                                    : (occipitalActive
+                                        ? model.activeOccipitalSubtitle
+                                        : (exampleClotActive
+                                            ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+                                            : region.subtitle)))))))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -314,9 +319,11 @@ struct RBCRegionInfoHUD: View {
                             ? model.activeCerebellumFact
                             : (deepStructuresActive
                                 ? model.activeDeepStructuresFact
-                                : (exampleClotActive
-                                    ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                                    : region.fact)))),
+                                : (occipitalActive
+                                    ? model.activeOccipitalFact
+                                    : (exampleClotActive
+                                        ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
+                                        : region.fact))))),
                     systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
@@ -331,7 +338,7 @@ struct RBCRegionInfoHUD: View {
                     .buttonBorderShape(.capsule)
                 }
 
-                if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum || region == .deepStructures {
+                if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum || region == .deepStructures || region == .occipitalLobe {
                     HStack(spacing: 7) {
                         ForEach(RBCRegionVisualizationMode.allCases) { mode in
                             RBCRegionModeButton(mode: mode, regionTitle: region.title)

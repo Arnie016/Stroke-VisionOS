@@ -34,9 +34,10 @@ result.
 
 A lower **Region Portal Reel** provides a second, user-directed exploration
 mode. It shows exactly three destinations at once and scrolls horizontally to
-eight supported local destinations: arterial lumen, Circle of Willis, cortical
-exchange, ventricular system, cerebellum, deep structures, frontal lobe, and
-cortical microarchitecture. Only one region can transfer at a time. The enclosing cortical atmosphere
+nine supported local destinations: arterial lumen, Circle of Willis, cortical
+exchange, ventricular system, cerebellum, deep structures, frontal lobe,
+cortical microarchitecture, and the occipital visual cortex. Only one region
+can transfer at a time. The enclosing cortical atmosphere
 remains present so the foreground lesson changes scale without turning into a
 disconnected model viewer.
 
@@ -163,6 +164,30 @@ territory map, patient anatomy, measured speed, pressure, perfusion, CFD,
 tissue prediction, or treatment guidance. Use `--proof-region-5`, optionally
 followed by `--proof-region-mode-xray` or `--proof-region-mode-flow`, for
 deterministic Simulator review.
+
+## Occipital observatory — a constellation around visual cortex
+
+The **Visual cortex** destination turns the previously distant occipital
+landmark into a place the wearer can enter. One selected medial occipital wall
+opens at exhibit scale while the opposite hemisphere remains in the dim
+registered cortex. Three broken boundary arcs and 168 sparse points locate the
+region without recreating the rejected bilateral eye-mask composition.
+Twenty-eight irregular fold fragments add depth around six layered calcarine
+bank guides.
+
+The same Locate → X-ray → Flow grammar preserves agency. **Locate** emphasizes
+the constellation and surrounding fold field. **X-ray** recedes the reference
+and lifts the upper and lower calcarine banks. **Flow** reveals ten qualitative
+posterior-cerebral, calcarine, parieto-occipital, lingual, posterior-temporal,
+and distal cortical paths with 12 tangent-aligned fronts. Successive proof
+frames retain the same world while the fronts change position; no app camera
+or forced locomotion is used.
+
+This is not lobe segmentation, a sulcal atlas, histology, retinotopic or
+visual-field mapping, a fixed arterial territory, patient anatomy, measured
+speed, pressure, perfusion, CFD, diagnosis, or treatment guidance. Use
+`--proof-region-8`, optionally followed by `--proof-region-mode-xray` or
+`--proof-region-mode-flow`, for deterministic Simulator review.
 
 ## Travel with the flow — arterial branch ride
 
@@ -416,10 +441,10 @@ Deterministic proof routes use `--proof-station-0` through
 Resume control without pretending a Simulator launch is wearer interaction.
 The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 `--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
-The region reel uses `--proof-region-0` through `--proof-region-7` for its eight
+The region reel uses `--proof-region-0` through `--proof-region-8` for its nine
 single-active-region states. Add `--proof-region-mode-xray` or
-`--proof-region-mode-flow` to deterministically select the frontal observatory
-view. Use `--proof-region-transition-7
+`--proof-region-mode-flow` to deterministically select an observatory reading.
+Use `--proof-region-transition-7
 --proof-region-transition-progress-55` to hold the Cortical layers threshold at
 55 percent without committing the destination. Add `--proof-frontal-clot` to
 hold the bounded illustrative obstruction state. The entry ritual uses
