@@ -26,6 +26,41 @@ enum StrokePointField: String, CaseIterable, Identifiable {
         case .procedure: "point.3.connected.trianglepath.dotted"
         }
     }
+
+    var lessonPoints: [StrokeLessonPoint] {
+        switch self {
+        case .regions:
+            [
+                StrokeLessonPoint(index: 0, shortTitle: "Affected", fullTitle: "Example affected area"),
+                StrokeLessonPoint(index: 1, shortTitle: "Nearby", fullTitle: "Nearby brain tissue"),
+                StrokeLessonPoint(index: 2, shortTitle: "Surface", fullTitle: "Brain surface"),
+                StrokeLessonPoint(index: 3, shortTitle: "Context", fullTitle: "Opposite-side context")
+            ]
+        case .procedure:
+            [
+                StrokeLessonPoint(index: 0, shortTitle: "Supply", fullTitle: "Blood supply approaches"),
+                StrokeLessonPoint(index: 1, shortTitle: "Branch", fullTitle: "Arteries branch"),
+                StrokeLessonPoint(index: 2, shortTitle: "Blockage", fullTitle: "Example blockage"),
+                StrokeLessonPoint(index: 3, shortTitle: "Beyond", fullTitle: "Flow beyond the blockage changes"),
+                StrokeLessonPoint(index: 4, shortTitle: "Territory", fullTitle: "Affected territory")
+            ]
+        }
+    }
+
+    var entityPrefix: String {
+        switch self {
+        case .regions: "clinician-region-point-field-point-"
+        case .procedure: "clinician-procedure-point-field-point-"
+        }
+    }
+}
+
+struct StrokeLessonPoint: Identifiable, Equatable {
+    let index: Int
+    let shortTitle: String
+    let fullTitle: String
+
+    var id: Int { index }
 }
 
 enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
@@ -187,8 +222,8 @@ enum StrokeCareDiscussion: String, CaseIterable, Identifiable {
 }
 
 enum StrokeClinicianTool: String, CaseIterable, Identifiable {
-    case focus = "Magnify"
-    case transparency = "Lens"
+    case focus = "Region focus"
+    case transparency = "Transparency"
     case layerReveal = "Layers"
     case forceps = "Forceps"
     case cranialDrill = "Drill"
@@ -197,7 +232,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 
     var systemImage: String {
         switch self {
-        case .focus: "magnifyingglass"
+        case .focus: "scope"
         case .transparency: "circle.lefthalf.filled"
         case .layerReveal: "square.3.layers.3d"
         case .forceps: "move.3d"
@@ -333,7 +368,9 @@ final class StrokeExperienceState: ObservableObject {
     func selectLessonFamily(_ field: StrokePointField) {
         pointField = field
         lessonPointsVisible = true
-        clearPointSelection()
+        if let first = field.lessonPoints.first {
+            selectLessonPoint(first)
+        }
         requestedPause = false
         if field == .procedure {
             withAnimation(.easeInOut(duration: 0.65)) {
@@ -633,6 +670,22 @@ final class StrokeExperienceState: ObservableObject {
         // A lesson point should reveal motion, not freeze it. Family pause is a
         // separate, reversible control.
         requestedPause = false
+    }
+
+    /// A specimen-rail choice locks one authored anatomy marker without
+    /// changing scale. Native two-hand magnification remains the only zoom.
+    func selectLessonPoint(_ point: StrokeLessonPoint) {
+        lessonPointsVisible = true
+        regionPortalActive = true
+        selectPoint(
+            entityName: "\(pointField.entityPrefix)\(point.index)",
+            label: point.fullTitle
+        )
+        if audienceLens == .clinician {
+            anatomyPresentation = .transparent
+            cortexOpacity = 0.40
+            selectedClinicianTool = .focus
+        }
     }
 
     func clearPointSelection() {

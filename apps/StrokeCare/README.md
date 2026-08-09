@@ -59,13 +59,15 @@ tear away from the brain.
 - Quiet mono audio beds are anchored separately to the vessel and affected
   hemisphere. Their mix follows the visible act; it never responds to inferred
   emotion, gaze, voice, heart rate, or a patient measurement.
-- Optional system narration speaks only the exact, versioned family caption;
-  it is not a generative medical answer or inferred-emotion voice agent.
+- Optional narration sends only the exact, versioned family caption to a
+  developer-controlled proxy for `gpt-realtime-2.1`. The permanent OpenAI key
+  remains server-side. There is no system-speech fallback, patient data, or
+  generative medical answer in the client.
 - A warm low-contrast ground and horizon replace the simulator's ominous black
   void. This is an unvalidated comfort hypothesis, not a therapeutic claim.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
   explicit user or clinician actions. There is no success animation.
-- A compact spatial patient drawer, clot reticle, and family question marker
+- A compact spatial patient drawer, specimen rail, and family question marker
   move the explanation into the room. The side rails carry controls and safety
   boundaries rather than repeating the lesson as text.
 
