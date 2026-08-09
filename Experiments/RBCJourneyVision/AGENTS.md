@@ -17,8 +17,9 @@ video cannot.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, sparse directional chevrons, tumbling/deforming authored cells,
   user-selected branch transfers, Pause, Leave, and Exit.
-- Family guide: optional exact-caption narration through a loopback proxy; off
-  by default and never a clinician default.
+- Family guide: optional three-beat orientation → passage → arrival captions;
+  voice may read only the exact visible copy through a loopback proxy. It is
+  off by default and never a clinician default.
 
 ## Non-negotiable constraints
 

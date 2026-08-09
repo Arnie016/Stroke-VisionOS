@@ -261,21 +261,27 @@ struct RBCRegionInfoHUD: View {
             let exampleClotActive = region == .frontalLobe && model.isFrontalClotScenarioActive
             let flowRideActive = region == .arterialLumen && model.isFlowRideActive
             VStack(alignment: .leading, spacing: 9) {
-                Text(flowRideActive ? "RIDE  ·  ARTERIAL LUMEN" : "INSIDE  ·  \(region.shortTitle.uppercased())")
+                Text(flowRideActive && model.familyNarrationEnabled
+                    ? model.familyNarrationProgressLabel
+                    : (flowRideActive ? "RIDE  ·  ARTERIAL LUMEN" : "INSIDE  ·  \(region.shortTitle.uppercased())"))
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .tracking(1.3)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
 
-                Text(flowRideActive
-                    ? model.flowRideRoute.title
-                    : (exampleClotActive ? "One branch, interrupted" : region.title))
+                Text(flowRideActive && model.familyNarrationEnabled
+                    ? model.familyNarrationCue.title
+                    : (flowRideActive
+                        ? model.flowRideRoute.title
+                        : (exampleClotActive ? "One branch, interrupted" : region.title)))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
-                Text(flowRideActive
-                    ? model.flowRideRoute.subtitle
-                    : (exampleClotActive
-                        ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                        : region.subtitle))
+                Text(flowRideActive && model.familyNarrationEnabled
+                    ? model.familyNarrationCue.caption
+                    : (flowRideActive
+                        ? model.flowRideRoute.subtitle
+                        : (exampleClotActive
+                            ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+                            : region.subtitle)))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -359,7 +365,7 @@ struct RBCRegionInfoHUD: View {
                                 ForEach(RBCFlowRideRoute.allCases) { route in
                                     let selected = model.flowRideRoute == route
                                     Button(route.shortTitle, systemImage: route.systemImage) {
-                                        model.flowRideRoute = route
+                                        model.selectFlowRideRoute(route)
                                     }
                                     .font(.caption.weight(.semibold))
                                     .buttonStyle(.bordered)
@@ -375,23 +381,35 @@ struct RBCRegionInfoHUD: View {
 
                             HStack(spacing: 8) {
                                 Button(
-                                    model.familyNarrationEnabled ? "Stop guide" : "Family guide",
+                                    model.familyNarrationEnabled ? "End guide" : "Family guide",
                                     systemImage: model.familyNarrationEnabled ? "waveform.slash" : "waveform"
                                 ) {
                                     model.toggleFamilyNarration()
                                 }
                                 .buttonStyle(.bordered)
                                 .tint(model.familyNarrationEnabled ? Color.indigo : nil)
-                                .disabled(!model.familyNarrationConfigured)
                                 .accessibilityLabel(model.familyNarrationEnabled
                                     ? "Turn off the optional family narration"
-                                    : "Turn on optional family narration of the visible caption")
+                                    : "Start the optional three-part family guide")
 
                                 Text(model.familyNarrationConfigured
-                                    ? "Optional voice; the caption stays visible."
-                                    : "Optional voice; connect the local guide to listen.")
+                                    ? "Voice follows the matching caption."
+                                    : "Captions work now; connect the local guide for voice.")
                                     .font(.caption2)
                                     .foregroundStyle(.white.opacity(0.62))
+
+                                if model.familyNarrationEnabled {
+                                    HStack(spacing: 4) {
+                                        ForEach(RBCFamilyNarrationMoment.allCases) { moment in
+                                            Capsule()
+                                                .fill(moment.rawValue <= model.familyNarrationMoment.rawValue
+                                                    ? Color.indigo
+                                                    : Color.white.opacity(0.16))
+                                                .frame(width: 13, height: 3)
+                                        }
+                                    }
+                                    .accessibilityLabel(model.familyNarrationProgressLabel)
+                                }
                             }
                         }
                     }

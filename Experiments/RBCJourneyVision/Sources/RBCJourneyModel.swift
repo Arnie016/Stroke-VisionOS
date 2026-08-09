@@ -436,9 +436,69 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         }
     }
 
-    var narration: String {
-        "\(title). \(subtitle) \(fact)"
+    func familyNarration(for moment: RBCFamilyNarrationMoment) -> RBCFamilyNarrationCue {
+        switch (self, moment) {
+        case (.overview, .orientation):
+            RBCFamilyNarrationCue(
+                title: "The fork comes into view",
+                caption: "You are inside a teaching model of a cerebral artery. The moving light shows which way blood is traveling."
+            )
+        case (.overview, .passage):
+            RBCFamilyNarrationCue(
+                title: "Two paths share one source",
+                caption: "Red cells divide between the branches. This is a direction lesson, not a measurement of speed, pressure, or your anatomy."
+            )
+        case (.overview, .arrival):
+            RBCFamilyNarrationCue(
+                title: "Choose where to look next",
+                caption: "Follow the coral path toward a frontal-region guide, or the teal path to compare a neighboring route."
+            )
+        case (.frontal, .orientation):
+            RBCFamilyNarrationCue(
+                title: "Turn with the frontal branch",
+                caption: "Coral light marks the selected route. The vessel shifts around you so your body can remain comfortably still."
+            )
+        case (.frontal, .passage):
+            RBCFamilyNarrationCue(
+                title: "Flow carries oxygen forward",
+                caption: "Red blood cells pass through the lumen, the open space inside the vessel, toward smaller downstream branches."
+            )
+        case (.frontal, .arrival):
+            RBCFamilyNarrationCue(
+                title: "A region, not a single point",
+                caption: "The constellation ahead is an orientation guide to the frontal lobe, which contributes to planning, speech, inhibition, and voluntary movement."
+            )
+        case (.neighboring, .orientation):
+            RBCFamilyNarrationCue(
+                title: "Turn toward the neighboring route",
+                caption: "Teal light marks a second route through the same branching network. The surrounding corridor moves; you do not."
+            )
+        case (.neighboring, .passage):
+            RBCFamilyNarrationCue(
+                title: "One network, many routes",
+                caption: "Cerebral arteries branch again and again as they distribute blood toward different territories of the brain."
+            )
+        case (.neighboring, .arrival):
+            RBCFamilyNarrationCue(
+                title: "Anatomy can vary",
+                caption: "Neighboring routes and collateral connections differ between people, so this scene teaches relationships rather than predicting an individual blood supply."
+            )
+        }
     }
+}
+
+struct RBCFamilyNarrationCue: Equatable, Sendable {
+    let title: String
+    let caption: String
+}
+
+enum RBCFamilyNarrationMoment: Int, CaseIterable, Identifiable, Sendable {
+    case orientation
+    case passage
+    case arrival
+
+    var id: Int { rawValue }
+    var number: String { String(format: "%02d", rawValue + 1) }
 }
 
 enum RBCExhibitBeat: Int, CaseIterable, Identifiable {
@@ -526,6 +586,9 @@ final class RBCJourneyModel {
     var soundEnabled = true
     var familyNarrationEnabled = false
     var familyNarrationConfigured = false
+    var familyNarrationMoment: RBCFamilyNarrationMoment = .orientation
+    var familyNarrationRun = 0
+    let familyNarrationProofLocked: Bool
     var showTeachingPoints = true
     var systemReduceMotion = false
     var openPortalIDs: Set<Int>
@@ -568,6 +631,10 @@ final class RBCJourneyModel {
         }
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
         let familyGuideProofRequested = arguments.contains("--proof-family-guide")
+        let familyGuideBeatArgument = arguments.first { $0.hasPrefix("--proof-family-guide-beat-") }
+        let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
+            Int($0.replacingOccurrences(of: "--proof-family-guide-beat-", with: ""))
+        }
         let initialRegionDestination = flowRideProofRequested
             ? RBCBrainRegionDestination.arterialLumen
             : regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
@@ -589,6 +656,10 @@ final class RBCJourneyModel {
         }
         familyNarrationEnabled = familyGuideProofRequested
         familyNarrationConfigured = familyGuideProofRequested
+        familyNarrationMoment = familyGuideBeatIndex
+            .flatMap(RBCFamilyNarrationMoment.init(rawValue:))
+            ?? .orientation
+        familyNarrationProofLocked = familyGuideBeatArgument != nil
         var initialOpenPortals = Set(0..<min(max(portalCount, 0), 3))
         if let initialTransfer, RBCVesselPortal(rawValue: initialTransfer) != nil {
             initialOpenPortals.insert(initialTransfer)
@@ -648,6 +719,7 @@ final class RBCJourneyModel {
             || arguments.contains("--proof-paused")
             || arguments.contains("--proof-frontal-clot")
             || familyGuideProofRequested
+            || familyGuideBeatArgument != nil
             || flowRideProofRequested
             || initialFocus != nil
             || initialTransfer != nil
@@ -661,11 +733,37 @@ final class RBCJourneyModel {
     /// read this exact text and may not add medical interpretation.
     var familyNarrationText: String {
         guard isFlowRideActive else { return "" }
-        return flowRideRoute.narration
+        return "\(familyNarrationCue.title). \(familyNarrationCue.caption)"
+    }
+
+    var familyNarrationCue: RBCFamilyNarrationCue {
+        flowRideRoute.familyNarration(for: familyNarrationMoment)
+    }
+
+    var familyNarrationSequenceKey: String {
+        "\(isFlowRideActive)-\(familyNarrationEnabled)-\(flowRideRoute.rawValue)-\(familyNarrationRun)"
+    }
+
+    var familyNarrationProgressLabel: String {
+        "GUIDE  ·  \(familyNarrationMoment.number) / 03"
     }
 
     func toggleFamilyNarration() {
         familyNarrationEnabled.toggle()
+        familyNarrationMoment = .orientation
+        familyNarrationRun += 1
+    }
+
+    func selectFlowRideRoute(_ route: RBCFlowRideRoute) {
+        guard flowRideRoute != route else { return }
+        flowRideRoute = route
+        familyNarrationMoment = .orientation
+        familyNarrationRun += 1
+    }
+
+    func setFamilyNarrationMoment(_ moment: RBCFamilyNarrationMoment) {
+        guard !familyNarrationProofLocked else { return }
+        familyNarrationMoment = moment
     }
 
     var progress: Double {
@@ -839,6 +937,8 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
         flowRideRoute = .overview
+        familyNarrationMoment = .orientation
+        familyNarrationRun += 1
         isPaused = false
         isExhibitFactExpanded = false
     }
@@ -852,6 +952,9 @@ final class RBCJourneyModel {
         transferredPortalID = RBCBrainRegionDestination.frontalLobe.id
         regionVisualization = .flow
         isFlowRideActive = false
+        familyNarrationEnabled = false
+        familyNarrationMoment = .orientation
+        familyNarrationRun += 1
         isPaused = false
     }
 

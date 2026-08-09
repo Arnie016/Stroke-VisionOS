@@ -53,7 +53,8 @@ The draft [open cranial surgery after stroke evidence and communication library]
 
 The separate [RBC Journey visionOS experiment](Experiments/RBCJourneyVision/README.md)
 lets a wearer enter an internal brain atlas, discover regions, and inhabit one
-directional arterial-flow lesson. It is research on
+directional arterial-flow lesson, with an optional three-beat family caption
+guide and separately gated Realtime voice. It is research on
 `feature/inside-brain-rbc-journey`, not yet part of the Stroke Care app target.
 
 ## MVP scope

@@ -17,8 +17,10 @@ a window. The short judge path is:
 5. One optional branch ride surrounds a stationary wearer with a native
    inward-facing fork, a continuous direction mesh, sparse chevrons, and moving
    biconcave cells. The wearer can explicitly transfer into either path.
-6. An optional family guide may read the exact visible caption through a local
-   GPT Realtime proxy. It is off by default and is not clinician tooling.
+6. An optional family guide paces orientation, passage, and arrival captions
+   through the ride. A local GPT Realtime proxy may read the exact visible copy;
+   captions remain available without it. The guide is off by default and is not
+   clinician tooling.
 
 Everything is generic education. No scene is patient-specific anatomy, CFD,
 perfusion, velocity, pressure, diagnosis, treatment guidance, or an outcome
@@ -44,19 +46,22 @@ The deterministic arterial-ride UI is launched with:
 --proof-flow-ride --proof-flow-route-frontal
 --proof-flow-ride --proof-flow-route-neighbor
 --proof-flow-ride --proof-family-guide
+--proof-flow-ride --proof-family-guide --proof-family-guide-beat-2 --proof-flow-route-frontal
 ```
 
 That launch flag proves only the selected interface state. It does not prove a
 provider call, audio playback, physical-device comfort, hand interaction, or
 clinical accuracy. See
-`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V3_BRANCHING_CORRIDOR_RECEIPT.md`
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V4_FAMILY_VOYAGE_RECEIPT.md`
 for the current evidence boundary.
 
 ## Optional family narration
 
-The app contains no permanent OpenAI key and no direct provider URL. The local
-proxy owns the key, locks model `gpt-realtime-2.1`, locks the exact family copy,
-and returns a caption hash that the app verifies before audio playback.
+The three-beat caption journey is local and available without a key. The app
+contains no permanent OpenAI key and no direct provider URL. The optional local
+proxy owns the key, locks model `gpt-realtime-2.1`, locks the exact visible
+family copy, and returns a caption hash that the app verifies before audio
+playback.
 
 ```bash
 cd Experiments/RBCJourneyVision
@@ -84,7 +89,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 50-check contract and generic Simulator build before publishing.
+5. Run the 51-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.

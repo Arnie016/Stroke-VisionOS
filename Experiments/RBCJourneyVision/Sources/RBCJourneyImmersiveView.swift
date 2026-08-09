@@ -110,9 +110,30 @@ struct RBCJourneyImmersiveView: View {
         .task {
             await handGestures.start(model: model)
             model.familyNarrationConfigured = familyNarrator.isConfigured
-                || (model.proofMode && model.familyNarrationEnabled)
             if model.familyNarrationEnabled && familyNarrator.isConfigured {
                 familyNarrator.speakExactCaption(model.familyNarrationText)
+            }
+        }
+        .task(id: model.familyNarrationSequenceKey) {
+            guard model.isFlowRideActive,
+                  model.familyNarrationEnabled,
+                  !model.familyNarrationProofLocked
+            else { return }
+
+            model.setFamilyNarrationMoment(.orientation)
+            for moment in [RBCFamilyNarrationMoment.passage, .arrival] {
+                var remainingSeconds = 7.5
+                while remainingSeconds > 0 {
+                    try? await Task.sleep(for: .milliseconds(250))
+                    guard !Task.isCancelled,
+                          model.isFlowRideActive,
+                          model.familyNarrationEnabled
+                    else { return }
+                    if !model.isPaused {
+                        remainingSeconds -= 0.25
+                    }
+                }
+                model.setFamilyNarrationMoment(moment)
             }
         }
         .onChange(of: model.familyNarrationEnabled) { _, enabled in

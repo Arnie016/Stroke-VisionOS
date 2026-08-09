@@ -171,6 +171,14 @@ checks = {
         "Both paths", "Frontal route", "Neighbor route",
         "--proof-flow-route-frontal", "--proof-flow-route-neighbor",
     ]),
+    "paced_family_voyage_guide": all(token in model + hud + immersive for token in [
+        "enum RBCFamilyNarrationMoment", "case orientation", "case passage", "case arrival",
+        "familyNarration(for moment:", "The fork comes into view",
+        "Flow carries oxygen forward", "Anatomy can vary",
+        "familyNarrationSequenceKey", "selectFlowRideRoute", "familyNarrationProofLocked",
+        "--proof-family-guide-beat-", "remainingSeconds = 7.5",
+        "Captions work now; connect the local guide for voice.",
+    ]) and "|| (model.proofMode && model.familyNarrationEnabled)" not in immersive,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

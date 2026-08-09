@@ -109,10 +109,18 @@ asset-authoring and scientific-validation gates.
 ### Optional family guide
 
 The ride includes one opt-in **Family guide** control. It is off by default and
-is intentionally separate from clinician tooling. When configured, the guide
-uses `gpt-realtime-2.1` with the `marin` voice to read only the exact, visible,
-versioned family caption. The provider is instructed not to add explanations,
-diagnoses, advice, or unstated medical claims.
+is intentionally separate from clinician tooling. Turning it on starts a short
+three-beat voyage—**orientation → passage → arrival**—inside the existing lesson
+surface. It does not open another panel. Each selected route has its own three
+short title-and-caption pairs; choosing a different route restarts the sequence
+at orientation. **Pause ride** holds both the flow and the guide clock.
+
+The paced captions work without a network connection. If voice is configured,
+the guide uses `gpt-realtime-2.1` with the `marin` voice to read only the exact,
+visible, versioned title and caption. The provider is instructed not to add
+explanations, diagnoses, advice, or unstated medical claims. If voice is not
+configured, the control still offers the caption journey and says plainly that
+the local guide is needed for audio.
 
 The visionOS app never receives a permanent OpenAI key. It sends the visible
 caption to a developer-controlled loopback proxy, then verifies the returned
@@ -128,9 +136,17 @@ Scripts/run_rbc_realtime_proxy.zsh
 
 Then launch the Simulator with
 `RBC_REALTIME_PROXY_URL=http://127.0.0.1:8792/narrate`. The deterministic UI
-state is `--proof-flow-ride --proof-family-guide`. Provider audio, cost, cadence,
-and wearer comprehension require separate explicit verification; a build or
-selected button is not live narration proof.
+state is `--proof-flow-ride --proof-family-guide`. Append one of
+`--proof-family-guide-beat-0`, `--proof-family-guide-beat-1`, or
+`--proof-family-guide-beat-2` to hold a specific caption for a reviewable
+screenshot. Provider audio, cost, cadence, and wearer comprehension require
+separate explicit verification; a build, caption, or selected button is not
+live narration proof.
+
+The server-side transport follows OpenAI's current Realtime guidance: the model
+supports speech-to-speech audio through `/v1/realtime`, while a permanent API
+key stays on the secure backend rather than in the visionOS client. The current
+implementation is a local developer proxy, not a production deployment.
 
 The title, one explanatory paragraph, one bounded fact, Save, Return, and Exit
 remain in one glanceable caption. Region choice remains in the lower portal
