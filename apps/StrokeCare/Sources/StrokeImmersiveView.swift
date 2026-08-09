@@ -422,6 +422,11 @@ struct StrokeImmersiveView: View {
                         }
                 )
             .onChange(of: experience.soundEnabled) { _, _ in updateAudioMix() }
+            .onAppear {
+                if experience.narrationEnabled {
+                    narrator.speak(experience.journeyCaption)
+                }
+            }
             .onChange(of: experience.narrationEnabled) { _, enabled in
                 enabled ? narrator.speak(experience.journeyCaption) : narrator.stop()
             }

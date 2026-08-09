@@ -455,6 +455,10 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-question") {
             experience.prepareFamilyQuestionProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-realtime-narration") {
+            experience.prepareProof(step: .inspectOcclusion)
+            experience.narrationEnabled = true
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-pressure") {
             experience.prepareProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
