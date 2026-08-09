@@ -63,10 +63,10 @@ struct StrokeTimeApp: App {
         }
 
         ImmersiveSpace(id: StrokeSpace.immersive) {
-            StrokeImmersiveView()
+            StrokeImmersiveView(immersionStyle: $immersionStyle)
                 .environmentObject(experience)
         }
-        .immersionStyle(selection: $immersionStyle, in: .mixed, .progressive)
+        .immersionStyle(selection: $immersionStyle, in: .mixed, .progressive, .full)
     }
 }
 

@@ -69,8 +69,10 @@ tear away from the brain.
   every other model, converts the Realtime API's 24 kHz PCM stream to WAV, and
   never returns the API key to visionOS. `marin` is the locked output voice
   inside `gpt-realtime-2.1`; it is not a macOS system voice.
-- A warm low-contrast ground and horizon replace the simulator's ominous black
-  void. This is an unvalidated comfort hypothesis, not a therapeutic claim.
+- A presenter-only spatial bubble switches between native mixed Surroundings,
+  the default progressive Warm horizon, and a full-immersion Focus field.
+  The setting is reversible and independent of anatomy, pathology, and audio;
+  no mode is presented as a therapeutic intervention.
 - Tap the occlusion to focus it. Pause, back, mute, exit, and all progression are
   explicit user or clinician actions. There is no success animation.
 - A compact spatial patient drawer, specimen rail, and family question marker
