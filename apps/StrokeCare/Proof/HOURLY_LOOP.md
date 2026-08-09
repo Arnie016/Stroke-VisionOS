@@ -31,3 +31,21 @@
   `SC-AIS-001.3` clinician decision remain unproven.
 - Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
   rerun `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-09 10:26 SGT — conditional Make space wording
+
+- Target: preserve the mechanical purpose of Act 3 without implying that an
+  operation is guaranteed to create the intended result.
+- Bounded action: changed the family/narrator sentence from “Surgery makes
+  room” to “Surgery can make room,” incremented the pending clinical-content
+  packet to `SC-AIS-001.4`, and updated the exact contract assertion.
+- Evidence: `Scripts/deploy_xcat.zsh` stopped with XCAT `unavailable`;
+  `tunnelState=unavailable`, `pairingState=paired`, and
+  `ddiServicesAvailable=false`. `python3 Tests/verify_contract.py` passed and
+  the narrow visionOS Simulator build exited `0`.
+- Verdict: `IMPROVED` — the ten-word intervention claim is now conditional
+  while the irreversible-injury boundary remains unchanged.
+- Blocker: XCAT 0.6 install, foreground launch, wearer observations, and the
+  `SC-AIS-001.4` clinician decision remain unproven.
+- Next safe action: when XCAT is powered on, worn, unlocked, and reachable,
+  rerun `Scripts/deploy_xcat.zsh` once.

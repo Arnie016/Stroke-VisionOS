@@ -519,7 +519,7 @@ final class StrokeExperienceState: ObservableObject {
         case .inspectOcclusion:
             "In this severe stroke, swelling builds inside the fixed skull."
         case .discussCare:
-            "Surgery makes room for swelling. It cannot undo the stroke injury."
+            "Surgery can make room for swelling. It cannot undo the stroke injury."
         }
     }
 
