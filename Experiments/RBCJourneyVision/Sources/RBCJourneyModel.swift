@@ -466,7 +466,7 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         case (.frontal, .arrival):
             RBCFamilyNarrationCue(
                 title: "A network meets the cortex",
-                caption: "The artery narrows into arterioles and then a capillary bed. This expanded view shows the relationship, not real scale or measured flow."
+                caption: "Red cells stay inside this capillary bed while oxygen passes toward nearby tissue. The soft rings show that exchange conceptually, not real scale or measured flow."
             )
         case (.neighboring, .orientation):
             RBCFamilyNarrationCue(
@@ -752,7 +752,7 @@ final class RBCJourneyModel {
 
     var activeFlowRideSubtitle: String {
         if isCapillaryFieldFocused {
-            return "The network expands around you while your body stays still. Gold fronts show direction only; scale, spacing, and flow are illustrative."
+            return "The network expands around you while your body stays still. Gold arrows stay inside the vessels; soft rings mark the exchange idea at nearby tissue."
         }
         return flowRideRoute.subtitle
     }

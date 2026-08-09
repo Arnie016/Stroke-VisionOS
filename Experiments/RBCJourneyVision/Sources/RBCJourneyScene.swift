@@ -79,10 +79,15 @@ final class RBCJourneyScene {
         route: RBCFlowRideRoute
     )] = []
     private var flowRideMicrovascularGlints: [(
-        entity: ModelEntity,
+        entity: Entity,
         path: [SIMD3<Float>],
         offset: Float,
         speed: Float
+    )] = []
+    private var flowRideCapillaryExchangeRipples: [(
+        entity: Entity,
+        origin: SIMD3<Float>,
+        phase: Float
     )] = []
     private var flowRideRuntimeRoute: RBCFlowRideRoute = .overview
     private var flowRideRuntimeCapillaryFocus = false
@@ -1748,6 +1753,10 @@ final class RBCJourneyScene {
             color: UIColor(red: 1.0, green: 0.62, blue: 0.28, alpha: 0.94),
             intensity: 4.0
         )
+        let exchangeRippleMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.73, blue: 0.38, alpha: 0.36),
+            intensity: 1.35
+        )
 
         let penetratingArteriole = sampleCubicBezier(
             center + SIMD3<Float>(0, 0, -0.03),
@@ -1853,21 +1862,59 @@ final class RBCJourneyScene {
             microPaths.append(path)
         }
 
-        let glintMesh = MeshResource.generateCylinder(height: 0.048, radius: 0.0065)
+        let frontHeadMesh = MeshResource.generateCone(height: 0.020, radius: 0.0082)
+        let frontTrailMesh = MeshResource.generateCylinder(height: 0.026, radius: 0.0028)
         for (index, path) in microPaths.enumerated() where index < 24 && index.isMultiple(of: 2) {
-            let glint = ModelEntity(mesh: glintMesh, materials: [flowFrontMaterial])
-            glint.name = "frontal-route-capillary-traveling-flow-front-\(index)"
-            glint.position = path.first ?? center
-            flowRideCapillaryWebRoot.addChild(glint)
+            let front = Entity()
+            front.name = "frontal-route-capillary-traveling-flow-front-\(index)"
+            front.position = path.first ?? center
+
+            let head = ModelEntity(mesh: frontHeadMesh, materials: [flowFrontMaterial])
+            head.name = "capillary-flow-front-arrowhead"
+            head.position.y = 0.014
+            let trail = ModelEntity(mesh: frontTrailMesh, materials: [flowFrontMaterial])
+            trail.name = "capillary-flow-front-tail"
+            trail.position.y = -0.009
+            front.addChild(head)
+            front.addChild(trail)
+            flowRideCapillaryWebRoot.addChild(front)
             flowRideMicrovascularGlints.append((
-                glint,
+                front,
                 path,
                 Float(index) / Float(max(microPaths.count, 1)),
                 0.045 + Float(index % 4) * 0.007
             ))
         }
 
-        print("RBC_FRONTAL_MICROVASCULAR_DESTINATION=READY arteriole=1 feeders=3 capillary_nodes=34 organic_links=nearest_neighbor flow_fronts=12 not_to_scale=true")
+        for (index, nodeIndex) in [2, 7, 12, 18, 24, 30].enumerated() {
+            guard nodes.indices.contains(nodeIndex) else { continue }
+            let ripple = Entity()
+            ripple.name = "frontal-capillary-exchange-ripple-not-diffusion-measurement-\(index)"
+            let origin = nodes[nodeIndex] + SIMD3<Float>(0, 0, 0.018)
+            ripple.position = origin
+
+            var ring: [SIMD3<Float>] = []
+            for segment in 0...30 {
+                let angle = Float(segment) / 30 * 2 * .pi
+                ring.append([cos(angle) * 0.026, sin(angle) * 0.026, 0])
+            }
+            addTubePath(
+                ring,
+                to: ripple,
+                radius: 0.0014,
+                material: exchangeRippleMaterial,
+                name: "capillary-to-tissue-exchange-wave"
+            )
+            ripple.components.set(OpacityComponent(opacity: 0))
+            flowRideCapillaryWebRoot.addChild(ripple)
+            flowRideCapillaryExchangeRipples.append((
+                ripple,
+                origin,
+                Float(index) / 6
+            ))
+        }
+
+        print("RBC_FRONTAL_MICROVASCULAR_DESTINATION=READY arteriole=1 feeders=3 capillary_nodes=34 organic_links=nearest_neighbor flow_fronts=12 arrow_fronts=12 exchange_ripples=6 not_to_scale=true")
     }
 
     private func addMicrovascularTube(
@@ -2160,7 +2207,23 @@ final class RBCJourneyScene {
             let pulse = flowRideRuntimeHeld
                 ? 0.92
                 : 0.88 + sin(flowRideElapsed * 3.1 + item.offset * 9) * 0.12
-            item.entity.scale = [pulse, 1, pulse]
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+
+        // A sparse radial response distinguishes molecular exchange from blood
+        // travel. The red cell and arrow fronts remain intravascular; these
+        // rings are a qualitative tissue-facing cue, not a diffusion or oxygen
+        // concentration measurement.
+        for item in flowRideCapillaryExchangeRipples {
+            let cycle = (item.phase + flowRideElapsed * 0.14)
+                .truncatingRemainder(dividingBy: 1)
+            let envelope = sin(cycle * .pi)
+            let scale = 0.58 + cycle * 1.02
+            item.entity.position = item.origin + SIMD3<Float>(0, 0, cycle * 0.072)
+            item.entity.scale = [scale, scale, scale]
+            item.entity.components.set(OpacityComponent(
+                opacity: focusMix * envelope * envelope * 0.46
+            ))
         }
 
         for item in flowRideForkSegments {

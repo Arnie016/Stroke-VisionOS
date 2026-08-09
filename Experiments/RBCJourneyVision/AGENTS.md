@@ -20,9 +20,11 @@ video cannot.
   Pause, Leave, and Exit.
 - Frontal destination: constellation outline around an authored artery →
   penetrating arteriole → 34-node capillary-field scale transition with sparse
-  traveling fronts. The wearer may pinch the field or use one fallback control
-  to let it expand while the wearer stays still, then return to the artery. It
-  is an orientation/exchange lesson, not measured flow or patient anatomy.
+  tangent-aligned arrow fronts. The wearer may pinch the field or use one
+  fallback control to let it expand while the wearer stays still, then return
+  to the artery. Six faint tissue-facing rings illustrate exchange while red
+  cells and arrows remain intravascular. It is an orientation/exchange lesson,
+  not measured flow, diffusion, oxygen concentration, or patient anatomy.
 - Family guide: optional three-beat orientation → passage → arrival captions;
   voice may read only the exact visible copy through a loopback proxy. It is
   off by default and never a clinician default. Entering the capillary field

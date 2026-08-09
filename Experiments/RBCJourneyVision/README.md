@@ -100,9 +100,13 @@ be recovered, the layer fails closed and the original native corridor remains.
 The frontal destination now carries two linked scales. An irregular
 constellation-like outline locates the broad region; inside it, the selected
 artery narrows into one penetrating arteriole, three precapillary feeders, and
-a genuinely three-dimensional 34-node capillary web. Twelve sparse gold fronts
-travel through different curved links over an undulating cortical exchange
-surface, so direction remains visible without recreating a bead chain. The
+a genuinely three-dimensional 34-node capillary web. Twelve sparse gold
+arrowhead-and-tail fronts align to their current vessel tangent as they travel
+through different curved links over an undulating cortical exchange surface,
+so direction is visible without recreating a bead chain. Six faint rings then
+expand from selected exchange sites toward that surface. The arrows remain
+inside vessels; the rings are a conceptual tissue-facing response, not a
+diffusion, concentration, or oxygen-delivery measurement. The
 neighboring destination keeps its separate teal field, so route selection
 changes the spatial relationship rather than only a label.
 
@@ -142,7 +146,9 @@ surface. It does not open another panel. Each selected route has its own three
 short title-and-caption pairs; choosing a different route restarts the sequence
 at orientation. Entering the capillary field advances the guide to its matching
 arrival cue instead of waiting for a generic timer. The remaining timer never
-rewinds that explanation. **Pause ride** holds both the flow and the guide clock.
+rewinds that explanation. The arrival copy explicitly distinguishes
+intravascular red-cell travel from oxygen moving toward tissue. **Pause ride**
+holds the arrows, exchange rings, and guide clock at their current phase.
 
 The paced captions work without a network connection. If voice is configured,
 the guide uses `gpt-realtime-2.1` with the `marin` voice to read only the exact,

@@ -27,6 +27,11 @@ not specialist review and does not make the app clinical software.
   https://www.ncbi.nlm.nih.gov/books/NBK54110/
 - Supported wording: oxygen moves from blood toward tissue by diffusion. The
   teaching scene keeps the red blood cell intravascular.
+- Representation limit: tangent-aligned arrows show only qualitative blood
+  direction inside the capillary bed. Faint outward rings illustrate the idea
+  of blood-to-tissue exchange; their radius, cadence, opacity, and travel are
+  not oxygen concentration, diffusion distance, delivery, or physiological
+  timing.
 - UI limit: no velocity, pressure, perfusion, tissue-outcome, or collateral-flow
   prediction may be inferred from animation speed, color, density, or path. The
   macro-to-micro destination expands scale for legibility and is not a literal

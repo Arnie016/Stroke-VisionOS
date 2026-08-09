@@ -208,6 +208,15 @@ checks = {
         "The network expands around you while your body stays still.",
         "setFamilyNarrationMoment(.arrival)",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "capillary_flow_to_exchange_story": all(token in scene + model + medical_canon for token in [
+        "capillary-flow-front-arrowhead", "capillary-flow-front-tail",
+        "flowRideCapillaryExchangeRipples", "exchange_ripples=6",
+        "frontal-capillary-exchange-ripple-not-diffusion-measurement-",
+        "capillary-to-tissue-exchange-wave", "The red cell and arrow fronts remain intravascular",
+        "Red cells stay inside this capillary bed while oxygen passes toward nearby tissue.",
+        "The soft rings show that exchange conceptually",
+        "oxygen moves from blood toward tissue by diffusion",
+    ]) and "oxygen concentration measurement" not in scene + model,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

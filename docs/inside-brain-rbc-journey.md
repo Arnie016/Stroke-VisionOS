@@ -30,6 +30,10 @@ a window. The short judge path is:
    outline recede; **Return to artery** reverses the transition. If the optional
    family guide is running, its visible and spoken copy advances to the matching
    arrival explanation.
+9. At capillary scale, twelve tangent-aligned arrow fronts make intravascular
+   direction explicit. Six faint rings expand toward the cortical surface to
+   distinguish the exchange idea from red-cell travel. Neither animation is a
+   measurement of flow, diffusion, oxygen concentration, or tissue delivery.
 
 Everything is generic education. No scene is patient-specific anatomy, CFD,
 perfusion, velocity, pressure, diagnosis, treatment guidance, or an outcome
@@ -71,7 +75,9 @@ for the wall-material gate, and
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V6_MACRO_MICRO_RECEIPT.md`
 for the artery-to-capillary destination gate, and
 `Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V7_CAPILLARY_FOCUS_RECEIPT.md`
-for the user-triggered scale-transfer and family-arrival gate.
+for the user-triggered scale-transfer and family-arrival gate, and
+`Experiments/RBCJourneyVision/Proof/INHABIT_THE_FLOW_V8_FLOW_TO_EXCHANGE_RECEIPT.md`
+for the capillary direction/exchange visual gate.
 
 ## Optional family narration
 
@@ -107,7 +113,7 @@ receipt.
 4. Prefer one visible spatial improvement at a time. Preserve a fixed wearer,
    no app camera, explicit pause/leave/exit agency, and no more than three open
    portals.
-5. Run the 54-check contract and generic Simulator build before publishing.
+5. Run the 55-check contract and generic Simulator build before publishing.
 6. Label proof literally: source, build, Simulator render, XCAT, wearer,
    specialist, and clinical evidence are separate gates.
 7. Inspect staged files, secret scan, and binary sizes before committing.
