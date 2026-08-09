@@ -42,9 +42,10 @@ family comprehension, or clinical validity.
 
 For the showcase, one doctor wears XCAT and the family watches the mirrored
 view on a Mac or Apple TV. This build does not claim a second-headset or shared
-spatial session. Questions and a presenter-recorded comfort check remain in the
-left family field; the clinician sees that explicitly shared response beside
-three concise presenter cues. No anxiety, emotion, or physiology is inferred.
+spatial session. Three finite question prompts and an explicit, self-reported
+clarity check remain in the left family field; the clinician sees only that
+shared response beside three concise presenter cues. No anxiety, emotion, or
+physiology is inferred.
 
 ![Doctor-worn, mirrored family cue field in visionOS Simulator](Proof/60-doctor-mirrored-family-cues-simulator.png)
 
@@ -68,10 +69,20 @@ brain appears. Patient-file furniture never persists beside the anatomy.
 
 The doctor's left peripheral surface is a Page 2-inspired presentation
 checklist—not a note editor. It shows three current-act prompts, the explicitly
-shared family comfort state, and the boundary that these are prompts rather
-than a script.
+shared clarity state, and the boundary that these are prompts rather than a
+script. Pinching one technical prompt reveals one authored plain-language line;
+it does not call a generative medical-answer endpoint.
 
 ![Doctor presentation checklist in visionOS Simulator](Proof/68-doctor-presentation-checklist-simulator.png)
+
+The role contract is now explicit: the family may opt into the locked
+`gpt-realtime-2.1` narration path, while the doctor-presenter route has no
+synthetic voice control. Pause silences narration. Family questions are finite
+pause markers, not a microphone or listening loop.
+
+![Family questions and self-reported clarity in visionOS Simulator](Proof/70-family-clarity-questions-simulator.png)
+
+![Doctor technical cue with authored plain-language expansion in visionOS Simulator](Proof/71-presenter-authored-plain-language-simulator.png)
 
 The companion window has two views over the same spatial state:
 
@@ -122,10 +133,11 @@ tear away from the brain.
 - Quiet mono audio beds are anchored separately to the vessel and affected
   hemisphere. Their mix follows the visible act; it never responds to inferred
   emotion, gaze, voice, heart rate, or a patient measurement.
-- Optional narration sends only the exact, versioned family caption to a
+- Family-only optional narration sends only the exact, versioned family caption to a
   developer-controlled proxy for `gpt-realtime-2.1`. The permanent OpenAI key
   remains server-side. There is no system-speech fallback, patient data, or
-  generative medical answer in the client.
+  generative medical answer in the client. Selecting Doctor presenter revokes
+  narration, and Pause stops any active playback.
 - For Simulator development, start the loopback-only proxy with
   `Scripts/run_realtime_proxy.zsh`, then launch with
   `STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate`. The proxy rejects
@@ -197,6 +209,10 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 # Doctor-worn hand arc and mirrored family cue field
 ... com.arnav.StrokeTime --proof-clinician-toolkit
 ... com.arnav.StrokeTime --proof-family-question
+
+# Role-specific language and voice boundaries
+... com.arnav.StrokeTime --proof-family-clarity
+... com.arnav.StrokeTime --proof-presenter-plain-language
 ```
 
 Simulator builds and screenshots do not prove XCAT performance, physical

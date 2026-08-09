@@ -339,11 +339,18 @@ final class StrokeExperienceState: ObservableObject {
     @Published var procedureStep: StrokeProcedureStep = .chooseCase
     @Published var audienceLens: StrokeAudienceLens = .family {
         didSet {
-            guard audienceLens == .family else { return }
+            if audienceLens == .clinician {
+                // The presenter speaks for themself. Changing role revokes
+                // synthesized-narration eligibility at the state boundary.
+                narrationEnabled = false
+                selectedFamilyQuestion = nil
+                return
+            }
             detailLevel = .calm
             selectedCatalogAssetID = nil
             clinicianToolKitVisible = false
             selectedClinicianTool = .focus
+            selectedPresenterKeyPointIndex = nil
         }
     }
     @Published private(set) var detailLevel: StrokeDetailLevel = .calm
@@ -353,13 +360,15 @@ final class StrokeExperienceState: ObservableObject {
     @Published var reportIsVisible = false
     @Published var requestedPause = false
     @Published var clarificationRequested = false
-    @Published private(set) var familyComfortCheck: Double = 1
-    @Published private(set) var familyComfortWasSet = false
+    @Published private(set) var familyClarityCheck: Double = 1
+    @Published private(set) var familyClarityWasSet = false
+    @Published private(set) var selectedFamilyQuestion: String?
+    @Published private(set) var selectedPresenterKeyPointIndex: Int?
     @Published var questionPlacementArmed = false
     @Published var questionMarkerVisible = false
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
     @Published var soundEnabled = true
-    @Published var narrationEnabled = false
+    @Published private(set) var narrationEnabled = false
     @Published var closingReflectionVisible = false
     @Published var pointField: StrokePointField = .regions
     @Published var lessonPointsVisible = true
@@ -631,6 +640,8 @@ final class StrokeExperienceState: ObservableObject {
             return
         }
         requestedPause = false
+        selectedFamilyQuestion = nil
+        selectedPresenterKeyPointIndex = nil
         closingReflectionVisible = false
         regionPortalActive = false
         clearPointSelection()
@@ -680,6 +691,8 @@ final class StrokeExperienceState: ObservableObject {
 
     func retreatJourney() {
         requestedPause = false
+        selectedFamilyQuestion = nil
+        selectedPresenterKeyPointIndex = nil
         isConsentPromptVisible = false
         pendingConsentStep = nil
         regionPortalActive = false
@@ -705,6 +718,16 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause.toggle()
     }
 
+    /// Narration is an opt-in family teaching aid. Doctor-presenter mode has
+    /// no synthesized voice because the clinician is already speaking.
+    func setNarrationEnabled(_ enabled: Bool) {
+        guard audienceLens == .family else {
+            narrationEnabled = false
+            return
+        }
+        narrationEnabled = enabled
+    }
+
     /// Explicit family feedback replaces any attempt to infer anxiety from
     /// face, voice, gaze, or physiology. It pauses the story and gives the
     /// clinician a calm clarification cue.
@@ -713,17 +736,34 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = true
     }
 
-    /// The Vision Pro presenter records a family's explicitly stated,
-    /// session-local conversation cue after asking aloud. It is not an anxiety score
-    /// and is never inferred from gaze, voice, face, physiology,
-    /// diagnosis, or patient data. Choosing Pause uses the same explicit
-    /// clarification path as the family pause control.
-    func setFamilyComfortCheck(_ value: Double) {
-        familyComfortCheck = min(max(value, 0), 2)
-        familyComfortWasSet = true
-        if familyComfortCheck < 0.5 {
+    /// A family member explicitly reports how clear the current explanation
+    /// feels. This is not an anxiety score and is never inferred from gaze,
+    /// voice, face, physiology, diagnosis, or patient data.
+    func setFamilyClarityCheck(_ value: Double) {
+        familyClarityCheck = min(max(value, 0), 2)
+        familyClarityWasSet = true
+        if familyClarityCheck < 0.5 {
             requestClarification()
         }
+    }
+
+    /// Suggestions are a finite, authored question set. Choosing one merely
+    /// marks it and pauses the current lesson; it never calls a medical model.
+    func selectFamilyQuestion(_ question: String) {
+        guard audienceLens == .family,
+              familyQuestionSuggestions.contains(question) else { return }
+        selectedFamilyQuestion = question
+        clarificationRequested = true
+        requestedPause = true
+    }
+
+    /// Technical prompts expand into one authored plain-language sentence.
+    /// There is intentionally no runtime-generated paraphrase in this path.
+    func selectPresenterKeyPoint(_ index: Int) {
+        guard audienceLens == .clinician,
+              presenterTimelineKeyPoints.indices.contains(index),
+              presenterPlainLanguagePoints.indices.contains(index) else { return }
+        selectedPresenterKeyPointIndex = selectedPresenterKeyPointIndex == index ? nil : index
     }
 
     func toggleQuestionPlacement() {
@@ -828,11 +868,11 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
-    var familyComfortLabel: String {
-        guard familyComfortWasSet else { return "Not shared" }
-        if familyComfortCheck < 0.5 { return "Pause" }
-        if familyComfortCheck < 1.5 { return "Unsure" }
-        return "Okay to continue"
+    var familyClarityLabel: String {
+        guard familyClarityWasSet else { return "Not shared" }
+        if familyClarityCheck < 0.5 { return "Please explain again" }
+        if familyClarityCheck < 1.5 { return "Still unsure" }
+        return "Clear enough to continue"
     }
 
     /// Exactly three glanceable teaching beats for each act. These are
@@ -853,6 +893,38 @@ final class StrokeExperienceState: ObservableObject {
             ["Blockage → injury → swelling", "Keep them distinct", "No prognosis inferred"]
         case .discussCare:
             ["Ask before transparency", "Room, not repair", "No outcome promise"]
+        }
+    }
+
+    /// One concise, authored lay explanation for each technical pointer.
+    var presenterPlainLanguagePoints: [String] {
+        if isClinicianScholarSkullInspectionActive {
+            return [
+                "This skull is a generic teaching reference from multiple sources.",
+                "Use it only to discuss shape and relative position.",
+                "A specialist still needs to review this anatomy.",
+            ]
+        }
+
+        return switch procedureStep {
+        case .chooseCase:
+            [
+                "This is a teaching example, not the person's scan.",
+                "Start with the whole brain before moving closer.",
+                "The anatomy explains the idea, not an individual diagnosis.",
+            ]
+        case .inspectOcclusion:
+            [
+                "The blockage, tissue injury, and swelling are different changes.",
+                "Point to each change separately before connecting them.",
+                "This model does not predict what will happen.",
+            ]
+        case .discussCare:
+            [
+                "Ask permission before revealing deeper layers.",
+                "The goal shown is more room, not repaired tissue.",
+                "This view does not promise an outcome.",
+            ]
         }
     }
 
@@ -1089,8 +1161,10 @@ final class StrokeExperienceState: ObservableObject {
         }
         requestedPause = false
         clarificationRequested = false
-        familyComfortCheck = 1
-        familyComfortWasSet = false
+        familyClarityCheck = 1
+        familyClarityWasSet = false
+        selectedFamilyQuestion = nil
+        selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         clearPointSelection()
         isConsentPromptVisible = false
@@ -1218,6 +1292,10 @@ final class StrokeExperienceState: ObservableObject {
         narrationEnabled = false
         closingReflectionVisible = false
         clarificationRequested = false
+        familyClarityCheck = 1
+        familyClarityWasSet = false
+        selectedFamilyQuestion = nil
+        selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         pointField = .regions
         lessonPointsVisible = true
@@ -1410,6 +1488,21 @@ final class StrokeExperienceState: ObservableObject {
         questionMarkerVisible = true
         clarificationRequested = true
         requestedPause = true
+    }
+
+    func prepareFamilyClarityProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        if familyQuestionSuggestions.indices.contains(1) {
+            selectFamilyQuestion(familyQuestionSuggestions[1])
+        }
+        setFamilyClarityCheck(1)
+    }
+
+    func preparePresenterPlainLanguageProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        setFamilyClarityCheck(1)
+        selectPresenterKeyPoint(0)
     }
 
     var discussionReport: String {

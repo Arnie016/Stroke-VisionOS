@@ -698,20 +698,24 @@ struct StrokeImmersiveView: View {
             .onAppear {
                 stagePlacement.start()
                 synchronizeImmersionStyle()
-                if experience.narrationEnabled {
-                    narrator.speak(experience.journeyCaption)
-                }
+                synchronizeNarration()
             }
             .onChange(of: experience.environmentMode) { _, _ in
                 synchronizeImmersionStyle()
             }
-            .onChange(of: experience.narrationEnabled) { _, enabled in
-                enabled ? narrator.speak(experience.journeyCaption) : narrator.stop()
+            .onChange(of: experience.narrationEnabled) { _, _ in
+                synchronizeNarration()
             }
             .onChange(of: experience.procedureStep) { _, _ in
-                if experience.narrationEnabled { narrator.speak(experience.journeyCaption) }
+                synchronizeNarration()
             }
-            .onChange(of: experience.requestedPause) { _, _ in updateAudioMix() }
+            .onChange(of: experience.audienceLens) { _, _ in
+                synchronizeNarration()
+            }
+            .onChange(of: experience.requestedPause) { _, _ in
+                updateAudioMix()
+                synchronizeNarration()
+            }
             .onDisappear {
                 stagePlacement.stop()
                 narrator.stop()
@@ -721,6 +725,18 @@ struct StrokeImmersiveView: View {
                 experience.isImmersivePresented = false
             }
         }
+    }
+
+    /// GPT-Realtime narration is a family-only teaching aid. Pausing stops the
+    /// current request/player; resuming may restart the current authored line.
+    private func synchronizeNarration() {
+        guard experience.audienceLens == .family,
+              experience.narrationEnabled,
+              !experience.requestedPause else {
+            narrator.stop()
+            return
+        }
+        narrator.speak(experience.journeyCaption)
     }
 
     private var annotationPosition: SIMD3<Float> {
@@ -1176,13 +1192,14 @@ private struct SpatialRoleControls: View {
                 .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
 
                 bubbleButton(
-                    experience.narrationEnabled ? "Voice off" : "Voice",
+                    experience.narrationEnabled ? "Narrator off" : "Narrator",
                     systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform",
                     accent: .orange,
                     selected: experience.narrationEnabled
                 ) {
-                    experience.narrationEnabled.toggle()
+                    experience.setNarrationEnabled(!experience.narrationEnabled)
                 }
+                .accessibilityLabel(experience.narrationEnabled ? "Turn off family narrator" : "Turn on family narrator")
 
                 bubbleButton(
                     experience.closingReflectionVisible ? "Cases" : "Next",
@@ -1395,13 +1412,14 @@ private struct SpatialRoleControls: View {
                 }
 
                 bubbleButton(
-                    experience.narrationEnabled ? "Voice off" : "Voice",
-                    systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform",
+                    experience.soundEnabled ? "Ambient off" : "Ambient",
+                    systemImage: experience.soundEnabled ? "speaker.slash.fill" : "speaker.wave.2.fill",
                     accent: .mint,
-                    selected: experience.narrationEnabled
+                    selected: experience.soundEnabled
                 ) {
-                    experience.narrationEnabled.toggle()
+                    experience.soundEnabled.toggle()
                 }
+                .accessibilityLabel(experience.soundEnabled ? "Mute ambient sound" : "Enable ambient sound")
 
                 bubbleButton(
                     experience.closingReflectionVisible ? "Cases" : "Next",
@@ -1661,8 +1679,8 @@ private struct SpatialTeachingTimelineNode: View {
 }
 
 /// A single left-peripheral cue surface whose density follows the audience.
-/// Family suggestions and the presenter-recorded comfort check stay together
-/// in the mirrored view; the presenter sees that declared pace plus exactly
+/// Family suggestions and the explicit self-reported clarity check stay together
+/// in the mirrored view; the presenter sees that declared clarity plus exactly
 /// three teaching beats. A second headset or shared spatial session is not
 /// implied by this surface.
 private struct SpatialRoleMicroCues: View {
@@ -1680,46 +1698,59 @@ private struct SpatialRoleMicroCues: View {
 
             if experience.audienceLens == .family {
                 ForEach(Array(experience.familyQuestionSuggestions.enumerated()), id: \.offset) { index, question in
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Circle()
-                            .fill(index == 0 ? accent : Color.white.opacity(0.36))
-                            .frame(width: 6, height: 6)
-                        Text(question)
-                            .font(index == 0 ? .callout.weight(.semibold) : .caption.weight(.semibold))
-                            .fixedSize(horizontal: false, vertical: true)
+                    let isSelected = experience.selectedFamilyQuestion == question
+                    Button {
+                        experience.selectFamilyQuestion(question)
+                    } label: {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(isSelected ? accent : Color.white.opacity(0.42))
+                            Text(question)
+                                .font(index == 0 ? .callout.weight(.semibold) : .caption.weight(.semibold))
+                                .fixedSize(horizontal: false, vertical: true)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 7)
+                        .background(isSelected ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 10))
                     }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .accessibilityLabel("Select question: \(question)")
+                    .accessibilityValue(isSelected ? "Selected; lesson paused" : "Not selected")
                 }
 
                 Divider().overlay(Color.white.opacity(0.12))
 
                 HStack {
-                    Text("ASK ALOUD · COMFORT")
+                    Text("CLARITY · SELF-REPORTED")
                         .font(.caption2.weight(.black))
                         .tracking(0.8)
                     Spacer()
-                    Text(experience.familyComfortLabel)
+                    Text(experience.familyClarityLabel)
                         .font(.caption.weight(.bold))
                         .foregroundStyle(accent)
                 }
 
                 Slider(
                     value: Binding(
-                        get: { experience.familyComfortCheck },
-                        set: { experience.setFamilyComfortCheck($0) }
+                        get: { experience.familyClarityCheck },
+                        set: { experience.setFamilyClarityCheck($0) }
                     ),
                     in: 0...2,
                     step: 1
                 )
                 .tint(accent)
-                .accessibilityLabel("Record the family's stated explanation comfort")
-                .accessibilityValue(experience.familyComfortLabel)
+                .accessibilityLabel("Record the family's self-reported explanation clarity")
+                .accessibilityValue(experience.familyClarityLabel)
 
                 HStack {
-                    Text("Pause")
+                    Text("Again")
                     Spacer()
                     Text("Unsure")
                     Spacer()
-                    Text("Continue")
+                    Text("Clear")
                 }
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.58))
@@ -1731,33 +1762,56 @@ private struct SpatialRoleMicroCues: View {
                     Spacer()
                     HStack(spacing: 6) {
                         Circle()
-                            .fill(experience.familyComfortWasSet ? accent : Color.white.opacity(0.30))
+                            .fill(experience.familyClarityWasSet ? accent : Color.white.opacity(0.30))
                             .frame(width: 7, height: 7)
-                        Text("Family · \(experience.familyComfortLabel)")
+                        Text("Clarity · \(experience.familyClarityLabel)")
                             .font(.caption.weight(.bold))
                     }
                 }
                 .foregroundStyle(.white.opacity(0.76))
 
                 ForEach(Array(experience.presenterTimelineKeyPoints.enumerated()), id: \.offset) { index, point in
+                    let isExpanded = experience.selectedPresenterKeyPointIndex == index
                     VStack(alignment: .leading, spacing: 9) {
                         if index > 0 {
                             Divider().overlay(Color.white.opacity(0.12))
                         }
-                        HStack(alignment: .top, spacing: 10) {
-                            ZStack {
-                                Circle()
-                                    .fill(index == 0 ? accent.opacity(0.92) : Color.white.opacity(0.10))
-                                Text("\(index + 1)")
-                                    .font(.caption2.monospacedDigit().weight(.black))
-                                    .foregroundStyle(index == 0 ? Color.black.opacity(0.78) : accent)
-                            }
-                            .frame(width: 23, height: 23)
+                        Button {
+                            experience.selectPresenterKeyPoint(index)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 7) {
+                                HStack(alignment: .top, spacing: 10) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(isExpanded ? accent.opacity(0.92) : Color.white.opacity(0.10))
+                                        Text("\(index + 1)")
+                                            .font(.caption2.monospacedDigit().weight(.black))
+                                            .foregroundStyle(isExpanded ? Color.black.opacity(0.78) : accent)
+                                    }
+                                    .frame(width: 23, height: 23)
 
-                            Text(point)
-                                .font(index == 0 ? .callout.weight(.bold) : .callout.weight(.semibold))
-                                .fixedSize(horizontal: false, vertical: true)
+                                    Text(point)
+                                        .font(.callout.weight(isExpanded ? .bold : .semibold))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Spacer(minLength: 0)
+                                    Image(systemName: isExpanded ? "chevron.up" : "text.bubble")
+                                        .font(.caption2.weight(.bold))
+                                        .foregroundStyle(accent.opacity(0.76))
+                                }
+
+                                if isExpanded {
+                                    Text(experience.presenterPlainLanguagePoints[index])
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(.white.opacity(0.72))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .padding(.leading, 33)
+                                }
+                            }
                         }
+                        .buttonStyle(.plain)
+                        .hoverEffect(.highlight)
+                        .accessibilityLabel("Presenter pointer \(index + 1): \(point)")
+                        .accessibilityHint("Pinch to reveal an authored plain-language phrasing")
                         .frame(minHeight: 48, alignment: .topLeading)
                     }
                 }
@@ -2067,7 +2121,7 @@ private struct JourneyCaption: View {
                     Image(systemName: experience.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(experience.soundEnabled ? "Mute spatial audio" : "Enable spatial audio")
+                .accessibilityLabel(experience.soundEnabled ? "Mute ambient sound" : "Enable ambient sound")
 
                 Button {
                     Task { await exitExperience() }

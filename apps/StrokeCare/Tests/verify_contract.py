@@ -264,13 +264,23 @@ require("PatientHistoryTimelineView" in immersive and 'caseHistoryTimelineID = "
 require("StrokeCaseHistoryMilestone" in patient_history and "selectedCaseHistoryMilestone" in state and "selectCaseHistoryMilestone" in state, "case-history milestones are not interactive state")
 require(all(copy in patient_history for copy in ("WHAT WE KNOW SO FAR", "CASE HISTORY · FICTIONAL", "SOURCE SLOT", "NOT A MEDICAL RECORD")), "case-history timeline lacks role-aware copy or fictional-record boundaries")
 require("calm-flow-direction-arrows" in scene and "updateFlowArrows" in scene, "calm directional flow lesson is missing")
-require("gpt-realtime-2.1" in immersive and "STROKE_REALTIME_PROXY_URL" in immersive and "AVSpeechSynthesizer" not in immersive and "narrationEnabled" in state, "GPT-Realtime-2.1-only narrator boundary is missing")
+require("gpt-realtime-2.1" in immersive and "STROKE_REALTIME_PROXY_URL" in immersive and "AVSpeechSynthesizer" not in immersive and "@Published private(set) var narrationEnabled" in state, "GPT-Realtime-2.1-only narrator boundary is missing")
 realtime_proxy = (ROOT / "Scripts" / "realtime_narration_proxy.mjs").read_text()
 realtime_runner = (ROOT / "Scripts" / "run_realtime_proxy.zsh").read_text()
 require('const MODEL = "gpt-realtime-2.1"' in realtime_proxy and 'body.model !== MODEL' in realtime_proxy, "Realtime proxy does not lock the requested model")
 require('response.output_audio.delta' in realtime_proxy and 'pcm16MonoToWAV' in realtime_proxy, "Realtime audio stream is not converted into app-playable WAV")
 require('AVSpeechSynthesizer' not in realtime_proxy and 'apikey get OPENAI_API_KEY' in realtime_runner, "Narration can fall back to system speech or bypass the keychain router")
-require('--proof-realtime-narration' in launch and 'if experience.narrationEnabled' in immersive, "deterministic Realtime playback route is missing")
+require(all(token in launch for token in ('--proof-realtime-narration', 'experience.audienceLens = .family', 'experience.setNarrationEnabled(true)')), "deterministic family Realtime playback route is missing")
+require(immersive.count("narrator.speak(") == 1 and all(token in immersive for token in (
+    "private func synchronizeNarration()",
+    "experience.audienceLens == .family",
+    "experience.narrationEnabled",
+    "!experience.requestedPause",
+    "narrator.stop()",
+)), "narration is not guarded by family role, opt-in, and active playback state")
+require(".onChange(of: experience.requestedPause)" in immersive and ".onChange(of: experience.audienceLens)" in immersive, "pause or role transition cannot stop/restart narration deterministically")
+require("narrationEnabled = false" in state and "func setNarrationEnabled" in state and 'experience.narrationEnabled ? "Narrator off" : "Narrator"' in immersive, "family narration state boundary is incomplete")
+require('experience.soundEnabled ? "Ambient off" : "Ambient"' in immersive and 'experience.narrationEnabled ? "Voice off" : "Voice"' not in immersive, "doctor controls still expose synthesized voice instead of ambient sound")
 require("spatial-family-controls" in immersive and "spatial-presenter-controls" in immersive and "SpatialRoleControls" in immersive, "role controls are not embedded in the immersive room")
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
 require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PRESSURE BUILD?", "WHAT CAN MAKING SPACE DO?")), "top intention questions are missing")
@@ -325,23 +335,37 @@ spatial_workspace = (ROOT / "Docs" / "SPATIAL_CASE_WORKSPACE.md").read_text()
 require("top explains, middle demonstrates" in spatial_workspace and "lower acts" in spatial_workspace, "vertical rule-of-three contract is missing")
 require("never communicated by peripheral" in spatial_workspace, "peripheral safety boundary is missing")
 require("--proof-family-question" in launch and "prepareFamilyQuestionProof" in state, "family question proof route is missing")
+require("--proof-family-clarity" in launch and "prepareFamilyClarityProof" in state, "family clarity proof route is missing")
+require("--proof-presenter-plain-language" in launch and "preparePresenterPlainLanguageProof" in state, "presenter plain-language proof route is missing")
 require("clarificationRequested" in state and "never infers emotion" in state, "explicit clarification or emotion-inference boundary is missing")
 require(all(token in state for token in (
-    "familyComfortCheck",
-    "familyComfortWasSet",
-    "setFamilyComfortCheck",
-    "It is not an anxiety score",
+    "familyClarityCheck",
+    "familyClarityWasSet",
+    "setFamilyClarityCheck",
+    "not an anxiety score",
     "familyQuestionSuggestions",
-    "familyComfortLabel",
-)), "explicit session-local family comfort check or left-side question suggestions are missing")
+    "familyClarityLabel",
+    "selectedFamilyQuestion",
+    "selectFamilyQuestion",
+)), "explicit session-local family clarity check or finite question selection is missing")
 require(all(token in immersive for token in (
     '"QUESTIONS TO ASK"',
     '"PRESENTATION CHECKLIST"',
-    '"ASK ALOUD · COMFORT"',
-    '"Family · \\(experience.familyComfortLabel)"',
+    '"CLARITY · SELF-REPORTED"',
+    '"Clarity · \\(experience.familyClarityLabel)"',
     'Slider(',
-    "Record the family's stated explanation comfort",
-)), "role-aware left cue surface does not expose family suggestions and the deliberate comfort check")
+    "Record the family's self-reported explanation clarity",
+    "experience.selectFamilyQuestion(question)",
+    '"Selected; lesson paused"',
+)), "role-aware left cue surface does not expose tappable questions and explicit clarity")
+require(all(token in state for token in (
+    "selectedPresenterKeyPointIndex",
+    "presenterPlainLanguagePoints",
+    "selectPresenterKeyPoint",
+    "There is intentionally no runtime-generated paraphrase",
+)), "presenter technical-to-plain authored pointer state is missing")
+require("experience.selectPresenterKeyPoint(index)" in immersive and "experience.presenterPlainLanguagePoints[index]" in immersive and "authored plain-language phrasing" in immersive, "presenter pointers do not reveal authored plain-language lines")
+require("ASK ALOUD" not in immersive and "familyComfort" not in state and "familyComfort" not in immersive, "misleading voice or comfort terminology remains")
 require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
 require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 220 : 154" in immersive, "three-act gaze timeline lacks readable active expansion or quiet inactive nodes")

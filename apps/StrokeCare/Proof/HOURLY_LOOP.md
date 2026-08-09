@@ -486,3 +486,25 @@
 - Next safe action: enforce the role-specific voice contract: no synthesized
   doctor voice, family-only opt-in Realtime narration, and honest tappable
   question/check-in semantics.
+
+## 2026-08-09 23:49 SGT — role-specific voice and language contract
+
+- Target: prevent synthetic narration from competing with the doctor while
+  preserving optional, bounded access support for a patient or family.
+- Bounded action: restricted narration to family + enabled + not paused;
+  replaced the doctor Voice control with Ambient; made three family questions
+  finite tappable pause markers; replaced the comfort proxy with an explicit
+  Again/Unsure/Clear clarity check; and made each doctor cue reveal one authored
+  plain-language line.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`, clean diff check, successful OS 26.5
+  visionOS Simulator Debug build, and Proof 70/71 with SHA-256 hashes recorded
+  in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the app now distinguishes patient/family narration from
+  doctor-led explanation without implying listening, inferred anxiety, or
+  generated medical advice.
+- Blocker: no live Realtime request was made in this slice, and Simulator does
+  not prove audibility, XCAT legibility, AirPlay composition, comprehension, or
+  clinical validity.
+- Next safe action: on an awake XCAT, verify that switching from Family to
+  Doctor immediately stops narration and that one family question plus one
+  doctor plain-language expansion remain readable in the mirrored view.

@@ -361,3 +361,27 @@ travel/stagger choreography.
 The procedural case anchor proves choreography only; it is not a MetaHuman,
 patient likeness, or scan-derived avatar. The capture does not prove physical
 gaze/pinch reliability, room comfort, AirPlay legibility, or clinical meaning.
+
+## 2026-08-09 23:49 SGT — family narration and doctor-language boundary
+
+The shared explanation now enforces two different communication roles. Family
+mode exposes three finite question prompts, an explicit Again/Unsure/Clear
+clarity check, and optional `gpt-realtime-2.1` narration. Selecting a question
+pauses the lesson. Doctor presenter mode revokes and stops narration; its
+left-peripheral checklist can reveal one authored plain-language line beneath
+the selected technical cue. It does not generate a medical answer.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`;
+`git diff --check` passed; and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-role-voice` ended `** BUILD SUCCEEDED **`. Deterministic
+runtime captures are:
+
+- `Proof/70-family-clarity-questions-simulator.png`, SHA-256
+  `d9fe66cc2c6e4b0115cf721adef49d13f92f7039b814b1f04f12b4a2829647b5`;
+- `Proof/71-presenter-authored-plain-language-simulator.png`, SHA-256
+  `7e8c38d5c6a1a1075b146bdd3288a9bbe241b1bcb7b04cf6d06ea3c0f858f91f`.
+
+This slice did not call the proxy or OpenAI API and therefore does not prove
+Realtime transport, audible output, voice quality, or latency. Simulator still
+does not prove XCAT peripheral legibility, gaze-and-pinch reliability, AirPlay
+composition, family comprehension, clinician acceptance, or clinical validity.

@@ -495,9 +495,16 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-question") {
             experience.prepareFamilyQuestionProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-clarity") {
+            experience.prepareFamilyClarityProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-presenter-plain-language") {
+            experience.preparePresenterPlainLanguageProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-realtime-narration") {
             experience.prepareProof(step: .inspectOcclusion)
-            experience.narrationEnabled = true
+            experience.audienceLens = .family
+            experience.setNarrationEnabled(true)
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-pressure") {
             experience.prepareProof(step: .inspectOcclusion)
