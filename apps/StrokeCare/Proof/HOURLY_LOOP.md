@@ -144,3 +144,30 @@
   comprehension, and `SC-AIS-001.4` clinical review remain unproven.
 - Next safe action: when XCAT is awake, worn, unlocked, and reachable, run the
   three environment states and select each of the five vessel-story points once.
+
+## 2026-08-09 13:00 SGT — archive-to-case constellation handoff
+
+- Target: make patient selection a spatial threshold rather than persistent
+  furniture or another dashboard window.
+- Bounded action: replaced the three-shelf cabinet with one face-angled dossier
+  bay, a fanned five-file archive, one protruding draggable fictional file, and
+  a compact focused-file briefing. Docking now removes the archive and reveals
+  a central generic case figure connected to four concise facts by copper
+  filaments, with one primary Begin action. The Vessel Story rail moved into
+  the upper-left visual field; presenter controls now fold environment,
+  evidence, and reset into one More bubble while Pause, Voice, Next, and Exit
+  remain below.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; the narrow generic visionOS Simulator build
+  exited `0`. The booted Apple Vision Pro Simulator installed and launched the
+  deterministic routes that produced
+  `Proof/45-case-library-archive-simulator.png`,
+  `Proof/46-case-review-constellation-simulator.png`, and
+  `Proof/47-vessel-story-upper-field-simulator.png`.
+- Verdict: `IMPROVED` — the archive and expanded case are now mutually
+  exclusive spatial states, and the anatomy view has fewer always-visible
+  controls.
+- Blocker: cyclic archive browsing, registered point-placement review, XCAT
+  wearer judgment, and `SC-AIS-001.4` clinical review remain unproven.
+- Next safe action: run a frame-registration overlay audit for every Vessel
+  Story marker before changing any marker position.

@@ -27,12 +27,13 @@ visible in the three-act path. Prototype-v1 edema/flap/patch remain bundled but
 disabled after a visual integration render demonstrated a mismatched frame.
 
 The 0.6 spatial-workspace pass separates the experience into three explicit
-phases: floating case exhibit, case review, and explanation. Docking a file does
-not reveal anatomy; the wearer must deliberately enter the selected case. The
-entire intake room then disappears. The brain space adds two sparse lesson
-families, registered blood-flow direction chevrons, optional versioned system
-narration, a quiet audio bed, a non-black horizon hypothesis, and a closing
-reflection. None of these proves physical comfort or clinical value.
+phases: one angled dossier archive, a connected case review, and explanation.
+Docking a file does not reveal anatomy; the wearer must deliberately enter the
+selected case. The entire intake room then disappears. The brain space adds two
+sparse lesson families, registered blood-flow direction chevrons, optional
+GPT-Realtime-2.1-only narration, a quiet audio bed, deliberate environment
+modes, and a closing reflection. None of these proves physical comfort or
+clinical value.
 
 ## Static contract and Simulator
 
@@ -93,16 +94,20 @@ or launch on XCAT.
 | Purpose-first prelude | `36-purpose-first-prelude-0.6-simulator.png` | `6c3453931eb44b241fdf6afc2402abad94c5ffa34207fd08e48be9b734ae4f44` |
 | Case review phase | `34-case-review-phase-0.6-simulator.png` | `ab50b0a97fa2b02d037c50c03d13ed98869d0d7bfe010dadb3dc4dad77cd937e` |
 | Blood-flow lesson | `35-blood-flow-lesson-0.6-simulator.png` | `0d551fb7eb532afc8806b90f69a02c3783da8074780c2d4990310dbd63517eb1` |
+| Angled case archive | `45-case-library-archive-simulator.png` | `86629c4cd58fe9ba4091e4727d94aebc39bf2b399761b86bf80802f6bfa4e510` |
+| Case constellation | `46-case-review-constellation-simulator.png` | `de36aa9b063c57f0de61201df9400c24ed843fbad9d8e9e280830b11211ce587` |
+| Upper-field Vessel Story | `47-vessel-story-upper-field-simulator.png` | `ab81e3b35b67dc23b14e92aaa6b27cb540b6b03d08f452803788bbcdddec4c98` |
 
 These artifacts prove Simulator-visible UI, model presence, deterministic
 teaching states, and the configured visual hierarchy. They do not prove anatomy
 validity, physical comfort, clinical value, or perception of spatial audio.
 
 The latest frames demonstrate the 0.6 Simulator composition: a purpose-first
-threshold, case review without anatomy, and a separate central blood-flow
-lesson with five registered points and direction chevrons. They do not
-establish foveal comfort, peripheral legibility, hand-control reliability,
-audio perception, or comprehension for a wearer.
+threshold, one face-angled archive, case review without anatomy, and a separate
+central blood-flow lesson with the lesson rail in the upper visual field. They
+do not establish foveal comfort, peripheral legibility, marker-registration
+accuracy, hand-control reliability, audio perception, or comprehension for a
+wearer.
 
 ## XCAT state
 

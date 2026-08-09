@@ -228,15 +228,22 @@ struct StrokeImmersiveView: View {
                     root.isEnabled = experience.spatialPhase == .explanation
                     if let caseRoom = content.entities.first(where: { $0.name == StrokeSceneFactory.spatialCaseRoomName }) {
                         caseRoom.isEnabled = experience.spatialPhase != .explanation
-                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = experience.spatialPhase == .caseReview
+                        let inLibrary = experience.spatialPhase == .caseLibrary
+                        let inReview = experience.spatialPhase == .caseReview
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview
                     }
                     if let caseRoom = content.entities.first(where: { $0.name == StrokeSceneFactory.spatialCaseRoomName }),
                        let file = caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFileName) {
-                        file.position = experience.spatialCaseFilePosition
+                        let inReview = experience.spatialPhase == .caseReview
+                        file.position = inReview ? [0, 1.23, -0.80] : experience.spatialCaseFilePosition
                         file.orientation = experience.spatialCaseDocked
                             ? simd_quatf(angle: 0, axis: [0, 1, 0])
                             : simd_quatf(angle: -0.16, axis: [0, 1, 0])
-                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseDockName)?.isEnabled = !experience.spatialCaseDocked
+                        file.scale = inReview ? [0.54, 0.54, 0.54] : [1, 1, 1]
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseDockName)?.isEnabled =
+                            experience.spatialPhase == .caseLibrary && !experience.spatialCaseDocked
                     }
 
                     // The anatomy owns the centre of the room. The progressive
@@ -292,14 +299,22 @@ struct StrokeImmersiveView: View {
                         if drawer.parent == nil {
                             content.add(drawer)
                         }
-                        drawer.isEnabled = false
+                        // This is the focused dossier's compact briefing, not
+                        // persistent furniture. It exists only in the archive
+                        // threshold and disappears with the case room.
+                        drawer.position = [-0.31, 1.45, -0.76]
+                        drawer.scale = [0.62, 0.62, 0.62]
+                        drawer.isEnabled = experience.spatialPhase == .caseLibrary
                         drawer.components.set(BillboardComponent())
                     }
                     if let rail = attachments.entity(for: lessonSpecimenRailID) {
                         if rail.parent == nil {
                             content.add(rail)
                         }
-                        rail.position = [-0.53, 1.53, -0.86]
+                        // The active lesson family reads as the room's upper
+                        // chapter title, leaving the anatomy and its markers
+                        // unobstructed in the primary visual field.
+                        rail.position = [-0.44, 1.82, -0.86]
                         rail.scale = [0.62, 0.62, 0.62]
                         rail.isEnabled = experience.spatialPhase == .explanation && experience.procedureStep != .chooseCase
                         rail.components.set(BillboardComponent())
@@ -340,10 +355,10 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                     }
                     Attachment(id: speechFactID) {
-                        SpatialCaseFact(title: "REPORTED", value: "Speech change", systemImage: "waveform")
+                        SpatialCaseFact(title: "SPEECH", value: "Change reported", systemImage: "waveform")
                     }
                     Attachment(id: armFactID) {
-                        SpatialCaseFact(title: "ALSO", value: "Right arm weakness", systemImage: "figure.arms.open")
+                        SpatialCaseFact(title: "ARM", value: "Right-side weakness", systemImage: "figure.arms.open")
                     }
                     Attachment(id: timeFactID) {
                         SpatialCaseFact(title: "TIME", value: "70 minutes ago", systemImage: "clock.fill")
@@ -476,14 +491,14 @@ struct StrokeImmersiveView: View {
         let inLibrary = experience.spatialPhase == .caseLibrary
         let inReview = experience.spatialPhase == .caseReview
         let positions: [(String, SIMD3<Float>, Float, Bool)] = [
-            (cabinetLabelID, [-0.62, 1.78, -0.88], 0.72, inLibrary),
-            (dockLabelID, [0, 1.16, -0.78], 0.68, inLibrary),
-            (hierarchySpineID, [0, 2.02, -0.48], 0.90, inReview),
-            (speechFactID, [-0.36, 1.91, -0.56], 0.68, inReview),
-            (armFactID, [-0.38, 1.62, -0.56], 0.68, inReview),
-            (timeFactID, [0.34, 1.62, -0.56], 0.68, inReview),
-            (questionFactID, [0.34, 1.91, -0.56], 0.68, inReview),
-            (caseReviewActionsID, [0, 1.12, -0.62], 0.74, inReview)
+            (cabinetLabelID, [-0.64, 1.75, -0.82], 0.72, inLibrary),
+            (dockLabelID, [0, 1.16, -0.76], 0.68, inLibrary),
+            (hierarchySpineID, [0, 1.97, -0.66], 0.76, inReview),
+            (speechFactID, [-0.30, 1.80, -0.66], 0.64, inReview),
+            (armFactID, [-0.32, 1.49, -0.66], 0.64, inReview),
+            (timeFactID, [0.30, 1.49, -0.66], 0.64, inReview),
+            (questionFactID, [0.30, 1.80, -0.66], 0.64, inReview),
+            (caseReviewActionsID, [-0.40, 1.28, -0.62], 0.62, inReview)
         ]
         for (id, position, scale, visible) in positions {
             guard let entity = attachments.entity(for: id) else { continue }
@@ -650,21 +665,21 @@ private struct SpatialCaseReviewActions: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
     var body: some View {
-        VStack(spacing: 11) {
+        VStack(spacing: 10) {
             Label("CASE 78 · FICTIONAL", systemImage: "person.text.rectangle.fill")
                 .font(.caption.weight(.black))
                 .tracking(1.0)
                 .foregroundStyle(.orange)
 
-            Text("Review the signals. Then enter one shared explanation.")
-                .font(.callout.weight(.semibold))
-                .multilineTextAlignment(.center)
-
             HStack(spacing: 10) {
-                Button("Return file", systemImage: "arrow.uturn.backward") {
+                Button {
                     experience.returnCaseToLibrary()
+                } label: {
+                    Image(systemName: "arrow.uturn.backward")
+                        .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel("Return file")
 
                 Button(
                     experience.audienceLens == .family ? "Begin family view" : "Begin presenter view",
@@ -676,7 +691,7 @@ private struct SpatialCaseReviewActions: View {
                 .tint(.orange)
             }
 
-            Text("Generic teaching anatomy · not this person's scan")
+            Text("Teaching anatomy · not a patient scan")
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(.secondary)
         }
@@ -946,26 +961,29 @@ private struct SpatialRoleControls: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
 
-                bubbleButton("Evidence", systemImage: "text.book.closed.fill", accent: .mint) {
-                    openWindow(id: StrokeSpace.evidence)
-                }
-
                 Menu {
                     ForEach(StrokeEnvironmentMode.allCases) { mode in
                         Button(mode.rawValue, systemImage: mode.systemImage) {
                             experience.setEnvironmentMode(mode)
                         }
                     }
+                    Divider()
+                    Button("Evidence", systemImage: "text.book.closed.fill") {
+                        openWindow(id: StrokeSpace.evidence)
+                    }
+                    Button("Reset view", systemImage: "arrow.counterclockwise") {
+                        experience.resetSpatialView()
+                    }
                 } label: {
                     SpatialControlBubbleLabel(
-                        title: experience.environmentMode.shortTitle,
-                        systemImage: experience.environmentMode.systemImage,
+                        title: "More",
+                        systemImage: "ellipsis.circle.fill",
                         accent: .mint,
                         selected: experience.environmentMode != .surroundings
                     )
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Environment: \(experience.environmentMode.rawValue)")
+                .accessibilityLabel("Environment, evidence, and view options")
             }
 
             HStack(spacing: 8) {
@@ -976,10 +994,6 @@ private struct SpatialRoleControls: View {
                     selected: experience.requestedPause
                 ) {
                     experience.togglePause()
-                }
-
-                bubbleButton("Reset", systemImage: "arrow.counterclockwise", accent: .mint) {
-                    experience.resetSpatialView()
                 }
 
                 bubbleButton(
