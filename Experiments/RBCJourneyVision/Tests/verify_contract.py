@@ -249,6 +249,17 @@ checks = {
         "SceneEvents.Update", "region == .corticalMicroarchitecture",
         "pial arteries distribute blood", "Five radial guides",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "cerebellar_observatory_folds_to_flow": all(token in model + scene + hud + medical_canon for token in [
+        "RBC_CEREBELLAR_OBSERVATORY=READY",
+        "cerebellum-constellation-outline-not-segmentation",
+        "magnified-cerebellar-folia-orientation-bands-not-histology",
+        "magnified-arbor-vitae-orientation-abstraction-not-histology",
+        "qualitative-sca-aica-pica-vertebrobasilar-approaches-not-patient-specific",
+        "folia_bands=47", "arbor_paths=13", "arterial_paths=15", "moving_fronts=22",
+        "cerebellar-tangent-flow-front", "advanceCerebellumFrame",
+        "SceneEvents.Update", "region == .cerebellum",
+        "SCA, AICA, and PICA", "47 fold bands", "substantial variation",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "user_triggered_capillary_focus": all(token in model + scene + hud + immersive for token in [
         "--proof-capillary-focus", "isCapillaryFieldFocused",
         "toggleCapillaryFieldFocus", "Enter capillary field", "Return to artery",

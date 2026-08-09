@@ -120,6 +120,28 @@ constellation mark cycles the three readings without opening another panel.
 Use `--proof-region-7` with `--proof-region-mode-xray` or
 `--proof-region-mode-flow` for deterministic Simulator review.
 
+## Cerebellar observatory — folds to flow
+
+The **Cerebellum** destination is no longer a generic imported hero floating in
+front of the wearer. Its registered source remains as dim anatomical context,
+expanded to environmental scale, while a peripheral constellation and depth
+ribs make the region read as a surrounding place. Forty-seven curved fold
+guides establish the repeated folia; 13 branching guides reveal the arbor
+vitae as an orientation abstraction.
+
+The same Locate → X-ray → Flow grammar preserves agency. **Locate** lifts the
+hemisphere-and-vermis outline. **X-ray** recedes the reference and emphasizes
+folds plus the inner branching guide. **Flow** reveals nine qualitative
+vertebral, basilar, SCA, AICA, and PICA approach paths with six distal folial
+continuations and 22 tangent-aligned fronts. The wearer stays still and chooses
+the reading; no app camera or forced locomotion is used.
+
+This is not histology, territory segmentation, a complete vascular map,
+patient anatomy, measured vessel calibre, physiological timing, perfusion, or
+CFD. Use `--proof-region-4`, optionally followed by
+`--proof-region-mode-xray` or `--proof-region-mode-flow`, for deterministic
+Simulator review.
+
 ## Travel with the flow — arterial branch ride
 
 Frontal **Flow** now offers one opt-in **Enter this branch** action. The wearer

@@ -261,6 +261,7 @@ struct RBCRegionInfoHUD: View {
             let exampleClotActive = region == .frontalLobe && model.isFrontalClotScenarioActive
             let flowRideActive = region == .arterialLumen && model.isFlowRideActive
             let willisRouteActive = region == .circleOfWillis
+            let cerebellumActive = region == .cerebellum
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
             VStack(alignment: .leading, spacing: 9) {
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -280,7 +281,9 @@ struct RBCRegionInfoHUD: View {
                         ? model.activeFlowRideTitle
                         : (willisRouteActive
                             ? model.activeWillisTitle
-                            : (exampleClotActive ? "One branch, interrupted" : region.title))))
+                            : (cerebellumActive
+                                ? model.activeCerebellumTitle
+                                : (exampleClotActive ? "One branch, interrupted" : region.title)))))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive && model.familyNarrationEnabled
@@ -289,9 +292,11 @@ struct RBCRegionInfoHUD: View {
                         ? model.activeFlowRideSubtitle
                         : (willisRouteActive
                             ? model.activeWillisSubtitle
-                            : (exampleClotActive
-                            ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                            : region.subtitle))))
+                            : (cerebellumActive
+                                ? model.activeCerebellumSubtitle
+                                : (exampleClotActive
+                                    ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+                                    : region.subtitle)))))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -300,9 +305,11 @@ struct RBCRegionInfoHUD: View {
                     ? model.activeFlowRideFact
                     : (willisRouteActive
                         ? model.activeWillisFact
-                        : (exampleClotActive
-                        ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                        : region.fact)),
+                        : (cerebellumActive
+                            ? model.activeCerebellumFact
+                            : (exampleClotActive
+                                ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
+                                : region.fact))),
                     systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
@@ -317,7 +324,7 @@ struct RBCRegionInfoHUD: View {
                     .buttonBorderShape(.capsule)
                 }
 
-                if region == .frontalLobe || region == .corticalMicroarchitecture {
+                if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum {
                     HStack(spacing: 7) {
                         ForEach(RBCRegionVisualizationMode.allCases) { mode in
                             RBCRegionModeButton(mode: mode, regionTitle: region.title)

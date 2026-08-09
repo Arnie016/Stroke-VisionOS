@@ -17,6 +17,12 @@ video cannot.
 - Cortical microarchitecture: a room-scale six-layer teaching fold with five
   explicitly simplified radial guides and pial → penetrating → capillary Flow;
   it is not uniform functional modules, histology, CFD, or patient anatomy.
+- Cerebellar observatory: one registered environmental reference, a peripheral
+  hemisphere-and-vermis constellation, 47 illustrative folia bands, 13
+  arbor-vitae guides, and 15 qualitative vertebrobasilar/SCA/AICA/PICA paths
+  with 22 tangent fronts. Locate/X-ray/Flow reveal one stable place; it is not
+  histology, territory segmentation, complete vasculature, CFD, or patient
+  anatomy.
 - Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an

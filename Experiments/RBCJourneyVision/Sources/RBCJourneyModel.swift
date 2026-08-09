@@ -876,6 +876,7 @@ final class RBCJourneyModel {
     var regionFamilyCompanionTitle: String {
         guard let region = activeRegionDestination else { return "" }
         if region == .circleOfWillis { return activeWillisTitle }
+        if region == .cerebellum { return activeCerebellumTitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "One branch, interrupted"
         }
@@ -885,6 +886,7 @@ final class RBCJourneyModel {
     var regionFamilyCompanionSubtitle: String {
         guard let region = activeRegionDestination else { return "" }
         if region == .circleOfWillis { return activeWillisSubtitle }
+        if region == .cerebellum { return activeCerebellumSubtitle }
         if region == .frontalLobe && isFrontalClotScenarioActive {
             return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
         }
@@ -928,6 +930,36 @@ final class RBCJourneyModel {
     var activeWillisTitle: String { willisRouteFocus.title }
     var activeWillisSubtitle: String { willisRouteFocus.subtitle }
     var activeWillisFact: String { willisRouteFocus.fact }
+
+    var activeCerebellumTitle: String {
+        switch regionVisualization {
+        case .locate: "A folded world behind the brain"
+        case .xray: "The tree inside the folds"
+        case .flow: "Three routes from posterior circulation"
+        }
+    }
+
+    var activeCerebellumSubtitle: String {
+        switch regionVisualization {
+        case .locate:
+            "The two cerebellar hemispheres and their midline vermis surround you as a constellation of repeated folds, posterior and inferior to the cerebrum."
+        case .xray:
+            "Parallel folia frame a branching white-matter guide called the arbor vitae. This enlarged reading is an orientation abstraction, not histology or measured anatomy."
+        case .flow:
+            "Gold fronts follow illustrative SCA, AICA, and PICA approaches around the cerebellar surface. Their paths show relationships, not a complete or individual vascular map."
+        }
+    }
+
+    var activeCerebellumFact: String {
+        switch regionVisualization {
+        case .locate:
+            "The cerebellum lies behind the brainstem and below the posterior cerebrum."
+        case .xray:
+            "Its cortex forms many folia around branching white matter known as the arbor vitae."
+        case .flow:
+            "SCA, AICA, and PICA arise from the vertebrobasilar system; their anatomy and relative size vary."
+        }
+    }
 
     var familyNarrationProgressLabel: String {
         "FAMILY GUIDE  ·  \(familyNarrationMoment.guidanceVerb)  ·  \(familyNarrationMoment.number) / 03"

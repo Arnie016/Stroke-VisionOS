@@ -71,6 +71,30 @@ not specialist review and does not make the app clinical software.
   place. They do not infer neural activity, cognition, oxygen concentration,
   perfusion, patient anatomy, or regional function.
 
+## Cerebellar observatory
+
+- Source: NCBI Bookshelf, *Neuroanatomy, Cerebellum*.
+  https://www.ncbi.nlm.nih.gov/books/NBK538167/
+- Supported wording: the cerebellum lies posterior and inferior to the
+  cerebrum, has two hemispheres joined by the vermis, and its surface is folded
+  into folia around branching white matter called the arbor vitae.
+- Supported wording: the superior cerebellar artery (SCA), anterior inferior
+  cerebellar artery (AICA), and posterior inferior cerebellar artery (PICA)
+  arise from the vertebrobasilar circulation and supply the cerebellum.
+- Source: Bonasia et al., *The Arterial Anatomy of the Cerebellum—A
+  Comprehensive Review* (PMC).
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC11352334/
+- Supported wording: cerebellar arterial anatomy shows substantial variation,
+  so the lesson must not imply fixed vessel dominance or a
+  universal territory boundary.
+- Representation limit: the 47 fold bands, 13 arbor-vitae guide paths, 15
+  arterial paths, and 22 moving fronts are magnified qualitative orientation
+  geometry. They are not histology, territory segmentation, a complete branch
+  map, measured vessel calibre, physiological timing, perfusion, CFD, or
+  patient anatomy.
+- UI limit: Locate, X-ray, and Flow reveal the same stable surrounding place.
+  The app does not move a camera or infer a region from eye gaze.
+
 ## Review status
 
 - Source-reviewed copy: complete for the narrow claims above.

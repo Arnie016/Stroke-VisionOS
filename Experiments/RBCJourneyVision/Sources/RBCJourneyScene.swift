@@ -80,6 +80,19 @@ final class RBCJourneyScene {
     private var corticalMicroarchitectureRuntimeHeld = false
     private var corticalMicroarchitectureRuntimeVisualization: RBCRegionVisualizationMode = .locate
     private var corticalMicroarchitectureElapsed: Float = 0
+    private var cerebellumAuthoredHero: Entity?
+    private var cerebellumOutlineRoot: Entity?
+    private var cerebellumFoliaRoot: Entity?
+    private var cerebellumArborRoot: Entity?
+    private var cerebellumVesselRoot: Entity?
+    private var cerebellumDiscoveryTargets: [Entity] = []
+    private var cerebellumGuideStars: [(entity: ModelEntity, phase: Float)] = []
+    private var cerebellumFlowPaths: [[SIMD3<Float>]] = []
+    private var cerebellumFlowArrows: [(entity: Entity, pathIndex: Int, offset: Float)] = []
+    private var cerebellumRuntimeActive = false
+    private var cerebellumRuntimeHeld = false
+    private var cerebellumRuntimeVisualization: RBCRegionVisualizationMode = .locate
+    private var cerebellumElapsed: Float = 0
     private var regionTransferRings: [(
         entity: Entity,
         phase: Float,
@@ -245,6 +258,7 @@ final class RBCJourneyScene {
                 self?.advanceRegionTransferFrame(deltaTime: deltaTime)
                 self?.advanceWillisNetworkFrame(deltaTime: deltaTime)
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
+                self?.advanceCerebellumFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
         }
@@ -282,6 +296,7 @@ final class RBCJourneyScene {
         let renderedRegionID = pendingRegionID ?? transferredPortalID
         let frontalRegionActive = renderedRegionID == RBCBrainRegionDestination.frontalLobe.id
         let willisRegionActive = renderedRegionID == RBCBrainRegionDestination.circleOfWillis.id
+        let cerebellumRegionActive = renderedRegionID == RBCBrainRegionDestination.cerebellum.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
@@ -346,6 +361,11 @@ final class RBCJourneyScene {
             active: renderedRegionID == RBCBrainRegionDestination.corticalMicroarchitecture.id,
             visualization: regionVisualization,
             time: t,
+            motionHeld: motionHeld
+        )
+        updateCerebellumRegion(
+            active: cerebellumRegionActive,
+            visualization: regionVisualization,
             motionHeld: motionHeld
         )
         updateWillisNetwork(
@@ -1280,12 +1300,7 @@ final class RBCJourneyScene {
         }
 
         if let cerebellum = cortexLayer?.findEntity(named: "Cerebellum") {
-            installExtendedRegionInterior(
-                id: RBCBrainRegionDestination.cerebellum.id,
-                source: cerebellum,
-                name: "cerebellum-region-portal",
-                targetExtent: 2.02
-            )
+            buildCerebellumRegionInterior(source: cerebellum)
         }
 
         if let deepLayer {
@@ -1296,6 +1311,298 @@ final class RBCJourneyScene {
                 targetExtent: 1.90
             )
         }
+    }
+
+    /// A room-scale cerebellar observatory. The registered mesh remains as a
+    /// dim positional reference, while the native outline, repeated folial
+    /// bands, arbor-vitae guide, and vertebrobasilar approaches expand around
+    /// the wearer. This is an orientation abstraction—not histology, territory
+    /// segmentation, patient anatomy, or a complete vascular reconstruction.
+    private func buildCerebellumRegionInterior(source: Entity) {
+        let id = RBCBrainRegionDestination.cerebellum.id
+        let region = Entity()
+        region.name = "transferred-region-interior-\(id)-cerebellum-region-portal-cerebellar-observatory"
+
+        let authoredHero = source.clone(recursive: true)
+        authoredHero.name = "registered-cerebellum-reference-expanded-environment-not-floating-model"
+        normalize(authoredHero, targetExtent: 2.65)
+        authoredHero.position += [0, 1.40, -2.16]
+        authoredHero.components.set(OpacityComponent(opacity: 0.13))
+        region.addChild(authoredHero)
+        cerebellumAuthoredHero = authoredHero
+
+        let outlineRoot = Entity()
+        outlineRoot.name = "cerebellum-constellation-outline-not-segmentation"
+        region.addChild(outlineRoot)
+        cerebellumOutlineRoot = outlineRoot
+
+        let foliaRoot = Entity()
+        foliaRoot.name = "magnified-cerebellar-folia-orientation-bands-not-histology"
+        region.addChild(foliaRoot)
+        cerebellumFoliaRoot = foliaRoot
+
+        let arborRoot = Entity()
+        arborRoot.name = "magnified-arbor-vitae-orientation-abstraction-not-histology"
+        region.addChild(arborRoot)
+        cerebellumArborRoot = arborRoot
+
+        let vesselRoot = Entity()
+        vesselRoot.name = "qualitative-sca-aica-pica-vertebrobasilar-approaches-not-patient-specific"
+        region.addChild(vesselRoot)
+        cerebellumVesselRoot = vesselRoot
+
+        let outlineMaterial = glowMaterial(
+            color: UIColor(red: 0.46, green: 0.96, blue: 0.82, alpha: 0.74),
+            intensity: 1.75
+        )
+        let starMaterial = glowMaterial(
+            color: UIColor(red: 0.84, green: 1.00, blue: 0.93, alpha: 0.96),
+            intensity: 3.0
+        )
+        let foliaMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.40, green: 0.21, blue: 0.22, alpha: 0.48),
+            emissive: UIColor(red: 0.66, green: 0.38, blue: 0.33, alpha: 1)
+        )
+        let arborMaterial = glowMaterial(
+            color: UIColor(red: 0.90, green: 0.84, blue: 0.64, alpha: 0.76),
+            intensity: 1.25
+        )
+
+        let silhouetteControls: [SIMD3<Float>] = [
+            [-0.10, 0.70, -1.90], [-0.70, 0.64, -1.98],
+            [-1.28, 0.80, -2.10], [-1.58, 1.20, -2.22],
+            [-1.49, 1.70, -2.30], [-1.14, 2.03, -2.22],
+            [-0.64, 2.17, -2.08], [-0.19, 2.05, -1.96],
+            [0.00, 1.80, -1.88], [0.21, 2.08, -1.97],
+            [0.69, 2.20, -2.10], [1.19, 1.99, -2.25],
+            [1.52, 1.64, -2.31], [1.57, 1.16, -2.23],
+            [1.25, 0.77, -2.09], [0.68, 0.62, -1.97],
+            [0.10, 0.70, -1.90],
+        ]
+        let silhouette = sampleClosedCatmullRom(silhouetteControls, samplesPerSegment: 6)
+        addContinuousTubePath(
+            silhouette,
+            to: outlineRoot,
+            startRadius: 0.0026,
+            endRadius: 0.0026,
+            material: outlineMaterial,
+            name: "cerebellar-hemisphere-vermis-constellation-contour",
+            radialSegments: 8
+        )
+
+        let starMesh = MeshResource.generateSphere(radius: 0.008)
+        for (index, point) in silhouetteControls.enumerated() {
+            let star = ModelEntity(mesh: starMesh, materials: [starMaterial])
+            star.name = "cerebellar-constellation-guide-star-\(index)"
+            star.position = point + SIMD3<Float>(0, 0, 0.006)
+            outlineRoot.addChild(star)
+            cerebellumGuideStars.append((star, Float(index) * 0.63))
+        }
+
+        // Side ribs extend the silhouette toward peripheral vision so the
+        // destination reads as a place around the wearer, not a small object.
+        for ribIndex in 0..<7 {
+            let progress = Float(ribIndex) / 6
+            let y = 0.86 + progress * 1.10
+            let spread = 1.30 + sin(progress * .pi) * 0.24
+            for side: Float in [-1, 1] {
+                let rib = sampleCubicBezier(
+                    [side * spread, y, -2.11],
+                    [side * 1.62, y + 0.035, -1.86],
+                    [side * 1.78, y + 0.065, -1.46],
+                    [side * 1.66, y + 0.10, -1.16],
+                    samples: 30
+                )
+                addContinuousTubePath(
+                    rib,
+                    to: outlineRoot,
+                    startRadius: 0.0024,
+                    endRadius: 0.0012,
+                    material: outlineMaterial,
+                    name: "cerebellar-peripheral-depth-rib-\(ribIndex)-\(side < 0 ? "left" : "right")",
+                    radialSegments: 7
+                )
+            }
+        }
+
+        // Parallel leaf-like bands establish the cerebellum's repeated-fold
+        // visual signature. Spacing and curvature are illustrative.
+        for bandIndex in 0..<19 {
+            let progress = Float(bandIndex) / 18
+            let y = 0.76 + progress * 1.34
+            let width = 0.56 + sin(progress * .pi) * 0.80
+            let phase = Float(bandIndex) * 0.71
+            let depth = -1.91 - cos(progress * .pi * 2 + 0.35) * 0.10
+            for side: Float in [-1, 1] {
+                let band = sampleCubicBezier(
+                    [side * 0.07, y + sin(phase) * 0.035, depth + 0.10],
+                    [side * (0.28 + width * 0.18), y + 0.15 + cos(phase) * 0.035, depth - 0.04],
+                    [side * (0.44 + width * 0.68), y - 0.12 + sin(phase * 1.4) * 0.04, depth - 0.14],
+                    [side * (0.46 + width), y + sin(phase + side * 0.8) * 0.07, depth + 0.02],
+                    samples: 38
+                )
+                addContinuousTubePath(
+                    band,
+                    to: foliaRoot,
+                    startRadius: 0.0052,
+                    endRadius: 0.0020,
+                    material: foliaMaterial,
+                    name: "cerebellar-folium-guide-band-\(bandIndex)-\(side < 0 ? "left" : "right")",
+                    radialSegments: 9
+                )
+            }
+        }
+        for bandIndex in 0..<9 {
+            let progress = Float(bandIndex) / 8
+            let y = 0.82 + progress * 1.08
+            let vermisBand = sampleCubicBezier(
+                [-0.25, y, -1.94], [-0.10, y + 0.06, -1.87],
+                [0.10, y + 0.06, -1.87], [0.25, y, -1.94],
+                samples: 24
+            )
+            addContinuousTubePath(
+                vermisBand,
+                to: foliaRoot,
+                startRadius: 0.0034,
+                endRadius: 0.0034,
+                material: foliaMaterial,
+                name: "cerebellar-vermis-fold-guide-\(bandIndex)",
+                radialSegments: 8
+            )
+        }
+
+        let arborPaths: [(String, [SIMD3<Float>], Float, Float)] = [
+            ("central-trunk", sampleCubicBezier([0, 0.72, -1.91], [0, 1.05, -1.94], [0, 1.66, -1.96], [0, 2.05, -1.99], samples: 46), 0.015, 0.007),
+            ("left-superior", sampleCubicBezier([0, 1.72, -1.96], [-0.28, 1.84, -1.97], [-0.66, 2.02, -2.00], [-1.10, 2.06, -2.04], samples: 38), 0.009, 0.003),
+            ("right-superior", sampleCubicBezier([0, 1.72, -1.96], [0.28, 1.84, -1.97], [0.66, 2.02, -2.00], [1.10, 2.06, -2.04], samples: 38), 0.009, 0.003),
+            ("left-middle", sampleCubicBezier([0, 1.43, -1.95], [-0.30, 1.50, -1.97], [-0.82, 1.63, -2.02], [-1.32, 1.62, -2.07], samples: 40), 0.010, 0.003),
+            ("right-middle", sampleCubicBezier([0, 1.43, -1.95], [0.30, 1.50, -1.97], [0.82, 1.63, -2.02], [1.32, 1.62, -2.07], samples: 40), 0.010, 0.003),
+            ("left-inferior", sampleCubicBezier([0, 1.14, -1.94], [-0.28, 1.08, -1.98], [-0.72, 0.88, -2.03], [-1.18, 0.78, -2.06], samples: 38), 0.010, 0.003),
+            ("right-inferior", sampleCubicBezier([0, 1.14, -1.94], [0.28, 1.08, -1.98], [0.72, 0.88, -2.03], [1.18, 0.78, -2.06], samples: 38), 0.010, 0.003),
+            ("left-superior-crown", sampleCubicBezier([-0.48, 1.93, -1.99], [-0.63, 2.05, -2.03], [-0.86, 2.13, -2.08], [-1.17, 2.15, -2.12], samples: 28), 0.0055, 0.0018),
+            ("right-superior-crown", sampleCubicBezier([0.48, 1.93, -1.99], [0.63, 2.05, -2.03], [0.86, 2.13, -2.08], [1.17, 2.15, -2.12], samples: 28), 0.0055, 0.0018),
+            ("left-middle-fan", sampleCubicBezier([-0.55, 1.56, -2.00], [-0.72, 1.67, -2.04], [-0.99, 1.76, -2.10], [-1.31, 1.78, -2.16], samples: 28), 0.0055, 0.0018),
+            ("right-middle-fan", sampleCubicBezier([0.55, 1.56, -2.00], [0.72, 1.67, -2.04], [0.99, 1.76, -2.10], [1.31, 1.78, -2.16], samples: 28), 0.0055, 0.0018),
+            ("left-inferior-fan", sampleCubicBezier([-0.49, 1.00, -1.99], [-0.68, 0.91, -2.03], [-0.91, 0.76, -2.09], [-1.20, 0.68, -2.13], samples: 28), 0.0050, 0.0016),
+            ("right-inferior-fan", sampleCubicBezier([0.49, 1.00, -1.99], [0.68, 0.91, -2.03], [0.91, 0.76, -2.09], [1.20, 0.68, -2.13], samples: 28), 0.0050, 0.0016),
+        ]
+        for path in arborPaths {
+            addContinuousTubePath(
+                path.1,
+                to: arborRoot,
+                startRadius: path.2,
+                endRadius: path.3,
+                material: arborMaterial,
+                name: "arbor-vitae-guide-\(path.0)",
+                radialSegments: 10
+            )
+        }
+
+        let vesselMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.42, green: 0.012, blue: 0.025, alpha: 0.86),
+            emissive: UIColor(red: 0.72, green: 0.018, blue: 0.036, alpha: 1)
+        )
+        let flowCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.24, blue: 0.15, alpha: 0.30),
+            intensity: 1.1
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.78, blue: 0.42, alpha: 0.98),
+            intensity: 4.1
+        )
+        typealias CerebellarPathSpec = (
+            name: String,
+            controls: (SIMD3<Float>, SIMD3<Float>, SIMD3<Float>, SIMD3<Float>),
+            startRadius: Float,
+            endRadius: Float,
+            fronts: Int
+        )
+        let vesselSpecs: [CerebellarPathSpec] = [
+            ("left-vertebral-approach", ([-0.25, 0.34, -1.36], [-0.21, 0.54, -1.39], [-0.10, 0.72, -1.43], [0, 0.84, -1.46]), 0.018, 0.014, 1),
+            ("right-vertebral-approach", ([0.25, 0.34, -1.36], [0.21, 0.54, -1.39], [0.10, 0.72, -1.43], [0, 0.84, -1.46]), 0.018, 0.014, 1),
+            ("basilar-trunk", ([0, 0.84, -1.46], [0, 1.08, -1.49], [0, 1.48, -1.52], [0, 1.76, -1.55]), 0.019, 0.014, 2),
+            ("left-sca-approach", ([0, 1.69, -1.55], [-0.28, 1.77, -1.58], [-0.78, 1.92, -1.69], [-1.30, 2.00, -1.82]), 0.012, 0.0045, 2),
+            ("right-sca-approach", ([0, 1.69, -1.55], [0.28, 1.77, -1.58], [0.78, 1.92, -1.69], [1.30, 2.00, -1.82]), 0.012, 0.0045, 2),
+            ("left-aica-approach", ([0, 1.23, -1.50], [-0.30, 1.28, -1.56], [-0.82, 1.33, -1.66], [-1.36, 1.37, -1.79]), 0.011, 0.0042, 2),
+            ("right-aica-approach", ([0, 1.23, -1.50], [0.30, 1.28, -1.56], [0.82, 1.33, -1.66], [1.36, 1.37, -1.79]), 0.011, 0.0042, 2),
+            ("left-pica-approach", ([-0.20, 0.53, -1.39], [-0.42, 0.59, -1.52], [-0.82, 0.72, -1.72], [-1.24, 0.84, -1.88]), 0.011, 0.0040, 2),
+            ("right-pica-approach", ([0.20, 0.53, -1.39], [0.42, 0.59, -1.52], [0.82, 0.72, -1.72], [1.24, 0.84, -1.88]), 0.011, 0.0040, 2),
+            ("left-sca-folial-continuation", ([-1.30, 2.00, -1.82], [-1.39, 2.10, -1.94], [-1.47, 1.96, -2.10], [-1.54, 1.82, -2.20]), 0.0045, 0.0022, 1),
+            ("right-sca-folial-continuation", ([1.30, 2.00, -1.82], [1.39, 2.10, -1.94], [1.47, 1.96, -2.10], [1.54, 1.82, -2.20]), 0.0045, 0.0022, 1),
+            ("left-aica-folial-continuation", ([-1.36, 1.37, -1.79], [-1.48, 1.47, -1.91], [-1.50, 1.31, -2.09], [-1.56, 1.16, -2.20]), 0.0042, 0.0020, 1),
+            ("right-aica-folial-continuation", ([1.36, 1.37, -1.79], [1.48, 1.47, -1.91], [1.50, 1.31, -2.09], [1.56, 1.16, -2.20]), 0.0042, 0.0020, 1),
+            ("left-pica-folial-continuation", ([-1.24, 0.84, -1.88], [-1.35, 0.76, -1.98], [-1.42, 0.66, -2.10], [-1.31, 0.61, -2.17]), 0.0040, 0.0018, 1),
+            ("right-pica-folial-continuation", ([1.24, 0.84, -1.88], [1.35, 0.76, -1.98], [1.42, 0.66, -2.10], [1.31, 0.61, -2.17]), 0.0040, 0.0018, 1),
+        ]
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.024, radius: 0.0075)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.034, radius: 0.0021)
+        for (pathIndex, spec) in vesselSpecs.enumerated() {
+            let path = sampleCubicBezier(
+                spec.controls.0, spec.controls.1, spec.controls.2, spec.controls.3,
+                samples: 50
+            )
+            cerebellumFlowPaths.append(path)
+            addContinuousTubePath(
+                path,
+                to: vesselRoot,
+                startRadius: spec.startRadius,
+                endRadius: spec.endRadius,
+                material: vesselMaterial,
+                name: "cerebellar-\(spec.name)-continuous-wall",
+                radialSegments: 16
+            )
+            addContinuousTubePath(
+                path,
+                to: vesselRoot,
+                startRadius: spec.startRadius * 0.30,
+                endRadius: spec.endRadius * 0.32,
+                material: flowCoreMaterial,
+                name: "cerebellar-\(spec.name)-continuous-flow-core",
+                radialSegments: 9
+            )
+            for frontIndex in 0..<spec.fronts {
+                let arrow = Entity()
+                arrow.name = "cerebellar-tangent-flow-front-\(spec.name)-\(frontIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                head.name = "cerebellar-flow-front-arrowhead"
+                head.position.y = 0.022
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                tail.name = "cerebellar-flow-front-tail"
+                tail.position.y = -0.022
+                arrow.addChild(head)
+                arrow.addChild(tail)
+                vesselRoot.addChild(arrow)
+                cerebellumFlowArrows.append((
+                    arrow,
+                    pathIndex,
+                    (Float(frontIndex) / Float(max(spec.fronts, 1)) + Float(pathIndex) * 0.113)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let overviewTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "overview",
+            position: [1.20, 1.02, -1.46],
+            collisionRadius: 0.20
+        )
+        regionGuideRoot.addChild(overviewTarget)
+        cerebellumDiscoveryTargets.append(overviewTarget)
+        let activeTarget = makeRegionDiscoveryTarget(
+            id: id,
+            variant: "active",
+            position: [1.30, 1.24, -1.58],
+            collisionRadius: 0.22
+        )
+        region.addChild(activeTarget)
+        cerebellumDiscoveryTargets.append(activeTarget)
+
+        region.isEnabled = false
+        regionInteriorRoot.addChild(region)
+        regionInteriors[id] = region
+        regionBaseScales[id] = region.scale
+        print("RBC_CEREBELLAR_OBSERVATORY=READY folia_bands=47 arbor_paths=13 arterial_paths=15 moving_fronts=22 registered_reference=true")
     }
 
     /// A room-scale teaching map of the arterial crossroads. The authored
@@ -2272,6 +2579,101 @@ final class RBCJourneyScene {
             let pulse = corticalMicroarchitectureRuntimeHeld
                 ? 1
                 : 0.94 + sin(time * 4.2 + item.offset * 7.0) * 0.08
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+    }
+
+    private func updateCerebellumRegion(
+        active: Bool,
+        visualization: RBCRegionVisualizationMode,
+        motionHeld: Bool
+    ) {
+        cerebellumRuntimeActive = active
+        cerebellumRuntimeHeld = motionHeld
+        cerebellumRuntimeVisualization = visualization
+        guard active else {
+            cerebellumElapsed = 0
+            return
+        }
+
+        let referenceOpacity: Float
+        let outlineOpacity: Float
+        let foliaOpacity: Float
+        let arborOpacity: Float
+        let vesselOpacity: Float
+        switch visualization {
+        case .locate:
+            referenceOpacity = 0.13
+            outlineOpacity = 0.68
+            foliaOpacity = 0.44
+            arborOpacity = 0.055
+            vesselOpacity = 0.075
+        case .xray:
+            referenceOpacity = 0.045
+            outlineOpacity = 0.15
+            foliaOpacity = 0.72
+            arborOpacity = 0.96
+            vesselOpacity = 0.11
+        case .flow:
+            referenceOpacity = 0.025
+            outlineOpacity = 0.065
+            foliaOpacity = 0.18
+            arborOpacity = 0.11
+            vesselOpacity = 1.0
+        }
+        cerebellumAuthoredHero?.components.set(OpacityComponent(opacity: referenceOpacity))
+        cerebellumOutlineRoot?.components.set(OpacityComponent(opacity: outlineOpacity))
+        cerebellumFoliaRoot?.components.set(OpacityComponent(opacity: foliaOpacity))
+        cerebellumArborRoot?.components.set(OpacityComponent(opacity: arborOpacity))
+        cerebellumVesselRoot?.components.set(OpacityComponent(opacity: vesselOpacity))
+        for target in cerebellumDiscoveryTargets where target.name.hasSuffix("-active") {
+            let opacity: Float = switch visualization {
+            case .locate: 0.72
+            case .xray: 0.42
+            case .flow: 0.30
+            }
+            target.components.set(OpacityComponent(opacity: opacity))
+        }
+        applyCerebellumMotion()
+    }
+
+    private func advanceCerebellumFrame(deltaTime: Float) {
+        guard cerebellumRuntimeActive else { return }
+        if !cerebellumRuntimeHeld {
+            cerebellumElapsed += min(max(deltaTime, 0), 0.10)
+        }
+        applyCerebellumMotion()
+    }
+
+    private func applyCerebellumMotion() {
+        for item in cerebellumGuideStars {
+            let pulse = cerebellumRuntimeHeld
+                ? 1
+                : 0.86 + sin(cerebellumElapsed * 1.42 + item.phase) * 0.16
+            item.entity.scale = [pulse, pulse, pulse]
+        }
+        for item in cerebellumFlowArrows {
+            item.entity.isEnabled = cerebellumRuntimeVisualization == .flow
+            guard cerebellumFlowPaths.indices.contains(item.pathIndex) else { continue }
+            let path = cerebellumFlowPaths[item.pathIndex]
+            let speed: Float = item.pathIndex < 3 ? 0.10 : 0.082
+            let progress = cerebellumRuntimeHeld
+                ? item.offset
+                : (item.offset + cerebellumElapsed * speed).truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: path, progress: progress)
+            let ahead = interpolatedPoint(on: path, progress: min(progress + 0.016, 1))
+            let behind = interpolatedPoint(on: path, progress: max(progress - 0.016, 0))
+            let tangent = ahead - behind
+            item.entity.position = point
+            if simd_length_squared(tangent) > 0.000_001 {
+                item.entity.orientation = simd_quatf(
+                    from: [0, 1, 0],
+                    to: simd_normalize(tangent)
+                )
+            }
+            let pulse = cerebellumRuntimeHeld
+                ? 1
+                : 0.94 + sin(cerebellumElapsed * 4.0 + item.offset * 7.2) * 0.08
             item.entity.scale = [pulse, pulse, pulse]
         }
     }
