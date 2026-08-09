@@ -1061,7 +1061,7 @@ private struct SpatialRoleControls: View {
                     experience.advanceJourney()
                 }
 
-                bubbleButton("X-ray", systemImage: "xray", accent: .orange) {
+                bubbleButton("X-ray", systemImage: "viewfinder", accent: .orange) {
                     openWindow(id: StrokeSpace.xray)
                 }
             }
@@ -1165,7 +1165,7 @@ private struct SpatialRoleControls: View {
                     Button("Evidence", systemImage: "text.book.closed.fill") {
                         openWindow(id: StrokeSpace.evidence)
                     }
-                    Button("X-ray", systemImage: "xray") {
+                    Button("X-ray", systemImage: "viewfinder") {
                         openWindow(id: StrokeSpace.xray)
                     }
                     Button("Reset view", systemImage: "arrow.counterclockwise") {
@@ -1784,7 +1784,7 @@ private struct JourneyCaption: View {
                 Button {
                     openWindow(id: StrokeSpace.xray)
                 } label: {
-                    Image(systemName: "xray")
+                    Image(systemName: "viewfinder")
                         .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.bordered)
@@ -1897,7 +1897,7 @@ private struct JourneyCaption: View {
             .buttonStyle(.bordered)
             .tint(.orange)
 
-            Button("X-ray", systemImage: "xray") {
+            Button("X-ray", systemImage: "viewfinder") {
                 openWindow(id: StrokeSpace.xray)
             }
             .buttonStyle(.bordered)

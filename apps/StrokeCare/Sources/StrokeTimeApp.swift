@@ -11,7 +11,13 @@ struct StrokeTimeApp: App {
 
     var body: some Scene {
         WindowGroup(id: StrokeSpace.window) {
-            if CommandLine.arguments.contains("--proof-evidence-window") {
+            if CommandLine.arguments.contains("--proof-xray-window") {
+                StrokeXrayWorkspaceView()
+                    .environmentObject(experience)
+                    .task {
+                        experience.prepareClinicianProof(step: .inspectOcclusion)
+                    }
+            } else if CommandLine.arguments.contains("--proof-evidence-window") {
                 StrokeEvidenceWorkspaceView()
                     .environmentObject(experience)
             } else {

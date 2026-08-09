@@ -43,7 +43,7 @@ struct StrokeXrayWorkspaceView: View {
                 Circle()
                     .fill(Color.cyan.opacity(0.13))
                     .frame(width: 42, height: 42)
-                Image(systemName: "xray")
+                Image(systemName: "viewfinder")
                     .foregroundStyle(.cyan)
                     .font(.headline)
             }

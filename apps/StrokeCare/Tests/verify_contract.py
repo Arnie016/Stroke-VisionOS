@@ -116,6 +116,7 @@ blender_builder = (ROOT / "Scripts" / "build_blender_layer_study.py").read_text(
 blender_manifest = (ROOT / "TechnicalArt" / "Generated" / "StrokeLayerStudy.manifest.json").read_text()
 require("StrokeEvidenceWorkspaceView()" in app and "StrokeSpace.evidence" in app, "upper evidence window is missing")
 require("StrokeXrayWorkspaceView()" in app and "StrokeSpace.xray" in app, "shared teaching X-ray window is missing")
+require("--proof-xray-window" in app and "prepareClinicianProof(step: .inspectOcclusion)" in app, "isolated X-ray proof route is missing")
 require(immersive.count("openWindow(id: StrokeSpace.xray)") >= 4, "family and presenter X-ray entry points are incomplete")
 require(immersive.count("dismissWindow(id: StrokeSpace.xray)") >= 2, "X-ray window is not closed by both exit paths")
 require(all(token in xray for token in ("procedureStep", "anatomyPresentation", "cortexOpacity", "pointField", "selectedPointLabel")), "X-ray window is not synchronized to shared teaching state")

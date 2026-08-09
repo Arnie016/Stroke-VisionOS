@@ -126,6 +126,9 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 ... com.arnav.StrokeTime --proof-pressure
 ... com.arnav.StrokeTime --proof-care-purpose
 ... com.arnav.StrokeTime --proof-clinician-pressure
+
+# Isolated shared teaching X-ray surface
+... com.arnav.StrokeTime --proof-xray-window
 ```
 
 Simulator builds and screenshots do not prove XCAT performance, physical
