@@ -139,6 +139,11 @@ tear away from the brain.
   is an educational display convention—not venous blood colour, oxygenation,
   direction, velocity, or patient-specific imaging—and specialist review is
   still pending.
+- The clinician lens exposes direct `Front`, `Side A`, `Side B`, `Top`, and
+  `Bottom` model-frame views in a compact two-row grid. Each preset rotates the
+  complete registered assembly as one object; it never independently moves an
+  organ, vessel, skull layer, or lesson point. Side labels remain neutral until
+  laterality is reviewed.
 - Procedural hemispheres, vessels, clot, at-risk tissue, and flow remain an
   instant-loading fallback when the hero brain cannot load.
 - A sparse fixed-space boundary ring replaces the earlier dark transparent

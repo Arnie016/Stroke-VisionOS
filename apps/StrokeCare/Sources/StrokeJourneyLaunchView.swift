@@ -458,6 +458,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-view-superior") {
             experience.prepareAnatomyViewpointProof(.superior)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-view-inferior") {
+            experience.prepareAnatomyViewpointProof(.inferior)
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-environment-surroundings") {
             experience.prepareEnvironmentProof(.surroundings)
             Task { await openProofSpace() }

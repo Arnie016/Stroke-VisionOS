@@ -569,3 +569,24 @@
 - Next safe action: on an awake XCAT, pinch checkpoints 1, 3, 5, and 6 and verify
   direct targeting, the permission/refusal path, assembled closure, and mirrored
   legibility without opening a second control surface.
+
+## 2026-08-10 02:11 SGT — complete direct viewpoint grid
+
+- Target: expose the missing side and underside perspectives without detaching
+  any registered anatomy or adding another panel.
+- Bounded action: added direct Side B and Bottom model-frame presets, converted
+  the existing clinician viewpoint row into a compact two-row grid, added a
+  deterministic inferior-view proof route, and increased the build to
+  `0.6 (14)`.
+- Evidence: XCAT deploy stopped with the dated `unavailable` receipt at
+  `Proof/xcat/20260810-020448/BLOCKED.md`; contract and diff checks passed;
+  XcodeGen and the OS 26.5 Simulator build succeeded; proof 74 is 3840×2160
+  with SHA-256 `38b6abfc025dedea5b742bf73a0848df67f8ba611072c14466ed2044ea6ba9b2`.
+- Verdict: `IMPROVED` — all five requested fixed model-frame perspectives are
+  now one-pinch choices while the whole authored assembly remains registered.
+- Blocker: XCAT is unavailable, and Simulator cannot validate target reach,
+  stereo depth, wearer comfort, AirPlay legibility, anatomical orientation, or
+  clinical validity.
+- Next safe action: when XCAT is awake and unlocked, pinch Side B and Bottom
+  once each and verify that brain, vessels, skull reference, and lesson points
+  remain attached throughout the transition.

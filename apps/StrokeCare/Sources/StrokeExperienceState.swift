@@ -122,6 +122,7 @@ enum StrokeAnatomyViewpoint: String, CaseIterable, Identifiable {
     case lateralA = "Side A · review laterality"
     case lateralB = "Side B · review laterality"
     case superior = "Top · model frame"
+    case inferior = "Bottom · model frame"
 
     var id: String { rawValue }
 
@@ -133,6 +134,7 @@ enum StrokeAnatomyViewpoint: String, CaseIterable, Identifiable {
         case .lateralA: "Side A"
         case .lateralB: "Side B"
         case .superior: "Top"
+        case .inferior: "Bottom"
         }
     }
 
@@ -144,6 +146,7 @@ enum StrokeAnatomyViewpoint: String, CaseIterable, Identifiable {
         case .lateralA: "arrow.left.circle"
         case .lateralB: "arrow.right.circle"
         case .superior: "arrow.down.to.line.circle"
+        case .inferior: "arrow.up.to.line.circle"
         }
     }
 
@@ -154,6 +157,7 @@ enum StrokeAnatomyViewpoint: String, CaseIterable, Identifiable {
         case .lateralA: [0.42 - Float.pi * 0.5, 0]
         case .lateralB: [0.42 + Float.pi * 0.5, 0]
         case .superior: [0.42, -Float.pi * 0.5]
+        case .inferior: [0.42, Float.pi * 0.5]
         }
     }
 }
@@ -1293,7 +1297,9 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func cycleAnatomyViewpoint(reduceMotion: Bool = false) {
-        let presets: [StrokeAnatomyViewpoint] = [.anterior, .lateralA, .lateralB, .superior, .threeQuarter]
+        let presets: [StrokeAnatomyViewpoint] = [
+            .anterior, .lateralA, .lateralB, .superior, .inferior, .threeQuarter
+        ]
         let next: StrokeAnatomyViewpoint
         if anatomyViewpoint == .free || anatomyViewpoint == .threeQuarter {
             next = .anterior

@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (13)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (14)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -465,3 +465,28 @@ Starter plan had reached its MCP call limit. XCAT was paired but `unavailable`;
 the dated reachability receipt is
 `Proof/xcat/20260810-015706/BLOCKED.md`. No device build, install, launch, wearer,
 AirPlay, interaction, comprehension, specialist, or clinical proof occurred.
+
+## 2026-08-10 02:11 SGT — direct complete model-frame viewpoints
+
+Build `0.6 (14)` adds direct `Side B` and `Bottom` choices to the existing
+clinician `Front`, `Side A`, and `Top` lens. The five presets use a compact
+two-row grid with 44-point minimum targets. Each preset rotates the complete
+registered anatomy root; no organ, vessel, skull layer, or lesson marker is
+repositioned independently. `Side A/B` and `Top/Bottom · model frame` avoid
+claiming reviewed laterality or radiological orientation.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, XcodeGen regenerated the project, and the OS 26.5
+visionOS Simulator Debug build at `/tmp/strokecare-viewpoints-build14` ended
+`** BUILD SUCCEEDED **`. The built app contains exactly 14 unique USDZ files
+plus `THIRD_PARTY_NOTICES.txt`; its executable SHA-256 is
+`d0c40408a0185cbe2b4d8596a7d9fe6e80a6d0ad21b6f167cbcac7cedaf36405`.
+
+The deterministic `--proof-view-inferior` route produced
+`Proof/74-clinician-inferior-viewpoint-simulator.png` at 3840×2160 with
+SHA-256
+`38b6abfc025dedea5b742bf73a0848df67f8ba611072c14466ed2044ea6ba9b2`.
+The receipt proves Simulator render state and visible control selection only.
+XCAT remained `unavailable`; wearer targetability, depth comfort, AirPlay
+legibility, anatomical orientation, specialist review, and clinical validity
+remain unproven.

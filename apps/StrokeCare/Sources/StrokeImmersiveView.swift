@@ -2102,7 +2102,10 @@ private struct SpatialRoleMicroCues: View {
                 .tracking(0.8)
                 .foregroundStyle(accent)
 
-            HStack(spacing: 6) {
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3),
+                spacing: 6
+            ) {
                 ForEach(directViewpoints) { viewpoint in
                     let isSelected = experience.anatomyViewpoint == viewpoint
                     Button {
@@ -2174,7 +2177,7 @@ private struct SpatialRoleMicroCues: View {
     }
 
     private var directViewpoints: [StrokeAnatomyViewpoint] {
-        [.anterior, .lateralA, .superior]
+        [.anterior, .lateralA, .lateralB, .superior, .inferior]
     }
 }
 

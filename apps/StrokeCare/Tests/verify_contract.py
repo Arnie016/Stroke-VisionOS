@@ -194,17 +194,18 @@ require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in imm
 require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive, "free-standing annotation tether is missing")
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
-require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior")), "named registered model-frame viewpoints are missing")
+require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior", "case inferior")), "named registered model-frame viewpoints are missing")
 require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)" in immersive and '.accessibilityLabel("Anatomy viewpoint")' in immersive, "named views and direct free-orbit handoff are not wired into the anatomy control")
 require(all(token in immersive for token in (
     'Text("CLINICIAN LENS")',
     'Text("REFERENCE DEPTH")',
-    '[.anterior, .lateralA, .superior]',
+    '[.anterior, .lateralA, .lateralB, .superior, .inferior]',
+    'LazyVGrid(',
     'experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)',
     'experience.selectDetailLevel(level)',
     'GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING',
 )), "clinician left rail lacks direct viewpoints or progressive detail controls")
-require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior")), "deterministic anatomy-viewpoint proof routes are missing")
+require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior", "--proof-view-inferior")), "deterministic anatomy-viewpoint proof routes are missing")
 require("true medial view is intentionally not" in state, "single-surface anatomy is mislabeled as a medial view")
 require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
 require("WorldTrackingProvider" in immersive and "queryDeviceAnchor" in immersive and "stroke-world-locked-stage" in immersive, "stage is not placed from a sampled device pose")
