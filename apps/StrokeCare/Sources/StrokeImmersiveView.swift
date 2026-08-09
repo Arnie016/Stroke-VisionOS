@@ -1,6 +1,66 @@
 import AVFoundation
+import ARKit
+import QuartzCore
 import RealityKit
 import SwiftUI
+
+/// Samples the current device pose once, then leaves the teaching stage fixed
+/// in the room. This is deliberate initial placement—not continuous head-lock,
+/// raw gaze access, or evidence that the wearer finds the distance comfortable.
+@MainActor
+private final class StrokeStagePlacement: ObservableObject {
+    @Published private(set) var transform: Transform?
+
+    private let session = ARKitSession()
+    private let worldTracking = WorldTrackingProvider()
+    private var placementTask: Task<Void, Never>?
+
+    func start() {
+        placementTask?.cancel()
+        placementTask = Task { [weak self] in
+            guard let self, WorldTrackingProvider.isSupported else { return }
+            do {
+                try await session.run([worldTracking])
+                for _ in 0..<30 {
+                    guard !Task.isCancelled else { return }
+                    if let anchor = worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime()),
+                       anchor.isTracked {
+                        transform = Self.makeStageTransform(from: anchor.originFromAnchorTransform)
+                        return
+                    }
+                    try await Task.sleep(for: .milliseconds(50))
+                }
+            } catch {
+                // Keep the authored fallback frame if tracking is unavailable.
+                // Simulator/build proof must not be reported as device placement.
+            }
+        }
+    }
+
+    func stop() {
+        placementTask?.cancel()
+        placementTask = nil
+        session.stop()
+    }
+
+    private static func makeStageTransform(from device: simd_float4x4) -> Transform {
+        let devicePosition = SIMD3<Float>(device.columns.3.x, device.columns.3.y, device.columns.3.z)
+        var forward = -SIMD3<Float>(device.columns.2.x, 0, device.columns.2.z)
+        if simd_length_squared(forward) < 0.0001 { forward = [0, 0, -1] }
+        forward = simd_normalize(forward)
+        let yaw = atan2(-forward.x, -forward.z)
+
+        // Existing authored coordinates use eye height ~= 1.62 m. Moving that
+        // local eye plane to the sampled device pose keeps every child—case
+        // archive, anatomy, annotations, and controls—in one coherent frame.
+        let stageOrigin = devicePosition - SIMD3<Float>(0, SpatialVisualField.eyePlaneHeight, 0)
+        return Transform(
+            scale: .one,
+            rotation: simd_quatf(angle: yaw, axis: [0, 1, 0]),
+            translation: stageOrigin
+        )
+    }
+}
 
 @MainActor
 private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate {
@@ -69,6 +129,7 @@ private struct RealtimeNarrationRequest: Encodable {
 /// and the lower companion surface acts. Safety, consent, and exit controls
 /// remain on the readable companion surface, never in peripheral vision alone.
 private enum SpatialVisualField {
+    static let eyePlaneHeight: Float = 1.62
     static let primaryAnatomy: SIMD3<Float> = [0.00, 1.62, -1.16]
     static let primaryVesselFocus: SIMD3<Float> = [0.00, 1.61, -0.76]
     static let secondaryCaseDrawer: SIMD3<Float> = [0.54, 1.55, -0.82]
@@ -91,6 +152,7 @@ struct StrokeImmersiveView: View {
     @State private var previousDragTranslation = CGSize.zero
     @State private var previousMagnification = 1.0
     @StateObject private var narrator = StrokeNarrationEngine()
+    @StateObject private var stagePlacement = StrokeStagePlacement()
 
     private let annotationID = "stroke-intention-annotation"
     private let annotationAnchorName = "stroke-intention-annotation-anchor"
@@ -112,16 +174,24 @@ struct StrokeImmersiveView: View {
     private let clinicianToolWheelID = "clinician-hand-tool-wheel"
     private let clinicianToolWheelAnchorName = "clinician-left-palm-tool-anchor"
     private let clinicianHeldToolAnchorName = "clinician-right-palm-tool-anchor"
+    private let stageRootName = "stroke-world-locked-stage"
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
             RealityView { content, attachments in
+                    let stageRoot = Entity()
+                    stageRoot.name = stageRootName
+                    if let transform = stagePlacement.transform {
+                        stageRoot.transform = transform
+                    }
+                    content.add(stageRoot)
+
                     let root = await StrokeSceneFactory.makeScene()
-                    content.add(root)
+                    stageRoot.addChild(root)
                     await installSpatialAudio(on: root)
 
                     let caseRoom = StrokeSceneFactory.makeSpatialCaseIntake()
-                    content.add(caseRoom)
+                    stageRoot.addChild(caseRoom)
 
                     let handProof = CommandLine.arguments.contains("--proof-clinician-toolkit")
                     let toolWheelAnchor = Entity()
@@ -157,7 +227,7 @@ struct StrokeImmersiveView: View {
                     horizon.position = SpatialVisualField.tertiaryHorizon
                     horizon.scale = [SpatialVisualField.tertiaryScale, SpatialVisualField.tertiaryScale, 1]
                     horizon.isEnabled = experience.environmentMode == .warmHorizon
-                    content.add(horizon)
+                    stageRoot.addChild(horizon)
 
                     let focusLight = Entity()
                     focusLight.name = focusLightID
@@ -168,7 +238,7 @@ struct StrokeImmersiveView: View {
                     focusLight.orientation = simd_quatf(angle: -0.48, axis: [1, 0, 0])
                         * simd_quatf(angle: 0.52, axis: [0, 1, 0])
                     focusLight.isEnabled = experience.environmentMode == .focusField
-                    content.add(focusLight)
+                    stageRoot.addChild(focusLight)
 
                     if let annotation = attachments.entity(for: annotationID) {
                         annotation.name = annotationID
@@ -176,25 +246,25 @@ struct StrokeImmersiveView: View {
                         let annotationAnchor = Entity()
                         annotationAnchor.name = annotationAnchorName
                         annotationAnchor.addChild(annotation)
-                        content.add(annotationAnchor)
+                        stageRoot.addChild(annotationAnchor)
                     }
 
                     if let marker = attachments.entity(for: questionMarkerID) {
                         marker.name = questionMarkerID
                         marker.components.set(BillboardComponent())
-                        content.add(marker)
+                        stageRoot.addChild(marker)
                     }
 
                     if let drawer = attachments.entity(for: caseDrawerID) {
                         drawer.name = caseDrawerID
                         drawer.components.set(BillboardComponent())
-                        content.add(drawer)
+                        stageRoot.addChild(drawer)
                     }
 
                     if let rail = attachments.entity(for: lessonSpecimenRailID) {
                         rail.name = lessonSpecimenRailID
                         rail.components.set(BillboardComponent())
-                        content.add(rail)
+                        stageRoot.addChild(rail)
                     }
 
                     for id in [
@@ -205,12 +275,18 @@ struct StrokeImmersiveView: View {
                         if let attachment = attachments.entity(for: id) {
                             attachment.name = id
                             attachment.components.set(BillboardComponent())
-                            content.add(attachment)
+                            stageRoot.addChild(attachment)
                         }
                     }
                 } update: { content, attachments in
-                    guard let root = content.entities.first(where: { $0.name == StrokeSceneFactory.rootName }) else {
+                    guard
+                        let stageRoot = content.entities.first(where: { $0.name == stageRootName }),
+                        let root = stageRoot.findEntity(named: StrokeSceneFactory.rootName)
+                    else {
                         return
+                    }
+                    if let transform = stagePlacement.transform {
+                        stageRoot.transform = transform
                     }
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
@@ -226,7 +302,7 @@ struct StrokeImmersiveView: View {
                     let smoothedZoom = Float(experience.spatialZoom)
 
                     root.isEnabled = experience.spatialPhase == .explanation
-                    if let caseRoom = content.entities.first(where: { $0.name == StrokeSceneFactory.spatialCaseRoomName }) {
+                    if let caseRoom = stageRoot.findEntity(named: StrokeSceneFactory.spatialCaseRoomName) {
                         caseRoom.isEnabled = experience.spatialPhase != .explanation
                         let inLibrary = experience.spatialPhase == .caseLibrary
                         let inReview = experience.spatialPhase == .caseReview
@@ -234,7 +310,7 @@ struct StrokeImmersiveView: View {
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview
                     }
-                    if let caseRoom = content.entities.first(where: { $0.name == StrokeSceneFactory.spatialCaseRoomName }),
+                    if let caseRoom = stageRoot.findEntity(named: StrokeSceneFactory.spatialCaseRoomName),
                        let file = caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFileName) {
                         let inReview = experience.spatialPhase == .caseReview
                         file.position = inReview ? [0, 1.23, -0.80] : experience.spatialCaseFilePosition
@@ -259,7 +335,7 @@ struct StrokeImmersiveView: View {
                         * simd_quatf(angle: smoothedOrbit.y, axis: [1, 0, 0])
 
                     if let annotation = attachments.entity(for: annotationID) {
-                        let annotationAnchor = content.entities.first(where: { $0.name == annotationAnchorName })
+                        let annotationAnchor = stageRoot.findEntity(named: annotationAnchorName)
                         if let annotationAnchor, annotation.parent !== annotationAnchor {
                             annotation.removeFromParent()
                             annotationAnchor.addChild(annotation)
@@ -270,7 +346,7 @@ struct StrokeImmersiveView: View {
                         annotation.isEnabled = experience.spatialPhase == .explanation
                         annotation.components.set(BillboardComponent())
                     }
-                    if let horizon = content.entities.first(where: { $0.name == calmHorizonID }) {
+                    if let horizon = stageRoot.findEntity(named: calmHorizonID) {
                         // Environmental mood stays behind the anatomy and is
                         // never attached to a vessel or pathology state.
                         horizon.isEnabled = experience.environmentMode == .warmHorizon
@@ -284,20 +360,20 @@ struct StrokeImmersiveView: View {
                             reduceMotion: reduceMotion
                         )
                     }
-                    content.entities.first(where: { $0.name == focusLightID })?.isEnabled =
+                    stageRoot.findEntity(named: focusLightID)?.isEnabled =
                         experience.environmentMode == .focusField
                     if let marker = attachments.entity(for: questionMarkerID) {
                         if marker.parent == nil {
-                            content.add(marker)
+                            stageRoot.addChild(marker)
                         }
-                        marker.position = questionMarkerPosition(in: root)
+                        marker.position = questionMarkerPosition(in: root, relativeTo: stageRoot)
                         marker.scale = [0.72, 0.72, 0.72]
                         marker.isEnabled = experience.spatialPhase == .explanation && experience.questionMarkerVisible
                         marker.components.set(BillboardComponent())
                     }
                     if let drawer = attachments.entity(for: caseDrawerID) {
                         if drawer.parent == nil {
-                            content.add(drawer)
+                            stageRoot.addChild(drawer)
                         }
                         // This is the focused dossier's compact briefing, not
                         // persistent furniture. It exists only in the archive
@@ -309,7 +385,7 @@ struct StrokeImmersiveView: View {
                     }
                     if let rail = attachments.entity(for: lessonSpecimenRailID) {
                         if rail.parent == nil {
-                            content.add(rail)
+                            stageRoot.addChild(rail)
                         }
                         // The active lesson family reads as the room's upper
                         // chapter title, leaving the anatomy and its markers
@@ -320,7 +396,7 @@ struct StrokeImmersiveView: View {
                         rail.components.set(BillboardComponent())
                     }
                     updateSpatialIntakeAttachments(attachments)
-                    updateSpatialRoleControls(attachments, content: content)
+                    updateSpatialRoleControls(attachments, stageRoot: stageRoot)
                     updateClinicianHandToolKit(content: content, attachments: attachments)
                     updateAudioMix()
                 } attachments: {
@@ -393,7 +469,11 @@ struct StrokeImmersiveView: View {
                         .onChanged { value in
                             if StrokeSceneFactory.isSpatialCaseFileTarget(value.entity) {
                                 let scenePoint = value.convert(value.location3D, from: .local, to: .scene)
-                                experience.moveSpatialCaseFile(to: scenePoint)
+                                let localPoint = spatialCaseRoom(for: value.entity)?.convert(
+                                    position: scenePoint,
+                                    from: nil
+                                ) ?? scenePoint
+                                experience.moveSpatialCaseFile(to: localPoint)
                                 return
                             }
                             guard StrokeSceneFactory.isAnatomyInteractionTarget(value.entity) else { return }
@@ -455,6 +535,7 @@ struct StrokeImmersiveView: View {
                 )
             .onChange(of: experience.soundEnabled) { _, _ in updateAudioMix() }
             .onAppear {
+                stagePlacement.start()
                 synchronizeImmersionStyle()
                 if experience.narrationEnabled {
                     narrator.speak(experience.journeyCaption)
@@ -471,6 +552,7 @@ struct StrokeImmersiveView: View {
             }
             .onChange(of: experience.requestedPause) { _, _ in updateAudioMix() }
             .onDisappear {
+                stagePlacement.stop()
                 narrator.stop()
                 flowController?.stop()
                 pressureController?.stop()
@@ -511,7 +593,7 @@ struct StrokeImmersiveView: View {
 
     private func updateSpatialRoleControls(
         _ attachments: RealityViewAttachments,
-        content: RealityViewContent
+        stageRoot: Entity
     ) {
         let controls: [(String, SIMD3<Float>, Bool)] = [
             (familyControlsID, [-0.58, 1.34, -0.92], experience.audienceLens == .family),
@@ -520,7 +602,7 @@ struct StrokeImmersiveView: View {
 
         for (id, position, correctRole) in controls {
             guard let attachment = attachments.entity(for: id) else { continue }
-            if attachment.parent == nil { content.add(attachment) }
+            if attachment.parent == nil { stageRoot.addChild(attachment) }
             attachment.position = position
             attachment.scale = [0.86, 0.86, 0.86]
             attachment.isEnabled = experience.spatialPhase == .explanation && correctRole
@@ -563,9 +645,10 @@ struct StrokeImmersiveView: View {
             .glassBackgroundEffect(in: Capsule())
     }
 
-    private func questionMarkerPosition(in root: Entity) -> SIMD3<Float> {
+    private func questionMarkerPosition(in root: Entity, relativeTo stageRoot: Entity) -> SIMD3<Float> {
         if let placement = experience.placedQuestion {
-            return root.convert(position: placement.rootLocalPosition, to: nil)
+            let scenePosition = root.convert(position: placement.rootLocalPosition, to: nil)
+            return stageRoot.convert(position: scenePosition, from: nil)
         }
         return switch experience.procedureStep {
         case .chooseCase: [-0.18, 1.73, -0.75]
@@ -578,6 +661,17 @@ struct StrokeImmersiveView: View {
         var candidate: Entity? = entity
         while let current = candidate {
             if current.name == StrokeSceneFactory.rootName {
+                return current
+            }
+            candidate = current.parent
+        }
+        return nil
+    }
+
+    private func spatialCaseRoom(for entity: Entity) -> Entity? {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.name == StrokeSceneFactory.spatialCaseRoomName {
                 return current
             }
             candidate = current.parent
@@ -791,6 +885,7 @@ private struct SpatialRoleControls: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let role: StrokeAudienceLens
 
@@ -924,21 +1019,35 @@ private struct SpatialRoleControls: View {
                 .accessibilityLabel("Teaching act \(experience.procedureStep.number): \(stepTitle(experience.procedureStep))")
 
                 Menu {
+                    Section("Perspective") {
+                        ForEach(StrokeAnatomyViewpoint.allCases) { viewpoint in
+                            Button(viewpoint.rawValue, systemImage: viewpoint.systemImage) {
+                                experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)
+                            }
+                        }
+                    }
+                    Divider()
+                    Section("Layers") {
                     ForEach(StrokeAnatomyPresentation.allCases) { presentation in
                         Button(presentation.rawValue) {
                             experience.setAnatomyPresentation(presentation)
                         }
                     }
+                    }
                 } label: {
                     SpatialControlBubbleLabel(
                         title: anatomyBubbleTitle,
-                        systemImage: "circle.lefthalf.filled",
+                        systemImage: experience.anatomyViewpoint.systemImage,
                         accent: .mint,
-                        selected: experience.anatomyPresentation != .assembled
+                        selected: experience.anatomyPresentation != .assembled || experience.anatomyViewpoint != .threeQuarter
                     )
+                } primaryAction: {
+                    experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Anatomy view: \(experience.anatomyPresentation.rawValue)")
+                .accessibilityLabel("Anatomy viewpoint")
+                .accessibilityValue("\(experience.anatomyViewpoint.rawValue), \(experience.anatomyPresentation.rawValue)")
+                .accessibilityHint("Pinch to move to the next view. Open the menu for an exact view or layer style.")
 
                 Menu {
                     ForEach(StrokePointField.allCases) { field in
@@ -1079,7 +1188,10 @@ private struct SpatialRoleControls: View {
     }
 
     private var anatomyBubbleTitle: String {
-        switch experience.anatomyPresentation {
+        if experience.anatomyViewpoint != .threeQuarter {
+            return experience.anatomyViewpoint.shortTitle
+        }
+        return switch experience.anatomyPresentation {
         case .assembled: "Layers"
         case .transparent: "Clear"
         case .exploded: "Apart"

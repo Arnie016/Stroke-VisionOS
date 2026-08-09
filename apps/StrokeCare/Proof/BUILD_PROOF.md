@@ -111,46 +111,27 @@ wearer.
 
 ## XCAT state
 
-`xcrun devicectl list devices` at 01:45 SGT on 2026-08-09 reports XCAT as
-`unavailable` with identifier
-`613CC48C-A6AD-5170-A238-D518B6012491`.
+At 15:53 SGT on 2026-08-09, XCAT was `available (paired)` with identifier
+`613CC48C-A6AD-5170-A238-D518B6012491`. The guarded deployment completed for
+Stroke Care `0.6 (6)`, bundle `com.arnav.StrokeTime`:
 
-The last reachable device inventory reported these historical installations:
+- generic physical visionOS build: PASS
+- designated-requirement and deep signature verification: PASS
+- installation and installed-app query: PASS
+- deterministic `--hackathon-demo` foreground launch: PASS
+- running-process query: PASS (`StrokeTime`, PID 592)
 
-| App | Bundle | Version/build | Evidence |
-| --- | --- | --- | --- |
-| Ashfall Vision | `com.arnav.AshfallVision` | `0.1 (1)` | Installed listing |
-| Stroke Care | `com.arnav.StrokeTime` | `0.3 (3)` | Older signed build installed; foreground launch pending |
+The authoritative local machine receipt is
+`Proof/xcat/20260809-155324/RECEIPT.md`; its JSON and command logs remain beside
+it. The deployment script now queries the current `devicectl` executable URL
+field and permits a short bounded process-registration delay.
 
-The earlier presenter-mode source was signed, built for the physical visionOS
-destination, and installed over `com.arnav.StrokeTime`. A fresh device query at
-17:33 SGT reports Stroke Care `0.3 (3)` installed while XCAT is
-`available (paired)`.
-
-Current `0.6 (6)` has passed the static contract, Simulator build, generic
-physical-device build, signature verification, and XCAT provisioning-profile
-membership check. No 0.6 install or launch has been attempted because the
-device is unavailable. A valid signed bundle is not device execution proof.
-
-Two bounded foreground-launch attempts did not return a launch receipt; the
-second ended with the explicit 20-second command timeout, and a subsequent
-process listing contained no StrokeTime process. Therefore current-version
-launch is **not proven**. The earlier `0.2 (2)` launch receipt does not prove the
-new binary. XCAT reports a passcode is configured and that it has been unlocked
-since boot, but the command line cannot establish that the headset is currently
-worn and ready for foreground activation.
-
-The static verifier deliberately prints `physical_device=NOT_PROVEN` because a
-source scan cannot establish a device result. The historical section above
-proves only the older `0.3 (3)` installation. Install, launch, and wearer
-judgment remain unrun for the current `0.6 (6)` binary.
-
-At 01:45 SGT on 2026-08-09, `devicectl` reported XCAT as paired with Developer
-Mode enabled but `unavailable`, `ddiServicesAvailable=false`, and
-`tunnelState=unavailable`. The device reports visionOS 27.0 beta. Therefore no
-0.6 installation attempt was started;
-the exact next deployment action is to retry once the headset is powered on,
-awake, unlocked, and reachable.
+This proves that the current signed binary was installed, activated, and found
+running on XCAT. It does **not** prove what appeared in the wearer’s field of
+view, comfortable placement, gaze or pinch behavior, audio perception,
+comprehension, or clinical validity. The static source verifier therefore still
+prints `physical_device=NOT_PROVEN`; human device judgment must come from the
+separate wearer receipt.
 
 ## Clinical and procedural gates
 

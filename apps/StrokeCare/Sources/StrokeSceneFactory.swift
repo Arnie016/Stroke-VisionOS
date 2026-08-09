@@ -487,14 +487,21 @@ enum StrokeSceneFactory {
         let arteryCenter = (arteryBounds.min + arteryBounds.max) / 2
         let arterySize = arteryBounds.max - arteryBounds.min
         let frontZ = max(arteryBounds.max.z, brainBounds.max.z) + 0.010
-        let clotCenter = registered.findEntity(named: importedClotName).map {
-            let bounds = $0.visualBounds(relativeTo: registered)
-            return (bounds.min + bounds.max) / 2
-        } ?? arteryCenter
+        let clotBounds = registered.findEntity(named: importedClotName)?.visualBounds(relativeTo: registered)
+        let clotCenter = clotBounds.map { ($0.min + $0.max) / 2 } ?? arteryCenter
+        let clotSurfaceMarker = clotBounds.map { bounds in
+            let center = (bounds.min + bounds.max) / 2
+            return SIMD3<Float>(center.x, center.y, bounds.max.z + 0.003)
+        } ?? clotCenter
         let registeredFlowPoints: [SIMD3<Float>] = [
             [arteryCenter.x - arterySize.x * 0.12, arteryBounds.min.y + arterySize.y * 0.14, frontZ],
             [arteryCenter.x - arterySize.x * 0.08, arteryBounds.min.y + arterySize.y * 0.38, frontZ],
-            [clotCenter.x, clotCenter.y, frontZ + 0.004],
+            // Point 2 is the one coordinate we can bind to an authored
+            // registered object today: 3 mm beyond the actual clot surface.
+            // It stays visibly attached instead of being hidden inside it. The
+            // remaining flow-story points stay coarse discovery cues pending
+            // reviewed FLOW_ANCHOR exports; they are not anatomical landmarks.
+            clotSurfaceMarker,
             [arteryCenter.x + arterySize.x * 0.10, arteryBounds.min.y + arterySize.y * 0.67, frontZ],
             [brainCenter.x + brainRadii.x * 0.40, brainCenter.y + brainRadii.y * 0.24, frontZ]
         ]
@@ -1365,10 +1372,16 @@ enum StrokeSceneFactory {
 
         let active = experience.pointField == .regions ? regionField : procedureField
         if let active {
-            let revealAll = experience.anatomyPresentation == .transparent || (
-                experience.audienceLens == .family &&
-                experience.procedureStep == .discussCare &&
-                experience.careViewPermissionGranted
+            // All region anchors can be inspected through the transparent
+            // cortex because they are bound to the registered brain envelope.
+            // Procedure points 0/1/3/4 remain single-focus only until reviewed
+            // FLOW_ANCHOR exports replace their coarse screen-plane positions.
+            let revealAll = experience.pointField == .regions && (
+                experience.anatomyPresentation == .transparent || (
+                    experience.audienceLens == .family &&
+                    experience.procedureStep == .discussCare &&
+                    experience.careViewPermissionGranted
+                )
             )
             for (index, child) in active.children.enumerated() {
                 guard let point = child as? ModelEntity else { continue }
