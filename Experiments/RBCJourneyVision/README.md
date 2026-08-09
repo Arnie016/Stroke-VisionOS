@@ -48,6 +48,23 @@ region arrives around the unchanged observation origin. The reel reports
 short, nearly static threshold. This is an authored spatial transition, not
 physical travel or camera locomotion.
 
+## Circle crossroads — network to branch
+
+The **Circle** destination now replaces its static hero view with a continuous
+room-scale teaching network. Twenty-six UV-capable native tube meshes separate
+the paired carotid approach, basilar approach, communicating connections, and
+major anterior/posterior continuations in depth. Sixteen small arrowhead-and-
+tail fronts move along vessel tangents. Connecting paths have no arrows because
+their lesson is anatomical connection—not a claim that collateral flow always
+travels in one direction.
+
+**Whole circle**, **Anterior**, and **Posterior** are explicit user choices in
+the existing information surface. Choosing one lifts that route family, recedes
+the other, and gently recomposes the authored world around the stationary
+wearer. It does not move an app camera. The direction, timing, thickness,
+branching, and geometry are qualitative and generic: this is not patient
+anatomy, measured hemodynamics, CFD, perfusion, or collateral-flow prediction.
+
 ## Brain Observatory — frontal region slice
 
 The frontal destination is a bounded prototype of a broader **brain
@@ -358,6 +375,9 @@ Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
 user-selected transfers. Combine any ride state with `--proof-paused` to render
 the exact held-flow and **Resume ride** state. The optional guide state is
 `--proof-flow-ride --proof-family-guide`.
+The Circle network uses `--proof-willis-route-overview`,
+`--proof-willis-route-anterior`, and `--proof-willis-route-posterior` for its
+three deterministic focus states.
 
 ## Fluid R&D boundary
 

@@ -367,6 +367,53 @@ enum RBCBrainRegionDestination: Int, CaseIterable, Identifiable {
     }
 }
 
+enum RBCWillisRouteFocus: String, CaseIterable, Identifiable {
+    case overview
+    case anterior
+    case posterior
+
+    var id: String { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .overview: "Whole circle"
+        case .anterior: "Anterior"
+        case .posterior: "Posterior"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .overview: "A crossroads at the brain's base"
+        case .anterior: "Follow the anterior route"
+        case .posterior: "Follow the posterior route"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .overview:
+            "Paired internal carotid routes and the basilar route meet through communicating arteries. Follow the moving fronts to see how the network connects."
+        case .anterior:
+            "The anterior reading lifts the paired carotid approach and the routes continuing toward the front while the posterior network recedes."
+        case .posterior:
+            "The posterior reading lifts the basilar approach and the routes continuing toward the back while the anterior network recedes."
+        }
+    }
+
+    var fact: String {
+        "Circle of Willis anatomy varies between people. These arrows show qualitative teaching directions, not an individual's collateral flow."
+    }
+
+    var systemImage: String {
+        switch self {
+        case .overview: "point.3.connected.trianglepath.dotted"
+        case .anterior: "arrow.up.and.line.horizontal.and.arrow.down"
+        case .posterior: "arrow.triangle.branch"
+        }
+    }
+}
+
 enum RBCRegionVisualizationMode: String, CaseIterable, Identifiable {
     case locate
     case xray
@@ -601,6 +648,7 @@ final class RBCJourneyModel {
     var pendingRegionDestination: RBCBrainRegionDestination?
     var regionTransferRun = 0
     var regionVisualization: RBCRegionVisualizationMode
+    var willisRouteFocus: RBCWillisRouteFocus
     var flowRideRoute: RBCFlowRideRoute = .overview
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
@@ -676,6 +724,9 @@ final class RBCJourneyModel {
         let requestedRegionTransitionProgress = regionTransitionProgressArgument.flatMap {
             Float($0.replacingOccurrences(of: "--proof-region-transition-progress-", with: ""))
         }
+        let willisRouteProofRequested = arguments.contains("--proof-willis-route-overview")
+            || arguments.contains("--proof-willis-route-anterior")
+            || arguments.contains("--proof-willis-route-posterior")
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
@@ -684,17 +735,28 @@ final class RBCJourneyModel {
         let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-family-guide-beat-", with: ""))
         }
-        let initialRegionDestination = initialPendingRegionDestination == nil && flowRideProofRequested
-            ? RBCBrainRegionDestination.arterialLumen
-            : (initialPendingRegionDestination == nil
-                ? regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
-                : nil)
+        let initialRegionDestination: RBCBrainRegionDestination? = if initialPendingRegionDestination != nil {
+            nil
+        } else if flowRideProofRequested {
+            .arterialLumen
+        } else if willisRouteProofRequested {
+            .circleOfWillis
+        } else {
+            regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
+        }
         regionVisualization = if arguments.contains("--proof-region-mode-xray") {
             .xray
         } else if arguments.contains("--proof-region-mode-flow") {
             .flow
         } else {
             .locate
+        }
+        willisRouteFocus = if arguments.contains("--proof-willis-route-anterior") {
+            .anterior
+        } else if arguments.contains("--proof-willis-route-posterior") {
+            .posterior
+        } else {
+            .overview
         }
         isFrontalClotScenarioActive = arguments.contains("--proof-frontal-clot")
         isFlowRideActive = flowRideProofRequested
@@ -778,6 +840,7 @@ final class RBCJourneyModel {
             || regionArgument != nil
             || regionTransitionArgument != nil
             || regionTransitionProgressArgument != nil
+            || willisRouteProofRequested
             || preludeArgument != nil
             || arguments.contains("--proof-comfort-still")
             || arguments.contains("--proof-paused")
@@ -834,6 +897,10 @@ final class RBCJourneyModel {
     var regionTransferDurationMilliseconds: Int {
         effectiveReducedMotion ? 420 : 1_450
     }
+
+    var activeWillisTitle: String { willisRouteFocus.title }
+    var activeWillisSubtitle: String { willisRouteFocus.subtitle }
+    var activeWillisFact: String { willisRouteFocus.fact }
 
     var familyNarrationProgressLabel: String {
         "FAMILY GUIDE  ·  \(familyNarrationMoment.guidanceVerb)  ·  \(familyNarrationMoment.number) / 03"
@@ -1020,6 +1087,7 @@ final class RBCJourneyModel {
         focusedPortalID = nil
         transferredPortalID = destination.id
         regionVisualization = .locate
+        willisRouteFocus = .overview
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         isPaused = destination == .arterialLumen || destination == .corticalExchange
@@ -1045,6 +1113,14 @@ final class RBCJourneyModel {
     func completePendingRegionTransfer() {
         guard let destination = pendingRegionDestination else { return }
         enterRegion(destination)
+    }
+
+    func selectWillisRouteFocus(_ focus: RBCWillisRouteFocus) {
+        guard activeRegionDestination == .circleOfWillis,
+              pendingRegionDestination == nil
+        else { return }
+        willisRouteFocus = focus
+        isPaused = false
     }
 
     /// Standard gaze + pinch discovery: first pinch enters a region; later

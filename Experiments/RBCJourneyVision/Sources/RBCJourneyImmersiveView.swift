@@ -51,6 +51,7 @@ struct RBCJourneyImmersiveView: View {
                     pendingRegionID: model.pendingRegionDestination?.id,
                     regionTransferProofProgress: model.regionTransferProofProgress,
                     regionVisualization: model.regionVisualization,
+                    willisRouteFocus: model.willisRouteFocus,
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
                     flowRideActive: model.isFlowRideActive,
                     flowRideRoute: model.flowRideRoute,

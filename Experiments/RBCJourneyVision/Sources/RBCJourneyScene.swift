@@ -5,6 +5,17 @@ import UIKit
 
 @MainActor
 final class RBCJourneyScene {
+    private enum WillisPathFamily {
+        case anterior
+        case posterior
+        case connector
+    }
+
+    private struct WillisPathRecord {
+        let points: [SIMD3<Float>]
+        let family: WillisPathFamily
+    }
+
     let root = Entity()
 
     private let worldRoot = Entity()
@@ -20,6 +31,10 @@ final class RBCJourneyScene {
     private let regionInteriorRoot = Entity()
     private let regionGuideRoot = Entity()
     private let regionTransferThresholdRoot = Entity()
+    private let willisNetworkRoot = Entity()
+    private let willisAnteriorRouteRoot = Entity()
+    private let willisPosteriorRouteRoot = Entity()
+    private let willisConnectorRoot = Entity()
     private let flowRideRoot = Entity()
     private let flowRideDirectionFieldRoot = Entity()
     private let flowRideInteriorShellRoot = Entity()
@@ -82,6 +97,18 @@ final class RBCJourneyScene {
     private var regionTransferElapsed: Float = 0
     private var regionTransferReducedMotion = false
     private var regionTransferVisualProgress: Float = 0
+    private weak var willisAuthoredHero: Entity?
+    private weak var willisArterialContext: Entity?
+    private var willisFlowPaths: [WillisPathRecord] = []
+    private var willisFlowFronts: [(
+        entity: Entity,
+        pathIndex: Int,
+        offset: Float
+    )] = []
+    private var willisRuntimeActive = false
+    private var willisRuntimeHeld = false
+    private var willisRuntimeFocus: RBCWillisRouteFocus = .overview
+    private var willisElapsed: Float = 0
     private var flowRideCells: [(
         entity: Entity,
         origin: SIMD3<Float>,
@@ -159,6 +186,10 @@ final class RBCJourneyScene {
         regionInteriorRoot.name = "user-controlled-region-transfer"
         regionGuideRoot.name = "surrounding-brain-orientation-guides"
         regionTransferThresholdRoot.name = "region-transfer-threshold-stationary-wearer-no-camera-locomotion"
+        willisNetworkRoot.name = "room-scale-circle-of-willis-network-not-patient-specific"
+        willisAnteriorRouteRoot.name = "qualitative-anterior-route-family"
+        willisPosteriorRouteRoot.name = "qualitative-posterior-route-family"
+        willisConnectorRoot.name = "communicating-artery-connection-family-no-fixed-flow-claim"
         flowRideRoot.name = "inside-arterial-lumen-flow-ride"
         flowRideDirectionFieldRoot.name = "continuous-intraluminal-direction-field-not-cfd"
         flowRideInteriorShellRoot.name = "native-inward-facing-arterial-corridor"
@@ -195,6 +226,7 @@ final class RBCJourneyScene {
         await buildRegisteredAnatomy()
         await buildPortals()
         buildExtendedRegionInteriors()
+        buildWillisNetworkInterior()
         buildFrontalRegionInterior()
         buildCorticalMicroarchitectureInterior()
         buildRegionTransferThreshold()
@@ -211,6 +243,7 @@ final class RBCJourneyScene {
             let deltaTime = Float(event.deltaTime)
             Task { @MainActor [weak self] in
                 self?.advanceRegionTransferFrame(deltaTime: deltaTime)
+                self?.advanceWillisNetworkFrame(deltaTime: deltaTime)
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceFlowRideFrame(deltaTime: deltaTime)
             }
@@ -228,6 +261,7 @@ final class RBCJourneyScene {
         pendingRegionID: Int?,
         regionTransferProofProgress: Float?,
         regionVisualization: RBCRegionVisualizationMode,
+        willisRouteFocus: RBCWillisRouteFocus,
         frontalClotScenarioActive: Bool,
         flowRideActive: Bool,
         flowRideRoute: RBCFlowRideRoute,
@@ -247,6 +281,7 @@ final class RBCJourneyScene {
         let regionTransferPending = pendingRegionID != nil && !preludeActive
         let renderedRegionID = pendingRegionID ?? transferredPortalID
         let frontalRegionActive = renderedRegionID == RBCBrainRegionDestination.frontalLobe.id
+        let willisRegionActive = renderedRegionID == RBCBrainRegionDestination.circleOfWillis.id
         let lumenRideActive = flowRideActive
             && transferredPortalID == RBCBrainRegionDestination.arterialLumen.id
             && !preludeActive
@@ -312,6 +347,12 @@ final class RBCJourneyScene {
             visualization: regionVisualization,
             time: t,
             motionHeld: motionHeld
+        )
+        updateWillisNetwork(
+            active: willisRegionActive,
+            focus: willisRouteFocus,
+            motionHeld: motionHeld,
+            reducedMotion: reducedMotion
         )
         updateFlowRide(
             active: lumenRideActive,
@@ -1120,6 +1161,9 @@ final class RBCJourneyScene {
             normalize(regionHero, targetExtent: definition.id == 1 ? 2.15 : 1.85)
             regionHero.position += [0, 1.44, -1.32]
             region.addChild(regionHero)
+            if definition.id == RBCBrainRegionDestination.circleOfWillis.id {
+                willisAuthoredHero = regionHero
+            }
 
             if definition.id == 1, let arteryLayer {
                 let arterialContext = arteryLayer.clone(recursive: true)
@@ -1128,6 +1172,7 @@ final class RBCJourneyScene {
                 arterialContext.position += [0, 1.43, -1.48]
                 arterialContext.components.set(OpacityComponent(opacity: 0.42))
                 region.addChild(arterialContext)
+                willisArterialContext = arterialContext
             }
             region.isEnabled = false
             regionInteriorRoot.addChild(region)
@@ -1250,6 +1295,342 @@ final class RBCJourneyScene {
                 name: "deep-structures-region-portal",
                 targetExtent: 1.90
             )
+        }
+    }
+
+    /// A room-scale teaching map of the arterial crossroads. The authored
+    /// asset remains as dim anatomical context; these continuous native paths
+    /// provide readable direction and a user-controlled anterior/posterior
+    /// emphasis. Connecting paths intentionally carry no arrowheads because
+    /// this generic lesson must not imply a universal collateral-flow pattern.
+    private func buildWillisNetworkInterior() {
+        let id = RBCBrainRegionDestination.circleOfWillis.id
+        guard let region = regionInteriors[id] else { return }
+
+        willisNetworkRoot.addChild(willisAnteriorRouteRoot)
+        willisNetworkRoot.addChild(willisPosteriorRouteRoot)
+        willisNetworkRoot.addChild(willisConnectorRoot)
+        region.addChild(willisNetworkRoot)
+        // The imported Circle hero is useful as portal provenance but, at room
+        // scale, its dark tubes and orange cuffs compete with this directional
+        // lesson. Keep only the registered arterial-tree context here.
+        willisAuthoredHero?.isEnabled = false
+
+        let arterialWallMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.46, green: 0.012, blue: 0.026, alpha: 0.84),
+            emissive: UIColor(red: 0.76, green: 0.018, blue: 0.034, alpha: 1)
+        )
+        let flowCoreMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.25, blue: 0.16, alpha: 0.34),
+            intensity: 1.25
+        )
+        let connectorMaterial = tissueContextMaterial(
+            color: UIColor(red: 0.42, green: 0.17, blue: 0.12, alpha: 0.52),
+            emissive: UIColor(red: 0.72, green: 0.34, blue: 0.20, alpha: 1)
+        )
+        let flowFrontMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.76, blue: 0.42, alpha: 0.98),
+            intensity: 4.0
+        )
+
+        typealias PathSpec = (
+            name: String,
+            family: WillisPathFamily,
+            controls: (SIMD3<Float>, SIMD3<Float>, SIMD3<Float>, SIMD3<Float>),
+            startRadius: Float,
+            endRadius: Float,
+            fronts: Int
+        )
+        let specs: [PathSpec] = [
+            (
+                "left-internal-carotid-approach", .anterior,
+                ([-0.66, 0.42, -1.04], [-0.70, 0.76, -1.16], [-0.54, 1.10, -1.30], [-0.43, 1.30, -1.39]),
+                0.021, 0.016, 2
+            ),
+            (
+                "right-internal-carotid-approach", .anterior,
+                ([0.66, 0.42, -1.04], [0.70, 0.76, -1.16], [0.54, 1.10, -1.30], [0.43, 1.30, -1.39]),
+                0.021, 0.016, 2
+            ),
+            (
+                "basilar-approach", .posterior,
+                ([0, 0.38, -2.10], [0.02, 0.70, -2.02], [-0.02, 0.96, -1.86], [0, 1.16, -1.74]),
+                0.022, 0.016, 2
+            ),
+            (
+                "left-posterior-cerebral-outflow", .posterior,
+                ([0, 1.16, -1.74], [-0.22, 1.22, -1.86], [-0.64, 1.30, -2.02], [-1.12, 1.38, -2.10]),
+                0.015, 0.009, 1
+            ),
+            (
+                "right-posterior-cerebral-outflow", .posterior,
+                ([0, 1.16, -1.74], [0.22, 1.22, -1.86], [0.64, 1.30, -2.02], [1.12, 1.38, -2.10]),
+                0.015, 0.009, 1
+            ),
+            (
+                "left-posterior-communicating-connection", .connector,
+                ([-0.48, 1.27, -1.96], [-0.52, 1.24, -1.78], [-0.49, 1.27, -1.54], [-0.43, 1.30, -1.39]),
+                0.009, 0.008, 0
+            ),
+            (
+                "right-posterior-communicating-connection", .connector,
+                ([0.48, 1.27, -1.96], [0.52, 1.24, -1.78], [0.49, 1.27, -1.54], [0.43, 1.30, -1.39]),
+                0.009, 0.008, 0
+            ),
+            (
+                "left-anterior-cerebral-a1", .anterior,
+                ([-0.43, 1.30, -1.39], [-0.34, 1.37, -1.42], [-0.22, 1.45, -1.44], [-0.09, 1.50, -1.44]),
+                0.013, 0.009, 1
+            ),
+            (
+                "right-anterior-cerebral-a1", .anterior,
+                ([0.43, 1.30, -1.39], [0.34, 1.37, -1.42], [0.22, 1.45, -1.44], [0.09, 1.50, -1.44]),
+                0.013, 0.009, 1
+            ),
+            (
+                "anterior-communicating-connection", .connector,
+                ([-0.09, 1.50, -1.44], [-0.03, 1.53, -1.45], [0.03, 1.53, -1.45], [0.09, 1.50, -1.44]),
+                0.007, 0.007, 0
+            ),
+            (
+                "left-anterior-cerebral-continuation", .anterior,
+                ([-0.09, 1.50, -1.44], [-0.13, 1.68, -1.47], [-0.24, 1.90, -1.45], [-0.36, 2.12, -1.39]),
+                0.009, 0.004, 1
+            ),
+            (
+                "right-anterior-cerebral-continuation", .anterior,
+                ([0.09, 1.50, -1.44], [0.13, 1.68, -1.47], [0.24, 1.90, -1.45], [0.36, 2.12, -1.39]),
+                0.009, 0.004, 1
+            ),
+            (
+                "left-middle-cerebral-outflow", .anterior,
+                ([-0.43, 1.30, -1.39], [-0.63, 1.40, -1.29], [-0.90, 1.53, -1.16], [-1.30, 1.70, -1.02]),
+                0.014, 0.006, 2
+            ),
+            (
+                "right-middle-cerebral-outflow", .anterior,
+                ([0.43, 1.30, -1.39], [0.63, 1.40, -1.29], [0.90, 1.53, -1.16], [1.30, 1.70, -1.02]),
+                0.014, 0.006, 2
+            ),
+            (
+                "left-middle-cerebral-superior-branch", .anterior,
+                ([-1.30, 1.70, -1.02], [-1.38, 1.80, -1.06], [-1.50, 1.90, -1.14], [-1.64, 2.00, -1.22]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "left-middle-cerebral-inferior-branch", .anterior,
+                ([-1.30, 1.70, -1.02], [-1.39, 1.63, -0.98], [-1.49, 1.52, -0.93], [-1.58, 1.42, -0.90]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "right-middle-cerebral-superior-branch", .anterior,
+                ([1.30, 1.70, -1.02], [1.38, 1.80, -1.06], [1.50, 1.90, -1.14], [1.64, 2.00, -1.22]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "right-middle-cerebral-inferior-branch", .anterior,
+                ([1.30, 1.70, -1.02], [1.39, 1.63, -0.98], [1.49, 1.52, -0.93], [1.58, 1.42, -0.90]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "left-anterior-cerebral-medial-branch", .anterior,
+                ([-0.36, 2.12, -1.39], [-0.39, 2.24, -1.43], [-0.47, 2.34, -1.50], [-0.56, 2.42, -1.57]),
+                0.004, 0.0018, 0
+            ),
+            (
+                "right-anterior-cerebral-medial-branch", .anterior,
+                ([0.36, 2.12, -1.39], [0.39, 2.24, -1.43], [0.47, 2.34, -1.50], [0.56, 2.42, -1.57]),
+                0.004, 0.0018, 0
+            ),
+            (
+                "left-anterior-cerebral-forward-branch", .anterior,
+                ([-0.36, 2.12, -1.39], [-0.33, 2.26, -1.33], [-0.28, 2.38, -1.25], [-0.22, 2.48, -1.18]),
+                0.004, 0.0018, 0
+            ),
+            (
+                "right-anterior-cerebral-forward-branch", .anterior,
+                ([0.36, 2.12, -1.39], [0.33, 2.26, -1.33], [0.28, 2.38, -1.25], [0.22, 2.48, -1.18]),
+                0.004, 0.0018, 0
+            ),
+            (
+                "left-posterior-cerebral-lateral-branch", .posterior,
+                ([-1.12, 1.38, -2.10], [-1.24, 1.44, -2.16], [-1.38, 1.53, -2.22], [-1.54, 1.62, -2.28]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "right-posterior-cerebral-lateral-branch", .posterior,
+                ([1.12, 1.38, -2.10], [1.24, 1.44, -2.16], [1.38, 1.53, -2.22], [1.54, 1.62, -2.28]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "left-posterior-cerebral-inferior-branch", .posterior,
+                ([-1.12, 1.38, -2.10], [-1.20, 1.29, -2.18], [-1.28, 1.19, -2.25], [-1.36, 1.10, -2.31]),
+                0.006, 0.0025, 0
+            ),
+            (
+                "right-posterior-cerebral-inferior-branch", .posterior,
+                ([1.12, 1.38, -2.10], [1.20, 1.29, -2.18], [1.28, 1.19, -2.25], [1.36, 1.10, -2.31]),
+                0.006, 0.0025, 0
+            ),
+        ]
+
+        let arrowHeadMesh = MeshResource.generateCone(height: 0.026, radius: 0.0085)
+        let arrowTailMesh = MeshResource.generateCylinder(height: 0.038, radius: 0.0023)
+        for (pathIndex, spec) in specs.enumerated() {
+            let path = sampleCubicBezier(
+                spec.controls.0,
+                spec.controls.1,
+                spec.controls.2,
+                spec.controls.3,
+                samples: 54
+            )
+            willisFlowPaths.append(WillisPathRecord(points: path, family: spec.family))
+            let parent: Entity = switch spec.family {
+            case .anterior: willisAnteriorRouteRoot
+            case .posterior: willisPosteriorRouteRoot
+            case .connector: willisConnectorRoot
+            }
+            let wallMaterial = spec.family == .connector ? connectorMaterial : arterialWallMaterial
+            addContinuousTubePath(
+                path,
+                to: parent,
+                startRadius: spec.startRadius,
+                endRadius: spec.endRadius,
+                material: wallMaterial,
+                name: "willis-\(spec.name)-continuous-wall",
+                radialSegments: 18
+            )
+            if spec.family != .connector {
+                addContinuousTubePath(
+                    path,
+                    to: parent,
+                    startRadius: spec.startRadius * 0.30,
+                    endRadius: spec.endRadius * 0.32,
+                    material: flowCoreMaterial,
+                    name: "willis-\(spec.name)-continuous-flow-core",
+                    radialSegments: 10
+                )
+            }
+            for frontIndex in 0..<spec.fronts {
+                let front = Entity()
+                front.name = "willis-tangent-flow-front-\(spec.name)-\(frontIndex)"
+                let head = ModelEntity(mesh: arrowHeadMesh, materials: [flowFrontMaterial])
+                head.name = "willis-flow-front-arrowhead"
+                head.position.y = 0.025
+                let tail = ModelEntity(mesh: arrowTailMesh, materials: [flowFrontMaterial])
+                tail.name = "willis-flow-front-tail"
+                tail.position.y = -0.026
+                front.addChild(head)
+                front.addChild(tail)
+                parent.addChild(front)
+                willisFlowFronts.append((
+                    front,
+                    pathIndex,
+                    (Float(frontIndex) / Float(max(spec.fronts, 1)) + Float(pathIndex) * 0.083)
+                        .truncatingRemainder(dividingBy: 1)
+                ))
+            }
+        }
+
+        let junctionMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.48, blue: 0.30, alpha: 0.84),
+            intensity: 2.5
+        )
+        let junctionMesh = MeshResource.generateSphere(radius: 0.013)
+        let junctions: [SIMD3<Float>] = [
+            [-0.43, 1.30, -1.39], [0.43, 1.30, -1.39],
+            [0, 1.16, -1.74], [-0.09, 1.50, -1.44], [0.09, 1.50, -1.44],
+        ]
+        for (index, position) in junctions.enumerated() {
+            let junction = ModelEntity(mesh: junctionMesh, materials: [junctionMaterial])
+            junction.name = "willis-network-junction-\(index)"
+            junction.position = position
+            willisConnectorRoot.addChild(junction)
+        }
+
+        willisNetworkRoot.isEnabled = false
+        print("RBC_WILLIS_NETWORK=READY paths=26 moving_fronts=16 connector_fronts=0 stable_wearer=true")
+    }
+
+    private func updateWillisNetwork(
+        active: Bool,
+        focus: RBCWillisRouteFocus,
+        motionHeld: Bool,
+        reducedMotion: Bool
+    ) {
+        willisRuntimeActive = active
+        willisRuntimeHeld = motionHeld
+        willisRuntimeFocus = focus
+        willisNetworkRoot.isEnabled = active
+        guard active else { return }
+
+        let anteriorOpacity: Float
+        let posteriorOpacity: Float
+        let connectorOpacity: Float
+        let targetScale: Float
+        let targetPosition: SIMD3<Float>
+        switch focus {
+        case .overview:
+            anteriorOpacity = 0.90
+            posteriorOpacity = 0.68
+            connectorOpacity = 0.72
+            targetScale = 1
+            targetPosition = .zero
+        case .anterior:
+            anteriorOpacity = 1
+            posteriorOpacity = 0.09
+            connectorOpacity = 0.38
+            targetScale = 1.10
+            targetPosition = [0, -0.045, 0.10]
+        case .posterior:
+            anteriorOpacity = 0.09
+            posteriorOpacity = 1
+            connectorOpacity = 0.38
+            targetScale = 1.12
+            targetPosition = [0, 0.035, 0.15]
+        }
+        willisAnteriorRouteRoot.components.set(OpacityComponent(opacity: anteriorOpacity))
+        willisPosteriorRouteRoot.components.set(OpacityComponent(opacity: posteriorOpacity))
+        willisConnectorRoot.components.set(OpacityComponent(opacity: connectorOpacity))
+        willisArterialContext?.components.set(OpacityComponent(opacity: focus == .overview ? 0.10 : 0.035))
+
+        let targetScaleVector = SIMD3<Float>(repeating: targetScale)
+        if reducedMotion {
+            willisNetworkRoot.scale = targetScaleVector
+            willisNetworkRoot.position = targetPosition
+        } else {
+            willisNetworkRoot.scale += (targetScaleVector - willisNetworkRoot.scale) * 0.16
+            willisNetworkRoot.position += (targetPosition - willisNetworkRoot.position) * 0.16
+        }
+        applyWillisFlowFrame()
+    }
+
+    private func advanceWillisNetworkFrame(deltaTime: Float) {
+        guard willisRuntimeActive, !willisRuntimeHeld else { return }
+        willisElapsed += deltaTime
+        applyWillisFlowFrame()
+    }
+
+    private func applyWillisFlowFrame() {
+        guard !willisFlowPaths.isEmpty else { return }
+        for front in willisFlowFronts {
+            guard willisFlowPaths.indices.contains(front.pathIndex) else { continue }
+            let record = willisFlowPaths[front.pathIndex]
+            let speed: Float = record.family == .posterior ? 0.105 : 0.125
+            let progress = (willisElapsed * speed + front.offset)
+                .truncatingRemainder(dividingBy: 1)
+            let point = interpolatedPoint(on: record.points, progress: progress)
+            let ahead = interpolatedPoint(on: record.points, progress: min(progress + 0.012, 1))
+            let behind = interpolatedPoint(on: record.points, progress: max(progress - 0.012, 0))
+            let tangent = ahead - behind
+            front.entity.position = point
+            if simd_length_squared(tangent) > 0.000_001 {
+                front.entity.orientation = simd_quatf(from: [0, 1, 0], to: simd_normalize(tangent))
+            }
+            let selected = willisRuntimeFocus == .overview
+                || (willisRuntimeFocus == .anterior && record.family == .anterior)
+                || (willisRuntimeFocus == .posterior && record.family == .posterior)
+            front.entity.isEnabled = selected
         }
     }
 
@@ -3022,6 +3403,30 @@ final class RBCJourneyScene {
             segment.orientation = simd_quatf(from: [0, 1, 0], to: delta / length)
             parent.addChild(segment)
         }
+    }
+
+    private func addContinuousTubePath(
+        _ points: [SIMD3<Float>],
+        to parent: Entity,
+        startRadius: Float,
+        endRadius: Float,
+        material: RealityKit.Material,
+        name: String,
+        radialSegments: Int
+    ) {
+        guard let mesh = try? makeInwardFacingTubeMesh(
+            path: points,
+            startRadius: startRadius,
+            endRadius: endRadius,
+            radialSegments: radialSegments,
+            name: name,
+            inwardFacing: false,
+            longitudinalRepeatsPerMeter: 4,
+            circumferentialRepeats: 1
+        ) else { return }
+        let tube = ModelEntity(mesh: mesh, materials: [material])
+        tube.name = name
+        parent.addChild(tube)
     }
 
     private func addTaperedTubePath(

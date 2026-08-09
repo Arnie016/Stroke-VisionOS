@@ -17,6 +17,10 @@ video cannot.
 - Cortical microarchitecture: a room-scale six-layer teaching fold with five
   explicitly simplified radial guides and pial → penetrating → capillary Flow;
   it is not uniform functional modules, histology, CFD, or patient anatomy.
+- Circle crossroads: 26 continuous native arterial paths, 16 tangent-aligned
+  qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
+  communicating paths carry no fixed-direction arrows because this is not an
+  individual's collateral-flow pattern.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,

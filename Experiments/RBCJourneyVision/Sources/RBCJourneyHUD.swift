@@ -260,6 +260,7 @@ struct RBCRegionInfoHUD: View {
         if let region = model.activeRegionDestination {
             let exampleClotActive = region == .frontalLobe && model.isFrontalClotScenarioActive
             let flowRideActive = region == .arterialLumen && model.isFlowRideActive
+            let willisRouteActive = region == .circleOfWillis
             VStack(alignment: .leading, spacing: 9) {
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationProgressLabel
@@ -272,29 +273,44 @@ struct RBCRegionInfoHUD: View {
                     ? model.familyNarrationCue.title
                     : (flowRideActive
                         ? model.activeFlowRideTitle
-                        : (exampleClotActive ? "One branch, interrupted" : region.title)))
+                        : (willisRouteActive
+                            ? model.activeWillisTitle
+                            : (exampleClotActive ? "One branch, interrupted" : region.title))))
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationCue.caption
                     : (flowRideActive
                         ? model.activeFlowRideSubtitle
-                        : (exampleClotActive
+                        : (willisRouteActive
+                            ? model.activeWillisSubtitle
+                            : (exampleClotActive
                             ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                            : region.subtitle)))
+                            : region.subtitle))))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
 
                 Label(flowRideActive
                     ? model.activeFlowRideFact
-                    : (exampleClotActive
+                    : (willisRouteActive
+                        ? model.activeWillisFact
+                        : (exampleClotActive
                         ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                        : region.fact),
+                        : region.fact)),
                     systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
                     .fixedSize(horizontal: false, vertical: true)
+
+                if willisRouteActive {
+                    HStack(spacing: 7) {
+                        ForEach(RBCWillisRouteFocus.allCases) { focus in
+                            RBCWillisRouteFocusButton(focus: focus)
+                        }
+                    }
+                    .buttonBorderShape(.capsule)
+                }
 
                 if region == .frontalLobe || region == .corticalMicroarchitecture {
                     HStack(spacing: 7) {
@@ -507,6 +523,28 @@ private struct RBCRegionModeButton: View {
         .tint(selected ? (mode == .flow ? .pink : Color(red: 0.31, green: 0.68, blue: 0.62)) : .white.opacity(0.34))
         .background(selected ? Color.white.opacity(0.08) : .clear, in: .capsule)
         .accessibilityLabel("Show \(mode.title) view for \(regionTitle)")
+    }
+}
+
+private struct RBCWillisRouteFocusButton: View {
+    @Environment(RBCJourneyModel.self) private var model
+    let focus: RBCWillisRouteFocus
+
+    var body: some View {
+        let selected = focus == model.willisRouteFocus
+        Button(focus.shortTitle, systemImage: focus.systemImage) {
+            withAnimation(.easeInOut(duration: 0.34)) {
+                model.selectWillisRouteFocus(focus)
+            }
+        }
+        .font(.caption.weight(.semibold))
+        .buttonStyle(.bordered)
+        .tint(selected
+            ? (focus == .posterior
+                ? Color(red: 0.34, green: 0.72, blue: 0.78)
+                : Color(red: 0.94, green: 0.28, blue: 0.32))
+            : .white.opacity(0.30))
+        .accessibilityLabel("Show \(focus.shortTitle.lowercased()) Circle of Willis routes")
     }
 }
 
