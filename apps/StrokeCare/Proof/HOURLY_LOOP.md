@@ -875,3 +875,24 @@
 - Next safe action: on an awake and unlocked XCAT, pinch one unselected point,
   confirm exactly one reference appears, then change the timeline step and
   confirm the reference clears before the next point choice.
+
+## 2026-08-10 07:37 SGT — one selected point, one teaching lane
+
+- Target: remove the visual competition between a selected point's local
+  teaching reference and the checkpoint-level access-skull context.
+- Bounded action: made the large access reference conditional on there being no
+  selected point, leaving the central anatomy, point state, and checkpoint
+  timeline unchanged; captured the same deterministic route again.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (26)` with 17 USDZs; the installed process
+  remained listed; Proof 92 is 3840×2160 with SHA-256
+  `c9eac95d…3bf8c3f` and visibly shows one selected disclosure and one right
+  affected-vessel reference without the competing separated skull.
+- Verdict: `IMPROVED` — point selection now produces one dominant explanatory
+  relationship instead of two simultaneous secondary anatomy stories.
+- Blocker: XCAT is unavailable, and Simulator cannot establish physical
+  gaze-and-pinch reliability, stereo depth, comfort, AirPlay legibility,
+  anatomical registration, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, select and clear the same
+  point once; verify that one local reference appears on selection and that the
+  broader access context returns only after clearing it.

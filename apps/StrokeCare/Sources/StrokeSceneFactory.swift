@@ -2018,7 +2018,8 @@ enum StrokeSceneFactory {
         let isClinicianExplanation = experience.audienceLens == .clinician &&
             experience.spatialPhase == .explanation
         let showsAccessReference = isClinicianExplanation &&
-            experience.presenterTeachingBeat == .discussAccess
+            experience.presenterTeachingBeat == .discussAccess &&
+            experience.selectedPointEntityName == nil
         let showsProtectiveCovering = isClinicianExplanation &&
             experience.presenterTeachingBeat == .protectiveCovering &&
             experience.careViewPermissionGranted

@@ -23,19 +23,19 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
-Build `0.6 (25)` preserves the doctor-presenter's six distinct checkpoints and
-adds a Scholar-only **Surface** focus: an authored HRA scalp cutaway and a
-separate eye-context reference restore exterior orientation without closing the
-view over the central brain. The cutaway is illustrative—not an incision or
-patient-specific craniotomy—and the eye fit remains approximate pending review.
+Build `0.6 (26)` gives a selected anatomy point one clear teaching lane. The
+central registered brain, attached region points, direct viewpoints, reference
+depth, and six-stop presenter timeline stay visible; one selected point opens
+one local disclosure and one affected-vessel reference. While that point is
+selected, the larger checkpoint-level access-skull context recedes instead of
+competing with the point-authored explanation.
 
-![Clinician Surface context in visionOS Simulator](Proof/90-clinician-surface-context-build24-simulator.png)
+![Selected point with one teaching reference in visionOS Simulator](Proof/92-selected-point-single-reference-build26-simulator.png)
 
-The exterior shell is deliberately faint: it restores head and eye orientation
-while the registered teaching brain, arterial atlas, optional venous atlas,
-attached points, and six-step timeline remain the lesson hierarchy. This is a
-Simulator composition receipt, not evidence of patient-specific registration,
-wearer legibility, or specialist approval.
+The 17-USDZ staged slice remains generic teaching anatomy, not a patient scan.
+This capture proves Simulator composition only; it does not establish physical
+gaze-and-pinch reliability, stereo depth, wearer comfort, AirPlay legibility,
+patient-specific registration, specialist approval, or clinical validity.
 
 Build `0.6 (23)` turned the doctor-presenter's six checkpoints into six distinct
 spatial compositions over the same bounded anatomy. **Access** separates the

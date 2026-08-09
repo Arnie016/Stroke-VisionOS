@@ -603,6 +603,10 @@ require(all(token in state for token in (
     "teachingImagingLens = .makingRoomPurpose",
     "teachingImagingDrawerVisible = careViewPermissionGranted",
 )), "point selection does not drive one consent-aware, act-matched reference")
+require(
+    "experience.presenterTeachingBeat == .discussAccess &&\n            experience.selectedPointEntityName == nil" in scene,
+    "selected-point reference competes with the large access-skull composition",
+)
 require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selected.position + [0.038, 0.020, 0.012]" in immersive, "selected-point disclosure is still a permanent label rail or is not depth-attached")
 require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
 require(all(token in immersive for token in (

@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (25)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (26)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -912,3 +912,33 @@ This is Simulator state, build, bundle, and composition evidence. It does not
 prove physical point acquisition, pinch reliability, stereo placement, wearer
 comfort, AirPlay legibility, anatomical registration, specialist approval, or
 clinical validity. XCAT/device verification remains outstanding.
+
+## 2026-08-10 07:37 SGT — selected reference gets one visual lane
+
+Build `0.6 (26)` removes the competing large access-skull composition while an
+authored anatomy point is selected. The presenter checkpoint remains at
+`Discuss access`, but the chosen point temporarily owns the secondary teaching
+lane; clearing the point can restore the broader access context. No anatomy
+transform, medical copy, asset registration, or point hit target changed.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build26` ended `** BUILD SUCCEEDED **`. The installed app
+reports `0.6 (26)`, contains 17 unique USDZ resources, and its debug
+implementation dylib has SHA-256
+`1308c12a094de378fbc29638355f7402582d09b2790c8ade099854ca34a50853`.
+
+`Proof/92-selected-point-single-reference-build26-simulator.png`, 3840×2160,
+SHA-256
+`c9eac95da9c116c3ebab76f77c2676ff0988edfcc6bf05ca7d66737ad3bf8c3f`,
+was captured from the installed build on route `--proof-main-selected-point`
+after terminating the competing RBC journey process. StrokeTime remained
+listed after capture. The frame visibly shows the central registered anatomy,
+six-stop presenter timeline, direct viewpoint and detail controls, multiple
+quiet anatomy points, one selected disclosure, and one affected-vessel
+teaching reference without the second oversized skull context.
+
+This is Simulator state, build, bundle, and composition evidence only. It does
+not prove physical point acquisition, pinch reliability, stereo placement,
+wearer comfort, AirPlay legibility, anatomical registration, specialist
+approval, or clinical validity. XCAT was still `unavailable`.
