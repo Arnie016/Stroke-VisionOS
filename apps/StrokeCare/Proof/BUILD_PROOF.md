@@ -385,3 +385,22 @@ This slice did not call the proxy or OpenAI API and therefore does not prove
 Realtime transport, audible output, voice quality, or latency. Simulator still
 does not prove XCAT peripheral legibility, gaze-and-pinch reliability, AirPlay
 composition, family comprehension, clinician acceptance, or clinical validity.
+
+## 2026-08-10 00:13 SGT — phase-aware static-room cadence
+
+The case library and case review no longer drive the 60 Hz animation timeline,
+and the hidden registered/procedural anatomy tree is not mutated during those
+phases. The dossier unfold remains driven by explicit published reveal state;
+the explanation phase retains its display-rate environmental and anatomy cues.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`;
+`git diff --check` passed; and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-idle-phase-gate` ended `** BUILD SUCCEEDED **`.
+
+Using the same Simulator, `--proof-spatial-intake` route, eight-second settle,
+and five two-second `ps` samples, median Stroke Care CPU fell from 27.7% to
+7.3%. The exact samples and boundaries are in `Proof/IDLE_CPU_RECEIPT.md`.
+RSS was not improved. The `--proof-case-unfold` route still reached its final
+state after the cadence change. These are Simulator process and render-state
+receipts only; XCAT performance, thermals, battery, wearer targeting, AirPlay,
+comfort, comprehension, and clinical validity remain unproven.

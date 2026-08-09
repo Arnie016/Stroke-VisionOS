@@ -508,3 +508,23 @@
 - Next safe action: on an awake XCAT, verify that switching from Family to
   Doctor immediately stops narration and that one family question plus one
   doctor plain-language expansion remain readable in the mirrored view.
+
+## 2026-08-10 00:13 SGT — pause hidden 60 Hz anatomy work
+
+- Target: stop the static doctor intake and case review from continuously
+  updating a hidden high-density anatomy scene.
+- Bounded action: paused the display-rate `TimelineView` outside the explanation
+  phase and guarded the anatomy update behind the same visible-phase boundary;
+  retained the state-driven dossier unfold and active explanation motion.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; the fixed five-sample intake
+  median fell from 27.7% to 7.3% CPU, recorded in
+  `Proof/IDLE_CPU_RECEIPT.md`; the case-unfold route still reached its authored
+  final state.
+- Verdict: `IMPROVED` — the accepted Simulator sample reduced static intake CPU
+  by 73.6% without removing the case reveal or the active anatomy cadence.
+- Blocker: XCAT is unavailable, RSS did not improve, and Simulator cannot prove
+  device thermals, battery, wearer interaction, AirPlay, or clinical validity.
+- Next safe action: when XCAT is awake and unlocked, run one doctor intake →
+  case unfold → explanation transition while recording launch, pinch response,
+  and device frame/thermal evidence.

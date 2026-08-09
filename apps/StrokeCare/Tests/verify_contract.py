@@ -93,6 +93,21 @@ require("How will you use this?" in launch and "Patient / family" in launch and 
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
+require(
+    "paused: experience.spatialPhase != .explanation" in immersive,
+    "case library and review still drive the display-rate animation timeline",
+)
+require(
+    "let anatomyVisible = experience.spatialPhase == .explanation" in immersive
+    and "if anatomyVisible {" in immersive
+    and "StrokeSceneFactory.update(" in immersive,
+    "hidden anatomy is still mutated while the patient-file rooms are active",
+)
+require(
+    "caseReviewRevealTask = Task" in state
+    and "self.caseReviewRevealProgress =" in state,
+    "case-review unfolding is no longer state-driven while the timeline is paused",
+)
 require(state.count("guard audienceLens == .clinician") >= 6, "patient-file intake must remain clinician-only at the state boundary")
 require(all(token in state for token in (
     "guard audienceLens == .clinician, spatialPhase == .caseReview else { return }",
@@ -261,7 +276,7 @@ require("--proof-spatial-intake" in launch and "makeSpatialCaseIntake" in scene,
 require("--proof-spatial-docked-case" in launch and "prepareSpatialDockedCaseProof" in state, "deterministic docked-case constellation proof is missing")
 require("spatialCaseFilePosition" in state and "settleSpatialCaseFile" in state and "isSpatialCaseFileTarget" in scene, "spatial case carry-and-dock loop is incomplete")
 require("StrokeSpatialPhase" in state and "caseLibrary" in state and "caseReview" in state and "explanation" in state, "case room and anatomy are not separated into explicit phases")
-require("root.isEnabled = experience.spatialPhase == .explanation" in immersive and "caseRoom.isEnabled = experience.spatialPhase != .explanation" in immersive, "patient cabinet still persists into the brain explanation")
+require("root.isEnabled = anatomyVisible" in immersive and "caseRoom.isEnabled = experience.spatialPhase != .explanation" in immersive, "patient cabinet still persists into the brain explanation")
 require("spatial-case-archive" in scene and "archive-dossier-bay" in scene and "[0.19, 0.25, 0.018]" in scene, "case library is not a single angled dossier archive with an upright selected file")
 require("spatial-case-constellation" in scene and all(branch in scene for branch in (
     "case-constellation-filament-speech",

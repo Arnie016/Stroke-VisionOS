@@ -245,7 +245,10 @@ struct StrokeImmersiveView: View {
     private let stageRootName = "stroke-world-locked-stage"
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
+        TimelineView(.animation(
+            minimumInterval: 1.0 / 60.0,
+            paused: experience.spatialPhase != .explanation
+        )) { timeline in
             RealityView { content, attachments in
                     let stageRoot = Entity()
                     stageRoot.name = stageRootName
@@ -363,12 +366,19 @@ struct StrokeImmersiveView: View {
                     }
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
-                    StrokeSceneFactory.update(
-                        root: root,
-                        experience: experience,
-                        time: now,
-                        reduceMotion: reduceMotion
-                    )
+                    let anatomyVisible = experience.spatialPhase == .explanation
+                    root.isEnabled = anatomyVisible
+                    if anatomyVisible {
+                        // Patient-file browsing and case review are driven by
+                        // explicit state changes. Do not mutate the hidden,
+                        // high-density anatomy tree while those rooms are idle.
+                        StrokeSceneFactory.update(
+                            root: root,
+                            experience: experience,
+                            time: now,
+                            reduceMotion: reduceMotion
+                        )
+                    }
 
                     // Keep the secondary registered teaching object world-
                     // locked. Reparenting it out of the hero root prevents the
@@ -402,7 +412,6 @@ struct StrokeImmersiveView: View {
                     let smoothedOrbit = experience.orbit
                     let smoothedZoom = Float(experience.spatialZoom)
 
-                    root.isEnabled = experience.spatialPhase == .explanation
                     if let caseRoom = stageRoot.findEntity(named: StrokeSceneFactory.spatialCaseRoomName) {
                         caseRoom.isEnabled = experience.spatialPhase != .explanation
                         let inLibrary = experience.spatialPhase == .caseLibrary
