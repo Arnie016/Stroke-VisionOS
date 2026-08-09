@@ -774,6 +774,7 @@ final class RBCJourneyModel {
     var willisRouteFocus: RBCWillisRouteFocus
     var flowRideRoute: RBCFlowRideRoute = .overview
     var anteriorPassagePhase: RBCAnteriorPassagePhase?
+    var isAnteriorGatewayTransitionActive = false
     var posteriorVoyagePhase: RBCPosteriorVoyagePhase?
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
@@ -799,6 +800,7 @@ final class RBCJourneyModel {
     var handTrackingStatus = "Hand gestures require Apple Vision Pro"
     let proofMode: Bool
     let regionTransferProofProgress: Float?
+    let anteriorGatewayTransitionProofProgress: Float?
 
     init(arguments: [String] = CommandLine.arguments) {
         let proofArgument = arguments.first { $0.hasPrefix("--proof-station-") }
@@ -840,7 +842,7 @@ final class RBCJourneyModel {
         let regionTransitionIndex = regionTransitionArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-region-transition-", with: ""))
         }
-        let initialPendingRegionDestination = regionTransitionIndex.flatMap(
+        let genericPendingRegionDestination = regionTransitionIndex.flatMap(
             RBCBrainRegionDestination.init(rawValue:)
         )
         let regionTransitionProgressArgument = arguments.first {
@@ -855,7 +857,19 @@ final class RBCJourneyModel {
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
-        let anteriorPassageProofPhase: RBCAnteriorPassagePhase? = if arguments.contains("--proof-anterior-passage-crossroads") {
+        let anteriorGatewayTransitionArgument = arguments.first {
+            $0.hasPrefix("--proof-anterior-gateway-transition-")
+        }
+        let requestedAnteriorGatewayTransitionProgress = anteriorGatewayTransitionArgument.flatMap {
+            Float($0.replacingOccurrences(of: "--proof-anterior-gateway-transition-", with: ""))
+        }.map { min(max($0 / 100, 0), 1) }
+        let anteriorGatewayTransitionProofRequested = requestedAnteriorGatewayTransitionProgress != nil
+        let initialPendingRegionDestination: RBCBrainRegionDestination? = anteriorGatewayTransitionProofRequested
+            ? .arterialLumen
+            : genericPendingRegionDestination
+        let anteriorPassageProofPhase: RBCAnteriorPassagePhase? = if anteriorGatewayTransitionProofRequested {
+            .middleCerebralContinuation
+        } else if arguments.contains("--proof-anterior-passage-crossroads") {
             .circleCrossroads
         } else if arguments.contains("--proof-anterior-passage-mca") {
             .middleCerebralContinuation
@@ -879,7 +893,9 @@ final class RBCJourneyModel {
         let familyGuideBeatIndex = familyGuideBeatArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-family-guide-beat-", with: ""))
         }
-        let initialRegionDestination: RBCBrainRegionDestination? = if initialPendingRegionDestination != nil {
+        let initialRegionDestination: RBCBrainRegionDestination? = if anteriorGatewayTransitionProofRequested {
+            .circleOfWillis
+        } else if initialPendingRegionDestination != nil {
             nil
         } else if flowRideProofRequested {
             .arterialLumen
@@ -920,6 +936,8 @@ final class RBCJourneyModel {
         }
         isCapillaryFieldFocused = capillaryFocusProofRequested
         anteriorPassagePhase = anteriorPassageProofPhase
+        isAnteriorGatewayTransitionActive = anteriorGatewayTransitionProofRequested
+        anteriorGatewayTransitionProofProgress = requestedAnteriorGatewayTransitionProgress
         posteriorVoyagePhase = posteriorVoyageProofPhase
         familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested
@@ -953,13 +971,18 @@ final class RBCJourneyModel {
         } else {
             legacyProofRequested ? .openAtlas : .wondrousJourney
         }
-        station = initialPendingRegionDestination?.station
+        station = (anteriorGatewayTransitionProofRequested ? RBCJourneyStation.circleOfWillis : nil)
+            ?? initialPendingRegionDestination?.station
             ?? initialRegionDestination?.station
             ?? initialExhibitBeat?.station
             ?? proofIndex.flatMap(RBCJourneyStation.init(rawValue:))
             ?? .circleOfWillis
         motionMode = arguments.contains("--proof-comfort-still") ? .comfort : .continuous
-        if initialPendingRegionDestination != nil {
+        if anteriorGatewayTransitionProofRequested {
+            openPortalIDs = []
+            focusedPortalID = nil
+            transferredPortalID = RBCBrainRegionDestination.circleOfWillis.id
+        } else if initialPendingRegionDestination != nil {
             openPortalIDs = []
             focusedPortalID = nil
             transferredPortalID = nil
@@ -1003,6 +1026,7 @@ final class RBCJourneyModel {
             || flowRideProofRequested
             || capillaryFocusProofRequested
             || anteriorPassageProofPhase != nil
+            || anteriorGatewayTransitionProofRequested
             || posteriorVoyageProofPhase != nil
             || initialFocus != nil
             || initialTransfer != nil
@@ -1033,12 +1057,16 @@ final class RBCJourneyModel {
     /// family narrator. They stay deliberately short so a region transfer can
     /// feel paced without becoming a spoken lecture.
     var regionTransferFamilyTitle: String {
+        if isAnteriorGatewayTransitionActive { return "The route becomes a place" }
         guard let destination = pendingRegionDestination else { return "" }
         return "Entering \(destination.shortTitle)"
     }
 
     var regionTransferFamilySubtitle: String {
-        pendingRegionDestination == nil ? "" : "The room moves. You stay."
+        if isAnteriorGatewayTransitionActive {
+            return "The branch opens around you. Your body stays still."
+        }
+        return pendingRegionDestination == nil ? "" : "The room moves. You stay."
     }
 
     var regionFamilyCompanionTitle: String {
@@ -1094,11 +1122,14 @@ final class RBCJourneyModel {
     }
 
     var regionTransferSequenceKey: String {
-        "\(pendingRegionDestination?.rawValue ?? -1)-\(regionTransferRun)"
+        "\(pendingRegionDestination?.rawValue ?? -1)-\(regionTransferRun)-\(isAnteriorGatewayTransitionActive)"
     }
 
     var regionTransferDurationMilliseconds: Int {
-        effectiveReducedMotion ? 420 : 1_450
+        if isAnteriorGatewayTransitionActive {
+            return effectiveReducedMotion ? 480 : 1_650
+        }
+        return effectiveReducedMotion ? 420 : 1_450
     }
 
     /// Live voice may hold the visual threshold long enough to finish its
@@ -1374,6 +1405,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         exhibitBeat = .route
@@ -1394,6 +1426,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
@@ -1418,6 +1451,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
@@ -1439,6 +1473,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         isPaused = destination == .arterialLumen || destination == .corticalExchange
         isExhibitFactExpanded = false
@@ -1456,6 +1491,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         isPaused = false
@@ -1464,6 +1500,12 @@ final class RBCJourneyModel {
 
     func completePendingRegionTransfer() {
         guard let destination = pendingRegionDestination else { return }
+        if isAnteriorGatewayTransitionActive, destination == .arterialLumen {
+            pendingRegionDestination = nil
+            isAnteriorGatewayTransitionActive = false
+            startFlowRide()
+            return
+        }
         enterRegion(destination)
     }
 
@@ -1473,6 +1515,7 @@ final class RBCJourneyModel {
         else { return }
         willisRouteFocus = focus
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         isPaused = false
     }
 
@@ -1503,14 +1546,27 @@ final class RBCJourneyModel {
               destination == .arterialLumen || destination == .frontalLobe
         else { return }
         if destination == .arterialLumen {
-            startFlowRide()
+            beginAnteriorGatewayTransition()
         } else {
             requestRegion(destination)
         }
     }
 
+    func beginAnteriorGatewayTransition() {
+        guard anteriorPassagePhase == .middleCerebralContinuation,
+              activeRegionDestination == .circleOfWillis,
+              pendingRegionDestination == nil
+        else { return }
+        pendingRegionDestination = .arterialLumen
+        isAnteriorGatewayTransitionActive = true
+        regionTransferRun += 1
+        isPaused = false
+        isExhibitFactExpanded = false
+    }
+
     func stopAnteriorPassage() {
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         isPaused = false
     }
 
@@ -1530,6 +1586,7 @@ final class RBCJourneyModel {
         if regionVisualization != .flow {
             isFrontalClotScenarioActive = false
             anteriorPassagePhase = nil
+            isAnteriorGatewayTransitionActive = false
             posteriorVoyagePhase = nil
         }
         isPaused = false
@@ -1552,6 +1609,7 @@ final class RBCJourneyModel {
         if mode != .flow {
             isFrontalClotScenarioActive = false
             anteriorPassagePhase = nil
+            isAnteriorGatewayTransitionActive = false
             posteriorVoyagePhase = nil
         }
         isPaused = false
@@ -1563,6 +1621,7 @@ final class RBCJourneyModel {
         else { return }
         regionVisualization = .flow
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = .convergence
         isPaused = false
     }
@@ -1594,6 +1653,7 @@ final class RBCJourneyModel {
 
     func startFlowRide() {
         experienceMode = .regionAtlas
+        pendingRegionDestination = nil
         activeRegionDestination = .arterialLumen
         station = .enterTheLumen
         openPortalIDs = []
@@ -1603,6 +1663,7 @@ final class RBCJourneyModel {
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         flowRideRoute = .overview
         isCapillaryFieldFocused = false
@@ -1622,6 +1683,7 @@ final class RBCJourneyModel {
         regionVisualization = .flow
         isFlowRideActive = false
         anteriorPassagePhase = nil
+        isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         familyNarrationEnabled = false

@@ -88,6 +88,19 @@ motor fallback for the same action. The right-sided route is a teaching
 exemplar, not a patient-specific pathway, complete vascular atlas, measured
 flow, CFD, territory map, or recommendation.
 
+The pinch now begins a dedicated 1.65-second **route-to-place** handoff rather
+than an instant scene swap. For most of that interval the Circle and lumen
+coexist: the selected MCA threshold opens, the source network yields, and the
+existing room-scale arterial corridor gathers from that same gateway locus.
+The world changes scale and position around an unchanged observation origin;
+the app never moves a camera or the wearer. At 84 percent the already-faded
+source network is removed so no dark vessel silhouette remains over the lumen.
+Reduce Motion uses a 480-millisecond nearly static dissolve at the same locus.
+The short caption says exactly what is happening: **The route becomes a
+place. The branch opens around you. Your body stays still.** Deterministic
+proof progress is available without committing the destination, so early,
+middle, and late compositions can be reviewed independently.
+
 ## Brain Observatory — frontal region slice
 
 The frontal destination is a bounded prototype of a broader **brain
@@ -537,6 +550,13 @@ the exact held-flow and **Resume ride** state. The optional guide state is
 The Circle network uses `--proof-willis-route-overview`,
 `--proof-willis-route-anterior`, and `--proof-willis-route-posterior` for its
 three deterministic focus states.
+The MCA-to-lumen handoff uses
+`--proof-anterior-gateway-transition-28`,
+`--proof-anterior-gateway-transition-62`, and
+`--proof-anterior-gateway-transition-88` for stable early, middle, and late
+compositions. Add `--proof-comfort-still` to inspect the held Reduce Motion
+composition. These flags prove Simulator composition, not physical comfort or
+pinch success.
 
 ## Fluid R&D boundary
 

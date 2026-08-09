@@ -183,6 +183,11 @@ final class RBCJourneyScene {
     private var regionTransferElapsed: Float = 0
     private var regionTransferReducedMotion = false
     private var regionTransferVisualProgress: Float = 0
+    private var anteriorGatewayTransitionRuntimeActive = false
+    private var anteriorGatewayTransitionProofProgress: Float?
+    private var anteriorGatewayTransitionElapsed: Float = 0
+    private var anteriorGatewayTransitionReducedMotion = false
+    private var anteriorGatewayTransitionVisualProgress: Float = 0
     private weak var willisAuthoredHero: Entity?
     private weak var willisArterialContext: Entity?
     private var willisFlowPaths: [WillisPathRecord] = []
@@ -195,6 +200,7 @@ final class RBCJourneyScene {
     private var willisRuntimeHeld = false
     private var willisRuntimeFocus: RBCWillisRouteFocus = .overview
     private var willisRuntimeAnteriorPassagePhase: RBCAnteriorPassagePhase?
+    private var willisRuntimeGatewayTransitionProgress: Float?
     private var willisElapsed: Float = 0
     private var flowRideCells: [(
         entity: Entity,
@@ -240,6 +246,7 @@ final class RBCJourneyScene {
     private var flowRideWasActive = false
     private var flowRideRuntimeActive = false
     private var flowRideRuntimeHeld = false
+    private var flowRideGatewayTransitionProgress: Float?
     private var frameUpdateSubscription: (any Cancellable)?
 
     private var portals: [Int: Entity] = [:]
@@ -339,6 +346,7 @@ final class RBCJourneyScene {
             let deltaTime = Float(event.deltaTime)
             Task { @MainActor [weak self] in
                 self?.advanceRegionTransferFrame(deltaTime: deltaTime)
+                self?.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)
                 self?.advanceWillisNetworkFrame(deltaTime: deltaTime)
                 self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self?.advanceCerebellumFrame(deltaTime: deltaTime)
@@ -364,6 +372,8 @@ final class RBCJourneyScene {
         willisRouteFocus: RBCWillisRouteFocus,
         frontalClotScenarioActive: Bool,
         anteriorPassagePhase: RBCAnteriorPassagePhase?,
+        anteriorGatewayTransitionActive: Bool,
+        anteriorGatewayTransitionProofProgress: Float?,
         posteriorVoyagePhase: RBCPosteriorVoyagePhase?,
         flowRideActive: Bool,
         flowRideRoute: RBCFlowRideRoute,
@@ -381,8 +391,18 @@ final class RBCJourneyScene {
         let t = Float(time)
         let preludeActive = preludeChapter != nil
         let transferActive = transferredPortalID != nil && !preludeActive
-        let regionTransferPending = pendingRegionID != nil && !preludeActive
-        let renderedRegionID = pendingRegionID ?? transferredPortalID
+        let gatewayTransitionActive = anteriorGatewayTransitionActive && !preludeActive
+        updateAnteriorGatewayTransition(
+            active: gatewayTransitionActive,
+            proofProgress: anteriorGatewayTransitionProofProgress,
+            reducedMotion: reducedMotion
+        )
+        let regionTransferPending = pendingRegionID != nil
+            && !preludeActive
+            && !gatewayTransitionActive
+        let renderedRegionID = gatewayTransitionActive
+            ? RBCBrainRegionDestination.circleOfWillis.id
+            : (pendingRegionID ?? transferredPortalID)
         let frontalRegionActive = renderedRegionID == RBCBrainRegionDestination.frontalLobe.id
         let willisRegionActive = renderedRegionID == RBCBrainRegionDestination.circleOfWillis.id
         let cerebellumRegionActive = renderedRegionID == RBCBrainRegionDestination.cerebellum.id
@@ -402,7 +422,7 @@ final class RBCJourneyScene {
         observationRoot.isEnabled = !preludeActive
 
         updateRegionTransferThreshold(
-            pendingRegionID: pendingRegionID,
+            pendingRegionID: gatewayTransitionActive ? nil : pendingRegionID,
             proofProgress: regionTransferProofProgress,
             reducedMotion: reducedMotion
         )
@@ -480,18 +500,26 @@ final class RBCJourneyScene {
             active: willisRegionActive,
             focus: willisRouteFocus,
             anteriorPassagePhase: anteriorPassagePhase,
+            gatewayTransitionProgress: gatewayTransitionActive
+                ? anteriorGatewayTransitionVisualProgress
+                : nil,
             motionHeld: motionHeld,
             reducedMotion: reducedMotion
         )
         updateFlowRide(
-            active: lumenRideActive,
+            active: lumenRideActive || gatewayTransitionActive,
             route: flowRideRoute,
             capillaryFieldFocused: capillaryFieldFocused,
+            gatewayTransitionProgress: gatewayTransitionActive
+                ? anteriorGatewayTransitionVisualProgress
+                : nil,
             time: t,
             motionHeld: motionHeld
         )
         if let infoAttachment {
-            let target: SIMD3<Float> = if anteriorPassagePhase != nil && willisRegionActive {
+            let target: SIMD3<Float> = if gatewayTransitionActive {
+                [0, 1.76, -0.70]
+            } else if anteriorPassagePhase != nil && willisRegionActive {
                 [0, 1.78, -0.70]
             } else if posteriorVoyagePhase != nil && brainstemRegionActive {
                 [0, 1.76, -0.70]
@@ -870,6 +898,55 @@ final class RBCJourneyScene {
             let stretch: Float = 0.72 + stagger * 0.82
             shard.entity.scale = [1, stretch, 1]
         }
+    }
+
+    /// The MCA threshold does not translate the camera. Instead, the selected
+    /// Circle route yields while the already-authored arterial lumen expands
+    /// from the same comfortable gateway locus around the stationary wearer.
+    private func updateAnteriorGatewayTransition(
+        active: Bool,
+        proofProgress: Float?,
+        reducedMotion: Bool
+    ) {
+        if active && !anteriorGatewayTransitionRuntimeActive {
+            anteriorGatewayTransitionElapsed = 0
+        }
+        anteriorGatewayTransitionRuntimeActive = active
+        anteriorGatewayTransitionProofProgress = proofProgress
+        anteriorGatewayTransitionReducedMotion = reducedMotion
+
+        guard active else {
+            anteriorGatewayTransitionElapsed = 0
+            anteriorGatewayTransitionVisualProgress = 0
+            return
+        }
+
+        if let proofProgress {
+            applyAnteriorGatewayTransition(progress: proofProgress)
+        } else if reducedMotion {
+            // A short cross-dissolve substitute: no apparent forward travel,
+            // no rotating tunnel, and no camera displacement.
+            applyAnteriorGatewayTransition(progress: 0.72)
+        }
+    }
+
+    private func advanceAnteriorGatewayTransitionFrame(deltaTime: Float) {
+        guard anteriorGatewayTransitionRuntimeActive,
+              anteriorGatewayTransitionProofProgress == nil,
+              !anteriorGatewayTransitionReducedMotion
+        else { return }
+
+        anteriorGatewayTransitionElapsed = min(
+            anteriorGatewayTransitionElapsed + min(max(deltaTime, 0), 0.10),
+            1.65
+        )
+        applyAnteriorGatewayTransition(
+            progress: anteriorGatewayTransitionElapsed / 1.65
+        )
+    }
+
+    private func applyAnteriorGatewayTransition(progress rawProgress: Float) {
+        anteriorGatewayTransitionVisualProgress = min(max(rawProgress, 0), 1)
     }
 
     func installSpatialAudio() async {
@@ -3389,6 +3466,7 @@ final class RBCJourneyScene {
         active: Bool,
         focus: RBCWillisRouteFocus,
         anteriorPassagePhase: RBCAnteriorPassagePhase?,
+        gatewayTransitionProgress: Float?,
         motionHeld: Bool,
         reducedMotion: Bool
     ) {
@@ -3396,6 +3474,7 @@ final class RBCJourneyScene {
         willisRuntimeHeld = motionHeld
         willisRuntimeFocus = focus
         willisRuntimeAnteriorPassagePhase = anteriorPassagePhase
+        willisRuntimeGatewayTransitionProgress = gatewayTransitionProgress
         willisNetworkRoot.isEnabled = active
         guard active else { return }
 
@@ -3486,14 +3565,27 @@ final class RBCJourneyScene {
             reducedMotion: reducedMotion
         )
 
-        let targetScaleVector = SIMD3<Float>(repeating: targetScale)
+        let gatewayProgress = min(max(gatewayTransitionProgress ?? 0, 0), 1)
+        let gatewayEased = gatewayProgress * gatewayProgress * (3 - 2 * gatewayProgress)
+        let transitionTargetScale = targetScale * (1 + gatewayEased * 0.16)
+        let transitionTargetPosition = targetPosition + SIMD3<Float>(
+            -0.08 * gatewayEased,
+            0.015 * gatewayEased,
+            0.14 * gatewayEased
+        )
+        let targetScaleVector = SIMD3<Float>(repeating: transitionTargetScale)
         if reducedMotion {
             willisNetworkRoot.scale = targetScaleVector
-            willisNetworkRoot.position = targetPosition
+            willisNetworkRoot.position = transitionTargetPosition
         } else {
             willisNetworkRoot.scale += (targetScaleVector - willisNetworkRoot.scale) * 0.16
-            willisNetworkRoot.position += (targetPosition - willisNetworkRoot.position) * 0.16
+            willisNetworkRoot.position += (transitionTargetPosition - willisNetworkRoot.position) * 0.16
         }
+        let yieldingOpacity = max(0.025, 1 - gatewayEased * 0.96)
+        willisNetworkRoot.components.set(OpacityComponent(opacity: yieldingOpacity))
+        // Once the room-scale lumen is established, remove the final source
+        // silhouette rather than leaving dark arterial bars over the interior.
+        willisNetworkRoot.isEnabled = gatewayProgress < 0.84
         applyWillisFlowFrame()
     }
 
@@ -3552,12 +3644,18 @@ final class RBCJourneyScene {
                     || (willisRuntimeFocus == .posterior && record.family == .posterior)
             }
             front.entity.isEnabled = selected
+            let gatewayProgress = min(max(willisRuntimeGatewayTransitionProgress ?? 0, 0), 1)
+            front.entity.components.set(OpacityComponent(opacity: 1 - gatewayProgress * 0.90))
         }
         if willisAnteriorGatewayRoot.isEnabled {
             let pulse: Float = willisRuntimeHeld
                 ? 1
                 : 1 + sin(willisElapsed * .pi * 1.3) * 0.055
-            willisAnteriorGatewayRoot.scale = SIMD3<Float>(repeating: pulse)
+            let gatewayProgress = min(max(willisRuntimeGatewayTransitionProgress ?? 0, 0), 1)
+            let eased = gatewayProgress * gatewayProgress * (3 - 2 * gatewayProgress)
+            willisAnteriorGatewayRoot.scale = SIMD3<Float>(
+                repeating: pulse * (1 + eased * 1.85)
+            )
         } else {
             willisAnteriorGatewayRoot.scale = .one
         }
@@ -5506,6 +5604,7 @@ final class RBCJourneyScene {
         active: Bool,
         route: RBCFlowRideRoute,
         capillaryFieldFocused: Bool,
+        gatewayTransitionProgress: Float?,
         time _: Float,
         motionHeld: Bool
     ) {
@@ -5513,6 +5612,7 @@ final class RBCJourneyScene {
         flowRideRuntimeHeld = motionHeld
         flowRideRuntimeRoute = route
         flowRideRuntimeCapillaryFocus = capillaryFieldFocused && route == .frontal
+        flowRideGatewayTransitionProgress = gatewayTransitionProgress
         flowRideRoot.isEnabled = active
         guard active else {
             flowRideWasActive = false
@@ -5728,7 +5828,8 @@ final class RBCJourneyScene {
         let focusedCenter = destinationTilt.act(flowRideFrontalDestinationCenter * focusedDestinationScale)
         let focusWorldTarget = SIMD3<Float>(0.20, 1.40, -2.08)
         let focusedRoutePosition = focusWorldTarget - routeOrientation.act(focusedCenter)
-        flowRideRoot.position = routePosition + (focusedRoutePosition - routePosition) * focusMix
+        let composedRoutePosition = routePosition + (focusedRoutePosition - routePosition) * focusMix
+        flowRideRoot.position = composedRoutePosition
         flowRideRoot.orientation = routeOrientation
 
         flowRideCapillaryFocusTarget?.isEnabled = flowRideRuntimeRoute == .frontal
@@ -5740,6 +5841,23 @@ final class RBCJourneyScene {
         // retain their exact pose instead of snapping to a generic still pose.
         let environmentPulse: Float = 1 + sin(flowRideElapsed * 1.2) * 0.006
         flowRideRoot.scale = [environmentPulse, environmentPulse, environmentPulse]
+        flowRideRoot.components.set(OpacityComponent(opacity: 1))
+
+        if let rawTransitionProgress = flowRideGatewayTransitionProgress {
+            let progress = min(max((rawTransitionProgress - 0.08) / 0.88, 0), 1)
+            let eased = progress * progress * (3 - 2 * progress)
+            // The root begins at the selected right-MCA aperture and grows
+            // toward its authored room-scale pose. Only content transforms;
+            // the wearer and RealityKit camera remain stationary.
+            let gatewayLocus = SIMD3<Float>(1.07, 1.48, -1.11)
+            flowRideRoot.position = gatewayLocus
+                + (composedRoutePosition - gatewayLocus) * eased
+            let emergenceScale = environmentPulse * (0.055 + eased * 0.945)
+            flowRideRoot.scale = SIMD3<Float>(repeating: emergenceScale)
+            flowRideRoot.components.set(OpacityComponent(
+                opacity: max(0.01, eased)
+            ))
+        }
     }
 
     private func descendants(in root: Entity, namePrefix: String) -> [Entity] {

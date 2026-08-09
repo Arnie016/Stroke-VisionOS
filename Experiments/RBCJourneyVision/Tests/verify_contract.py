@@ -175,6 +175,16 @@ checks = {
         "Look at its warm threshold and pinch", "system hover", "Enter artery",
         "motor fallback", "do not expose or retain an eye-gaze vector",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "continuous_anterior_gateway_to_lumen_transition": all(token in model + scene + hud + immersive + medical_canon + readme for token in [
+        "isAnteriorGatewayTransitionActive", "beginAnteriorGatewayTransition",
+        "--proof-anterior-gateway-transition-", "The route becomes a place",
+        "The branch opens around you. Your body stays still.", "1_650", "480",
+        "advanceAnteriorGatewayTransitionFrame", "anteriorGatewayTransitionVisualProgress",
+        "gatewayTransitionActive", "gatewayLocus", "flowRideRoot.position = gatewayLocus",
+        "willisNetworkRoot.isEnabled = gatewayProgress < 0.84",
+        "Circle and lumen", "same gateway locus", "Reduce Motion",
+        "RBCRegionTransferHUD", "!model.isAnteriorGatewayTransitionActive",
+    ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "spatial_entry_prologue": all(token in model + hud + immersive + scene for token in [
         "RBCEntryPreludeChapter", "Entering the brain.", "No region works alone.",
         "A blockage changes more than one point.", "Follow one route.",

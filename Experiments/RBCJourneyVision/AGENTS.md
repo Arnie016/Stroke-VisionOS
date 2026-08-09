@@ -61,6 +61,13 @@ video cannot.
   system hover plus one pinch enters the artery, while the labelled Enter
   artery button remains the accessible and Simulator-safe equivalent. Never
   read, store, or infer an eye-gaze vector for this interaction.
+- MCA gateway handoff: entering the artery must be a continuous
+  fixed-observation transition, not an instant scene replacement. Keep the
+  selected Circle route and existing arterial corridor alive together while
+  the source yields and the lumen grows from the same gateway locus. Preserve
+  the 1.65-second default, the 480-millisecond Reduce Motion dissolve,
+  deterministic progress flags, concise exact-caption copy, and the no-camera
+  boundary. Do not introduce another threshold asset or floating control.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,

@@ -54,6 +54,8 @@ struct RBCJourneyImmersiveView: View {
                     willisRouteFocus: model.willisRouteFocus,
                     frontalClotScenarioActive: model.isFrontalClotScenarioActive,
                     anteriorPassagePhase: model.anteriorPassagePhase,
+                    anteriorGatewayTransitionActive: model.isAnteriorGatewayTransitionActive,
+                    anteriorGatewayTransitionProofProgress: model.anteriorGatewayTransitionProofProgress,
                     posteriorVoyagePhase: model.posteriorVoyagePhase,
                     flowRideActive: model.isFlowRideActive,
                     flowRideRoute: model.flowRideRoute,
@@ -92,7 +94,9 @@ struct RBCJourneyImmersiveView: View {
                 }
                 Attachment(id: "regionPortalReel") {
                     if model.experienceMode == .wondrousJourney
-                        || (model.experienceMode == .regionAtlas && !model.isFlowRideActive) {
+                        || (model.experienceMode == .regionAtlas
+                            && !model.isFlowRideActive
+                            && !model.isAnteriorGatewayTransitionActive) {
                         RBCRegionPortalReelHUD()
                             .environment(model)
                     }
@@ -130,7 +134,8 @@ struct RBCJourneyImmersiveView: View {
         }
         .task(id: model.regionTransferSequenceKey) {
             guard let destination = model.pendingRegionDestination,
-                  model.regionTransferProofProgress == nil
+                  model.regionTransferProofProgress == nil,
+                  model.anteriorGatewayTransitionProofProgress == nil
             else { return }
             let run = model.regionTransferRun
             try? await Task.sleep(for: .milliseconds(model.regionTransferDurationMilliseconds))

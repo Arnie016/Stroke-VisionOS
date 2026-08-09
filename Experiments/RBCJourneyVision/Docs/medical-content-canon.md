@@ -25,6 +25,12 @@ not specialist review and does not make the app clinical software.
   target express user intent; they do not expose or retain an eye-gaze vector.
   The world recomposes around a stationary wearer; no anatomy or app camera
   moves the person through a vessel.
+- Gateway-transition limit: the MCA threshold widening and the lumen gathering
+  from its locus are a spatial continuity device, not dilation, vessel motion,
+  measured calibre change, endoscopic travel, hemodynamics, or an anatomical
+  claim. The Circle and lumen intentionally coexist during the handoff; their
+  relative scale, opacity, timing, and cutoff communicate a change in lesson
+  scale only. Reduce Motion replaces apparent expansion with a brief dissolve.
 
 ## Cerebral routes and microcirculation
 
