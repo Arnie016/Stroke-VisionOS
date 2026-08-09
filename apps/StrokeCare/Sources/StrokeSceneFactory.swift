@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import RealityKit
 import SwiftUI
 
@@ -14,6 +15,11 @@ struct StrokeLessonPointTargetComponent: Component {}
 /// from a background executor.
 @MainActor
 enum StrokeSceneFactory {
+    private static let anatomyLoadLogger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.arnav.StrokeTime",
+        category: "AnatomyLoading"
+    )
+
     static func registerCustomComponents() {
         StrokeLessonPointTargetComponent.registerComponent()
     }
@@ -87,6 +93,20 @@ enum StrokeSceneFactory {
     private static let ventriclesLayerName = "anatomy-ventricles-layer"
     private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
     private static let qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"
+    private static let fallbackReadinessNoticeName = "procedural-fallback-readiness-notice"
+
+    /// The four same-frame assets required to tell the complete three-act
+    /// story. Optional skull, venous, internal-detail, and flow references may
+    /// fail independently without invalidating the family explanation. If any
+    /// required item fails, the complete procedural teaching model is used
+    /// instead of presenting a silently incomplete imported head.
+    private static let requiredCoreAnatomyNames = [
+        importedBrainName,
+        importedArteriesName,
+        importedClotName,
+        importedDuraName
+    ]
+    private static var lastRequiredAssetLoadFailures: [String] = []
 
     /// Retaining the playback controllers lets the global Pause control freeze
     /// the imported four-second teaching loop rather than making it disappear.
@@ -161,23 +181,30 @@ enum StrokeSceneFactory {
         root.addChild(fallback)
 
         var importedForMiniature: Entity?
-        if !compact, let imported = await makeImportedAnatomy() {
-            root.addChild(imported)
-            importedForMiniature = imported
-        } else if !compact {
-            // Fallback points share the procedural teaching frame.
-            fallback.addChild(makePointField(
-                name: regionPointFieldName,
-                points: regionPointDirections.map { simd_normalize($0) * SIMD3<Float>(0.071, 0.100, 0.117) },
-                labels: regionPointLabels,
-                material: careMaterial(opacity: 0.92)
-            ))
-            fallback.addChild(makePointField(
-                name: procedurePointFieldName,
-                points: procedurePointPositions,
-                labels: procedurePointLabels,
-                material: warningMaterial(opacity: 0.92)
-            ))
+        if !compact {
+            if let imported = await makeImportedAnatomy() {
+                root.addChild(imported)
+                importedForMiniature = imported
+            } else {
+                // Fallback points share the procedural teaching frame. The
+                // wearer also gets a concise visible boundary so a degraded
+                // asset load can never masquerade as the detailed model.
+                fallback.addChild(makePointField(
+                    name: regionPointFieldName,
+                    points: regionPointDirections.map {
+                        simd_normalize($0) * SIMD3<Float>(0.071, 0.100, 0.117)
+                    },
+                    labels: regionPointLabels,
+                    material: careMaterial(opacity: 0.92)
+                ))
+                fallback.addChild(makePointField(
+                    name: procedurePointFieldName,
+                    points: procedurePointPositions,
+                    labels: procedurePointLabels,
+                    material: warningMaterial(opacity: 0.92)
+                ))
+                fallback.addChild(makeFallbackReadinessNotice())
+            }
         }
 
         if !compact {
@@ -535,6 +562,7 @@ enum StrokeSceneFactory {
     /// pressure-purpose cues stay under a distinct legacy root with one manual
     /// fit transform, matching the source catalog's registration contract.
     private static func makeImportedAnatomy() async -> Entity? {
+        lastRequiredAssetLoadFailures = []
         let imported = Entity()
         imported.name = importedRootName
 
@@ -604,6 +632,19 @@ enum StrokeSceneFactory {
                 entity.name = name
                 legacy.addChild(entity)
             }
+        }
+
+        let missingRequired = requiredCoreAnatomyNames.filter {
+            registered.findEntity(named: $0) == nil
+        }
+        guard missingRequired.isEmpty else {
+            lastRequiredAssetLoadFailures = missingRequired
+            let missingSummary = missingRequired.joined(separator: ", ")
+            anatomyLoadLogger.error(
+                "Registered anatomy incomplete; using procedural fallback. Missing: \(missingSummary, privacy: .public)"
+            )
+            stopAuthoredBloodflowAnimations()
+            return nil
         }
 
         guard let importedBrain = registered.findEntity(named: importedBrainName) else {
@@ -780,10 +821,104 @@ enum StrokeSceneFactory {
     }
 
     private static func loadBundledUSDZ(named name: String) async -> Entity? {
+        if forcedMissingAssetNames.contains(name) {
+            anatomyLoadLogger.warning(
+                "Injected anatomy load failure for deterministic proof: \(name, privacy: .public)"
+            )
+            return nil
+        }
         let url = Bundle.main.url(forResource: name, withExtension: "usdz", subdirectory: "StrokeAssets")
             ?? Bundle.main.url(forResource: name, withExtension: "usdz")
-        guard let url else { return nil }
-        return try? await Entity(contentsOf: url)
+        guard let url else {
+            anatomyLoadLogger.error("Bundled anatomy resource missing: \(name, privacy: .public)")
+            return nil
+        }
+        do {
+            return try await Entity(contentsOf: url)
+        } catch {
+            anatomyLoadLogger.error(
+                "Bundled anatomy resource failed to load: \(name, privacy: .public); \(error.localizedDescription, privacy: .public)"
+            )
+            return nil
+        }
+    }
+
+    /// Deterministic Simulator-only fault injection. Production launches do
+    /// not contain these arguments. The matrix lets the contract exercise the
+    /// exact brain-only, missing-artery, missing-clot, and missing-dura cases
+    /// from issue #29 without damaging or renaming repository assets.
+    private static var forcedMissingAssetNames: Set<String> {
+        let arguments = Set(CommandLine.arguments)
+        if arguments.contains("--proof-load-brain-only") {
+            return Set(requiredCoreAnatomyNames.filter { $0 != importedBrainName })
+        }
+
+        var missing: Set<String> = []
+        if arguments.contains("--proof-load-missing-arteries") {
+            missing.insert(importedArteriesName)
+        }
+        if arguments.contains("--proof-load-missing-clot") {
+            missing.insert(importedClotName)
+        }
+        if arguments.contains("--proof-load-missing-dura") {
+            missing.insert(importedDuraName)
+        }
+        return missing
+    }
+
+    private static func makeFallbackReadinessNotice() -> Entity {
+        let notice = Entity()
+        notice.name = fallbackReadinessNoticeName
+        notice.position = [0, -0.152, 0.128]
+
+        let panel = ModelEntity(
+            mesh: .generateBox(size: [0.205, 0.042, 0.002], cornerRadius: 0.009),
+            materials: [contextMaterial(opacity: 0.82)]
+        )
+        panel.position.z = -0.002
+        notice.addChild(panel)
+
+        let title = centeredFallbackText(
+            "SIMPLIFIED TEACHING VIEW",
+            fontSize: 0.011,
+            weight: .semibold,
+            color: UIColor(red: 0.78, green: 0.96, blue: 0.92, alpha: 1)
+        )
+        title.position.y = 0.006
+        notice.addChild(title)
+
+        let detail = centeredFallbackText(
+            "Detailed anatomy unavailable",
+            fontSize: 0.0065,
+            weight: .medium,
+            color: UIColor(white: 0.94, alpha: 0.90)
+        )
+        detail.position.y = -0.010
+        notice.addChild(detail)
+
+        return notice
+    }
+
+    private static func centeredFallbackText(
+        _ text: String,
+        fontSize: CGFloat,
+        weight: UIFont.Weight,
+        color: UIColor
+    ) -> ModelEntity {
+        let label = ModelEntity(
+            mesh: .generateText(
+                text,
+                extrusionDepth: 0.0002,
+                font: .systemFont(ofSize: fontSize, weight: weight),
+                containerFrame: .zero,
+                alignment: .center,
+                lineBreakMode: .byClipping
+            ),
+            materials: [UnlitMaterial(color: color)]
+        )
+        let bounds = label.visualBounds(relativeTo: label)
+        label.position = [-bounds.center.x, -bounds.center.y, 0]
+        return label
     }
 
     /// A deliberately non-graphic pressure frame. The translucent shell makes

@@ -23,6 +23,16 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (16)` now treats brain, arteries, clot, and dura as one required
+registered-v2 teaching set. If any required layer is missing or fails to load,
+Stroke Care logs the exact asset name and shows the complete procedural model
+with a visible **Simplified teaching view · Detailed anatomy unavailable**
+boundary. It no longer suppresses the fallback and silently presents a partial
+head. Optional skull, venous, internal-detail, and flow references remain
+independently gated.
+
+![Visible complete fallback when the registered artery asset is unavailable](Proof/76-visible-anatomy-fallback-simulator.png)
+
 Build `0.6 (15)` adds a same-frame, registered-v2 Circle-of-Willis teaching
 overlay to the deliberately selected Blood-flow point. Coral/gold route lines
 and authored direction chevrons stay attached to the central arterial model;

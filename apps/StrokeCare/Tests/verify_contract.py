@@ -191,6 +191,24 @@ require("imported-brain-surface-target" in scene and "generateSphere(radius: 0.1
 require("imported-clot-focus-target" in scene and "isAnatomyInteractionTarget" in scene, "semantic clot interaction target is missing")
 require("legacy-v1-pressure-root" in scene and "craniotomy_bone_flap" in scene and "dural_patch" in scene, "PR2 pressure-purpose assets are not segregated")
 require("loadBundledUSDZ" in scene and "procedural-stroke-fallback" in scene, "imported-asset fallback loader is missing")
+require(all(token in scene for token in (
+    "requiredCoreAnatomyNames",
+    "importedBrainName",
+    "importedArteriesName",
+    "importedClotName",
+    "importedDuraName",
+    "guard missingRequired.isEmpty else",
+    "Registered anatomy incomplete; using procedural fallback",
+    "SIMPLIFIED TEACHING VIEW",
+    "Detailed anatomy unavailable",
+)), "partial registered-v2 loads can still masquerade as a complete teaching model")
+require(all(flag in scene for flag in (
+    "--proof-load-brain-only",
+    "--proof-load-missing-arteries",
+    "--proof-load-missing-clot",
+    "--proof-load-missing-dura",
+)), "required-asset failure-injection matrix is incomplete")
+require("Bundled anatomy resource missing" in scene and "Bundled anatomy resource failed to load" in scene, "asset-load diagnostics do not identify missing or invalid resources")
 require("catheter-review-preview" in scene and "medicine-review-preview" in scene, "care discussion previews are missing")
 require(all(name in scene for name in ("fixed-skull-context", "bone-flap", "dura-expansion")), "pressure-purpose anatomy is missing")
 require("does not restore or shrink established injury" in scene, "non-restoration visual boundary is missing")
@@ -550,6 +568,7 @@ print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
 print("github_asset_runtime=FIFTEEN_ASSET_STAGED_SLICE")
+print("required_asset_failure=VISIBLE_COMPLETE_PROCEDURAL_FALLBACK")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")
 print("physical_device=NOT_PROVEN")

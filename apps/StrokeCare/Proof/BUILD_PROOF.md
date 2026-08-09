@@ -518,3 +518,34 @@ quality, XCAT visibility, gaze-and-pinch reliability, stereo depth, AirPlay
 legibility, wearer comfort, arterial/venous meaning, specialist review, or
 clinical validity. The 134-item repository catalog remains an inventory, not
 134 bundled, registered, visible, or approved runtime assets.
+
+## 2026-08-10 03:06 SGT — complete-or-visible anatomy load gate
+
+Build `0.6 (16)` makes the registered-v2 brain, cerebral arteries, ischemic
+teaching clot, and conceptual dura one required core set. A complete load keeps
+the detailed registered assembly. Any missing required layer now records the
+exact asset name through the `AnatomyLoading` OSLog category and switches to the
+complete procedural teaching model with the wearer-visible boundary
+`SIMPLIFIED TEACHING VIEW · Detailed anatomy unavailable`. Optional skull,
+venous, deep-structure, ventricular, and flow references do not invalidate the
+family core.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, XcodeGen regenerated the project, and the OS 26.5
+visionOS Simulator Debug build at `/tmp/strokecare-asset-fallback-build16`
+ended `** BUILD SUCCEEDED **`. The built app is `0.6 (16)`, contains exactly
+15 unique USDZ files, and its `StrokeTime.debug.dylib` SHA-256 is
+`e988faf9222cca109a26b6b624c88b73aab174460dc562bfdce5178cb72ee534`.
+
+The deterministic Simulator matrix launched the complete, brain-only,
+missing-artery, missing-clot, and missing-dura states. Every launch remained
+running. The four degraded cases logged exactly the omitted required assets;
+the complete case logged no anatomy failure. The missing-artery route produced
+`Proof/76-visible-anatomy-fallback-simulator.png` with SHA-256
+`1f1a44305cd82aa5de29a098c28a72d96bedd17930d671f024e8636eaa62dd34`.
+
+This is deterministic Simulator failure-injection and visible-render proof. It
+does not establish physical-device loading, wearer legibility, gaze-and-pinch
+quality, AirPlay composition, comfort, comprehension, specialist registration,
+or clinical validity. XCAT remained `unavailable`; the dated reachability
+receipt is `Proof/xcat/20260810-030404/BLOCKED.md`.

@@ -611,3 +611,26 @@
 - Next safe action: on an awake XCAT, select the Blood-flow blockage point once
   and verify that the directional overlay remains registered, readable, and
   subordinate to the central anatomy during orbit and viewpoint changes.
+
+## 2026-08-10 03:06 SGT — complete-or-visible anatomy loading
+
+- Target: prevent an incomplete registered head from appearing as a complete
+  teaching model when one required USDZ fails to load.
+- Bounded action: defined brain, arteries, clot, and dura as the required
+  registered-v2 core; added exact OSLog diagnostics, a deterministic five-case
+  failure-injection matrix, a complete procedural fallback, and a visible
+  simplified-view boundary; increased the build to `0.6 (16)`.
+- Evidence: XCAT deploy stopped at the dated `unavailable` receipt
+  `Proof/xcat/20260810-030404/BLOCKED.md`; contract and diff checks passed;
+  XcodeGen and the OS 26.5 Simulator build succeeded; complete, brain-only,
+  missing-artery, missing-clot, and missing-dura launches all remained running;
+  each degraded route logged the exact omitted asset; proof 76 SHA-256 is
+  `1f1a44305cd82aa5de29a098c28a72d96bedd17930d671f024e8636eaa62dd34`.
+- Verdict: `IMPROVED` — a required anatomy failure is now complete and visible,
+  never a silently partial registered head.
+- Blocker: XCAT is unavailable, so device loading, wearer legibility,
+  interaction, AirPlay, specialist registration, and clinical validity remain
+  unproven.
+- Next safe action: on an awake and unlocked XCAT, launch the normal build-16
+  path once and confirm the detailed registered brain, arteries, clot, and dura
+  all appear without the simplified-view boundary.
