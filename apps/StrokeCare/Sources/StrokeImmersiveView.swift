@@ -4,6 +4,23 @@ import QuartzCore
 import RealityKit
 import SwiftUI
 
+/// A local machine receipt for the placement code path. It deliberately omits
+/// the device's raw room transform, gaze, hands, and any patient information.
+/// Presence of this file proves only that a tracked device anchor was sampled.
+private struct StrokeStagePlacementReceipt: Codable {
+    let timestamp: String
+    let appVersion: String
+    let appBuild: String
+    let placementSource: String
+    let placementMode: String
+    let sampleAttempt: Int
+    let anchorTracked: Bool
+    let targetForwardDistanceMetres: Float
+    let machineEvidence: String
+    let wearerEvidence: String
+    let clinicalEvidence: String
+}
+
 /// Samples the current device pose once, then leaves the teaching stage fixed
 /// in the room. This is deliberate initial placement—not continuous head-lock,
 /// raw gaze access, or evidence that the wearer finds the distance comfortable.
@@ -21,11 +38,12 @@ private final class StrokeStagePlacement: ObservableObject {
             guard let self, WorldTrackingProvider.isSupported else { return }
             do {
                 try await session.run([worldTracking])
-                for _ in 0..<30 {
+                for sampleAttempt in 1...30 {
                     guard !Task.isCancelled else { return }
                     if let anchor = worldTracking.queryDeviceAnchor(atTimestamp: CACurrentMediaTime()),
                        anchor.isTracked {
                         transform = Self.makeStageTransform(from: anchor.originFromAnchorTransform)
+                        writeMachineReceipt(sampleAttempt: sampleAttempt)
                         return
                     }
                     try await Task.sleep(for: .milliseconds(50))
@@ -41,6 +59,44 @@ private final class StrokeStagePlacement: ObservableObject {
         placementTask?.cancel()
         placementTask = nil
         session.stop()
+    }
+
+    private func writeMachineReceipt(sampleAttempt: Int) {
+        let receipt = StrokeStagePlacementReceipt(
+            timestamp: ISO8601DateFormatter().string(from: Date()),
+            appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown",
+            appBuild: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown",
+            placementSource: "WorldTrackingProvider.queryDeviceAnchor",
+            placementMode: "sample-once-room-fixed",
+            sampleAttempt: sampleAttempt,
+            anchorTracked: true,
+            targetForwardDistanceMetres: abs(SpatialVisualField.primaryAnatomy.z),
+            machineEvidence: "PLACEMENT_PATH_RAN",
+            wearerEvidence: "NOT_RUN",
+            clinicalEvidence: "NOT_RUN"
+        )
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+            let data = try encoder.encode(receipt)
+            guard let directory = FileManager.default.urls(
+                for: .documentDirectory,
+                in: .userDomainMask
+            ).first else { return }
+            try FileManager.default.createDirectory(
+                at: directory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            try data.write(
+                to: directory.appendingPathComponent("stroke-stage-placement.json"),
+                options: .atomic
+            )
+        } catch {
+            // An absent receipt is an explicit machine-evidence failure. The
+            // visible experience must not change just to make proof pass.
+        }
     }
 
     private static func makeStageTransform(from device: simd_float4x4) -> Transform {

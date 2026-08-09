@@ -25,6 +25,7 @@ houdini = (ROOT / "Docs" / "HOUDINI_STROKE_PIPELINE.md").read_text()
 clinical_packet = (ROOT / "Docs" / "ISCHEMIC_STROKE_CLINICAL_REVIEW.md").read_text()
 houdini_builder = (ROOT / "Scripts" / "build_houdini_stroke_graph.py").read_text()
 xcat_deploy = (ROOT / "Scripts" / "deploy_xcat.zsh").read_text()
+xcat_stage_collect = (ROOT / "Scripts" / "collect_xcat_stage_placement.zsh").read_text()
 xcat_acceptance = (ROOT / "Proof" / "XCAT_ACCEPTANCE.md").read_text()
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
@@ -72,6 +73,8 @@ require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Fie
 require("WorldTrackingProvider" in immersive and "queryDeviceAnchor" in immersive and "stroke-world-locked-stage" in immersive, "stage is not placed from a sampled device pose")
 require("Samples the current device pose once" in immersive and "session.stop()" in immersive, "anatomy stage is continuously head-locked or tracking is not bounded")
 require("stageRoot.addChild(root)" in immersive and "stageRoot.addChild(caseRoom)" in immersive and "relativeTo: stageRoot" in immersive, "brain, case archive, and annotation placement do not share one coherent stage frame")
+require("stroke-stage-placement.json" in immersive and "PLACEMENT_PATH_RAN" in immersive and "raw room transform" in immersive, "physical placement path lacks a privacy-bounded machine receipt")
+require("appDataContainer" in xcat_stage_collect and "anchorTracked == true" in xcat_stage_collect and "wearerEvidence == \"NOT_RUN\"" in xcat_stage_collect, "XCAT placement receipt cannot be collected with explicit proof boundaries")
 require("careViewPermissionGranted" in state and "Reveal layers" in immersive, "non-graphic permission gate is missing")
 require("layerRevealProgress" in state and "calm-layer-reveal-seam" in scene, "calm layer-separation animation is missing")
 require("No incision or blood" in immersive, "patient-friendly layer reveal language is missing")
