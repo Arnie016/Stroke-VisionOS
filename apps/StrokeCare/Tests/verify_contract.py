@@ -93,8 +93,22 @@ require("How will you use this?" in launch and "Patient / family" in launch and 
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
-require(state.count("guard audienceLens == .clinician else { return }") >= 3, "patient-file intake must remain clinician-only at the state boundary")
-require("experience.selectCaseHistoryMilestone(milestone)" in immersive and "accessibilityReduceMotion" in immersive, "case-history endpoints must be selectable and respect Reduce Motion")
+require(state.count("guard audienceLens == .clinician") >= 6, "patient-file intake must remain clinician-only at the state boundary")
+require(all(token in state for token in (
+    "guard audienceLens == .clinician, spatialPhase == .caseReview else { return }",
+    "guard audienceLens == .clinician,\n              spatialPhase == .caseReview",
+    "guard audienceLens == .clinician else { return }\n        cancelCaseReviewReveal()",
+)), "case selection, explanation entry, or library return can bypass the doctor-presenter boundary")
+require('audienceLens == .family ? "Restart exhibit" : "Return to cases"' in state and "reset()\n                beginPatientExploration()" in state, "family closing can leak into the doctor-only case archive")
+require(all(token in immersive for token in (
+    "SpatialCaseFact(milestone: .everydayContext)",
+    "SpatialCaseFact(milestone: .reportedChange)",
+    "SpatialCaseFact(milestone: .teamReview)",
+    "SpatialCaseFact(milestone: .sharedQuestions)",
+    "experience.selectCaseHistoryMilestone(\n                milestone,\n                reduceMotion: reduceMotion",
+    ".hoverEffect(.highlight)",
+    "transaction.disablesAnimations = true",
+)), "every visible case-history endpoint must be directly selectable and respect Reduce Motion")
 require("hospital protocol" in launch and "Presenter rail" in launch, "emergency accountability boundary is missing")
 require(all(route in launch for route in ("--proof-orient", "--proof-pressure", "--proof-care-purpose")), "deterministic spatial proof routes are missing")
 require('id: "CASE-078"' in state and 'displayName: "Case 78"' in state, "fictional case contract is missing")

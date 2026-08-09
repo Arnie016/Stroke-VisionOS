@@ -581,6 +581,12 @@ struct StrokeImmersiveView: View {
                         PatientHistoryTimelineView()
                             .environmentObject(experience)
                             .frame(width: 600, height: 188)
+                            .transaction { transaction in
+                                if reduceMotion {
+                                    transaction.animation = nil
+                                    transaction.disablesAnimations = true
+                                }
+                            }
                     }
                     Attachment(id: teachingTimelineID) {
                         SpatialTeachingTimeline()
@@ -2445,7 +2451,10 @@ private struct SpatialCaseFact: View {
 
     var body: some View {
         Button {
-            experience.selectCaseHistoryMilestone(milestone)
+            experience.selectCaseHistoryMilestone(
+                milestone,
+                reduceMotion: reduceMotion
+            )
         } label: {
             Group {
                 if milestone == experience.selectedCaseHistoryMilestone {
@@ -2472,7 +2481,7 @@ private struct SpatialCaseFact: View {
             }
         }
         .buttonStyle(.plain)
-        .animation(reduceMotion ? nil : .easeInOut(duration: 0.26), value: experience.selectedCaseHistoryMilestone)
+        .hoverEffect(.highlight)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(milestone.shortTitle), \(milestone.spatialWebValue)")
     }

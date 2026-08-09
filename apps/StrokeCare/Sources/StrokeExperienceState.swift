@@ -333,6 +333,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 @MainActor
 final class StrokeExperienceState: ObservableObject {
     static let scholarSkullCatalogID = "skull_semantic_realistic_v2"
+    static let authoredCaseHistoryMilestone: StrokeCaseHistoryMilestone = .reportedChange
 
     let teachingCase = TeachingStrokeCase.case78
 
@@ -392,7 +393,8 @@ final class StrokeExperienceState: ObservableObject {
     @Published var spatialPhase: StrokeSpatialPhase = .caseLibrary
     @Published var spatialCaseDocked = false
     @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
-    @Published var selectedCaseHistoryMilestone: StrokeCaseHistoryMilestone = .reportedChange
+    @Published var selectedCaseHistoryMilestone: StrokeCaseHistoryMilestone =
+        StrokeExperienceState.authoredCaseHistoryMilestone
     @Published private(set) var caseReviewRevealProgress: Double = 0
     @Published private(set) var pendingConsentStep: StrokeProcedureStep?
     /// Spatial interaction state follows the proven Heart Field ownership
@@ -414,14 +416,19 @@ final class StrokeExperienceState: ObservableObject {
         spatialCaseDocked = true
         isCaseSelected = true
         spatialPhase = .caseReview
-        selectedCaseHistoryMilestone = .reportedChange
+        selectedCaseHistoryMilestone = Self.authoredCaseHistoryMilestone
         procedureStep = .chooseCase
         startCaseReviewReveal(reduceMotion: reduceMotion)
     }
 
-    func selectCaseHistoryMilestone(_ milestone: StrokeCaseHistoryMilestone) {
-        guard spatialPhase == .caseReview else { return }
-        selectedCaseHistoryMilestone = milestone
+    func selectCaseHistoryMilestone(
+        _ milestone: StrokeCaseHistoryMilestone,
+        reduceMotion: Bool = false
+    ) {
+        guard audienceLens == .clinician, spatialPhase == .caseReview else { return }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.26)) {
+            selectedCaseHistoryMilestone = milestone
+        }
     }
 
     /// Detail is a presentation filter, never a fourth teaching act. Family
@@ -488,6 +495,7 @@ final class StrokeExperienceState: ObservableObject {
                 spatialCaseDocked = true
                 isCaseSelected = true
                 spatialPhase = .caseReview
+                selectedCaseHistoryMilestone = Self.authoredCaseHistoryMilestone
                 procedureStep = .chooseCase
                 brainRevealProgress = 0
             }
@@ -539,7 +547,10 @@ final class StrokeExperienceState: ObservableObject {
     /// The patient file is a threshold, not persistent furniture. The case room
     /// disappears before anatomy appears, preserving one clear spatial task.
     func beginExplanation() {
-        guard spatialCaseDocked, isCaseSelected else { return }
+        guard audienceLens == .clinician,
+              spatialPhase == .caseReview,
+              spatialCaseDocked,
+              isCaseSelected else { return }
         spatialPhase = .explanation
         clearPointSelection()
         procedureStep = .chooseCase
@@ -572,13 +583,14 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func returnCaseToLibrary() {
+        guard audienceLens == .clinician else { return }
         cancelCaseReviewReveal()
         spatialPhase = .caseLibrary
         teachingImagingDrawerVisible = false
         spatialCaseDocked = false
         isCaseSelected = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
-        selectedCaseHistoryMilestone = .reportedChange
+        selectedCaseHistoryMilestone = Self.authoredCaseHistoryMilestone
         caseReviewRevealProgress = 0
         brainRevealProgress = 0
         vesselFocusProgress = 0
@@ -636,7 +648,15 @@ final class StrokeExperienceState: ObservableObject {
     /// advances itself, or calculates a care recommendation.
     func advanceJourney() {
         if closingReflectionVisible {
-            returnCaseToLibrary()
+            if audienceLens == .clinician {
+                returnCaseToLibrary()
+            } else {
+                // The lay route deliberately bypasses fictional case files.
+                // Restart the same generic exhibit instead of revealing the
+                // doctor-only archive after the closing reflection.
+                reset()
+                beginPatientExploration()
+            }
             return
         }
         requestedPause = false
@@ -994,7 +1014,9 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     var primaryActionTitle: String {
-        if closingReflectionVisible { return "Return to cases" }
+        if closingReflectionVisible {
+            return audienceLens == .family ? "Restart exhibit" : "Return to cases"
+        }
         return switch procedureStep {
         case .chooseCase: "Reveal what changed"
         case .inspectOcclusion: "Reveal layers with permission"
