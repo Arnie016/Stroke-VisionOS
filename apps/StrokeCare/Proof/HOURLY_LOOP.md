@@ -184,9 +184,13 @@
   query for current `devicectl` output.
 - Evidence: `python3 Tests/verify_contract.py` returned
   `STROKE_CARE_CONTRACT=PASS`; a clean generic visionOS Simulator build exited
-  `0`; the signed physical build, code-sign verification, install, installed-app
-  query, `--hackathon-demo` foreground launch, and running-process query all
-  passed in `Proof/xcat/20260809-155324/RECEIPT.md` (PID 592).
+  `0`; deterministic Front, Side A, and Top captures are recorded as
+  `Proof/48-model-front-points-simulator.png`,
+  `Proof/49-model-side-a-points-simulator.png`, and
+  `Proof/50-model-top-points-simulator.png`; the signed physical build,
+  code-sign verification, install, installed-app query, `--hackathon-demo`
+  foreground launch, and running-process query all passed in
+  `Proof/xcat/20260809-155324/RECEIPT.md` (PID 592).
 - Verdict: `IMPROVED` — the current `0.6 (6)` binary is installed and running on
   XCAT, while anatomy, case intake, annotations, and controls now share one
   initial placement frame.
