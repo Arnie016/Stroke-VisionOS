@@ -519,7 +519,18 @@ struct StrokeImmersiveView: View {
                             .frame(width: 330, height: 390)
                     }
                 }
-            .gesture(
+                .highPriorityGesture(
+                    SpatialTapGesture()
+                        .targetedToEntity(where: .has(StrokeLessonPointTargetComponent.self))
+                        .onEnded { value in
+                            guard let point = StrokeSceneFactory.pointFieldSelection(for: value.entity) else {
+                                return
+                            }
+                            experience.selectPoint(entityName: point.entityName, label: point.label)
+                        },
+                    isEnabled: !experience.questionPlacementArmed
+                )
+                .gesture(
                     DragGesture(minimumDistance: 3)
                         .targetedToAnyEntity()
                         .onChanged { value in

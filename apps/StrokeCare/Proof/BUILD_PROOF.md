@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Version/build: `0.6 (8)` in current source; signed XCAT deployment and
+- Version/build: `0.6 (9)` in current source; signed XCAT deployment and
   placement-path receipts are recorded below.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
@@ -158,6 +158,22 @@ and the process query was empty. The machine receipts are
 `Proof/xcat/20260809-163625/BLOCKED.md` and
 `Proof/xcat/20260809-164319/INSTALL_ONLY.md`. Build 8 is therefore installed but
 is **not** claimed foregrounded, running, or visible.
+
+At 17:00 SGT, build `0.6 (9)` completed the guarded physical-device lane:
+
+- generic physical visionOS build and deep code-sign verification: PASS
+- installation and installed-app query: PASS (`Stroke Care 0.6 (9)`)
+- deterministic `--hackathon-demo` launch and process query: PASS
+- normal no-argument main-app launch at 17:04 SGT: PASS
+- post-launch process query: PASS (`StrokeTime`, PID 761)
+
+The guarded receipt is `Proof/xcat/20260809-165957/RECEIPT.md`; the separate
+normal-route receipt is
+`Proof/xcat/20260809-170430-main-route/RECEIPT.md`. These machine receipts prove
+that the signed build installed, foreground-launched, and existed as a running
+process. They do not establish the wearer-visible scene, lesson-point hover or
+pinch quality, annotation behavior, comfort, comprehension, spatial audio, or
+clinical validity.
 
 ## Clinical and procedural gates
 
