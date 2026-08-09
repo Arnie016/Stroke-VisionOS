@@ -77,6 +77,13 @@ enum StrokePointField: String, CaseIterable, Identifiable {
         case .procedure: "clinician-procedure-point-field-point-"
         }
     }
+
+    var defaultLessonPointIndex: Int {
+        switch self {
+        case .regions: 0
+        case .procedure: 2
+        }
+    }
 }
 
 struct StrokeLessonPoint: Identifiable, Equatable {
@@ -442,8 +449,8 @@ final class StrokeExperienceState: ObservableObject {
     func selectLessonFamily(_ field: StrokePointField) {
         pointField = field
         lessonPointsVisible = true
-        if let first = field.lessonPoints.first {
-            selectLessonPoint(first)
+        if let initialPoint = field.lessonPoints.first(where: { $0.index == field.defaultLessonPointIndex }) {
+            selectLessonPoint(initialPoint)
         }
         requestedPause = false
         if field == .procedure {
@@ -731,6 +738,9 @@ final class StrokeExperienceState: ObservableObject {
                 cortexOpacity = 0.40
                 pointField = .procedure
                 lessonPointsVisible = true
+                if let blockagePoint = pointField.lessonPoints.first(where: { $0.index == pointField.defaultLessonPointIndex }) {
+                    selectLessonPoint(blockagePoint)
+                }
                 spatialZoom = 1.36
                 orbit = [0.14, 0.08]
                 vesselFocusProgress = 1
