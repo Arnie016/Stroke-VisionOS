@@ -789,3 +789,31 @@ patient-specific registration, specialist approval, or clinical validity.
 XCAT remained unavailable. The larger 134-item GitHub catalog remains a
 metadata/review inventory; it is not falsely reported as 134 registered live
 layers.
+
+## 2026-08-10 06:17 SGT — optional anatomy availability fallback
+
+Build `0.6 (22)` now derives presenter anatomy availability from the entities
+that RealityKit actually loaded. **Vessels** requires both the registered
+arterial and venous references; **Internal** requires both deep structures and
+ventricles. A requested focus is queued while the scene loads. If its pair is
+incomplete, the app restores **Whole** and shows a concise unavailable-layer
+message instead of retaining a selected empty focus.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build22` succeeded. Its app reports `0.6 (22)`, contains
+exactly 15 USDZ resources, and its debug implementation dylib has SHA-256
+`840a7d20762bdd441ba8d8ef5ea8f00914962536730b7bfbb2c06084edc4367a`.
+
+`Proof/88-anatomy-vessels-unavailable-build22-simulator.png`, 3840×2160,
+SHA-256
+`b6be1411ad6fa8573d3d0c97bfd3495db552c2dc896921f4fcd16b8e43869935`,
+was captured with deterministic venous-load failure injection. It visibly
+shows **Whole** restored, **Vessels** dimmed, and `Venous reference unavailable
+· Whole view restored` while preserving the central brain, arteries, attached
+points, direct viewpoints, Scholar depth, and six-beat timeline.
+
+The injected failure is Simulator evidence for state/render behavior only. It
+does not prove a spontaneous production load failure, XCAT legibility,
+gaze-and-pinch quality, anatomical registration, specialist approval, or
+clinical validity. XCAT remained unavailable.

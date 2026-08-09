@@ -809,3 +809,24 @@
 - Next safe action: on an awake and unlocked XCAT, validate gaze-and-pinch
   selection of Whole, Vessels, and Internal while confirming the anatomy points
   remain targetable from the default presenter position.
+
+## 2026-08-10 06:17 SGT — optional anatomy availability fallback
+
+- Target: prevent an optional USDZ load failure from appearing as a selected
+  but empty Vessels or Internal anatomy focus.
+- Bounded action: connected RealityKit's loaded entity hierarchy to the
+  presenter state; queued focus requests until the report arrives; restored
+  Whole with an explicit message when either required optional pair is absent;
+  added deterministic venous/internal failure routes.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (22)` with exactly 15 USDZs; Proof 88 is
+  3840×2160 with SHA-256 `b6be1411…9935` and visibly shows Whole restored,
+  Vessels dimmed, the failure boundary, attached points, and the top timeline.
+- Verdict: `IMPROVED` — optional anatomy failure is now explicit and reversible
+  instead of producing a misleading empty subsystem.
+- Blocker: XCAT is unavailable, and Simulator fault injection does not prove
+  physical targeting, stereo placement, wearer legibility, real device load
+  behavior, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, select Whole, Vessels, and
+  Internal once each and record both the loaded layer and presenter-visible
+  boundary before any further anatomy expansion.

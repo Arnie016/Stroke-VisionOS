@@ -113,7 +113,7 @@ enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
 /// A presenter-controlled visibility filter for registered teaching anatomy.
 /// It changes emphasis only: it never claims patient-specific registration,
 /// diagnosis, treatment eligibility, or procedural simulation.
-enum StrokeAnatomyFocus: String, CaseIterable, Identifiable {
+enum StrokeAnatomyFocus: String, CaseIterable, Identifiable, Hashable {
     case whole = "Whole"
     case vessels = "Vessels"
     case internalStructures = "Internal"
@@ -478,6 +478,9 @@ final class StrokeExperienceState: ObservableObject {
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
     @Published private(set) var anatomyFocus: StrokeAnatomyFocus = .whole
+    @Published private(set) var availableAnatomyFocuses: Set<StrokeAnatomyFocus> = [.whole]
+    @Published private(set) var anatomyAvailabilityResolved = false
+    @Published private(set) var anatomyAvailabilityNotice: String?
     @Published private(set) var anatomyViewpoint: StrokeAnatomyViewpoint = .threeQuarter
     @Published var environmentMode: StrokeEnvironmentMode = .warmHorizon
     @Published var cortexOpacity: Double = 0.34
@@ -511,6 +514,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
     private var caseReviewRevealTask: Task<Void, Never>?
+    private var pendingAnatomyFocus: StrokeAnatomyFocus?
 
     func selectTeachingCase(reduceMotion: Bool = false) {
         guard audienceLens == .clinician else { return }
@@ -564,6 +568,61 @@ final class StrokeExperienceState: ObservableObject {
             anatomyFocus = .whole
             return
         }
+
+        guard anatomyAvailabilityResolved else {
+            pendingAnatomyFocus = focus
+            anatomyAvailabilityNotice = "Checking registered anatomy layers…"
+            return
+        }
+        guard availableAnatomyFocuses.contains(focus) else {
+            pendingAnatomyFocus = nil
+            anatomyFocus = .whole
+            anatomyPresentation = .assembled
+            cortexOpacity = 0.66
+            anatomyAvailabilityNotice = focus == .vessels
+                ? "Venous reference unavailable · Whole view restored"
+                : "Internal references unavailable · Whole view restored"
+            return
+        }
+
+        applyAnatomyFocus(focus)
+    }
+
+    /// Receives the actual RealityKit load result. Optional detail failures
+    /// stay visible in the presenter UI and can never leave a selected-but-
+    /// empty subsystem. Whole always remains available through the complete
+    /// procedural teaching fallback.
+    func updateAvailableAnatomyFocuses(_ focuses: Set<StrokeAnatomyFocus>) {
+        availableAnatomyFocuses = focuses.union([.whole])
+        anatomyAvailabilityResolved = true
+
+        if let pendingAnatomyFocus {
+            self.pendingAnatomyFocus = nil
+            selectAnatomyFocus(pendingAnatomyFocus)
+            return
+        }
+
+        if !availableAnatomyFocuses.contains(anatomyFocus) {
+            let unavailableFocus = anatomyFocus
+            anatomyFocus = .whole
+            anatomyPresentation = .assembled
+            cortexOpacity = 0.66
+            anatomyAvailabilityNotice = unavailableFocus == .vessels
+                ? "Venous reference unavailable · Whole view restored"
+                : "Internal references unavailable · Whole view restored"
+        }
+    }
+
+    func isAnatomyFocusAvailable(_ focus: StrokeAnatomyFocus) -> Bool {
+        focus == .whole || (anatomyAvailabilityResolved && availableAnatomyFocuses.contains(focus))
+    }
+
+    var anatomyFocusStatus: String {
+        anatomyAvailabilityNotice ?? anatomyFocus.boundary
+    }
+
+    private func applyAnatomyFocus(_ focus: StrokeAnatomyFocus) {
+        anatomyAvailabilityNotice = nil
 
         anatomyFocus = focus
         pointField = .regions
@@ -1547,6 +1606,8 @@ final class StrokeExperienceState: ObservableObject {
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
         anatomyFocus = .whole
+        pendingAnatomyFocus = nil
+        anatomyAvailabilityNotice = nil
         anatomyViewpoint = .threeQuarter
         environmentMode = .warmHorizon
         cortexOpacity = 0.34

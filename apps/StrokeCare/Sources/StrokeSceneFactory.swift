@@ -225,6 +225,24 @@ enum StrokeSceneFactory {
         return root
     }
 
+    /// Reports only subsystems that actually loaded into the live scene. This
+    /// keeps optional USDZ failures from becoming a silent empty selection in
+    /// the presenter controls.
+    static func availableAnatomyFocuses(in root: Entity) -> Set<StrokeAnatomyFocus> {
+        var focuses: Set<StrokeAnatomyFocus> = [.whole]
+        guard let imported = root.findEntity(named: importedRootName) else { return focuses }
+
+        if imported.findEntity(named: importedArteriesName) != nil,
+           imported.findEntity(named: importedVenousName) != nil {
+            focuses.insert(.vessels)
+        }
+        if imported.findEntity(named: importedDeepStructuresName) != nil,
+           imported.findEntity(named: importedVentriclesName) != nil {
+            focuses.insert(.internalStructures)
+        }
+        return focuses
+    }
+
     /// Wires the registered miniature to a view-owned disclosure state without
     /// exposing its internal entity hierarchy.
     static func updateRegisteredTeachingImaging(
@@ -1017,6 +1035,13 @@ enum StrokeSceneFactory {
         }
         if arguments.contains("--proof-load-missing-dura") {
             missing.insert(importedDuraName)
+        }
+        if arguments.contains("--proof-anatomy-vessels-unavailable") {
+            missing.insert(importedVenousName)
+        }
+        if arguments.contains("--proof-anatomy-internal-unavailable") {
+            missing.insert(importedDeepStructuresName)
+            missing.insert(importedVentriclesName)
         }
         return missing
     }

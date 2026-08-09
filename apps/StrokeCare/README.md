@@ -94,7 +94,16 @@ boundary. It no longer suppresses the fallback and silently presents a partial
 head. Optional skull, venous, internal-detail, and flow references remain
 independently gated.
 
+Build `0.6 (22)` extends that honesty to the optional presenter focus controls.
+RealityKit reports which subsystem pairs actually loaded before **Vessels** or
+**Internal** can become active. If a pair is incomplete, Stroke Care restores
+**Whole** and shows the exact missing-reference boundary instead of leaving a
+selected empty view. The dimmed control remains pinchable so the presenter can
+read why it is unavailable.
+
 ![Visible complete fallback when the registered artery asset is unavailable](Proof/76-visible-anatomy-fallback-simulator.png)
+
+![Optional venous reference unavailable with Whole safely restored](Proof/88-anatomy-vessels-unavailable-build22-simulator.png)
 
 Build `0.6 (15)` adds a same-frame, registered-v2 Circle-of-Willis teaching
 overlay to the deliberately selected Blood-flow point. Coral/gold route lines

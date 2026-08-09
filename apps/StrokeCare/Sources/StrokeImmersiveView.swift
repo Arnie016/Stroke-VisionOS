@@ -257,6 +257,9 @@ struct StrokeImmersiveView: View {
 
                     let root = await StrokeSceneFactory.makeScene()
                     stageRoot.addChild(root)
+                    experience.updateAvailableAnatomyFocuses(
+                        StrokeSceneFactory.availableAnatomyFocuses(in: root)
+                    )
                     await installSpatialAudio(on: root)
 
                     let caseRoom = StrokeSceneFactory.makeSpatialCaseIntake()
@@ -1685,6 +1688,7 @@ private struct StrokeScholarReferenceRail: View {
 
                 HStack(spacing: 6) {
                     ForEach(StrokeAnatomyFocus.allCases) { focus in
+                        let isAvailable = experience.isAnatomyFocusAvailable(focus)
                         Button {
                             experience.selectAnatomyFocus(focus)
                         } label: {
@@ -1703,12 +1707,17 @@ private struct StrokeScholarReferenceRail: View {
                         .buttonStyle(.plain)
                         .hoverEffect(.highlight)
                         .contentShape(Capsule())
+                        .opacity(isAvailable ? 1 : 0.46)
                         .accessibilityLabel("Anatomy focus, \(focus.rawValue)")
-                        .accessibilityValue(experience.anatomyFocus == focus ? "Selected" : "Available")
+                        .accessibilityValue(
+                            experience.anatomyFocus == focus
+                                ? "Selected"
+                                : (isAvailable ? "Available" : "Unavailable in this build")
+                        )
                     }
                 }
 
-                Text(experience.anatomyFocus.boundary)
+                Text(experience.anatomyFocusStatus)
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.62))
                     .fixedSize(horizontal: false, vertical: true)

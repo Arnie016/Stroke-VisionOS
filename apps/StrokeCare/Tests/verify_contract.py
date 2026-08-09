@@ -623,6 +623,10 @@ require(all(token in state for token in (
     'case vessels = "Vessels"',
     'case internalStructures = "Internal"',
     "func selectAnatomyFocus(_ focus: StrokeAnatomyFocus)",
+    "func updateAvailableAnatomyFocuses(_ focuses: Set<StrokeAnatomyFocus>)",
+    "availableAnatomyFocuses.contains(focus)",
+    "Venous reference unavailable · Whole view restored",
+    "Internal references unavailable · Whole view restored",
     "focus != .internalStructures || detailLevel == .scholar",
     "anatomyFocus = .whole",
     "prepareAnatomyInternalFocusProof",
@@ -631,7 +635,9 @@ require(all(token in immersive for token in (
     'Text("ANATOMY FOCUS")',
     "ForEach(StrokeAnatomyFocus.allCases)",
     "experience.selectAnatomyFocus(focus)",
-    "experience.anatomyFocus.boundary",
+    "experience.anatomyFocusStatus",
+    "experience.isAnatomyFocusAvailable(focus)",
+    "Unavailable in this build",
     "minHeight: 48",
 )), "Scholar rail lacks a directly selectable, accessible anatomy subsystem hierarchy")
 require(all(token in scene for token in (
@@ -647,6 +653,15 @@ require(all(token in launch for token in (
     '"--proof-anatomy-vessels"',
     "prepareAnatomyVesselsFocusProof",
 )), "deterministic vessels/internal anatomy-focus proof routes are missing")
+require(all(token in launch for token in (
+    '"--proof-anatomy-vessels-unavailable"',
+    '"--proof-anatomy-internal-unavailable"',
+)), "deterministic optional-anatomy failure proof routes are missing")
+require(all(token in scene for token in (
+    "static func availableAnatomyFocuses(in root: Entity)",
+    'arguments.contains("--proof-anatomy-vessels-unavailable")',
+    'arguments.contains("--proof-anatomy-internal-unavailable")',
+)), "optional registered layers lack a live availability report and deterministic failure injection")
 require(all(token in immersive for token in (
     'Text("SHARED DISCUSSION")',
     '"This teaching view does not diagnose or recommend care."',
