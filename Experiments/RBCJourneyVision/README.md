@@ -66,6 +66,24 @@ wearer. It does not move an app camera. The direction, timing, thickness,
 branching, and geometry are qualitative and generic: this is not patient
 anatomy, measured hemodynamics, CFD, perfusion, or collateral-flow prediction.
 
+### Follow the anterior passage
+
+Choosing **Anterior** now offers an optional three-beat passage through the
+same network: **Approach → Crossroads → Continue**. The paired internal-carotid
+approaches rise first; the Circle connections then return as one crossroads;
+finally one example right middle-cerebral route stays bright while the
+contralateral side recedes as orientation context. Six semantic roots
+recompose the existing 26 paths instead of loading a second vessel model.
+
+Three faint coral navigation halos sit outside only the selected route's red
+arterial wall. At its continuation, a broken warm aperture pulses around the
+handoff to the existing inhabited arterial-lumen lesson. The final beat offers
+exactly **Enter artery**, **Open frontal field**, or **Leave passage**. Entering
+the artery reuses the established fixed-wearer lumen ride; opening the frontal
+field reuses the normal region threshold. The right-sided route is a teaching
+exemplar, not a patient-specific pathway, complete vascular atlas, measured
+flow, CFD, territory map, or recommendation.
+
 ## Brain Observatory — frontal region slice
 
 The frontal destination is a bounded prototype of a broader **brain

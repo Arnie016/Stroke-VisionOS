@@ -51,6 +51,13 @@ video cannot.
   qualitative flow fronts, and Whole circle / Anterior / Posterior focus. The
   communicating paths carry no fixed-direction arrows because this is not an
   individual's collateral-flow pattern.
+- Anterior passage: only after explicit Anterior focus. Approach → Crossroads →
+  Continue must reuse the Circle network, isolate one clearly named right-MCA
+  teaching exemplar, and keep the opposite side as faint context. Three outer
+  halos and one broken warm aperture are navigation accents, never vessel
+  color or patient registration. The final beat offers only Enter artery, Open
+  frontal field, and Leave passage; both destinations reuse their established
+  fixed-wearer handoffs.
 - Arterial ride: fixed wearer, native inward-facing fork, continuous route
   meshes, provenance-tracked PBR arterial-wall microtexture, sparse directional
   chevrons, tumbling/deforming authored cells, user-selected branch transfers,

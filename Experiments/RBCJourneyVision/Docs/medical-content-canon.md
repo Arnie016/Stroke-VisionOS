@@ -14,6 +14,15 @@ not specialist review and does not make the app clinical software.
   anatomy can vary between people.
 - UI limit: do not imply that every person has a complete symmetric circle or
   that this generic asset represents an individual's anatomy.
+- Anterior-passage limit: the paired carotid approaches, Circle crossroads,
+  and one enlarged right middle-cerebral continuation are a staged spatial
+  explanation of relationships already present in the generic network. The
+  selected side is an explicit teaching exemplar, not laterality from a
+  patient, a complete branch atlas, collateral-flow prediction, measured
+  vessel calibre, physiological timing, perfusion, pressure, CFD, territory,
+  diagnosis, or treatment guidance. The three outer halos and broken warm
+  threshold encode navigation only. The world recomposes around a stationary
+  wearer; no anatomy or app camera moves the person through a vessel.
 
 ## Cerebral routes and microcirculation
 

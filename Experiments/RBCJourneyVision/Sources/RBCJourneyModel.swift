@@ -429,6 +429,60 @@ enum RBCWillisRouteFocus: String, CaseIterable, Identifiable {
     }
 }
 
+enum RBCAnteriorPassagePhase: Int, CaseIterable, Identifiable {
+    case carotidApproach
+    case circleCrossroads
+    case middleCerebralContinuation
+
+    var id: Int { rawValue }
+
+    var shortTitle: String {
+        switch self {
+        case .carotidApproach: "Approach"
+        case .circleCrossroads: "Crossroads"
+        case .middleCerebralContinuation: "Continue"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .carotidApproach: "Two carotid routes rise"
+        case .circleCrossroads: "At the arterial crossroads"
+        case .middleCerebralContinuation: "Follow one right MCA route"
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .carotidApproach:
+            "The paired internal-carotid approaches lift from below and gather around the Circle. Direction lights move upward while your viewpoint remains still."
+        case .circleCrossroads:
+            "Anterior, middle-cerebral, and communicating paths meet in one connected teaching network. The crossings stay visible without claiming a universal collateral-flow direction."
+        case .middleCerebralContinuation:
+            "One example right middle-cerebral route stays bright while the opposite side recedes as orientation context. Cross its living threshold to inhabit the artery, or open the frontal field around it."
+        }
+    }
+
+    var fact: String {
+        switch self {
+        case .carotidApproach:
+            "The internal carotid arteries contribute to anterior cerebral circulation and give rise to middle cerebral arteries."
+        case .circleCrossroads:
+            "Circle of Willis anatomy varies substantially, and communicating routes do not imply one fixed direction of blood flow."
+        case .middleCerebralContinuation:
+            "Middle cerebral arteries travel laterally and branch repeatedly. This right-sided route is an enlarged teaching exemplar, not a patient-specific pathway."
+        }
+    }
+
+    var nextActionTitle: String? {
+        switch self {
+        case .carotidApproach: "Reach the crossroads"
+        case .circleCrossroads: "Reveal MCA routes"
+        case .middleCerebralContinuation: nil
+        }
+    }
+}
+
 enum RBCRegionVisualizationMode: String, CaseIterable, Identifiable {
     case locate
     case xray
@@ -719,6 +773,7 @@ final class RBCJourneyModel {
     var regionVisualization: RBCRegionVisualizationMode
     var willisRouteFocus: RBCWillisRouteFocus
     var flowRideRoute: RBCFlowRideRoute = .overview
+    var anteriorPassagePhase: RBCAnteriorPassagePhase?
     var posteriorVoyagePhase: RBCPosteriorVoyagePhase?
     var isFrontalClotScenarioActive = false
     var isFlowRideActive = false
@@ -800,6 +855,15 @@ final class RBCJourneyModel {
         let capillaryFocusProofRequested = arguments.contains("--proof-capillary-focus")
         let flowRideProofRequested = arguments.contains("--proof-flow-ride")
             || capillaryFocusProofRequested
+        let anteriorPassageProofPhase: RBCAnteriorPassagePhase? = if arguments.contains("--proof-anterior-passage-crossroads") {
+            .circleCrossroads
+        } else if arguments.contains("--proof-anterior-passage-mca") {
+            .middleCerebralContinuation
+        } else if arguments.contains("--proof-anterior-passage-carotid") {
+            .carotidApproach
+        } else {
+            nil
+        }
         let posteriorVoyageProofPhase: RBCPosteriorVoyagePhase? = if arguments.contains("--proof-posterior-voyage-bridge") {
             .basilarBridge
         } else if arguments.contains("--proof-posterior-voyage-choice") {
@@ -819,6 +883,8 @@ final class RBCJourneyModel {
             nil
         } else if flowRideProofRequested {
             .arterialLumen
+        } else if anteriorPassageProofPhase != nil {
+            .circleOfWillis
         } else if posteriorVoyageProofPhase != nil {
             .brainstem
         } else if willisRouteProofRequested || regionFamilyCompanionProofRequested {
@@ -835,7 +901,7 @@ final class RBCJourneyModel {
         } else {
             .locate
         }
-        willisRouteFocus = if arguments.contains("--proof-willis-route-anterior") {
+        willisRouteFocus = if anteriorPassageProofPhase != nil || arguments.contains("--proof-willis-route-anterior") {
             .anterior
         } else if arguments.contains("--proof-willis-route-posterior") {
             .posterior
@@ -853,6 +919,7 @@ final class RBCJourneyModel {
             .overview
         }
         isCapillaryFieldFocused = capillaryFocusProofRequested
+        anteriorPassagePhase = anteriorPassageProofPhase
         posteriorVoyagePhase = posteriorVoyageProofPhase
         familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested
@@ -935,6 +1002,7 @@ final class RBCJourneyModel {
             || familyGuideBeatArgument != nil
             || flowRideProofRequested
             || capillaryFocusProofRequested
+            || anteriorPassageProofPhase != nil
             || posteriorVoyageProofPhase != nil
             || initialFocus != nil
             || initialTransfer != nil
@@ -1038,9 +1106,17 @@ final class RBCJourneyModel {
     /// wearer between regions.
     var regionTransferNarrationWaitLimitMilliseconds: Int { 7_000 }
 
-    var activeWillisTitle: String { willisRouteFocus.title }
-    var activeWillisSubtitle: String { willisRouteFocus.subtitle }
-    var activeWillisFact: String { willisRouteFocus.fact }
+    var activeWillisTitle: String {
+        anteriorPassagePhase?.title ?? willisRouteFocus.title
+    }
+
+    var activeWillisSubtitle: String {
+        anteriorPassagePhase?.subtitle ?? willisRouteFocus.subtitle
+    }
+
+    var activeWillisFact: String {
+        anteriorPassagePhase?.fact ?? willisRouteFocus.fact
+    }
 
     var activeCerebellumTitle: String {
         return switch regionVisualization {
@@ -1297,6 +1373,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         exhibitBeat = .route
@@ -1316,6 +1393,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
@@ -1339,6 +1417,7 @@ final class RBCJourneyModel {
         activeRegionDestination = nil
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         familyNarrationEnabled = false
         station = .circleOfWillis
@@ -1359,6 +1438,7 @@ final class RBCJourneyModel {
         willisRouteFocus = .overview
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         isPaused = destination == .arterialLumen || destination == .corticalExchange
         isExhibitFactExpanded = false
@@ -1375,6 +1455,7 @@ final class RBCJourneyModel {
         regionTransferRun += 1
         isFrontalClotScenarioActive = false
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         isPaused = false
@@ -1391,6 +1472,45 @@ final class RBCJourneyModel {
               pendingRegionDestination == nil
         else { return }
         willisRouteFocus = focus
+        anteriorPassagePhase = nil
+        isPaused = false
+    }
+
+    func startAnteriorPassage() {
+        guard activeRegionDestination == .circleOfWillis,
+              pendingRegionDestination == nil
+        else { return }
+        willisRouteFocus = .anterior
+        anteriorPassagePhase = .carotidApproach
+        isPaused = false
+    }
+
+    func advanceAnteriorPassage() {
+        guard let anteriorPassagePhase else { return }
+        switch anteriorPassagePhase {
+        case .carotidApproach:
+            self.anteriorPassagePhase = .circleCrossroads
+        case .circleCrossroads:
+            self.anteriorPassagePhase = .middleCerebralContinuation
+        case .middleCerebralContinuation:
+            break
+        }
+        isPaused = false
+    }
+
+    func chooseAnteriorDestination(_ destination: RBCBrainRegionDestination) {
+        guard anteriorPassagePhase == .middleCerebralContinuation,
+              destination == .arterialLumen || destination == .frontalLobe
+        else { return }
+        if destination == .arterialLumen {
+            startFlowRide()
+        } else {
+            requestRegion(destination)
+        }
+    }
+
+    func stopAnteriorPassage() {
+        anteriorPassagePhase = nil
         isPaused = false
     }
 
@@ -1409,6 +1529,7 @@ final class RBCJourneyModel {
         }
         if regionVisualization != .flow {
             isFrontalClotScenarioActive = false
+            anteriorPassagePhase = nil
             posteriorVoyagePhase = nil
         }
         isPaused = false
@@ -1430,6 +1551,7 @@ final class RBCJourneyModel {
         regionVisualization = mode
         if mode != .flow {
             isFrontalClotScenarioActive = false
+            anteriorPassagePhase = nil
             posteriorVoyagePhase = nil
         }
         isPaused = false
@@ -1440,6 +1562,7 @@ final class RBCJourneyModel {
               pendingRegionDestination == nil
         else { return }
         regionVisualization = .flow
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = .convergence
         isPaused = false
     }
@@ -1479,6 +1602,7 @@ final class RBCJourneyModel {
         regionVisualization = .flow
         isFrontalClotScenarioActive = false
         isFlowRideActive = true
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         flowRideRoute = .overview
         isCapillaryFieldFocused = false
@@ -1497,6 +1621,7 @@ final class RBCJourneyModel {
         transferredPortalID = RBCBrainRegionDestination.frontalLobe.id
         regionVisualization = .flow
         isFlowRideActive = false
+        anteriorPassagePhase = nil
         posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
         familyNarrationEnabled = false

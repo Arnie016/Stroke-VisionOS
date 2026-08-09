@@ -11,9 +11,18 @@ final class RBCJourneyScene {
         case connector
     }
 
+    private enum WillisAnteriorSegment {
+        case carotid
+        case crossroads
+        case middleCerebral
+        case anteriorCerebralContext
+    }
+
     private struct WillisPathRecord {
         let points: [SIMD3<Float>]
         let family: WillisPathFamily
+        let anteriorSegment: WillisAnteriorSegment?
+        let isSelectedAnteriorExemplar: Bool
     }
 
     let root = Entity()
@@ -33,6 +42,13 @@ final class RBCJourneyScene {
     private let regionTransferThresholdRoot = Entity()
     private let willisNetworkRoot = Entity()
     private let willisAnteriorRouteRoot = Entity()
+    private let willisCarotidPassageRoot = Entity()
+    private let willisCrossroadsPassageRoot = Entity()
+    private let willisMiddleCerebralPassageRoot = Entity()
+    private let willisSelectedMCAPassageRoot = Entity()
+    private let willisContralateralMCAContextRoot = Entity()
+    private let willisAnteriorGatewayRoot = Entity()
+    private let willisAnteriorCerebralContextRoot = Entity()
     private let willisPosteriorRouteRoot = Entity()
     private let willisConnectorRoot = Entity()
     private let flowRideRoot = Entity()
@@ -178,6 +194,7 @@ final class RBCJourneyScene {
     private var willisRuntimeActive = false
     private var willisRuntimeHeld = false
     private var willisRuntimeFocus: RBCWillisRouteFocus = .overview
+    private var willisRuntimeAnteriorPassagePhase: RBCAnteriorPassagePhase?
     private var willisElapsed: Float = 0
     private var flowRideCells: [(
         entity: Entity,
@@ -258,6 +275,13 @@ final class RBCJourneyScene {
         regionTransferThresholdRoot.name = "region-transfer-threshold-stationary-wearer-no-camera-locomotion"
         willisNetworkRoot.name = "room-scale-circle-of-willis-network-not-patient-specific"
         willisAnteriorRouteRoot.name = "qualitative-anterior-route-family"
+        willisCarotidPassageRoot.name = "anterior-passage-paired-internal-carotid-approaches"
+        willisCrossroadsPassageRoot.name = "anterior-passage-circle-crossroads"
+        willisMiddleCerebralPassageRoot.name = "anterior-passage-middle-cerebral-continuations"
+        willisSelectedMCAPassageRoot.name = "anterior-passage-selected-right-mca-exemplar-not-patient-specific"
+        willisContralateralMCAContextRoot.name = "contralateral-mca-context-not-selected-route"
+        willisAnteriorGatewayRoot.name = "right-mca-entry-threshold-to-inhabited-arterial-lumen"
+        willisAnteriorCerebralContextRoot.name = "anterior-cerebral-context-not-selected-route"
         willisPosteriorRouteRoot.name = "qualitative-posterior-route-family"
         willisConnectorRoot.name = "communicating-artery-connection-family-no-fixed-flow-claim"
         flowRideRoot.name = "inside-arterial-lumen-flow-ride"
@@ -339,6 +363,7 @@ final class RBCJourneyScene {
         regionVisualization: RBCRegionVisualizationMode,
         willisRouteFocus: RBCWillisRouteFocus,
         frontalClotScenarioActive: Bool,
+        anteriorPassagePhase: RBCAnteriorPassagePhase?,
         posteriorVoyagePhase: RBCPosteriorVoyagePhase?,
         flowRideActive: Bool,
         flowRideRoute: RBCFlowRideRoute,
@@ -454,6 +479,7 @@ final class RBCJourneyScene {
         updateWillisNetwork(
             active: willisRegionActive,
             focus: willisRouteFocus,
+            anteriorPassagePhase: anteriorPassagePhase,
             motionHeld: motionHeld,
             reducedMotion: reducedMotion
         )
@@ -465,7 +491,9 @@ final class RBCJourneyScene {
             motionHeld: motionHeld
         )
         if let infoAttachment {
-            let target: SIMD3<Float> = if posteriorVoyagePhase != nil && brainstemRegionActive {
+            let target: SIMD3<Float> = if anteriorPassagePhase != nil && willisRegionActive {
+                [0, 1.78, -0.70]
+            } else if posteriorVoyagePhase != nil && brainstemRegionActive {
                 [0, 1.76, -0.70]
             } else if lumenRideActive && capillaryFieldFocused {
                 [0, 1.78, -0.70]
@@ -2998,6 +3026,13 @@ final class RBCJourneyScene {
         willisNetworkRoot.addChild(willisAnteriorRouteRoot)
         willisNetworkRoot.addChild(willisPosteriorRouteRoot)
         willisNetworkRoot.addChild(willisConnectorRoot)
+        willisAnteriorRouteRoot.addChild(willisCarotidPassageRoot)
+        willisAnteriorRouteRoot.addChild(willisCrossroadsPassageRoot)
+        willisAnteriorRouteRoot.addChild(willisMiddleCerebralPassageRoot)
+        willisAnteriorRouteRoot.addChild(willisAnteriorCerebralContextRoot)
+        willisMiddleCerebralPassageRoot.addChild(willisSelectedMCAPassageRoot)
+        willisMiddleCerebralPassageRoot.addChild(willisContralateralMCAContextRoot)
+        willisSelectedMCAPassageRoot.addChild(willisAnteriorGatewayRoot)
         region.addChild(willisNetworkRoot)
         // The imported Circle hero is useful as portal provenance but, at room
         // scale, its dark tubes and orange cuffs compete with this directional
@@ -3019,6 +3054,14 @@ final class RBCJourneyScene {
         let flowFrontMaterial = glowMaterial(
             color: UIColor(red: 1.0, green: 0.76, blue: 0.42, alpha: 0.98),
             intensity: 4.0
+        )
+        let middleCerebralPassageHaloMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.24, blue: 0.34, alpha: 0.12),
+            intensity: 1.15
+        )
+        let anteriorGatewayMaterial = glowMaterial(
+            color: UIColor(red: 1.0, green: 0.66, blue: 0.30, alpha: 0.86),
+            intensity: 3.4
         )
 
         typealias PathSpec = (
@@ -3172,9 +3215,35 @@ final class RBCJourneyScene {
                 spec.controls.3,
                 samples: 54
             )
-            willisFlowPaths.append(WillisPathRecord(points: path, family: spec.family))
+            let anteriorSegment: WillisAnteriorSegment? = if spec.family != .anterior {
+                nil
+            } else if spec.name.contains("internal-carotid") {
+                .carotid
+            } else if spec.name.contains("middle-cerebral") {
+                .middleCerebral
+            } else if spec.name.contains("anterior-cerebral-a1") {
+                .crossroads
+            } else {
+                .anteriorCerebralContext
+            }
+            let isSelectedAnteriorExemplar = spec.name.contains("right-middle-cerebral")
+            willisFlowPaths.append(WillisPathRecord(
+                points: path,
+                family: spec.family,
+                anteriorSegment: anteriorSegment,
+                isSelectedAnteriorExemplar: isSelectedAnteriorExemplar
+            ))
             let parent: Entity = switch spec.family {
-            case .anterior: willisAnteriorRouteRoot
+            case .anterior:
+                switch anteriorSegment {
+                case .carotid: willisCarotidPassageRoot
+                case .crossroads: willisCrossroadsPassageRoot
+                case .middleCerebral:
+                    isSelectedAnteriorExemplar
+                        ? willisSelectedMCAPassageRoot
+                        : willisContralateralMCAContextRoot
+                case .anteriorCerebralContext, nil: willisAnteriorCerebralContextRoot
+                }
             case .posterior: willisPosteriorRouteRoot
             case .connector: willisConnectorRoot
             }
@@ -3199,6 +3268,17 @@ final class RBCJourneyScene {
                     radialSegments: 10
                 )
             }
+            if isSelectedAnteriorExemplar {
+                addContinuousTubePath(
+                    path,
+                    to: parent,
+                    startRadius: spec.startRadius * 1.32,
+                    endRadius: spec.endRadius * 1.36,
+                    material: middleCerebralPassageHaloMaterial,
+                    name: "anterior-passage-mca-navigation-halo-not-vessel-color",
+                    radialSegments: 12
+                )
+            }
             for frontIndex in 0..<spec.fronts {
                 let front = Entity()
                 front.name = "willis-tangent-flow-front-\(spec.name)-\(frontIndex)"
@@ -3220,6 +3300,8 @@ final class RBCJourneyScene {
             }
         }
 
+        buildAnteriorPassageGateway(material: anteriorGatewayMaterial)
+
         let junctionMaterial = glowMaterial(
             color: UIColor(red: 1.0, green: 0.48, blue: 0.30, alpha: 0.84),
             intensity: 2.5
@@ -3237,18 +3319,65 @@ final class RBCJourneyScene {
         }
 
         willisNetworkRoot.isEnabled = false
-        print("RBC_WILLIS_NETWORK=READY paths=26 moving_fronts=16 connector_fronts=0 stable_wearer=true")
+        print("RBC_WILLIS_NETWORK=READY paths=26 moving_fronts=16 connector_fronts=0 anterior_passage_groups=6 selected_route_halos=3 gateway=1 stable_wearer=true")
+    }
+
+    /// A deliberately oblique, broken threshold marks the exact handoff from
+    /// the room-scale map into the existing inhabited lumen. It is a teaching
+    /// gateway around one example right MCA branch, not an anatomical device
+    /// or a patient-specific navigation target.
+    private func buildAnteriorPassageGateway(material: RealityKit.Material) {
+        // Sit around the single bright M1 continuation before its visible
+        // bifurcation. A shallow oblique angle keeps the aperture spatial but
+        // readable from the stable teaching origin.
+        willisAnteriorGatewayRoot.position = [1.07, 1.48, -1.11]
+        willisAnteriorGatewayRoot.orientation = simd_quatf(angle: -.pi * 0.08, axis: [0, 1, 0])
+
+        for ringIndex in 0..<3 {
+            let contour = Entity()
+            contour.name = "right-mca-entry-broken-contour-\(ringIndex)"
+            let ringPhase = Float(ringIndex) * 0.81
+            let xRadius: Float = 0.13 + Float(ringIndex) * 0.020
+            let yRadius: Float = 0.16 + Float(ringIndex) * 0.018
+            var points: [SIMD3<Float>] = []
+            for index in 0..<64 {
+                let angle = Float(index) / 64 * .pi * 2
+                let irregularity = 1
+                    + sin(angle * 3 + ringPhase) * 0.052
+                    + cos(angle * 5 - ringPhase) * 0.024
+                points.append([
+                    cos(angle) * xRadius * irregularity,
+                    sin(angle) * yRadius * irregularity,
+                    sin(angle * 4 + ringPhase) * 0.012 + Float(ringIndex - 1) * 0.012,
+                ])
+            }
+            for arcIndex in 0..<4 {
+                let start = arcIndex * 16 + 1 + ((ringIndex + arcIndex) % 2)
+                let end = min(start + 11 + ((ringIndex + arcIndex) % 3), points.count - 1)
+                addTubePath(
+                    Array(points[start...end]),
+                    to: contour,
+                    radius: 0.0031 - Float(ringIndex) * 0.00035,
+                    material: material,
+                    name: "right-mca-entry-threshold-arc-\(ringIndex)-\(arcIndex)"
+                )
+            }
+            willisAnteriorGatewayRoot.addChild(contour)
+        }
+        willisAnteriorGatewayRoot.isEnabled = false
     }
 
     private func updateWillisNetwork(
         active: Bool,
         focus: RBCWillisRouteFocus,
+        anteriorPassagePhase: RBCAnteriorPassagePhase?,
         motionHeld: Bool,
         reducedMotion: Bool
     ) {
         willisRuntimeActive = active
         willisRuntimeHeld = motionHeld
         willisRuntimeFocus = focus
+        willisRuntimeAnteriorPassagePhase = anteriorPassagePhase
         willisNetworkRoot.isEnabled = active
         guard active else { return }
 
@@ -3257,30 +3386,87 @@ final class RBCJourneyScene {
         let connectorOpacity: Float
         let targetScale: Float
         let targetPosition: SIMD3<Float>
-        switch focus {
-        case .overview:
-            anteriorOpacity = 0.90
-            posteriorOpacity = 0.68
-            connectorOpacity = 0.72
-            targetScale = 1
-            targetPosition = .zero
-        case .anterior:
+        if let anteriorPassagePhase {
             anteriorOpacity = 1
-            posteriorOpacity = 0.09
-            connectorOpacity = 0.38
-            targetScale = 1.10
-            targetPosition = [0, -0.045, 0.10]
-        case .posterior:
-            anteriorOpacity = 0.09
-            posteriorOpacity = 1
-            connectorOpacity = 0.38
-            targetScale = 1.12
-            targetPosition = [0, 0.035, 0.15]
+            posteriorOpacity = 0.035
+            switch anteriorPassagePhase {
+            case .carotidApproach:
+                connectorOpacity = 0.12
+                targetScale = 1.20
+                targetPosition = [0, -0.12, 0.18]
+            case .circleCrossroads:
+                connectorOpacity = 0.82
+                targetScale = 1.28
+                targetPosition = [0, -0.22, 0.24]
+            case .middleCerebralContinuation:
+                connectorOpacity = 0.22
+                targetScale = 1.17
+                targetPosition = [-0.80, -0.10, 0.20]
+            }
+        } else {
+            switch focus {
+            case .overview:
+                anteriorOpacity = 0.90
+                posteriorOpacity = 0.68
+                connectorOpacity = 0.72
+                targetScale = 1
+                targetPosition = .zero
+            case .anterior:
+                anteriorOpacity = 1
+                posteriorOpacity = 0.09
+                connectorOpacity = 0.38
+                targetScale = 1.10
+                targetPosition = [0, -0.045, 0.10]
+            case .posterior:
+                anteriorOpacity = 0.09
+                posteriorOpacity = 1
+                connectorOpacity = 0.38
+                targetScale = 1.12
+                targetPosition = [0, 0.035, 0.15]
+            }
         }
         willisAnteriorRouteRoot.components.set(OpacityComponent(opacity: anteriorOpacity))
         willisPosteriorRouteRoot.components.set(OpacityComponent(opacity: posteriorOpacity))
         willisConnectorRoot.components.set(OpacityComponent(opacity: connectorOpacity))
-        willisArterialContext?.components.set(OpacityComponent(opacity: focus == .overview ? 0.10 : 0.035))
+        willisArterialContext?.components.set(OpacityComponent(
+            opacity: anteriorPassagePhase == nil && focus == .overview ? 0.10 : 0.025
+        ))
+
+        let passageOpacities: (carotid: Float, crossroads: Float, middleCerebral: Float, context: Float) = switch anteriorPassagePhase {
+        case .carotidApproach: (1, 0.24, 0.08, 0.06)
+        case .circleCrossroads: (0.48, 1, 0.24, 0.18)
+        case .middleCerebralContinuation: (0.14, 0.48, 1, 0.10)
+        case nil: (1, 1, 1, 1)
+        }
+        applyWillisPassageEmphasis(
+            willisCarotidPassageRoot,
+            opacity: passageOpacities.carotid,
+            emphasized: anteriorPassagePhase == .carotidApproach,
+            reducedMotion: reducedMotion
+        )
+        applyWillisPassageEmphasis(
+            willisCrossroadsPassageRoot,
+            opacity: passageOpacities.crossroads,
+            emphasized: anteriorPassagePhase == .circleCrossroads,
+            reducedMotion: reducedMotion
+        )
+        applyWillisPassageEmphasis(
+            willisMiddleCerebralPassageRoot,
+            opacity: passageOpacities.middleCerebral,
+            emphasized: anteriorPassagePhase == .middleCerebralContinuation,
+            reducedMotion: reducedMotion
+        )
+        willisSelectedMCAPassageRoot.components.set(OpacityComponent(opacity: 1))
+        willisContralateralMCAContextRoot.components.set(OpacityComponent(
+            opacity: anteriorPassagePhase == .middleCerebralContinuation ? 0.085 : 1
+        ))
+        willisAnteriorGatewayRoot.isEnabled = anteriorPassagePhase == .middleCerebralContinuation
+        applyWillisPassageEmphasis(
+            willisAnteriorCerebralContextRoot,
+            opacity: passageOpacities.context,
+            emphasized: false,
+            reducedMotion: reducedMotion
+        )
 
         let targetScaleVector = SIMD3<Float>(repeating: targetScale)
         if reducedMotion {
@@ -3291,6 +3477,24 @@ final class RBCJourneyScene {
             willisNetworkRoot.position += (targetPosition - willisNetworkRoot.position) * 0.16
         }
         applyWillisFlowFrame()
+    }
+
+    private func applyWillisPassageEmphasis(
+        _ root: Entity,
+        opacity: Float,
+        emphasized: Bool,
+        reducedMotion: Bool
+    ) {
+        root.components.set(OpacityComponent(opacity: opacity))
+        let targetScale = SIMD3<Float>(repeating: emphasized ? 1.075 : 1)
+        let targetPosition: SIMD3<Float> = emphasized ? [0, 0.015, 0.055] : .zero
+        if reducedMotion {
+            root.scale = targetScale
+            root.position = targetPosition
+        } else {
+            root.scale += (targetScale - root.scale) * 0.18
+            root.position += (targetPosition - root.position) * 0.18
+        }
     }
 
     private func advanceWillisNetworkFrame(deltaTime: Float) {
@@ -3315,10 +3519,29 @@ final class RBCJourneyScene {
             if simd_length_squared(tangent) > 0.000_001 {
                 front.entity.orientation = simd_quatf(from: [0, 1, 0], to: simd_normalize(tangent))
             }
-            let selected = willisRuntimeFocus == .overview
-                || (willisRuntimeFocus == .anterior && record.family == .anterior)
-                || (willisRuntimeFocus == .posterior && record.family == .posterior)
+            let selected: Bool = if let phase = willisRuntimeAnteriorPassagePhase {
+                switch phase {
+                case .carotidApproach:
+                    record.anteriorSegment == .carotid
+                case .circleCrossroads:
+                    record.anteriorSegment == .carotid || record.anteriorSegment == .crossroads
+                case .middleCerebralContinuation:
+                    record.isSelectedAnteriorExemplar
+                }
+            } else {
+                willisRuntimeFocus == .overview
+                    || (willisRuntimeFocus == .anterior && record.family == .anterior)
+                    || (willisRuntimeFocus == .posterior && record.family == .posterior)
+            }
             front.entity.isEnabled = selected
+        }
+        if willisAnteriorGatewayRoot.isEnabled {
+            let pulse: Float = willisRuntimeHeld
+                ? 1
+                : 1 + sin(willisElapsed * .pi * 1.3) * 0.055
+            willisAnteriorGatewayRoot.scale = SIMD3<Float>(repeating: pulse)
+        } else {
+            willisAnteriorGatewayRoot.scale = .one
         }
     }
 

@@ -337,12 +337,77 @@ struct RBCRegionInfoHUD: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 if willisRouteActive {
-                    HStack(spacing: 7) {
-                        ForEach(RBCWillisRouteFocus.allCases) { focus in
-                            RBCWillisRouteFocusButton(focus: focus)
+                    if let passagePhase = model.anteriorPassagePhase {
+                        VStack(alignment: .leading, spacing: 7) {
+                            HStack(spacing: 5) {
+                                ForEach(RBCAnteriorPassagePhase.allCases) { phase in
+                                    Label(phase.shortTitle, systemImage: phase.rawValue <= passagePhase.rawValue
+                                        ? "circle.inset.filled"
+                                        : "circle")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(phase.rawValue <= passagePhase.rawValue
+                                            ? Color(red: 0.96, green: 0.38, blue: 0.34)
+                                            : .white.opacity(0.38))
+                                }
+                            }
+                            .accessibilityLabel("Anterior passage step \(passagePhase.rawValue + 1) of 3")
+
+                            HStack(spacing: 7) {
+                                if let nextTitle = passagePhase.nextActionTitle {
+                                    Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
+                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                            model.advanceAnteriorPassage()
+                                        }
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.84, green: 0.18, blue: 0.27))
+                                    .accessibilityLabel("Continue the anterior circulation passage")
+                                } else {
+                                    Button("Enter artery", systemImage: "arrow.down.right.and.arrow.up.left") {
+                                        model.chooseAnteriorDestination(.arterialLumen)
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.84, green: 0.18, blue: 0.27))
+                                    .accessibilityLabel("Enter the inhabited middle cerebral teaching branch")
+
+                                    Button("Open frontal field", systemImage: "brain.head.profile.fill") {
+                                        model.chooseAnteriorDestination(.frontalLobe)
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(Color(red: 0.28, green: 0.68, blue: 0.62))
+                                    .accessibilityLabel("Open the frontal lobe observatory around the selected route")
+                                }
+
+                                Button("Leave passage", systemImage: "arrow.uturn.backward") {
+                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                        model.stopAnteriorPassage()
+                                    }
+                                }
+                                .buttonStyle(.bordered)
+                                .accessibilityLabel("Return to the complete Circle of Willis view")
+                            }
+                            .buttonBorderShape(.capsule)
+                        }
+                    } else {
+                        HStack(spacing: 7) {
+                            ForEach(RBCWillisRouteFocus.allCases) { focus in
+                                RBCWillisRouteFocusButton(focus: focus)
+                            }
+                        }
+                        .buttonBorderShape(.capsule)
+
+                        if model.willisRouteFocus == .anterior {
+                            Button("Enter anterior passage", systemImage: "arrow.forward.circle.fill") {
+                                withAnimation(.easeInOut(duration: 0.42)) {
+                                    model.startAnteriorPassage()
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(Color(red: 0.84, green: 0.18, blue: 0.27))
+                            .buttonBorderShape(.capsule)
+                            .accessibilityLabel("Begin the three-step anterior circulation passage")
                         }
                     }
-                    .buttonBorderShape(.capsule)
                 }
 
                 if region == .frontalLobe || region == .corticalMicroarchitecture || region == .cerebellum || region == .deepStructures || region == .occipitalLobe || region == .brainstem {
