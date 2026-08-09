@@ -110,6 +110,28 @@ enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
     }
 }
 
+/// A presenter-controlled visibility filter for registered teaching anatomy.
+/// It changes emphasis only: it never claims patient-specific registration,
+/// diagnosis, treatment eligibility, or procedural simulation.
+enum StrokeAnatomyFocus: String, CaseIterable, Identifiable {
+    case whole = "Whole"
+    case vessels = "Vessels"
+    case internalStructures = "Internal"
+
+    var id: String { rawValue }
+
+    var boundary: String {
+        switch self {
+        case .whole:
+            "Registered teaching assembly · not a patient scan"
+        case .vessels:
+            "Arterial + venous teaching atlases · colour convention · review pending"
+        case .internalStructures:
+            "Deep structures + ventricles · generic teaching anatomy · review pending"
+        }
+    }
+}
+
 /// Named, repeatable views of the authored anatomy. These rotate the complete
 /// registered-v2 assembly as one object; they never reposition individual
 /// organs, vessels, or lesson markers. A true medial view is intentionally not
@@ -423,6 +445,7 @@ final class StrokeExperienceState: ObservableObject {
                 return
             }
             detailLevel = .calm
+            anatomyFocus = .whole
             selectedCatalogAssetID = nil
             clinicianToolKitVisible = false
             selectedClinicianTool = .focus
@@ -454,6 +477,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
+    @Published private(set) var anatomyFocus: StrokeAnatomyFocus = .whole
     @Published private(set) var anatomyViewpoint: StrokeAnatomyViewpoint = .threeQuarter
     @Published var environmentMode: StrokeEnvironmentMode = .warmHorizon
     @Published var cortexOpacity: Double = 0.34
@@ -517,9 +541,44 @@ final class StrokeExperienceState: ObservableObject {
         }
 
         detailLevel = level
+        if level != .scholar, anatomyFocus == .internalStructures {
+            anatomyFocus = .whole
+            anatomyPresentation = .assembled
+            cortexOpacity = 0.66
+        }
         if let selectedCatalogAssetID,
            !visibleCatalogRecords.contains(where: { $0.id == selectedCatalogAssetID }) {
             self.selectedCatalogAssetID = nil
+        }
+    }
+
+    /// Reveals one registered subsystem at a time without adding a modal or
+    /// separating layers. Internal structures remain an explicit Scholar-only
+    /// technical view; family mode always returns to the whole assembly.
+    func selectAnatomyFocus(_ focus: StrokeAnatomyFocus) {
+        guard audienceLens == .clinician, spatialPhase == .explanation else {
+            anatomyFocus = .whole
+            return
+        }
+        guard focus != .internalStructures || detailLevel == .scholar else {
+            anatomyFocus = .whole
+            return
+        }
+
+        anatomyFocus = focus
+        pointField = .regions
+        lessonPointsVisible = true
+        clearPointSelection()
+        switch focus {
+        case .whole:
+            anatomyPresentation = .assembled
+            cortexOpacity = 0.66
+        case .vessels:
+            anatomyPresentation = .transparent
+            cortexOpacity = 0.18
+        case .internalStructures:
+            anatomyPresentation = .transparent
+            cortexOpacity = 0.12
         }
     }
 
@@ -1487,6 +1546,7 @@ final class StrokeExperienceState: ObservableObject {
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
         anatomyPresentation = .assembled
+        anatomyFocus = .whole
         anatomyViewpoint = .threeQuarter
         environmentMode = .warmHorizon
         cortexOpacity = 0.34
@@ -1600,6 +1660,20 @@ final class StrokeExperienceState: ObservableObject {
         // also proves the peripheral reference hierarchy. This remains a
         // presenter-only composition, not a patient scan or flow state.
         selectDetailLevel(.scholar)
+    }
+
+    func prepareAnatomyInternalFocusProof() {
+        prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
+        selectAnatomyFocus(.internalStructures)
+        spatialZoom = 1.30
+    }
+
+    func prepareAnatomyVesselsFocusProof() {
+        prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
+        selectAnatomyFocus(.vessels)
+        spatialZoom = 1.30
     }
 
     func prepareTeachingImagingProof() {

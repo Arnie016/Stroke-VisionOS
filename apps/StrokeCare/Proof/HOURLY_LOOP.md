@@ -785,3 +785,27 @@
 - Next safe action: on an awake and unlocked XCAT, verify the attribution and
   review boundary remain legible beside the venous reference and record the
   wearer observation separately from the machine receipt.
+
+## 2026-08-10 06:00 SGT — clinician anatomy-focus hierarchy
+
+- Target: make skull/brain/vessel/internal anatomy deliberately selectable
+  without bulk-loading the 134-item mixed-frame catalog or adding another
+  dashboard.
+- Bounded action: added clinician-only Whole, Vessels, and Scholar-only
+  Internal focus controls; wired them to the existing registered brain,
+  arterial, venous, deep-structure, and ventricular layers; preserved the
+  family Whole view, region points, direct viewpoints, detail depth, and
+  six-beat timeline.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as build 21 with exactly 15 USDZs; clean Proof 87 is
+  3840×2160 with SHA-256 `10d63ea5…99b5` and visibly shows the red/purple
+  vessel focus, four attached points, top timeline, and focus hierarchy. One
+  black back-to-back capture was rejected as Simulator scene invalidation.
+- Verdict: `IMPROVED` — the presenter can now reveal a coherent subsystem
+  rather than stacking every asset or seeing only a skull.
+- Blocker: XCAT is unavailable, and Simulator does not prove targeting,
+  stereo placement, AirPlay legibility, registration accuracy, specialist
+  approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, validate gaze-and-pinch
+  selection of Whole, Vessels, and Internal while confirming the anatomy points
+  remain targetable from the default presenter position.

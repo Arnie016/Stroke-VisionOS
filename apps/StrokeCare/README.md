@@ -23,6 +23,23 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (21)` adds a clinician-only anatomy-focus hierarchy without adding
+another window: **Whole** preserves the registered teaching assembly,
+**Vessels** isolates the arterial and purple venous atlases, and Scholar-only
+**Internal** reveals deep structures and ventricles. The central anatomy,
+attached region points, direct Front/Side/Top views, reference-depth control,
+and six-beat timeline remain visible. The family path stays on the whole,
+calm teaching assembly.
+
+![Clinician vessel focus in visionOS Simulator](Proof/87-clinician-vessels-focus-build21-simulator.png)
+
+The app currently stages exactly 15 reviewed-or-gated USDZ resources. The
+larger 134-item repository catalog remains metadata and review inventory—not a
+claim that every differently framed, licensed, or specialist-gated asset is
+registered and visible. This capture proves Simulator composition only; it
+does not prove patient-specific registration, headset targetability, wearer
+comfort, AirPlay legibility, specialist approval, or clinical validity.
+
 Build `0.6 (18)` keeps the registered Pressure grammar and adds a distinct,
 permission-controlled Make-space purpose cue: a dashed conceptual aperture,
 a translucent protective cover that lifts away from the cortex, and a wider

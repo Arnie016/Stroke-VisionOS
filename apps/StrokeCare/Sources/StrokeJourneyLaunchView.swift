@@ -528,6 +528,12 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-layer-hierarchy") {
             experience.prepareClinicianLayerHierarchyProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-anatomy-internal") {
+            experience.prepareAnatomyInternalFocusProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-anatomy-vessels") {
+            experience.prepareAnatomyVesselsFocusProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-main-selected-point") {
             experience.prepareTeachingImagingProof()
             Task { await openProofSpace() }

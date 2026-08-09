@@ -755,3 +755,37 @@ venous reference, and the new atlas attribution. This is Simulator composition
 evidence only. It does not prove headset legibility, legal sufficiency,
 registration accuracy, specialist approval, or clinical validity; XCAT remains
 unavailable.
+
+## 2026-08-10 06:00 SGT — clinician anatomy-focus hierarchy
+
+Build `0.6 (21)` adds one explicit presenter-only hierarchy over the existing
+registered teaching assembly: **Whole**, **Vessels**, and Scholar-only
+**Internal**. Vessels keeps the arterial and generic purple venous teaching
+atlases together with their visible colour-convention, provenance, and review
+boundary. Internal suppresses the artery/clot story and reveals the already
+bundled deep-structure and ventricular references. The family path remains on
+Whole. No anatomy transform, treatment recommendation, patient scan, outcome
+claim, or operative interaction was added.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-anatomy-focus` succeeded. The built app is build 21 and
+contains exactly 15 USDZ resources. The executable SHA-256 is
+`aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`.
+
+`Proof/87-clinician-vessels-focus-build21-simulator.png`, 3840×2160,
+SHA-256
+`10d63ea5e4f771e579dcb685e6bf71e2c9ecd560184d758761130659517299b5`,
+was captured after terminating competing immersive apps and waiting for a
+clean scene. It visibly retains the six-beat top timeline, direct viewpoint
+chips, detail-depth selector, four attached region points, central brain
+context, red arterial atlas, purple venous atlas, and right anatomy-focus
+hierarchy with Vessels selected. A black back-to-back capture was rejected as
+Simulator immersive-scene invalidation and is not evidence.
+
+This is Simulator composition evidence only. It does not prove physical
+gaze-and-pinch selection, stereo placement, wearer comfort, AirPlay quality,
+patient-specific registration, specialist approval, or clinical validity.
+XCAT remained unavailable. The larger 134-item GitHub catalog remains a
+metadata/review inventory; it is not falsely reported as 134 registered live
+layers.

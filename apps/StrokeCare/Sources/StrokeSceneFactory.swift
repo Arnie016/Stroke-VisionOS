@@ -1973,7 +1973,13 @@ enum StrokeSceneFactory {
         approach(blockageLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(duraLayer, [0.050 * separation, 0, 0])
 
-        cortexLayer?.components.set(OpacityComponent(opacity: cortexOpacity))
+        let anatomyFocus = experience.anatomyFocus
+        let focusedCortexOpacity: Float = switch anatomyFocus {
+        case .whole: cortexOpacity
+        case .vessels: min(cortexOpacity, 0.18)
+        case .internalStructures: min(cortexOpacity, 0.12)
+        }
+        cortexLayer?.components.set(OpacityComponent(opacity: focusedCortexOpacity))
         arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
         venousLayer?.components.set(OpacityComponent(opacity: 0.88))
         blockageLayer?.components.set(OpacityComponent(opacity: 1))
@@ -2009,11 +2015,13 @@ enum StrokeSceneFactory {
         let showsClinicianSkullContext = experience.audienceLens == .clinician &&
             experience.detailLevel >= .guided &&
             presentation == .transparent &&
+            anatomyFocus == .whole &&
             experience.pointField == .regions &&
             !isolateScholarSkull
         approach(fixedSpaceLayer, showsClinicianSkullContext ? [0.16, 0, 0] : .zero)
         imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
-        imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull
+        imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull &&
+            anatomyFocus != .internalStructures
         // Blue/purple is an educational convention, not the colour of venous
         // blood. The generic registered-v2 reference is presenter-only and
         // requires an explicit Guided or Scholar detail choice. Its semantic
@@ -2023,9 +2031,11 @@ enum StrokeSceneFactory {
             experience.detailLevel >= .guided &&
             experience.spatialPhase == .explanation &&
             experience.pointField == .regions &&
+            anatomyFocus == .vessels &&
             !isolateScholarSkull
         venousLayer?.isEnabled = showsVenousReference
         imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
+            anatomyFocus != .internalStructures &&
             (experience.procedureStep != .chooseCase || presentation == .exploded)
         imported.findEntity(named: importedDuraName)?.isEnabled = !isolateScholarSkull && showsPurpose
 
@@ -2033,7 +2043,8 @@ enum StrokeSceneFactory {
         // remain a clinician-only, explicit Study-apart reference. They do not
         // appear in the family explanation or imply a patient scan.
         let showsInternalStudy = experience.audienceLens == .clinician &&
-            presentation == .exploded &&
+            experience.detailLevel == .scholar &&
+            anatomyFocus == .internalStructures &&
             experience.pointField == .regions &&
             !isolateScholarSkull
         deepStructuresLayer?.isEnabled = showsInternalStudy
@@ -2048,6 +2059,7 @@ enum StrokeSceneFactory {
         // direction chevrons without reconnecting the rejected room-space
         // arrows; Pause and Reduce Motion freeze only the animated markers.
         let showsAuthoredBloodflow = experience.spatialPhase == .explanation &&
+            anatomyFocus != .internalStructures &&
             experience.lessonPointsVisible &&
             experience.pointField == .procedure &&
             experience.selectedPointEntityName?.hasPrefix(
@@ -2087,8 +2099,9 @@ enum StrokeSceneFactory {
 
         // This small beacon marks the exact registered clot-derived target. It
         // is a focus affordance, not a simulated lesion volume or outcome.
-        pressureStory?.isEnabled = showsPressureStory
-        clotTarget?.isEnabled = showsPressureStory
+        let showsPressureFocus = showsPressureStory && anatomyFocus != .internalStructures
+        pressureStory?.isEnabled = showsPressureFocus
+        clotTarget?.isEnabled = showsPressureFocus
         let motionTime = experience.requestedPause || reduceMotion ? 0 : time
         if let affectedCue = pressureStory?.findEntity(named: registeredPressureAffectedCueName) {
             let breath = Float(1 + sin(motionTime * 0.82) * 0.012)

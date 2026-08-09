@@ -1673,6 +1673,46 @@ private struct StrokeScholarReferenceRail: View {
                         .accessibilityLabel(unavailableLabel(for: lane))
                 }
             }
+
+            if !experience.teachingImagingDrawerVisible {
+                Divider()
+                    .overlay(Color.white.opacity(0.10))
+
+                Text("ANATOMY FOCUS")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.8)
+                    .foregroundStyle(.white.opacity(0.58))
+
+                HStack(spacing: 6) {
+                    ForEach(StrokeAnatomyFocus.allCases) { focus in
+                        Button {
+                            experience.selectAnatomyFocus(focus)
+                        } label: {
+                            Text(focus.rawValue)
+                                .font(.caption2.weight(.bold))
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, minHeight: 48)
+                                .foregroundStyle(
+                                    experience.anatomyFocus == focus ? Color.black.opacity(0.82) : .white
+                                )
+                                .background(
+                                    experience.anatomyFocus == focus ? Color.mint : Color.white.opacity(0.07),
+                                    in: Capsule()
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        .hoverEffect(.highlight)
+                        .contentShape(Capsule())
+                        .accessibilityLabel("Anatomy focus, \(focus.rawValue)")
+                        .accessibilityValue(experience.anatomyFocus == focus ? "Selected" : "Available")
+                    }
+                }
+
+                Text(experience.anatomyFocus.boundary)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.62))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 11)
@@ -2169,7 +2209,9 @@ private struct SpatialRoleMicroCues: View {
                 }
             }
 
-            if experience.detailLevel >= .guided && experience.pointField == .regions {
+            if experience.detailLevel >= .guided &&
+                experience.pointField == .regions &&
+                experience.anatomyFocus == .vessels {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")
                     Text("ATLAS · Z-ANATOMY + BODYPARTS3D · CC BY-SA")

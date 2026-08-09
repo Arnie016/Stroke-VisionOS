@@ -112,6 +112,7 @@ require(all(token in immersive for token in (
     'Text("GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING")',
     'Text("ATLAS · Z-ANATOMY + BODYPARTS3D · CC BY-SA")',
     "Atlas sources: Z-Anatomy and BodyParts3D, Creative Commons Attribution ShareAlike.",
+    "experience.anatomyFocus == .vessels",
 )), "visible venous reference does not surface its review boundary and atlas attribution")
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
 require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
@@ -568,7 +569,7 @@ require(all(token in scene for token in (
     "mesh: .generateCylinder(height: 0.0022, radius: 0.030)",
     "for index in 0..<14",
     "experience.procedureStep != .chooseCase",
-    "pressureStory?.isEnabled = showsPressureStory",
+    "pressureStory?.isEnabled = showsPressureFocus",
 )), "registered-frame blockage, affected-tissue, and constrained-swelling Pressure cues are incomplete")
 require(
     "imported.findEntity(named: importedEdemaName)?.isEnabled = false" in scene
@@ -616,6 +617,36 @@ require(all(token in immersive for token in (
     "experience.selectedPointEntityName != nil",
     'Image(systemName: "lock.fill")',
 )), "Scholar rail does not expose the reviewed reference lanes or visibly lock unsupported lanes")
+require(all(token in state for token in (
+    "enum StrokeAnatomyFocus",
+    'case whole = "Whole"',
+    'case vessels = "Vessels"',
+    'case internalStructures = "Internal"',
+    "func selectAnatomyFocus(_ focus: StrokeAnatomyFocus)",
+    "focus != .internalStructures || detailLevel == .scholar",
+    "anatomyFocus = .whole",
+    "prepareAnatomyInternalFocusProof",
+)), "clinician anatomy focus lacks guarded Whole, Vessels, and Internal states")
+require(all(token in immersive for token in (
+    'Text("ANATOMY FOCUS")',
+    "ForEach(StrokeAnatomyFocus.allCases)",
+    "experience.selectAnatomyFocus(focus)",
+    "experience.anatomyFocus.boundary",
+    "minHeight: 48",
+)), "Scholar rail lacks a directly selectable, accessible anatomy subsystem hierarchy")
+require(all(token in scene for token in (
+    "let anatomyFocus = experience.anatomyFocus",
+    "anatomyFocus == .vessels",
+    "anatomyFocus == .internalStructures",
+    "anatomyFocus != .internalStructures",
+    "experience.detailLevel == .scholar",
+)), "registered arterial, venous, deep-structure, and ventricular geometry does not follow anatomy focus")
+require(all(token in launch for token in (
+    '"--proof-anatomy-internal"',
+    "prepareAnatomyInternalFocusProof",
+    '"--proof-anatomy-vessels"',
+    "prepareAnatomyVesselsFocusProof",
+)), "deterministic vessels/internal anatomy-focus proof routes are missing")
 require(all(token in immersive for token in (
     'Text("SHARED DISCUSSION")',
     '"This teaching view does not diagnose or recommend care."',
