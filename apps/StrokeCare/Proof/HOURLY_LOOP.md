@@ -854,3 +854,24 @@
 - Next safe action: on an awake and unlocked XCAT, traverse all six checkpoints
   once and record whether skull, covering, purpose, and reassembly remain
   spatially distinct and legible in the mirrored three-minute demo.
+
+## 2026-08-10 07:26 SGT — point selection owns its teaching reference
+
+- Target: prevent the Scholar reference lane from becoming a parallel image
+  browser that can open without an anatomy point.
+- Bounded action: required a selected authored point in both state-level
+  teaching-reference entry points, retained the filtered high-priority point
+  gesture, and captured the deterministic selected-point composition.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (25)` with 17 USDZs; the installed process
+  remained listed; Proof 91 is 3840×2160 with SHA-256 `b98fb7ab…b6b41f0` and
+  visibly shows the six-step timeline, multiple points, one selected disclosure,
+  and one right-side registered teaching reference.
+- Verdict: `IMPROVED` — the secondary reference is now causally owned by a
+  deliberate point choice instead of an independent rail action.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reliability,
+  stereo depth, wearer comfort, AirPlay legibility, anatomical registration,
+  specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, pinch one unselected point,
+  confirm exactly one reference appears, then change the timeline step and
+  confirm the reference clears before the next point choice.

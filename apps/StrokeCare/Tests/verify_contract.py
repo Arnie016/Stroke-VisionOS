@@ -554,6 +554,12 @@ require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) 
 require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
 require("Canvas" not in immersive and "StrokeTeachingImagingSchematic" not in immersive, "rejected procedural imaging plates remain in the runtime UI")
 require("teachingImagingDrawerVisible = false" in state and "teachingImagingLens" in state and "selectTeachingImagingLens" in state and "careViewPermissionGranted" in state and "present(step: .discussCare" in state, "teaching lens is not explanation-gated or consent-aware")
+require(
+    state.count("selectedPointEntityName != nil else {") >= 2
+    and "toggleTeachingImagingDrawer()" in state
+    and "func selectTeachingImagingLens(" in state,
+    "teaching reference can open without an authored point selection",
+)
 require("updateRegisteredTeachingImaging" in scene and "miniature.parent !== stageRoot" in immersive and "registeredTeachingImagingSuggestedStagePosition" in immersive, "registered teaching lens is not mutually selected and world-locked")
 require("let miniature = stageRoot.findEntity(" in immersive and "root.findEntity(\n                        named: StrokeSceneFactory.registeredTeachingImagingRootName" not in immersive, "world-locked teaching reference stops updating after reparenting")
 require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" in state, "deterministic teaching imaging proof route is missing")

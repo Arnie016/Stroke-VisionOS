@@ -841,7 +841,8 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func toggleTeachingImagingDrawer() {
-        guard spatialPhase == .explanation else {
+        guard spatialPhase == .explanation,
+              selectedPointEntityName != nil else {
             teachingImagingDrawerVisible = false
             return
         }
@@ -855,7 +856,11 @@ final class StrokeExperienceState: ObservableObject {
         _ lens: StrokeTeachingImagingLens,
         reduceMotion: Bool = false
     ) {
-        guard spatialPhase == .explanation else { return }
+        guard spatialPhase == .explanation,
+              selectedPointEntityName != nil else {
+            teachingImagingDrawerVisible = false
+            return
+        }
         if lens == .makingRoomPurpose,
            (procedureStep != .discussCare || !careViewPermissionGranted) {
             present(step: .discussCare, reduceMotion: reduceMotion)

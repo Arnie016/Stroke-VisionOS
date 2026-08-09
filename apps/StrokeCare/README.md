@@ -23,7 +23,7 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
-Build `0.6 (24)` preserves the doctor-presenter's six distinct checkpoints and
+Build `0.6 (25)` preserves the doctor-presenter's six distinct checkpoints and
 adds a Scholar-only **Surface** focus: an authored HRA scalp cutaway and a
 separate eye-context reference restore exterior orientation without closing the
 view over the central brain. The cutaway is illustrative—not an incision or

@@ -4,7 +4,7 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (24)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (25)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
@@ -881,3 +881,34 @@ does not prove physical gaze-and-pinch selection, stereo depth, wearer comfort,
 AirPlay legibility, patient-specific registration, specialist approval, or
 clinical validity. XCAT remained `unavailable`. The 134-item GitHub catalog is
 still a review inventory; it is not represented as 134 registered live layers.
+
+## 2026-08-10 07:26 SGT — point-authored teaching-reference gate
+
+Build `0.6 (25)` closes the remaining state-level bypass around the right-side
+teaching reference. Both the drawer toggle and explicit lens selector now
+require an authored anatomy point to be selected. The normal point gesture still
+uses visionOS gaze targeting plus pinch confirmation; selecting one point opens
+one act-matched registered-v2 reference, while clearing the point or changing
+lesson context closes it.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build25` ended `** BUILD SUCCEEDED **`. The built app reports
+`0.6 (25)`, contains 17 unique USDZ resources, and its debug implementation
+dylib has SHA-256
+`4e2cc8080c4b8ff7f88b8e0e34ed522969c00a14c8b86d6c333599b9ead100ce`.
+
+`Proof/91-selected-point-teaching-reference-build25-simulator.png`, 3840×2160,
+SHA-256
+`b98fb7abd201c04672d97deb1d60dcebf3887785e00f10a6b4d2fbe41b6b41f0`,
+was captured from the installed build on route `--proof-main-selected-point`
+after terminating the competing RBC journey process. StrokeTime remained
+listed after capture. The frame visibly includes the six-stop presenter
+timeline, direct viewpoints, multiple quiet anatomy-attached points, one
+selected affected-area disclosure, and one separate registered teaching
+reference beside the central anatomy.
+
+This is Simulator state, build, bundle, and composition evidence. It does not
+prove physical point acquisition, pinch reliability, stereo placement, wearer
+comfort, AirPlay legibility, anatomical registration, specialist approval, or
+clinical validity. XCAT/device verification remains outstanding.
