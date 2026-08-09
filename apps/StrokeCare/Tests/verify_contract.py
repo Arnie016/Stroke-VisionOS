@@ -211,6 +211,28 @@ require(all(flag in scene for flag in (
 require("Bundled anatomy resource missing" in scene and "Bundled anatomy resource failed to load" in scene, "asset-load diagnostics do not identify missing or invalid resources")
 require("catheter-review-preview" in scene and "medicine-review-preview" in scene, "care discussion previews are missing")
 require(all(name in scene for name in ("fixed-skull-context", "bone-flap", "dura-expansion")), "pressure-purpose anatomy is missing")
+require(all(name in scene for name in (
+    "registered-care-purpose-story",
+    "registered-care-purpose-aperture",
+    "registered-care-purpose-protective-cover",
+    "registered-care-purpose-expanding-room",
+)), "registered family-safe Make-space purpose cues are missing")
+require(
+    "carePurposeStory?.isEnabled = showsPurpose && !isolateScholarSkull" in scene
+    and "0.026 * reveal" in scene
+    and "0.72 + 0.28 * reveal" in scene,
+    "Make-space opening and expansion cues are not permission-controlled",
+)
+require(
+    "imported.findEntity(named: importedFlapName)?.isEnabled = false" in scene
+    and "imported.findEntity(named: importedPatchName)?.isEnabled = false" in scene,
+    "prototype-v1 flap or patch escaped quarantine",
+)
+require(
+    "--proof-family-make-space-purpose" in launch
+    and "prepareFamilyMakeSpacePurposeProof" in state,
+    "family Make-space purpose proof route is missing",
+)
 require("does not restore or shrink established injury" in scene, "non-restoration visual boundary is missing")
 require("authored teaching motion" in scene and "not a patient measurement" in scene, "animation evidence boundary is missing")
 require("TimelineView" in immersive and "focusOcclusion()" in immersive, "runtime spatial animation or focus gesture is missing")
@@ -437,7 +459,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.6" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.7" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -595,7 +617,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.6" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.7" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")

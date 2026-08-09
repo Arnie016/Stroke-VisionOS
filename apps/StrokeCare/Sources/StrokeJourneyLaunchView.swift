@@ -527,6 +527,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-care-purpose") {
             experience.prepareProof(step: .discussCare)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-make-space-purpose") {
+            experience.prepareFamilyMakeSpacePurposeProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-orient") {
             experience.prepareProof(step: .chooseCase)
             Task { await openProofSpace() }

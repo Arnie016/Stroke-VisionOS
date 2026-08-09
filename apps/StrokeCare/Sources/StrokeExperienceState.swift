@@ -1569,6 +1569,15 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
     }
 
+    func prepareFamilyMakeSpacePurposeProof() {
+        prepareProof(step: .discussCare)
+        environmentMode = .surroundings
+        pointField = .regions
+        lessonPointsVisible = true
+        spatialZoom = 1.24
+        clearPointSelection()
+    }
+
     func prepareClinicianSixBeatTimelineProof() {
         prepareClinicianProof(step: .discussCare)
         environmentMode = .surroundings

@@ -4,12 +4,12 @@
 
 - Product: `Stroke Care`
 - Bundle: `com.arnav.StrokeTime`
-- Current source/build candidate: `0.6 (17)` on the feature branch. Older signed
+- Current source/build candidate: `0.6 (18)` on the feature branch. Older signed
   XCAT deployment receipts are versioned separately below and do not prove this
   candidate on device.
 - Workflow: `Orient → Pressure → Make space` (exactly three internal acts)
 - Patient data: none; `CASE-078` is fictional.
-- Clinical content version: `SC-AIS-001.6`; clinician review pending.
+- Clinical content version: `SC-AIS-001.7`; clinician review pending.
 - Heart Field: removed from XCAT at the user's request.
 
 The default experience is a progressive spatial story rather than the old

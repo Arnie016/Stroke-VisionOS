@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.6`
-- App version: `0.6 (17)` review candidate
+- Content version: `SC-AIS-001.7`
+- App version: `0.6 (18)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -17,12 +17,19 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.6`, the Pressure scene uses three deliberately
+In content version `SC-AIS-001.7`, the Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
 affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
 positions come from the loaded registered-v2 brain and clot bounds, not a
 patient segmentation or edema measurement. The change remains pending the
 same clinician review required by the 3D-model and Act-2 rows below.
+
+The Make-space scene now adds a separate registered-frame conceptual cue at the
+same derived cortical direction: a dashed aperture, a translucent protective
+cover that moves outward, and a wider dashed room boundary. It is a reversible
+purpose explanation, not an access-site plan, bone segmentation, incision,
+patient-specific surgical step, or claim that pressure was relieved. The
+prototype-v1 bone flap and dural patch remain disabled.
 
 The shipped spatial path explains one mechanical purpose: why a stroke team may
 discuss making room when a severe large-territory infarction causes dangerous
@@ -49,7 +56,7 @@ approval alone is not sufficient.
 | --- | --- | --- | --- | --- |
 | 1 — Orient | “This model shows one severe stroke affecting one side of the brain.” | Generic cortex and arterial anatomy appear inside a fixed-space boundary. | Generic anatomy; the scenario is not inferred from reported signs and is not this person's scan. | Pending |
 | 2 — Pressure | “In this severe stroke, swelling builds inside the fixed skull.” | Blocked flow, affected tissue, swelling, and fixed skull remain distinct cues. | This is the selected fictional scenario; it is not a claim that every ischemic stroke causes dangerous swelling. | Pending |
-| 3 — Make space | “Surgery can make room for swelling. It cannot undo the stroke injury.” | After permission, one protective layer fades and a small reversible offset shows the mechanical purpose without cutting, peeling, or exposed blood. | Making room may ease pressure; this is not a recommendation, consent discussion, or outcome promise. | Pending |
+| 3 — Make space | “Surgery can make room for swelling. It cannot undo the stroke injury.” | After permission, a dashed conceptual aperture, a lifted translucent protective cover, and a wider room boundary show mechanical purpose without cutting, peeling, or exposed blood. | The cue is not an access-site plan or patient anatomy. Making room may ease pressure; this is not a recommendation, consent discussion, or outcome promise. | Pending |
 
 ### Required reviewer questions
 

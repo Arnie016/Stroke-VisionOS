@@ -97,6 +97,10 @@ enum StrokeSceneFactory {
     private static let registeredPressureBlockageCueName = "registered-pressure-blockage-cue"
     private static let registeredPressureAffectedCueName = "registered-pressure-affected-tissue-cue"
     private static let registeredPressureSwellingCueName = "registered-pressure-swelling-cue"
+    private static let registeredCarePurposeStoryName = "registered-care-purpose-story"
+    private static let registeredCarePurposeApertureName = "registered-care-purpose-aperture"
+    private static let registeredCarePurposeCoverName = "registered-care-purpose-protective-cover"
+    private static let registeredCarePurposeRoomName = "registered-care-purpose-expanding-room"
     private static let fallbackReadinessNoticeName = "procedural-fallback-readiness-notice"
 
     /// The four same-frame assets required to tell the complete three-act
@@ -771,6 +775,19 @@ enum StrokeSceneFactory {
         pressureStory.isEnabled = false
         registered.addChild(pressureStory)
 
+        // Make-space needs a visible family-safe purpose cue even though the
+        // old prototype-v1 bone flap and dural patch remain quarantined. This
+        // abstract aperture is derived from the same registered brain/clot
+        // bounds as the Pressure story. It lifts a translucent protective
+        // cover and expands a dashed room boundary; it never cuts anatomy or
+        // implies that injured tissue has been repaired.
+        let carePurposeStory = makeRegisteredCarePurposeStory(
+            affectedSurfaceMarker: affectedSurfaceMarker,
+            affectedDirection: affectedDirection
+        )
+        carePurposeStory.isEnabled = false
+        registered.addChild(carePurposeStory)
+
         return imported
     }
 
@@ -816,6 +833,66 @@ enum StrokeSceneFactory {
             swelling.addChild(dash)
         }
         story.addChild(swelling)
+        return story
+    }
+
+    private static func makeRegisteredCarePurposeStory(
+        affectedSurfaceMarker: SIMD3<Float>,
+        affectedDirection: SIMD3<Float>
+    ) -> Entity {
+        let story = Entity()
+        story.name = registeredCarePurposeStoryName
+        // Keep the abstract cue just beyond the loaded cortex so its two
+        // concentric meanings stay visible without becoming an access-site
+        // claim: amber marks the reversible opening concept; mint marks room.
+        story.position = affectedSurfaceMarker + affectedDirection * 0.014
+        story.orientation = simd_quatf(from: [0, 1, 0], to: affectedDirection)
+
+        let aperture = Entity()
+        aperture.name = registeredCarePurposeApertureName
+        let apertureDashMesh = MeshResource.generateBox(
+            size: [0.012, 0.0024, 0.0032],
+            cornerRadius: 0.0012
+        )
+        for index in 0..<16 {
+            let angle = Float(index) / 16 * 2 * Float.pi
+            let dash = ModelEntity(
+                mesh: apertureDashMesh,
+                materials: [warningMaterial(opacity: 0.94)]
+            )
+            dash.name = "registered-care-purpose-aperture-dash-\(index)"
+            dash.position = [cos(angle) * 0.050, 0, sin(angle) * 0.038]
+            dash.orientation = simd_quatf(angle: -angle, axis: [0, 1, 0])
+            aperture.addChild(dash)
+        }
+        story.addChild(aperture)
+
+        let cover = ModelEntity(
+            mesh: .generateCylinder(height: 0.0032, radius: 0.036),
+            materials: [contextMaterial(opacity: 0.42)]
+        )
+        cover.name = registeredCarePurposeCoverName
+        cover.scale = [1.12, 1, 0.84]
+        story.addChild(cover)
+
+        let room = Entity()
+        room.name = registeredCarePurposeRoomName
+        let roomDashMesh = MeshResource.generateBox(
+            size: [0.010, 0.0018, 0.0024],
+            cornerRadius: 0.001
+        )
+        for index in 0..<12 {
+            let angle = Float(index) / 12 * 2 * Float.pi
+            let dash = ModelEntity(
+                mesh: roomDashMesh,
+                materials: [careMaterial(opacity: 0.64)]
+            )
+            dash.name = "registered-care-purpose-room-dash-\(index)"
+            dash.position = [cos(angle) * 0.068, 0.002, sin(angle) * 0.052]
+            dash.orientation = simd_quatf(angle: -angle, axis: [0, 1, 0])
+            room.addChild(dash)
+        }
+        story.addChild(room)
         return story
     }
 
@@ -1888,6 +1965,7 @@ enum StrokeSceneFactory {
         let qualitativeFlowOverlayLayer = imported.findEntity(named: qualitativeFlowOverlayLayerName)
         let clotTarget = imported.findEntity(named: importedClotTargetName)
         let pressureStory = imported.findEntity(named: registeredPressureStoryName)
+        let carePurposeStory = imported.findEntity(named: registeredCarePurposeStoryName)
 
         approach(cortexLayer, [-0.050 * separation, 0, 0])
         approach(regionPointAnchor, [-0.050 * separation, 0, 0])
@@ -2022,6 +2100,28 @@ enum StrokeSceneFactory {
         if let clotBeacon = clotTarget?.findEntity(named: "registered-clot-focus-beacon") {
             let pulse = Float(1.0 + sin(motionTime * 1.4) * 0.10)
             clotBeacon.scale = [pulse, pulse, pulse]
+        }
+
+        // A reversible family-safe Make-space cue. The ring marks a generic
+        // opening concept, the translucent cover moves outward, and the wider
+        // dashed boundary communicates additional room. All motion is derived
+        // from the permission-controlled reveal state; no cut, result, or
+        // patient-specific access site is shown.
+        carePurposeStory?.isEnabled = showsPurpose && !isolateScholarSkull
+        if showsPurpose, let carePurposeStory {
+            let reveal = Float(experience.layerRevealProgress)
+            let breath = Float(1 + sin(motionTime * 0.72) * 0.010)
+            if let aperture = carePurposeStory.findEntity(named: registeredCarePurposeApertureName) {
+                aperture.scale = [breath, breath, breath]
+            }
+            if let cover = carePurposeStory.findEntity(named: registeredCarePurposeCoverName) {
+                cover.position = [0, 0.004 + 0.026 * reveal, 0]
+                cover.orientation = simd_quatf(angle: reveal * 0.12, axis: [0, 0, 1])
+            }
+            if let room = carePurposeStory.findEntity(named: registeredCarePurposeRoomName) {
+                let expansion = (0.72 + 0.28 * reveal) * breath
+                room.scale = [expansion, expansion, expansion]
+            }
         }
 
     }

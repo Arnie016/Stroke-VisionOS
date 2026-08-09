@@ -23,7 +23,15 @@ selection reveals one local explanation plus the relevant teaching image.
 
 ## Latest verified Simulator composition
 
-Build `0.6 (17)` makes the Pressure story visually explicit without adding a
+Build `0.6 (18)` keeps the registered Pressure grammar and adds a distinct,
+permission-controlled Make-space purpose cue: a dashed conceptual aperture,
+a translucent protective cover that lifts away from the cortex, and a wider
+expanding room boundary. It is non-graphic, derived from the loaded
+registered-v2 brain/clot bounds, and does not claim an access site, outcome, or
+patient-specific procedure. The prototype-v1 bone flap and dural patch remain
+quarantined.
+
+Build `0.6 (17)` made the Pressure story visually explicit without adding a
 diagnostic overlay. The registered clot keeps a compact pulse; a filled amber
 surface cue marks affected tissue; and a wider dashed mint boundary represents
 constrained swelling. All three cues are derived from the loaded registered-v2
@@ -54,7 +62,7 @@ These two captures prove current Simulator render/process state only. They do
 not prove physical placement, gaze-and-pinch quality, comfort, AirPlay
 legibility, comprehension, or clinical validity.
 
-Build `0.6 (17)` retains brain, arteries, clot, and dura as one required
+Build `0.6 (18)` retains brain, arteries, clot, and dura as one required
 registered-v2 teaching set. If any required layer is missing or fails to load,
 Stroke Care logs the exact asset name and shows the complete procedural model
 with a visible **Simplified teaching view · Detailed anatomy unavailable**
