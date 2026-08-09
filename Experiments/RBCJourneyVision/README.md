@@ -1,0 +1,273 @@
+# Inside the Flow — RBC Journey Vision
+
+A standalone native visionOS side app that places the wearer inside one
+full-resolution cerebral atlas. There is no second brain model floating in
+front of the person. The double-sided cortex is the room; deep structures,
+ventricles, cerebral arteries, Circle routes, an example clot, and a baked flow
+route appear as restrained layers within it.
+
+The immersive space now begins with a four-beat **entry ritual**, not a window
+or dashboard: **threshold → anatomy → problem → invitation**. A distant brain
+approaches over the four short readings until its cortical shell fills the
+wearer's surroundings. The final **Enter the brain** action hands off to the
+Wondrous Journey without moving a camera. Back, Continue, Skip, and system
+Reduce Motion preserve agency; Reduce Motion holds one stable composition
+instead of performing the enclosing zoom.
+
+The default entry is a three-beat **Wondrous Journey**: **Route → Blockage →
+Consequence**. One explicitly chosen Circle portal changes from anatomical
+locus, to focused interruption, to enlarged downstream relationship while the
+wearer remains still. The information surface is limited to one title, one
+short paragraph, an optional fact, Save, Previous, Next, and Exit. The complete
+seven-station lesson remains available through **Open Atlas** instead of being
+forced into the three-minute path.
+
+The causal exhibit reuses the portal directions derived from the named
+`Flow_Route_Anterior_Communicating` and
+`Right_M1_Large_Vessel_Occlusion` entities, projected onto the same 1.26-metre
+comfort sphere. A continuous 48-segment illuminated lumen and eleven travelling
+direction markers connect those teaching loci; a separate 72-facet tissue field
+reveals the relationship beyond the example obstruction. The trail is not a
+vessel centerline, and the field is explicitly illustrative: neither is
+patient segmentation, perfusion imaging, CFD, tissue prediction, or a clinical
+result.
+
+A lower **Region Portal Reel** provides a second, user-directed exploration
+mode. It shows exactly three destinations at once and scrolls horizontally to
+seven supported local destinations: arterial lumen, Circle of Willis, cortical
+exchange, ventricular system, cerebellum, deep structures, and the frontal
+lobe. Only one region can transfer at a time. The enclosing cortical atmosphere
+remains present so the foreground lesson changes scale without turning into a
+disconnected model viewer.
+
+## Brain Observatory — frontal region slice
+
+The frontal destination is a bounded prototype of a broader **brain
+observatory** interaction. It does not place a second whole brain in front of
+the wearer. A local, irregular prefrontal guide is discovered inside the
+surrounding tissue like a constellation. Thirteen guide stars and thin arcs
+locate one territory without claiming clinical segmentation.
+
+Three explicit modes preserve control and visual hierarchy:
+
+- **Locate** keeps the authored internal anatomy dominant and reveals only the
+  local constellation.
+- **X-ray** recedes cortical tissue and lifts the registered cerebral arterial
+  context plus a tapered 13-branch teaching hierarchy.
+- **Flow** dims the guide and moves 18 short luminous glints through those
+  branches. The movement communicates route direction; it is not measured
+  velocity, CFD, perfusion, or a red-cell-scale simulation.
+
+The local constellation is also a native RealityKit discovery target. It uses
+`InputTargetComponent`, `CollisionComponent`, and the system
+`HoverEffectComponent`: looking supplies Apple's privacy-preserving hover cue,
+and one ordinary pinch enters the frontal destination. Pinching the same mark
+inside the region cycles Locate → X-ray → Flow. The app does not read, store, or
+infer an eye-gaze vector.
+
+Flow offers one optional **Place example clot** action. It reveals an irregular
+teaching obstruction in a single frontal branch and keeps that branch's flow
+glints upstream while the neighboring arterial context remains active. The
+effect is intentionally qualitative: it does not estimate velocity, collateral
+capacity, infarct territory, tissue outcome, or treatment response.
+
+## Travel with the flow — arterial branch ride
+
+Frontal **Flow** now offers one opt-in **Enter this branch** action. The wearer
+does not become a camera projectile. The camera and observation origin remain
+still while a 9.2-metre authored arterial cutaway opens around the viewing
+direction. Its near mouth remains outside the one-metre comfort boundary.
+
+The cutaway preserves separate adventitia, media, and intima layers with
+restrained transparency. The imported yellow arrows and streamlines are hidden.
+In their place, three narrow continuous intraluminal ribbons carry travelling
+luminance fronts through the branch while authored disc-shaped cells translate,
+tumble, and deform mildly beside them. The asset's opaque
+`Combined_Blood_Volume` is deliberately hidden because it sealed the cutaway
+and obscured the lesson in Simulator review. This direction field is procedural
+teaching geometry, not CFD or a measurement of cell density or speed.
+
+**Pause ride** freezes the local flow clock without jumping on resume.
+**Leave branch** returns directly to the frontal Flow observatory. **Exit** is
+always visible. The Region Portal Reel is hidden during the ride so there is one
+clear choice at a time.
+
+This is a qualitative direction lesson, not a CFD solve, red-cell-density
+measurement, pressure map, velocity field, patient vessel, or outcome model.
+The current visual is a stylized cutaway. More natural wall optics, non-Newtonian
+rheology, branching collisions, and patient-derived geometry remain later
+asset-authoring and scientific-validation gates.
+
+### Optional family guide
+
+The ride includes one opt-in **Family guide** control. It is off by default and
+is intentionally separate from clinician tooling. When configured, the guide
+uses `gpt-realtime-2.1` with the `marin` voice to read only the exact, visible,
+versioned family caption. The provider is instructed not to add explanations,
+diagnoses, advice, or unstated medical claims.
+
+The visionOS app never receives a permanent OpenAI key. It sends the visible
+caption to a developer-controlled loopback proxy, then verifies the returned
+model name and SHA-256 of that caption before playing the WAV. There is no
+system-voice fallback: if the proxy is absent, the caption remains visible and
+the interface says that the guide is not connected.
+
+Start the local proxy without printing the key:
+
+```bash
+Scripts/run_rbc_realtime_proxy.zsh
+```
+
+Then launch the Simulator with
+`RBC_REALTIME_PROXY_URL=http://127.0.0.1:8792/narrate`. The deterministic UI
+state is `--proof-flow-ride --proof-family-guide`. Provider audio, cost, cadence,
+and wearer comprehension require separate explicit verification; a build or
+selected button is not live narration proof.
+
+The title, one explanatory paragraph, one bounded fact, Save, Return, and Exit
+remain in one glanceable caption. Region choice remains in the lower portal
+reel; it is not duplicated as a floating dashboard.
+
+Six world-anchored orientation cards invite the wearer to turn toward frontal,
+parietal, temporal, occipital, cerebellar, and brainstem directions. They are
+explicitly simplified orientation guides, not lobe segmentation. A subtle
+surrounding **identity echo field** remains an art-science metaphor for memory
+and perspective; it is not a model of consciousness, diagnosis, neural firing,
+emotion, or mental state.
+
+The full named head-and-neck vascular assembly remains bundled for provenance
+and geometry audit but is not rendered at room scale: its large neck vessels
+crossed the viewing origin and failed the composition gate. The visible atlas
+uses only the brain-scale layers needed for this lesson.
+
+This project is intentionally separate from Stroke Care. It does not import or
+modify Stroke Care source, targets, bundle identifiers, branches, or product
+state. Integration requires Arnav's explicit later approval.
+
+The vetted generic teaching USDZ files and ambient flow bed are copied into this
+project's own `Resources` directory. The registered vascular assembly is an
+exact SHA-256-preserving copy from Arnav's `Stroke-VisionOS` checkout
+(`45080b42…9d6`). The built app therefore has no runtime or build-time dependency
+on that checkout.
+
+## Open Atlas — seven stations
+
+1. Meet one magnified red blood cell.
+2. Open a longitudinal artery-lumen portal.
+3. Inspect a registered cerebral branching overlay.
+4. Follow the looping four-second, 30-fps conceptual marker route.
+5. Pause at a conceptual right-M1 blockage.
+6. Pull back to the downstream brain-territory relationship.
+7. Open the arteriole–capillary–venule exchange portal.
+
+## Portal interaction
+
+- Open or close the Lumen, Circle, and Exchange lenses individually. The hard
+  maximum is three.
+- Each lens begins from a named USD entity direction and is projected to a
+  comfortable 1.26-metre interaction sphere. A subtle tether exposes the
+  relationship. This is geometry-derived placement pending specialist review,
+  not clinical registration.
+- Gaze/pinch a lens to inspect it in the center while the other open lenses keep
+  their surrounding atlas loci.
+- Choose **Enter region** to enlarge that vessel world around a stationary
+  wearer; **Return to atlas** reverses the transfer.
+- The Circle transfer adds the full cerebral arterial tree as a faint
+  high-resolution context layer behind the named teaching routes.
+- Hold a two-hand **T** for 0.45 seconds to open the next portal.
+- **Clap** to close every open portal.
+- Gaze/pinch an open portal or use the visible Open/Close buttons as accessible
+  and Simulator-compatible fallbacks.
+- Hand tracking is device-only. A successful build or Simulator screenshot is
+  not proof that the T/clap thresholds are comfortable or reliable on XCAT.
+
+## Comfort contract
+
+- Full immersion is used for the surrounding world.
+- The wearer and observation field stay fixed.
+- `Living flow` is the default; the registered baked route and a very small
+  anatomy pulse evolve continuously.
+- Pause/Resume controls the actual RealityKit animation playback controllers.
+- `Comfort still` and system Reduce Motion hold animation without hiding anatomy.
+- Every station is manually selectable and supports back, pause, next, restart,
+  and mute.
+- No camera entity, forced head movement, spinning world, or automatic ride is
+  used.
+- Region transfer moves and dims the authored world around the wearer; it never
+  moves a camera or forces locomotion.
+
+## Explanation and saved learning
+
+One top caption describes the thing currently being inspected: either the
+lesson station or the focused portal. It carries a title, explanatory paragraph,
+one bounded “Did you know?” fact, and a local Save control. Saved learning keys
+distinguish stations from portal lessons and use `UserDefaults`; no patient data,
+account, network, analytics, or remote API is involved. The lower hand-adjacent
+control surface retains explicit portal, label, pause, sound, navigation,
+region-transfer, and exit agency.
+
+Medical wording remains generic. The Circle of Willis lens describes a
+connection between anterior and posterior circulation and explicitly avoids
+assuming identical anatomy in every person. The exchange lens depicts oxygen
+diffusion from capillary blood to tissue while the red cell stays intravascular.
+
+## Medical boundary
+
+All anatomy and flow are generic and educational. The assets are not
+patient-specific, not CFD, not measured hemodynamics, and require specialist
+review. The app is not a scan viewer, diagnosis, treatment planner, clinical
+decision aid, rehabilitation intervention, or outcome simulator.
+
+## Build
+
+```bash
+cd Experiments/RBCJourneyVision
+xcodegen generate
+python3 Tests/verify_contract.py
+xcodebuild -project RBCJourneyVision.xcodeproj -scheme RBCJourneyVision \
+  -sdk xrsimulator \
+  -destination 'generic/platform=visionOS Simulator' \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+Deterministic proof routes use `--proof-station-0` through
+`--proof-station-6`, `--proof-portals-1` through `--proof-portals-3`, and
+`--proof-focus-0` through `--proof-focus-2` for centered inspection, plus
+`--proof-transfer-0` through `--proof-transfer-2` for enlarged region views.
+`--proof-comfort-still` and `--proof-paused` render the held-flow state and
+Resume control without pretending a Simulator launch is wearer interaction.
+The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
+`--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
+The region reel uses `--proof-region-0` through `--proof-region-6` for its seven
+single-active-region states. Add `--proof-region-mode-xray` or
+`--proof-region-mode-flow` to deterministically select the frontal observatory
+view. Add `--proof-frontal-clot` to hold the bounded illustrative obstruction
+state. The entry ritual uses `--proof-prelude-0` through `--proof-prelude-3` for
+Threshold, Anatomy, Problem, and Invitation.
+Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
+`--proof-paused` to render the exact held-flow and **Resume ride** state.
+
+## Fluid R&D boundary
+
+The runtime route is continuous RealityKit geometry with moving flow lights and
+real pause/resume state. It is not a live fluid solver. The bounded offline
+Houdini/Blender/Mantaflow promotion contract is documented in
+`Docs/vascular-fluid-authoring-pipeline.md`. Mantaflow may strengthen a local
+cutaway's visual storytelling, but it must not be presented as quantitative
+cerebral hemodynamics or a non-Newtonian blood model.
+
+## Asset provenance
+
+The cranial vascular manifest identifies the geometry source as Z-Anatomy /
+BodyParts3D under CC BY-SA 4.0 / CC BY-SA 2.1 Japan. Attribution and ShareAlike
+apply. The repo manifest records 64 structures and 83,456 triangles in the
+registered vascular assembly. The flow module is custom educational geometry;
+its speed, particles, and route are illustrative rather than measured.
+
+`Resources/Provenance/portal-anchor-manifest.json` records the three named
+anchor entities, source hashes, comfort projection, proxy limitation, and
+pending-review status.
+
+Simulator build and launch do not prove XCAT visibility, motion comfort,
+binocular depth, gaze targeting, spatial-audio perception, teaching efficacy,
+or clinical accuracy.

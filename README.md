@@ -49,6 +49,13 @@ Educational simplifications must be labelled in the interface and documentation.
 
 The draft [open cranial surgery after stroke evidence and communication library](docs/research/open-cranial-stroke-surgery/README.md) maps the major surgical pathways, annotated clinical evidence, urgent-family communication guidance, synthetic conversation demos, and product safety requirements. It is a research foundation for specialist review—not approved patient-specific content, a clinical guideline, or a consent tool.
 
+### Inside the Brain R&D
+
+The separate [RBC Journey visionOS experiment](Experiments/RBCJourneyVision/README.md)
+lets a wearer enter an internal brain atlas, discover regions, and inhabit one
+directional arterial-flow lesson. It is research on
+`feature/inside-brain-rbc-journey`, not yet part of the Stroke Care app target.
+
 ## MVP scope
 
 The first coherent vertical slice should include:

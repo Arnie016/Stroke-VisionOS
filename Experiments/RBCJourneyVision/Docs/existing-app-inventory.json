@@ -1,0 +1,145 @@
+{
+  "schema": "rbc-journey-existing-app-inventory/1",
+  "audited_at": "2026-08-09",
+  "scope": {
+    "project": "Experiments/RBCJourneyVision",
+    "product_name": "Inside the Flow",
+    "bundle_identifier": "com.arnav.RBCJourneyVision",
+    "isolation_boundary": "Standalone R&D side app; no Night Fury or Stroke Care source dependency"
+  },
+  "entry_point": {
+    "kind": "SwiftUI @main App",
+    "file": "Sources/RBCJourneyVisionApp.swift",
+    "type": "RBCJourneyVisionApp",
+    "scenes": [
+      "WindowGroup(id: rbc-journey-trailhead)",
+      "ImmersiveSpace(id: rbc-journey-full-space, style: full)"
+    ],
+    "app_delegate": false,
+    "scene_delegate": false
+  },
+  "ui": {
+    "primary_framework": "SwiftUI",
+    "spatial_framework": "RealityKit",
+    "tracking_framework": "ARKit",
+    "uikit_usage": {
+      "present": true,
+      "scope": "UIColor bridges for RealityKit materials and lights in RBCJourneyScene.swift",
+      "view_or_navigation_dependency": false
+    },
+    "spritekit": false,
+    "reality_composer_pro_bundle": false
+  },
+  "navigation": {
+    "model": "Explicit window-to-immersive transition",
+    "window_open": "openImmersiveSpace(id:)",
+    "window_close": "dismissWindow(id:)",
+    "immersive_exit": "dismissImmersiveSpace() then openWindow(id:)",
+    "tab_view": false,
+    "navigation_stack": false,
+    "volumetric_window": false
+  },
+  "state_and_data": {
+    "global_state": "@Observable RBCJourneyModel injected with Environment",
+    "persistence": "UserDefaults stores only local station and portal learning keys",
+    "swiftdata": false,
+    "core_data": false,
+    "user_defaults": true,
+    "remote_api": "Optional local narration proxy only; no direct provider request",
+    "networking": "URLSession to a developer-configured loopback narration proxy",
+    "data_classification": "Ephemeral generic educational state only"
+  },
+  "interactions": {
+    "indirect_gaze_pinch": "Targeted TapGesture on portal entities",
+    "direct_input": "InputTargetComponent plus CollisionComponent",
+    "hover": "HoverEffectComponent",
+    "custom_hand_tracking": "ARKitSession plus HandTrackingProvider",
+    "custom_gestures": [
+      "Two-hand T held for 0.45 seconds opens the next portal",
+      "Closing clap closes all portals"
+    ],
+    "simulator_fallback": "Explicit Open portal and Close portals buttons",
+    "touch_only_gestures": []
+  },
+  "permissions": [
+    {
+      "key": "NSHandsTrackingUsageDescription",
+      "purpose": "Open and close educational vessel portals with deliberate two-hand gestures"
+    }
+  ],
+  "permissions_not_requested": [
+    "camera",
+    "microphone",
+    "location"
+  ],
+  "haptics": false,
+  "dependencies": {
+    "swift_package_manager": [],
+    "cocoapods": [],
+    "carthage": [],
+    "local_packages": [],
+    "system_frameworks": [
+      "SwiftUI",
+      "RealityKit",
+      "ARKit",
+      "Observation",
+      "Foundation",
+      "AVFoundation",
+      "Combine",
+      "CryptoKit",
+      "UIKit"
+    ]
+  },
+  "assets": {
+    "models": {
+      "format": "USDZ",
+      "count": 14,
+      "total_bytes": 49747233,
+      "files": [
+        {"name": "brain_anatomy_realistic_v2.usdz", "bytes": 14051264},
+        {"name": "brain_deep_structures_v2.usdz", "bytes": 2204061},
+        {"name": "brain_ventricles_v2.usdz", "bytes": 782064},
+        {"name": "cerebral_arteries_realistic_v2.usdz", "bytes": 4246138},
+        {"name": "cranial_vascular_registered_assembly_v2.usdz", "bytes": 6429160},
+        {"name": "ischemic_mca_clot_v2.usdz", "bytes": 70237},
+        {"name": "artery_wall_cutaway_v2.usdz", "bytes": 6282219},
+        {"name": "artery_interior_bloodflow_v2.usdz", "bytes": 259920},
+        {"name": "artery_cutaway_complete_v2.usdz", "bytes": 6539717},
+        {"name": "circle_of_willis_flow_overlay_v2.usdz", "bytes": 475177},
+        {"name": "red_blood_cells_closeup_v2.usdz", "bytes": 228694},
+        {"name": "microcirculation_arterial_venous_v2.usdz", "bytes": 375857},
+        {"name": "cerebral_bloodflow_animation_v2.usdz", "bytes": 192931},
+        {"name": "cerebral_bloodflow_teaching_set_v2.usdz", "bytes": 7609794}
+      ]
+    },
+    "audio": [
+      {"name": "FlowBed.wav", "bytes": 768078, "behavior": "looping spatial flow bed"}
+    ],
+    "images": [],
+    "reality_files": [],
+    "materialx_shaders": [],
+    "metal_shaders": []
+  },
+  "architecture_inventory": {
+    "app": ["RBCJourneyVisionApp.swift", "RBCJourneyModel.swift"],
+    "windows": ["RBCJourneyTrailheadView.swift"],
+    "volumes": [],
+    "immersive": ["RBCJourneyImmersiveView.swift", "RBCJourneyScene.swift"],
+    "interactions": ["RBCPortalGestureController.swift"],
+    "hud": ["RBCJourneyHUD.swift"],
+    "services": [
+      "RBCFamilyNarrationEngine.swift — exact-caption loopback-proxy audio client"
+    ],
+    "custom_ecs_components": [],
+    "custom_ecs_systems": []
+  },
+  "current_proof_boundary": {
+    "source_contract": "Tests/verify_contract.py",
+    "simulator_proofs": "Proof/",
+    "live_realtime_audio_proof": false,
+    "provider_cost_proof": false,
+    "xcat_hand_gesture_proof": false,
+    "wearer_comfort_proof": false,
+    "specialist_content_review": false
+  }
+}

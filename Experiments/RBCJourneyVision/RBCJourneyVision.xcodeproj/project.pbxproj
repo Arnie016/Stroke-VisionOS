@@ -1,0 +1,435 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03FDF42C4CF1605105F222F9 /* RBCJourneyTrailheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0211755FDA61F0AB2C8189 /* RBCJourneyTrailheadView.swift */; };
+		1F1DC8F3E8428ECE12372E4E /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 72F1174096295A38060CF3FF /* cerebral_bloodflow_teaching_set_v2.usdz */; };
+		2A89701998AABFB71DDD2E1C /* brain_ventricles_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A09DF472EDF15D89791B41AD /* brain_ventricles_v2.usdz */; };
+		39C7C51371060A910DD3B5ED /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 781BCC05DB7D478159B46A0C /* ischemic_mca_clot_v2.usdz */; };
+		3A78146196913CBB60E2127A /* ATTRIBUTION.md in Resources */ = {isa = PBXBuildFile; fileRef = 1FAAE6AC17C97701B0E53C82 /* ATTRIBUTION.md */; };
+		44C2F92AE5BDC2BBFAF14713 /* RBCJourneyVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D189AC15300A4341A8361BB /* RBCJourneyVisionApp.swift */; };
+		4CEF82EDFAF608BEF14BBEDE /* microcirculation_arterial_venous_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1F8E4C53D135CD918367341F /* microcirculation_arterial_venous_v2.usdz */; };
+		59301F4067B1D25E668175C2 /* RBCPortalGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F91B9029B28B399F70AE9F /* RBCPortalGestureController.swift */; };
+		78C519995E4A31016C6CF9EE /* RBCJourneyHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7730EA5B8B8D8E1DC5FEC82A /* RBCJourneyHUD.swift */; };
+		8784FB12C8C5C9A155645FD4 /* portal-anchor-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = A2F9F8B013CC9048DFA5F5A5 /* portal-anchor-manifest.json */; };
+		8F1759B747470278B5F51538 /* circle_of_willis_flow_overlay_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 56DB8FB9CD5AD668581962D8 /* circle_of_willis_flow_overlay_v2.usdz */; };
+		9834E5B0A5E0804C07FE0258 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = 485904FBDEB12F558CDCE138 /* FlowBed.wav */; };
+		9A4EE6EEF25A91A711E5E0DA /* artery_cutaway_complete_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3813C19A324ED2F77974EF77 /* artery_cutaway_complete_v2.usdz */; };
+		A40E80961C96736227DDE6E0 /* brain_deep_structures_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 70918A2FDD79BA174A3B92B4 /* brain_deep_structures_v2.usdz */; };
+		A698438CF855DEC897DD85FF /* cranial_vascular_registered_assembly_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8675C0C263C1492A8D9808EB /* cranial_vascular_registered_assembly_v2.usdz */; };
+		B026F90EDA741A6A379C89EF /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 6A7C575A5D2F2E0F78DF6157 /* brain_anatomy_realistic_v2.usdz */; };
+		BF405E1F30C87373B40FC733 /* red_blood_cells_closeup_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 494A074BCAE5BE78E2FC3D48 /* red_blood_cells_closeup_v2.usdz */; };
+		C5BC4AE9CAF9E4080A85FE15 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 49FD574C0AF5C96E8B6EB0C7 /* cerebral_bloodflow_animation_v2.usdz */; };
+		D24B19C567650584FCDE21BB /* cerebral_arteries_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = AB6B4EAFA92BE6CA2A7BC631 /* cerebral_arteries_realistic_v2.usdz */; };
+		DB4B63232624E6765553D02F /* RBCJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52D93C80BE13778725C82FE /* RBCJourneyModel.swift */; };
+		DB9C6F166DE4B2FB2EC587B3 /* artery_wall_cutaway_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A8566F55C828B6891A4A1064 /* artery_wall_cutaway_v2.usdz */; };
+		E59611D2187653A84B2DACCF /* artery_interior_bloodflow_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF3961D7E6CBDB20275DBC7 /* artery_interior_bloodflow_v2.usdz */; };
+		E7EDB5EFA53B0E6E36F51F7E /* RBCJourneyImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4793D2DB4A6F981FA36A973D /* RBCJourneyImmersiveView.swift */; };
+		ED9D09BCC37337667834FE6A /* RBCJourneyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E555E0C3686F9534F946B8 /* RBCJourneyScene.swift */; };
+		FC6A72F4141DD66CE7AA91BA /* RBCFamilyNarrationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C463D9C3D7F6403E15CEB5D /* RBCFamilyNarrationEngine.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1C463D9C3D7F6403E15CEB5D /* RBCFamilyNarrationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCFamilyNarrationEngine.swift; sourceTree = "<group>"; };
+		1F8E4C53D135CD918367341F /* microcirculation_arterial_venous_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = microcirculation_arterial_venous_v2.usdz; sourceTree = "<group>"; };
+		1FAAE6AC17C97701B0E53C82 /* ATTRIBUTION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ATTRIBUTION.md; sourceTree = "<group>"; };
+		3813C19A324ED2F77974EF77 /* artery_cutaway_complete_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_cutaway_complete_v2.usdz; sourceTree = "<group>"; };
+		3D189AC15300A4341A8361BB /* RBCJourneyVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyVisionApp.swift; sourceTree = "<group>"; };
+		4793D2DB4A6F981FA36A973D /* RBCJourneyImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyImmersiveView.swift; sourceTree = "<group>"; };
+		485904FBDEB12F558CDCE138 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
+		494A074BCAE5BE78E2FC3D48 /* red_blood_cells_closeup_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = red_blood_cells_closeup_v2.usdz; sourceTree = "<group>"; };
+		49FD574C0AF5C96E8B6EB0C7 /* cerebral_bloodflow_animation_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_animation_v2.usdz; sourceTree = "<group>"; };
+		56DB8FB9CD5AD668581962D8 /* circle_of_willis_flow_overlay_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = circle_of_willis_flow_overlay_v2.usdz; sourceTree = "<group>"; };
+		6A7C575A5D2F2E0F78DF6157 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
+		6EA0E71C36649CA3E3395F1A /* RBCJourneyVision.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RBCJourneyVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		70918A2FDD79BA174A3B92B4 /* brain_deep_structures_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_deep_structures_v2.usdz; sourceTree = "<group>"; };
+		72F1174096295A38060CF3FF /* cerebral_bloodflow_teaching_set_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_teaching_set_v2.usdz; sourceTree = "<group>"; };
+		7730EA5B8B8D8E1DC5FEC82A /* RBCJourneyHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyHUD.swift; sourceTree = "<group>"; };
+		781BCC05DB7D478159B46A0C /* ischemic_mca_clot_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = ischemic_mca_clot_v2.usdz; sourceTree = "<group>"; };
+		8675C0C263C1492A8D9808EB /* cranial_vascular_registered_assembly_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_vascular_registered_assembly_v2.usdz; sourceTree = "<group>"; };
+		A09DF472EDF15D89791B41AD /* brain_ventricles_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_ventricles_v2.usdz; sourceTree = "<group>"; };
+		A2F9F8B013CC9048DFA5F5A5 /* portal-anchor-manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "portal-anchor-manifest.json"; sourceTree = "<group>"; };
+		A52D93C80BE13778725C82FE /* RBCJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyModel.swift; sourceTree = "<group>"; };
+		A5E555E0C3686F9534F946B8 /* RBCJourneyScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyScene.swift; sourceTree = "<group>"; };
+		A8566F55C828B6891A4A1064 /* artery_wall_cutaway_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_wall_cutaway_v2.usdz; sourceTree = "<group>"; };
+		AB6B4EAFA92BE6CA2A7BC631 /* cerebral_arteries_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_arteries_realistic_v2.usdz; sourceTree = "<group>"; };
+		CAF3961D7E6CBDB20275DBC7 /* artery_interior_bloodflow_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_interior_bloodflow_v2.usdz; sourceTree = "<group>"; };
+		E1F91B9029B28B399F70AE9F /* RBCPortalGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCPortalGestureController.swift; sourceTree = "<group>"; };
+		FB0211755FDA61F0AB2C8189 /* RBCJourneyTrailheadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyTrailheadView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0D38EAC4076491458EFE981E /* Provenance */ = {
+			isa = PBXGroup;
+			children = (
+				1FAAE6AC17C97701B0E53C82 /* ATTRIBUTION.md */,
+				A2F9F8B013CC9048DFA5F5A5 /* portal-anchor-manifest.json */,
+			);
+			path = Provenance;
+			sourceTree = "<group>";
+		};
+		3750384ED35E503198574E01 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4198DE34B9423C96EC15319B /* Audio */,
+				651FE0A2390FE288820596B5 /* Models */,
+				0D38EAC4076491458EFE981E /* Provenance */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4198DE34B9423C96EC15319B /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				485904FBDEB12F558CDCE138 /* FlowBed.wav */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		651FE0A2390FE288820596B5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3813C19A324ED2F77974EF77 /* artery_cutaway_complete_v2.usdz */,
+				CAF3961D7E6CBDB20275DBC7 /* artery_interior_bloodflow_v2.usdz */,
+				A8566F55C828B6891A4A1064 /* artery_wall_cutaway_v2.usdz */,
+				6A7C575A5D2F2E0F78DF6157 /* brain_anatomy_realistic_v2.usdz */,
+				70918A2FDD79BA174A3B92B4 /* brain_deep_structures_v2.usdz */,
+				A09DF472EDF15D89791B41AD /* brain_ventricles_v2.usdz */,
+				AB6B4EAFA92BE6CA2A7BC631 /* cerebral_arteries_realistic_v2.usdz */,
+				49FD574C0AF5C96E8B6EB0C7 /* cerebral_bloodflow_animation_v2.usdz */,
+				72F1174096295A38060CF3FF /* cerebral_bloodflow_teaching_set_v2.usdz */,
+				56DB8FB9CD5AD668581962D8 /* circle_of_willis_flow_overlay_v2.usdz */,
+				8675C0C263C1492A8D9808EB /* cranial_vascular_registered_assembly_v2.usdz */,
+				781BCC05DB7D478159B46A0C /* ischemic_mca_clot_v2.usdz */,
+				1F8E4C53D135CD918367341F /* microcirculation_arterial_venous_v2.usdz */,
+				494A074BCAE5BE78E2FC3D48 /* red_blood_cells_closeup_v2.usdz */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		859616CD10F1462A6CB60EDC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6EA0E71C36649CA3E3395F1A /* RBCJourneyVision.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B318C3DF30D955ABE1E579CC /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				1C463D9C3D7F6403E15CEB5D /* RBCFamilyNarrationEngine.swift */,
+				7730EA5B8B8D8E1DC5FEC82A /* RBCJourneyHUD.swift */,
+				4793D2DB4A6F981FA36A973D /* RBCJourneyImmersiveView.swift */,
+				A52D93C80BE13778725C82FE /* RBCJourneyModel.swift */,
+				A5E555E0C3686F9534F946B8 /* RBCJourneyScene.swift */,
+				FB0211755FDA61F0AB2C8189 /* RBCJourneyTrailheadView.swift */,
+				3D189AC15300A4341A8361BB /* RBCJourneyVisionApp.swift */,
+				E1F91B9029B28B399F70AE9F /* RBCPortalGestureController.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		C588BA89C9990103D676A58D = {
+			isa = PBXGroup;
+			children = (
+				3750384ED35E503198574E01 /* Resources */,
+				B318C3DF30D955ABE1E579CC /* Sources */,
+				859616CD10F1462A6CB60EDC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		949FFE61F50FED8CE637A5BC /* RBCJourneyVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1383432123A3C7E2000E627 /* Build configuration list for PBXNativeTarget "RBCJourneyVision" */;
+			buildPhases = (
+				9A814F72436BA98CBFCA279B /* Sources */,
+				30D8F164BC538219B2D5B3A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RBCJourneyVision;
+			packageProductDependencies = (
+			);
+			productName = RBCJourneyVision;
+			productReference = 6EA0E71C36649CA3E3395F1A /* RBCJourneyVision.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A202109A7D2E12F81E8D723F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					949FFE61F50FED8CE637A5BC = {
+						DevelopmentTeam = VV6YGTA587;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A0E26BAF72A01906D203CC84 /* Build configuration list for PBXProject "RBCJourneyVision" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C588BA89C9990103D676A58D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 859616CD10F1462A6CB60EDC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				949FFE61F50FED8CE637A5BC /* RBCJourneyVision */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		30D8F164BC538219B2D5B3A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A78146196913CBB60E2127A /* ATTRIBUTION.md in Resources */,
+				9834E5B0A5E0804C07FE0258 /* FlowBed.wav in Resources */,
+				9A4EE6EEF25A91A711E5E0DA /* artery_cutaway_complete_v2.usdz in Resources */,
+				E59611D2187653A84B2DACCF /* artery_interior_bloodflow_v2.usdz in Resources */,
+				DB9C6F166DE4B2FB2EC587B3 /* artery_wall_cutaway_v2.usdz in Resources */,
+				B026F90EDA741A6A379C89EF /* brain_anatomy_realistic_v2.usdz in Resources */,
+				A40E80961C96736227DDE6E0 /* brain_deep_structures_v2.usdz in Resources */,
+				2A89701998AABFB71DDD2E1C /* brain_ventricles_v2.usdz in Resources */,
+				D24B19C567650584FCDE21BB /* cerebral_arteries_realistic_v2.usdz in Resources */,
+				C5BC4AE9CAF9E4080A85FE15 /* cerebral_bloodflow_animation_v2.usdz in Resources */,
+				1F1DC8F3E8428ECE12372E4E /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */,
+				8F1759B747470278B5F51538 /* circle_of_willis_flow_overlay_v2.usdz in Resources */,
+				A698438CF855DEC897DD85FF /* cranial_vascular_registered_assembly_v2.usdz in Resources */,
+				39C7C51371060A910DD3B5ED /* ischemic_mca_clot_v2.usdz in Resources */,
+				4CEF82EDFAF608BEF14BBEDE /* microcirculation_arterial_venous_v2.usdz in Resources */,
+				8784FB12C8C5C9A155645FD4 /* portal-anchor-manifest.json in Resources */,
+				BF405E1F30C87373B40FC733 /* red_blood_cells_closeup_v2.usdz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9A814F72436BA98CBFCA279B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC6A72F4141DD66CE7AA91BA /* RBCFamilyNarrationEngine.swift in Sources */,
+				78C519995E4A31016C6CF9EE /* RBCJourneyHUD.swift in Sources */,
+				E7EDB5EFA53B0E6E36F51F7E /* RBCJourneyImmersiveView.swift in Sources */,
+				DB4B63232624E6765553D02F /* RBCJourneyModel.swift in Sources */,
+				ED9D09BCC37337667834FE6A /* RBCJourneyScene.swift in Sources */,
+				03FDF42C4CF1605105F222F9 /* RBCJourneyTrailheadView.swift in Sources */,
+				44C2F92AE5BDC2BBFAF14713 /* RBCJourneyVisionApp.swift in Sources */,
+				59301F4067B1D25E668175C2 /* RBCPortalGestureController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		355F1291DA3CEBD08A69B315 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Inside the Flow";
+				INFOPLIST_KEY_NSHandsTrackingUsageDescription = "Open and close educational vessel portals with deliberate two-hand gestures.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.RBCJourneyVision;
+				PRODUCT_NAME = RBCJourneyVision;
+				SDKROOT = xros;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Release;
+		};
+		57B13C8768AA5A9614FC0D65 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VV6YGTA587;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		8680D8EAEA1B3BD8B9013D6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VV6YGTA587;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		A894867D3192F671D714927B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Inside the Flow";
+				INFOPLIST_KEY_NSHandsTrackingUsageDescription = "Open and close educational vessel portals with deliberate two-hand gestures.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.RBCJourneyVision;
+				PRODUCT_NAME = RBCJourneyVision;
+				SDKROOT = xros;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A0E26BAF72A01906D203CC84 /* Build configuration list for PBXProject "RBCJourneyVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8680D8EAEA1B3BD8B9013D6A /* Debug */,
+				57B13C8768AA5A9614FC0D65 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C1383432123A3C7E2000E627 /* Build configuration list for PBXNativeTarget "RBCJourneyVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A894867D3192F671D714927B /* Debug */,
+				355F1291DA3CEBD08A69B315 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A202109A7D2E12F81E8D723F /* Project object */;
+}

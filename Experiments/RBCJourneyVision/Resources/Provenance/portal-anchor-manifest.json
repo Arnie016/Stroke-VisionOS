@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-09",
+  "coordinate_model": {
+    "runtime_root": "large-inside-out-cortical-vault",
+    "placement_method": "Named source-entity visual bounds are converted into the portal root, then projected onto a 1.26 metre interaction sphere around a seated wearer reference.",
+    "vertical_clamp_metres": [0.88, 1.82],
+    "clinical_status": "GEOMETRY_DERIVED_PENDING_SPECIALIST_REVIEW",
+    "proof_boundary": "Deterministic placement metadata only. This is not segmentation, image registration, patient anatomy, or clinical validation."
+  },
+  "portals": [
+    {
+      "id": 0,
+      "name": "Lumen",
+      "source_asset": "ischemic_mca_clot_v2.usdz",
+      "source_asset_sha256": "ba07bfb3d13a2ba73d951eda1266500fec037ad416ae72886ed4d4759ae854f0",
+      "source_entity": "Right_M1_Large_Vessel_Occlusion",
+      "anchor_meaning": "A named right-M1 teaching locus provides directional context for the magnified lumen lesson.",
+      "content_asset": "artery_cutaway_complete_v2.usdz",
+      "review_status": "PENDING_SPECIALIST_REVIEW"
+    },
+    {
+      "id": 1,
+      "name": "Circle",
+      "source_asset": "circle_of_willis_flow_overlay_v2.usdz",
+      "source_asset_sha256": "7aa5442f0d8eb6a1fb14b8b8f046c39040501c7df41589f554f1d8d90f845e7a",
+      "source_entity": "Flow_Route_Anterior_Communicating",
+      "anchor_meaning": "The named anterior communicating route provides a geometry-derived direction to the cerebral arterial crossroads.",
+      "content_asset": "circle_of_willis_flow_overlay_v2.usdz",
+      "review_status": "PENDING_SPECIALIST_REVIEW"
+    },
+    {
+      "id": 2,
+      "name": "Exchange",
+      "source_asset": "brain_anatomy_realistic_v2.usdz",
+      "source_asset_sha256": "6b02ec90e808d3e50a84a9b75239390be6ca8c5903c7212b96251b633e4f0622",
+      "source_entity": "Cerebral_Cortex_R",
+      "anchor_meaning": "A named cortical hemisphere provides a representative surface direction for a magnified capillary lesson.",
+      "content_asset": "microcirculation_arterial_venous_v2.usdz",
+      "review_status": "ILLUSTRATIVE_PROXY_PENDING_SPECIALIST_REVIEW",
+      "limitation": "The magnified microcirculation teaching asset is not registered to a specific cortical capillary bed."
+    }
+  ],
+  "orientation_guides": {
+    "labels": ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe", "Cerebellum", "Brainstem"],
+    "status": "SIMPLIFIED_WORLD_ORIENTATION_NOT_SEGMENTATION"
+  }
+}
