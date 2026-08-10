@@ -40,6 +40,14 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
         requestTask != nil || player != nil
     }
 
+    /// A new, explicit family opt-in starts audible even if the surrounding
+    /// region lesson is already holding its visual flow. Pause changes after
+    /// the request starts still latch through loading via `setPaused`.
+    func beginOptInExactCaption(_ text: String) {
+        pauseRequested = false
+        speakExactCaption(text)
+    }
+
     func speakExactCaption(_ text: String) {
         stop()
         guard !text.isEmpty else { return }
