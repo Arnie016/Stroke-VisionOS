@@ -5,6 +5,11 @@ import UIKit
 
 @MainActor
 final class RBCJourneyScene {
+    private static let expectedBrainstemVertebralSourceNodes = [
+        "Assembly__Vertebral_artery_l",
+        "Assembly__Vertebral_artery_r",
+    ]
+
     private enum WillisPathFamily {
         case anterior
         case posterior
@@ -60,6 +65,9 @@ final class RBCJourneyScene {
     private let flowRideFrontalArterioleRoot = Entity()
     private let flowRideCapillaryWebRoot = Entity()
     private let flowRideNeighborDestinationRoot = Entity()
+    /// Keeps the complete information surface within a conservative head-pose
+    /// envelope while preserving its authored scale and every line of copy.
+    private let poseSafeInfoSurfacePosition = SIMD3<Float>(0, 1.68, -1.04)
     private var flowRideCapillaryFocusTarget: Entity?
     private var flowRideFrontalDestinationCenter: SIMD3<Float> = .zero
 
@@ -157,6 +165,7 @@ final class RBCJourneyScene {
     private var brainstemVoyageStartOpacities: [Float] = [1, 1, 1, 1]
     private var brainstemVoyageTargetOpacities: [Float] = [1, 1, 1, 1]
     private var brainstemVoyageCurrentOpacities: [Float] = [1, 1, 1, 1]
+    private var brainstemRegisteredVertebralNodeCount = 0
     private var brainstemElapsed: Float = 0
     private var brainstemVoyageRouteRoots: [Entity] {
         [
@@ -592,7 +601,7 @@ final class RBCJourneyScene {
             } else if lumenRideActive {
                 [0, 1.72, -0.70]
             } else {
-                [0, 2.08, -1.04]
+                poseSafeInfoSurfacePosition
             }
             infoAttachment.position += (target - infoAttachment.position) * (reducedMotion ? 1 : 0.22)
         }
@@ -758,7 +767,7 @@ final class RBCJourneyScene {
         guard entity.parent == nil else { return }
         infoAttachment = entity
         entity.name = "journey-info-attachment"
-        entity.position = [0, 2.08, -1.04]
+        entity.position = poseSafeInfoSurfacePosition
         entity.scale = [0.86, 0.86, 0.86]
         entity.components.set(BillboardComponent())
         hudRoot.addChild(entity)
@@ -1159,7 +1168,7 @@ final class RBCJourneyScene {
 
         if let infoAttachment {
             let position: SIMD3<Float> = chapter == nil
-                ? [0, 2.08, -1.04]
+                ? poseSafeInfoSurfacePosition
                 : [0, 1.58, -0.72]
             let scale: Float = chapter == nil ? 0.86 : 0.66
             let attachmentResponse: Float = reducedMotion ? 1 : 0.12
@@ -2603,22 +2612,26 @@ final class RBCJourneyScene {
             deepReference.position += [0, 1.42, -2.34]
             authoredContext.addChild(deepReference)
         }
+        brainstemRegisteredVertebralNodeCount = 0
         if let cranialVascularLayer {
             let pairedVertebralReference = Entity()
             pairedVertebralReference.name = "registered-paired-vertebral-artery-reference-source-nodes"
-            for sourceName in ["Assembly__Vertebral_artery_l", "Assembly__Vertebral_artery_r"] {
+            for sourceName in Self.expectedBrainstemVertebralSourceNodes {
                 if let source = cranialVascularLayer.findEntity(named: sourceName) {
                     pairedVertebralReference.addChild(source.clone(recursive: true))
+                    brainstemRegisteredVertebralNodeCount += 1
                 }
             }
-            normalize(pairedVertebralReference, targetExtent: 2.14)
-            pairedVertebralReference.position += [0, 1.28, -2.06]
-            // The source nodes are preserved for registration provenance, but
-            // their combined catalogue transform reads as two dark loops at
-            // environmental scale. The native continuous routes below are the
-            // visible lesson until a semantically segmented replacement exists.
-            pairedVertebralReference.isEnabled = false
-            authoredContext.addChild(pairedVertebralReference)
+            if brainstemRegisteredVertebralNodeCount > 0 {
+                normalize(pairedVertebralReference, targetExtent: 2.14)
+                pairedVertebralReference.position += [0, 1.28, -2.06]
+                // The source nodes are preserved for registration provenance,
+                // but their combined catalogue transform reads as dark loops at
+                // environmental scale. The native continuous routes below are
+                // the visible lesson until a reviewed segmented replacement exists.
+                pairedVertebralReference.isEnabled = false
+                authoredContext.addChild(pairedVertebralReference)
+            }
         }
         authoredContext.components.set(OpacityComponent(opacity: 0.11))
         region.addChild(authoredContext)
@@ -3111,7 +3124,11 @@ final class RBCJourneyScene {
         regionInteriorRoot.addChild(region)
         regionInteriors[id] = region
         regionBaseScales[id] = region.scale
-        print("RBC_BRAINSTEM_OBSERVATORY=READY levels=3 broken_outline_arcs=9 environmental_wall_sheets=4 peripheral_ribs=16 longitudinal_guides=9 transverse_pons_guides=9 tegmental_points=72 arterial_paths=17 moving_fronts=23 voyage_route_groups=4 destination_route_halos=8 registered_deep_context=true registered_vertebral_nodes=2")
+        let expectedVertebralNodeCount = Self.expectedBrainstemVertebralSourceNodes.count
+        let registrationStatus = brainstemRegisteredVertebralNodeCount == expectedVertebralNodeCount
+            ? "READY"
+            : "DEGRADED"
+        print("RBC_BRAINSTEM_OBSERVATORY=\(registrationStatus) levels=3 broken_outline_arcs=9 environmental_wall_sheets=4 peripheral_ribs=16 longitudinal_guides=9 transverse_pons_guides=9 tegmental_points=72 arterial_paths=17 moving_fronts=23 voyage_route_groups=4 destination_route_halos=8 registered_deep_context=\(deepLayer != nil) registered_vertebral_nodes=\(brainstemRegisteredVertebralNodeCount) expected_vertebral_nodes=\(expectedVertebralNodeCount)")
     }
 
     private func makeBrainstemCorridorWallMesh(

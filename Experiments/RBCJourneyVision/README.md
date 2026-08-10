@@ -442,17 +442,30 @@ emotion, or mental state.
 The full named head-and-neck vascular assembly remains bundled for provenance
 and geometry audit but is not rendered at room scale: its large neck vessels
 crossed the viewing origin and failed the composition gate. The visible atlas
-uses only the brain-scale layers needed for this lesson.
+uses only the brain-scale layers needed for this lesson. The source-library
+models `artery_wall_cutaway_v2`, `artery_interior_bloodflow_v2`,
+`red_blood_cells_closeup_v2`, and `cerebral_bloodflow_teaching_set_v2` remain
+unchanged in `Resources/Models` for provenance and future review but are
+intentionally excluded from the app target because no current runtime path
+uses them. Exclusion does not promote or reject their specialist-review state.
 
 This project is intentionally separate from Stroke Care. It does not import or
 modify Stroke Care source, targets, bundle identifiers, branches, or product
 state. Integration requires Arnav's explicit later approval.
 
-The vetted generic teaching USDZ files and ambient flow bed are copied into this
-project's own `Resources` directory. The registered vascular assembly is an
-exact SHA-256-preserving copy from Arnav's `Stroke-VisionOS` checkout
+The ten runtime-referenced generic teaching USDZ files and ambient flow bed are
+copied from this project's own `Resources` directory into the built bundle. The
+four source-library-only USDZ files are not packaged. The registered vascular
+assembly is an exact SHA-256-preserving copy from Arnav's `Stroke-VisionOS` checkout
 (`45080b42…9d6`). The built app therefore has no runtime or build-time dependency
 on that checkout.
+
+Every immersive information surface carries the persistent boundary **Generic
+synthetic teaching view · not a patient scan · specialist review pending ·
+clinical review pending**. Family companion replaces clinician atlas terms with
+plain-language copy for the same selected region and teaching point; ending the
+companion restores the clinician-detail wording. Neither layer supplies
+patient-specific advice or clinical validation.
 
 ## Open Atlas — seven stations
 

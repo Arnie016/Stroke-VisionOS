@@ -1,5 +1,23 @@
 import SwiftUI
 
+private struct RBCEducationalBoundaryBadge: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Label("GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN", systemImage: "shield.lefthalf.filled")
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundStyle(Color(red: 0.98, green: 0.70, blue: 0.34))
+            Text("SPECIALIST REVIEW PENDING · CLINICAL REVIEW PENDING")
+                .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.white.opacity(0.64))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.black.opacity(0.34), in: .capsule)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Generic synthetic teaching view. Not a patient scan. Specialist review pending. Clinical review pending.")
+    }
+}
+
 private struct RBCPreludeChapterText: View {
     @Environment(RBCJourneyModel.self) private var model
     let chapter: RBCEntryPreludeChapter
@@ -38,6 +56,8 @@ struct RBCEntryPreludeHUD: View {
 
     var body: some View {
         VStack(spacing: 26) {
+            RBCEducationalBoundaryBadge()
+
             RBCPreludeChapterText(chapter: model.entryPreludeChapter)
                 .id(model.entryPreludeChapter.id)
 
@@ -117,6 +137,8 @@ struct RBCJourneyInfoHUD: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            RBCEducationalBoundaryBadge()
+
             HStack {
                 Text(model.lessonEyebrow)
                     .font(.caption2.monospacedDigit().weight(.bold))
@@ -166,6 +188,8 @@ struct RBCExhibitInfoHUD: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            RBCEducationalBoundaryBadge()
+
             HStack(spacing: 10) {
                 Text(model.lessonEyebrow)
                     .font(.caption2.monospacedDigit().weight(.bold))
@@ -267,72 +291,95 @@ struct RBCRegionInfoHUD: View {
             let occipitalActive = region == .occipitalLobe
             let brainstemActive = region == .brainstem
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
+            let displayTitle = if flowRideActive && model.familyNarrationEnabled {
+                model.familyNarrationCue.title
+            } else if flowRideActive {
+                model.activeFlowRideTitle
+            } else if regionCompanionActive {
+                model.regionFamilyCompanionTitle
+            } else if willisRouteActive {
+                model.activeWillisTitle
+            } else if cerebellumActive {
+                model.activeCerebellumTitle
+            } else if deepStructuresActive {
+                model.activeDeepStructuresTitle
+            } else if occipitalActive {
+                model.activeOccipitalTitle
+            } else if brainstemActive {
+                model.activeBrainstemTitle
+            } else if exampleClotActive {
+                "One branch, interrupted"
+            } else {
+                region.title
+            }
+            let displaySubtitle = if flowRideActive && model.familyNarrationEnabled {
+                model.familyNarrationCue.caption
+            } else if flowRideActive {
+                model.activeFlowRideSubtitle
+            } else if regionCompanionActive {
+                model.regionFamilyCompanionSubtitle
+            } else if willisRouteActive {
+                model.activeWillisSubtitle
+            } else if cerebellumActive {
+                model.activeCerebellumSubtitle
+            } else if deepStructuresActive {
+                model.activeDeepStructuresSubtitle
+            } else if occipitalActive {
+                model.activeOccipitalSubtitle
+            } else if brainstemActive {
+                model.activeBrainstemSubtitle
+            } else if exampleClotActive {
+                "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+            } else {
+                region.subtitle
+            }
+            let displayFact = if regionCompanionActive {
+                model.regionFamilyCompanionFact
+            } else if flowRideActive {
+                model.activeFlowRideFact
+            } else if willisRouteActive {
+                model.activeWillisFact
+            } else if cerebellumActive {
+                model.activeCerebellumFact
+            } else if deepStructuresActive {
+                model.activeDeepStructuresFact
+            } else if occipitalActive {
+                model.activeOccipitalFact
+            } else if brainstemActive {
+                model.activeBrainstemFact
+            } else if exampleClotActive {
+                "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
+            } else {
+                region.fact
+            }
             VStack(alignment: .leading, spacing: 9) {
+                RBCEducationalBoundaryBadge()
+
                 Text(flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationProgressLabel
                     : (flowRideActive
                         ? "RIDE  ·  ARTERIAL LUMEN"
                         : (regionCompanionActive
                             ? "FAMILY COMPANION  ·  \(region.shortTitle.uppercased())"
-                            : "INSIDE  ·  \(region.shortTitle.uppercased())")))
+                            : "CLINICIAN DETAIL  ·  \(region.shortTitle.uppercased())")))
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .tracking(1.3)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
 
-                Text(flowRideActive && model.familyNarrationEnabled
-                    ? model.familyNarrationCue.title
-                    : (flowRideActive
-                        ? model.activeFlowRideTitle
-                        : (willisRouteActive
-                            ? model.activeWillisTitle
-                            : (cerebellumActive
-                                ? model.activeCerebellumTitle
-                                : (deepStructuresActive
-                                    ? model.activeDeepStructuresTitle
-                                    : (occipitalActive
-                                        ? model.activeOccipitalTitle
-                                        : (brainstemActive
-                                            ? model.activeBrainstemTitle
-                                            : (exampleClotActive ? "One branch, interrupted" : region.title))))))))
+                Text(displayTitle)
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
-                Text(flowRideActive && model.familyNarrationEnabled
-                    ? model.familyNarrationCue.caption
-                    : (flowRideActive
-                        ? model.activeFlowRideSubtitle
-                        : (willisRouteActive
-                            ? model.activeWillisSubtitle
-                            : (cerebellumActive
-                                ? model.activeCerebellumSubtitle
-                                : (deepStructuresActive
-                                    ? model.activeDeepStructuresSubtitle
-                                    : (occipitalActive
-                                        ? model.activeOccipitalSubtitle
-                                        : (brainstemActive
-                                            ? model.activeBrainstemSubtitle
-                                            : (exampleClotActive
-                                                ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                                                : region.subtitle))))))))
+                Text(displaySubtitle)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
 
-                Label(flowRideActive
-                    ? model.activeFlowRideFact
-                    : (willisRouteActive
-                        ? model.activeWillisFact
-                        : (cerebellumActive
-                            ? model.activeCerebellumFact
-                            : (deepStructuresActive
-                                ? model.activeDeepStructuresFact
-                                : (occipitalActive
-                                    ? model.activeOccipitalFact
-                                    : (brainstemActive
-                                        ? model.activeBrainstemFact
-                                        : (exampleClotActive
-                                            ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                                            : region.fact)))))),
-                    systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
+                Label(
+                    displayFact,
+                    systemImage: regionCompanionActive
+                        ? "person.2.fill"
+                        : (flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
+                )
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
                     .fixedSize(horizontal: false, vertical: true)
@@ -748,6 +795,8 @@ struct RBCRegionTransferHUD: View {
     var body: some View {
         if model.pendingRegionDestination != nil {
             VStack(spacing: 10) {
+                RBCEducationalBoundaryBadge()
+
                 Text(model.regionTransferFamilyTitle.uppercased())
                     .font(.caption.monospacedDigit().weight(.bold))
                     .tracking(1.8)

@@ -41,6 +41,21 @@
       "limitation": "The magnified microcirculation teaching asset is not registered to a specific cortical capillary bed."
     }
   ],
+  "registered_references": {
+    "brainstem_vertebral_pair": {
+      "source_asset": "cranial_vascular_registered_assembly_v2.usdz",
+      "source_asset_sha256": "45080b42e09cd61cdcb1215d3ad69868d4dfa08d273ee6d9aa318c3b0f6229d6",
+      "source_entities": [
+        "Assembly__Vertebral_artery_l",
+        "Assembly__Vertebral_artery_r"
+      ],
+      "required_count": 2,
+      "runtime_behavior": "Count only exact named entities found and cloned. Emit a DEGRADED brainstem receipt when the count is not two.",
+      "display_status": "DISABLED_PROVENANCE_REFERENCE",
+      "review_status": "REGISTRATION_REFERENCE_PENDING_SPECIALIST_REVIEW",
+      "proof_boundary": "The named nodes preserve source registration evidence only. Native qualitative routes remain the visible teaching layer and are not patient-specific flow."
+    }
+  },
   "orientation_guides": {
     "labels": ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe", "Cerebellum", "Brainstem"],
     "status": "SIMPLIFIED_WORLD_ORIENTATION_NOT_SEGMENTATION"

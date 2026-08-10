@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import hashlib
 import json
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +17,7 @@ required_files = [
     ROOT / "Sources/RBCFamilyNarrationEngine.swift",
     ROOT / "Sources/RBCJourneyScene.swift",
     ROOT / "Sources/RBCPortalGestureController.swift",
+    ROOT / "Tests/verify_built_bundle.py",
     ROOT / "Docs/existing-app-inventory.json",
     ROOT / "Docs/medical-content-canon.md",
     ROOT / "Resources/Provenance/portal-anchor-manifest.json",
@@ -28,6 +31,7 @@ for path in required_files:
         raise SystemExit(f"MISSING|{path}")
 
 project = (ROOT / "project.yml").read_text()
+pbx_project = (ROOT / "RBCJourneyVision.xcodeproj/project.pbxproj").read_text()
 app = (ROOT / "Sources/RBCJourneyVisionApp.swift").read_text()
 model = (ROOT / "Sources/RBCJourneyModel.swift").read_text()
 scene = (ROOT / "Sources/RBCJourneyScene.swift").read_text()
@@ -42,7 +46,7 @@ realtime_proxy = (ROOT / "Scripts/rbc_realtime_narration_proxy.mjs").read_text()
 realtime_runner = (ROOT / "Scripts/run_rbc_realtime_proxy.zsh").read_text()
 anchor_manifest = json.loads((ROOT / "Resources/Provenance/portal-anchor-manifest.json").read_text())
 all_source = "\n".join(path.read_text() for path in required_files if path.suffix in {".swift", ".md", ".yml"})
-required_resource_names = [
+required_bundle_model_names = {
     "brain_anatomy_realistic_v2.usdz",
     "brain_deep_structures_v2.usdz",
     "brain_ventricles_v2.usdz",
@@ -51,14 +55,80 @@ required_resource_names = [
     "ischemic_mca_clot_v2.usdz",
     "artery_cutaway_complete_v2.usdz",
     "circle_of_willis_flow_overlay_v2.usdz",
-    "red_blood_cells_closeup_v2.usdz",
     "microcirculation_arterial_venous_v2.usdz",
     "cerebral_bloodflow_animation_v2.usdz",
+}
+source_library_only_model_names = {
+    "artery_wall_cutaway_v2.usdz",
+    "artery_interior_bloodflow_v2.usdz",
+    "red_blood_cells_closeup_v2.usdz",
+    "cerebral_bloodflow_teaching_set_v2.usdz",
+}
+required_non_model_resources = [
     "FlowBed.wav",
 ]
+source_model_names = {path.name for path in (ROOT / "Resources/Models").glob("*.usdz")}
+runtime_referenced_model_names = {
+    name
+    for name in source_model_names
+    if f'"{Path(name).stem}"' in scene
+}
+declared_resource_model_names = set(re.findall(
+    r"- path: Resources/Models/([^\s]+\.usdz)\s+buildPhase: resources",
+    project,
+))
+declared_source_only_model_names = set(re.findall(
+    r"- path: Resources/Models/([^\s]+\.usdz)\s+buildPhase: none",
+    project,
+))
+pbx_resource_model_names = set(re.findall(
+    r"/\* ([^*]+\.usdz) in Resources \*/",
+    pbx_project,
+))
+
+brainstem_reference = anchor_manifest["registered_references"]["brainstem_vertebral_pair"]
+brainstem_expected_nodes = brainstem_reference["source_entities"]
+family_companion_source = model[
+    model.index("var regionFamilyCompanionTitle"):
+    model.index("var familyNarrationCue")
+]
+family_forbidden_clinician_terms = [
+    "SCA", "AICA", "PICA", "M1", "lenticulostriate", "anterior choroidal",
+    "posterior perforator", "calcarine", "parieto-occipital", "lingual",
+]
+
+def registration_receipt(expected_nodes, available_nodes):
+    found = [name for name in expected_nodes if name in available_nodes]
+    return {
+        "count": len(found),
+        "status": "READY" if len(found) == len(expected_nodes) else "DEGRADED",
+    }
+
+registration_fixtures_pass = (
+    registration_receipt(brainstem_expected_nodes, set()) == {"count": 0, "status": "DEGRADED"}
+    and registration_receipt(brainstem_expected_nodes, {brainstem_expected_nodes[0]}) == {"count": 1, "status": "DEGRADED"}
+    and registration_receipt(brainstem_expected_nodes, set(brainstem_expected_nodes)) == {"count": 2, "status": "READY"}
+)
+brainstem_source_path = ROOT / "Resources/Models" / brainstem_reference["source_asset"]
+brainstem_source_sha256 = hashlib.sha256(brainstem_source_path.read_bytes()).hexdigest()
 
 checks = {
     "standalone_bundle": "com.arnav.RBCJourneyVision" in project,
+    "intentional_app_identity": all(token in project + pbx_project for token in [
+        "Resources/Assets.xcassets", "ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon",
+        "MARKETING_VERSION: 0.1.0", "CURRENT_PROJECT_VERSION: 1",
+    ]) and all((ROOT / path).exists() for path in [
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Back.solidimagestacklayer/Content.imageset/icon.png",
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Middle.solidimagestacklayer/Content.imageset/icon.png",
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Front.solidimagestacklayer/Content.imageset/icon.png",
+    ]),
+    "exact_model_bundle_contract": (
+        source_model_names == required_bundle_model_names | source_library_only_model_names
+        and runtime_referenced_model_names == required_bundle_model_names
+        and declared_resource_model_names == required_bundle_model_names
+        and pbx_resource_model_names == required_bundle_model_names
+        and declared_source_only_model_names == source_library_only_model_names
+    ),
     "full_immersion": ".immersionStyle(selection: $immersionStyle, in: .full)" in app,
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
     "manual_station_navigation": all(token in model for token in ["func select", "func back", "func advance", "func restart"]),
@@ -111,9 +181,21 @@ checks = {
     "blockage_focus": all(token in scene for token in ["ischemic_mca_clot_v2", "applyMaterialRecursively", "example-right-m1-blockage-halo"]),
     "spatial_audio": "SpatialAudioComponent" in scene and (ROOT / "Resources/Audio/FlowBed.wav").exists(),
     "proof_routes": all(token in model for token in ["--proof-station-", "--proof-portals-", "--proof-focus-", "--proof-comfort-still", "--proof-paused", "--proof-transfer-"]),
-    "required_assets": all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_resource_names),
+    "required_assets": all((ROOT / "Resources/Models" / name).exists() for name in required_bundle_model_names | source_library_only_model_names)
+        and all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_non_model_resources),
     "self_contained_resources": "- path: Resources" in project and "../Stroke-VisionOS" not in project,
     "medical_boundary": all(term in all_source for term in ["not patient-specific", "not CFD", "specialist review"]),
+    "persistent_immersive_boundary": all(token in hud for token in [
+        "RBCEducationalBoundaryBadge", "GENERIC SYNTHETIC TEACHING VIEW",
+        "NOT A PATIENT SCAN", "SPECIALIST REVIEW PENDING", "CLINICAL REVIEW PENDING",
+        "RBCEntryPreludeHUD", "RBCExhibitInfoHUD", "RBCRegionInfoHUD", "RBCRegionTransferHUD",
+    ]) and hud.count("RBCEducationalBoundaryBadge()") >= 5,
+    "family_clinician_audience_separation": all(token in model + hud for token in [
+        "regionFamilyCompanionTitle", "regionFamilyCompanionSubtitle", "regionFamilyCompanionFact",
+        "FAMILY COMPANION", "CLINICIAN DETAIL", "Small arteries reach deep tissue",
+        "Blood routes reach the visual area", "Two blood routes join into one",
+        "SCA, AICA, and PICA", "M1 lenticulostriate", "calcarine, parieto-occipital, and lingual",
+    ]) and all(term not in family_companion_source for term in family_forbidden_clinician_terms),
     "no_custom_camera": "PerspectiveCameraComponent" not in all_source,
     "no_direct_provider_secret": all(term not in all_source for term in [
         "OPENAI_API_KEY", "https://api.openai"
@@ -219,7 +301,7 @@ checks = {
     "frontal_region_directional_flow": all(token in model + scene + hud for token in [
         "case frontalLobe", "frontal-region-orientation-outline-not-segmentation",
         "frontal-lobe-directional-blood-flow-field", "frontal-flow-direction-arrow",
-        "generateCone", "INSIDE  ·",
+        "generateCone", "CLINICIAN DETAIL  ·",
     ]),
     "brain_observatory_views": all(token in model + scene + hud for token in [
         "enum RBCRegionVisualizationMode", "case locate", "case xray", "case flow",
@@ -269,7 +351,8 @@ checks = {
         "regionFamilyCompanionSubtitle", "Family companion",
         "Voice reads this exact view.", "familyNarrationText",
         "X-RBC-Narration-Transcript-SHA256",
-    ]) and "NSMicrophoneUsageDescription" not in project,
+    ]) and "NSMicrophoneUsageDescription" not in project
+        and "regionFamilyCompanionProofRequested && regionIndex == nil" in model,
     "family_voice_spatial_thresholds": all(token in model + hud + immersive + scene + narrator for token in [
         "regionTransferFamilyTitle", "regionTransferFamilySubtitle",
         "regionTransferNarrationWaitLimitMilliseconds", "shouldDuckAmbientAudio",
@@ -371,7 +454,7 @@ checks = {
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "brainstem_posterior_circulation_bridge": all(token in model + scene + hud + medical_canon for token in [
         "case brainstem", "Brainstem bridge",
-        "RBC_BRAINSTEM_OBSERVATORY=READY",
+        "RBC_BRAINSTEM_OBSERVATORY=\\(registrationStatus)",
         "registered-brainstem-relational-context-combined-source-not-segmentation",
         "registered-paired-vertebral-artery-reference-source-nodes",
         r"brainstem-\(level.name)-broken-constellation-arc-",
@@ -379,12 +462,23 @@ checks = {
         "qualitative-vertebral-basilar-pica-aica-sca-pca-and-pontine-routes-not-fixed-territories",
         "levels=3", "broken_outline_arcs=9", "environmental_wall_sheets=4", "peripheral_ribs=16",
         "longitudinal_guides=9", "transverse_pons_guides=9", "tegmental_points=72",
-        "arterial_paths=17", "moving_fronts=23", "registered_vertebral_nodes=2",
+        "arterial_paths=17", "moving_fronts=23", "registered_vertebral_nodes=\\(brainstemRegisteredVertebralNodeCount)",
+        "expected_vertebral_nodes=\\(expectedVertebralNodeCount)", "DEGRADED",
         "brainstem-flow-front-arrowhead", "brainstem-flow-front-tail",
         "updateBrainstemRegion", "advanceBrainstemFrame", "SceneEvents.Update",
         "region == .brainstem", "Two vertebral routes become one",
         "midbrain, pons, and medulla", "not brainstem segmentation",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "truthful_brainstem_registration_receipt": (
+        len(brainstem_expected_nodes) == brainstem_reference["required_count"] == 2
+        and all(name in scene for name in brainstem_expected_nodes)
+        and brainstem_reference["review_status"].endswith("PENDING_SPECIALIST_REVIEW")
+        and brainstem_reference["display_status"] == "DISABLED_PROVENANCE_REFERENCE"
+        and brainstem_source_sha256 == brainstem_reference["source_asset_sha256"]
+        and "brainstemRegisteredVertebralNodeCount += 1" in scene
+        and "registered_vertebral_nodes=2" not in scene
+        and registration_fixtures_pass
+    ),
     "user_directed_posterior_voyage": all(token in model + scene + hud + immersive + medical_canon + readme for token in [
         "enum RBCPosteriorVoyagePhase", "case convergence", "case basilarBridge", "case destinations",
         "--proof-posterior-voyage-convergence", "--proof-posterior-voyage-bridge",
