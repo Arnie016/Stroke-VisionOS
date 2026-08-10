@@ -1062,7 +1062,7 @@ private struct SpatialRoleControls: View {
                 }
 
                 bubbleButton("X-ray", systemImage: "viewfinder", accent: .orange) {
-                    openWindow(id: StrokeSpace.xray)
+                    openXrayWindowIfNeeded()
                 }
             }
 
@@ -1166,7 +1166,7 @@ private struct SpatialRoleControls: View {
                         openWindow(id: StrokeSpace.evidence)
                     }
                     Button("X-ray", systemImage: "viewfinder") {
-                        openWindow(id: StrokeSpace.xray)
+                        openXrayWindowIfNeeded()
                     }
                     Button("Reset view", systemImage: "arrow.counterclockwise") {
                         experience.resetSpatialView()
@@ -1283,8 +1283,20 @@ private struct SpatialRoleControls: View {
         await dismissImmersiveSpace()
         experience.isImmersivePresented = false
         experience.reset()
-        dismissWindow(id: StrokeSpace.xray)
+        closeXrayWindowIfNeeded()
         openWindow(id: StrokeSpace.window)
+    }
+
+    @MainActor
+    private func openXrayWindowIfNeeded() {
+        guard experience.requestXrayWindowOpen() else { return }
+        openWindow(id: StrokeSpace.xray)
+    }
+
+    @MainActor
+    private func closeXrayWindowIfNeeded() {
+        experience.beginXrayWindowClose()
+        dismissWindow(id: StrokeSpace.xray)
     }
 }
 
@@ -1782,7 +1794,7 @@ private struct JourneyCaption: View {
                 .accessibilityLabel("Open clinical evidence space")
 
                 Button {
-                    openWindow(id: StrokeSpace.xray)
+                    openXrayWindowIfNeeded()
                 } label: {
                     Image(systemName: "viewfinder")
                         .frame(width: 24, height: 24)
@@ -1898,7 +1910,7 @@ private struct JourneyCaption: View {
             .tint(.orange)
 
             Button("X-ray", systemImage: "viewfinder") {
-                openWindow(id: StrokeSpace.xray)
+                openXrayWindowIfNeeded()
             }
             .buttonStyle(.bordered)
             .tint(.cyan)
@@ -1952,8 +1964,20 @@ private struct JourneyCaption: View {
         experience.isImmersivePresented = false
         openWindow(id: StrokeSpace.window)
         dismissWindow(id: StrokeSpace.evidence)
-        dismissWindow(id: StrokeSpace.xray)
+        closeXrayWindowIfNeeded()
         dismissWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+    }
+
+    @MainActor
+    private func openXrayWindowIfNeeded() {
+        guard experience.requestXrayWindowOpen() else { return }
+        openWindow(id: StrokeSpace.xray)
+    }
+
+    @MainActor
+    private func closeXrayWindowIfNeeded() {
+        experience.beginXrayWindowClose()
+        dismissWindow(id: StrokeSpace.xray)
     }
 
     private var consentChoice: some View {

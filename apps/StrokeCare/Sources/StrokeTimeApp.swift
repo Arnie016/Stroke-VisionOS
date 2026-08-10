@@ -1,5 +1,51 @@
 import SwiftUI
 
+private enum StrokeXrayProofRoute: String, Hashable {
+    case orient
+    case pressure
+    case makeSpace
+    case selectedPoint
+
+    static func requested(in arguments: [String]) -> Self? {
+        if arguments.contains("--proof-xray-orient") {
+            return .orient
+        }
+        if arguments.contains("--proof-xray-make-space") {
+            return .makeSpace
+        }
+        if arguments.contains("--proof-xray-selected-point") {
+            return .selectedPoint
+        }
+        if arguments.contains("--proof-xray-pressure")
+            || arguments.contains("--proof-xray-window") {
+            // Preserve the original issue-34 route as a pressure-state alias.
+            return .pressure
+        }
+        return nil
+    }
+
+    @MainActor
+    func prepare(_ experience: StrokeExperienceState) {
+        switch self {
+        case .orient:
+            experience.prepareProof(step: .chooseCase)
+        case .pressure:
+            experience.prepareProof(step: .inspectOcclusion)
+        case .makeSpace:
+            experience.prepareProof(step: .discussCare)
+        case .selectedPoint:
+            experience.prepareProcedureFieldProof()
+        }
+        let pointLabel = experience.selectedPointLabel ?? "none"
+        print(
+            "XRAY_PROOF_ROUTE=\(rawValue) "
+                + "title=\(experience.journeyTitle) "
+                + "point=\(pointLabel) "
+                + "boundary=synthetic-not-patient"
+        )
+    }
+}
+
 @main
 struct StrokeTimeApp: App {
     @StateObject private var experience = StrokeExperienceState()
@@ -11,11 +57,13 @@ struct StrokeTimeApp: App {
 
     var body: some Scene {
         WindowGroup(id: StrokeSpace.window) {
-            if CommandLine.arguments.contains("--proof-xray-window") {
+            if let xrayProofRoute = StrokeXrayProofRoute.requested(
+                in: CommandLine.arguments
+            ) {
                 StrokeXrayWorkspaceView()
                     .environmentObject(experience)
-                    .task {
-                        experience.prepareClinicianProof(step: .inspectOcclusion)
+                    .task(id: xrayProofRoute) {
+                        xrayProofRoute.prepare(experience)
                     }
             } else if CommandLine.arguments.contains("--proof-evidence-window") {
                 StrokeEvidenceWorkspaceView()
@@ -73,7 +121,7 @@ struct StrokeTimeApp: App {
         }
 
         WindowGroup(id: StrokeSpace.xray) {
-            StrokeXrayWorkspaceView()
+            StrokeXrayWorkspaceView(tracksXrayWindowLifecycle: true)
                 .environmentObject(experience)
         }
         .defaultSize(width: 872, height: 510)

@@ -8,6 +8,7 @@ import SwiftUI
 struct StrokeXrayWorkspaceView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissWindow) private var dismissWindow
+    var tracksXrayWindowLifecycle = false
 
     var body: some View {
         ZStack {
@@ -36,6 +37,14 @@ struct StrokeXrayWorkspaceView: View {
             .padding(22)
         }
         .frame(width: 872, height: 510)
+        .onAppear {
+            guard tracksXrayWindowLifecycle else { return }
+            experience.markXrayWindowPresented()
+        }
+        .onDisappear {
+            guard tracksXrayWindowLifecycle else { return }
+            experience.markXrayWindowClosed()
+        }
     }
 
     private var header: some View {
@@ -68,7 +77,12 @@ struct StrokeXrayWorkspaceView: View {
                 .background(Color.cyan.opacity(0.09), in: Capsule())
 
             Button {
-                dismissWindow(id: StrokeSpace.xray)
+                if tracksXrayWindowLifecycle {
+                    experience.beginXrayWindowClose()
+                    dismissWindow(id: StrokeSpace.xray)
+                } else {
+                    dismissWindow(id: StrokeSpace.window)
+                }
             } label: {
                 Image(systemName: "xmark")
                     .frame(width: 28, height: 28)
@@ -155,111 +169,126 @@ private struct StrokeTeachingImagingPlate: View {
     @State private var previousMagnification = 1.0
 
     var body: some View {
-        TimelineView(.animation(
-            minimumInterval: 1.0 / 30.0,
-            paused: experience.requestedPause
-        )) { timeline in
-            ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.018, green: 0.042, blue: 0.054),
-                        Color.black.opacity(0.88)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+        GeometryReader { geometry in
+            let plateSize = geometry.size
 
-                RealityView { content in
-                    // Full mode is intentional: compact mode is procedural.
-                    // The shared image loads the registered generic brain,
-                    // arteries, clot, and reviewed layer hierarchy without
-                    // reducing mesh or semantic detail.
-                    let root = await StrokeSceneFactory.makeScene(compact: false)
-                    root.position = [0, -0.025, 0.08]
-                    content.add(root)
-                } update: { content in
-                    guard let root = content.entities.first(where: {
-                        $0.name == StrokeSceneFactory.rootName
-                    }) else { return }
-
-                    StrokeSceneFactory.update(
-                        root: root,
-                        experience: experience,
-                        time: timeline.date.timeIntervalSinceReferenceDate
+            TimelineView(.animation(
+                minimumInterval: 1.0 / 30.0,
+                paused: experience.requestedPause
+            )) { timeline in
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.018, green: 0.042, blue: 0.054),
+                            Color.black.opacity(0.88)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
-                    root.scale = SIMD3(repeating: modelScale)
-                    root.orientation = simd_quatf(angle: orbitYaw, axis: [0, 1, 0])
-                        * simd_quatf(angle: orbitPitch, axis: [1, 0, 0])
-                }
-                .gesture(
-                    DragGesture(minimumDistance: 3)
-                        .onChanged { value in
-                            let translation = value.translation
-                            let delta = CGSize(
-                                width: translation.width - previousDrag.width,
-                                height: translation.height - previousDrag.height
-                            )
-                            previousDrag = translation
-                            orbitYaw += Float(delta.width) * 0.006
-                            orbitPitch = min(
-                                max(orbitPitch + Float(delta.height) * 0.005, -0.48),
-                                0.48
-                            )
-                        }
-                        .onEnded { _ in previousDrag = .zero }
-                )
-                .simultaneousGesture(
-                    MagnifyGesture()
-                        .onChanged { value in
-                            let ratio = value.magnification / previousMagnification
-                            modelScale = min(max(modelScale * Float(ratio), 0.76), 1.28)
-                            previousMagnification = value.magnification
-                        }
-                        .onEnded { _ in previousMagnification = 1 }
-                )
+                    .frame(width: plateSize.width, height: plateSize.height)
 
-                VStack(alignment: .leading, spacing: 0) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Label("ASSET-DERIVED GENERIC VIEW", systemImage: "view.3d")
-                            .font(.caption2.weight(.bold))
-                            .tracking(0.9)
-                            .foregroundStyle(.cyan)
-                        Text("Drag to orient · pinch to scale")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                    RealityView { content in
+                        // Full mode is intentional: compact mode is procedural.
+                        // The shared image loads the registered generic brain,
+                        // arteries, clot, and reviewed layer hierarchy without
+                        // reducing mesh or semantic detail.
+                        let root = await StrokeSceneFactory.makeScene(compact: false)
+                        root.position = [0, -0.025, 0.08]
+                        content.add(root)
+                    } update: { content in
+                        guard let root = content.entities.first(where: {
+                            $0.name == StrokeSceneFactory.rootName
+                        }) else { return }
+
+                        StrokeSceneFactory.update(
+                            root: root,
+                            experience: experience,
+                            time: timeline.date.timeIntervalSinceReferenceDate
+                        )
+                        root.scale = SIMD3(repeating: modelScale)
+                        root.orientation = simd_quatf(angle: orbitYaw, axis: [0, 1, 0])
+                            * simd_quatf(angle: orbitPitch, axis: [1, 0, 0])
                     }
-                    .padding(13)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 13))
+                    .frame(width: plateSize.width, height: plateSize.height)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        DragGesture(minimumDistance: 3)
+                            .onChanged { value in
+                                let translation = value.translation
+                                let delta = CGSize(
+                                    width: translation.width - previousDrag.width,
+                                    height: translation.height - previousDrag.height
+                                )
+                                previousDrag = translation
+                                orbitYaw += Float(delta.width) * 0.006
+                                orbitPitch = min(
+                                    max(orbitPitch + Float(delta.height) * 0.005, -0.48),
+                                    0.48
+                                )
+                            }
+                            .onEnded { _ in previousDrag = .zero }
+                    )
+                    .simultaneousGesture(
+                        MagnifyGesture()
+                            .onChanged { value in
+                                let ratio = value.magnification / previousMagnification
+                                modelScale = min(max(modelScale * Float(ratio), 0.76), 1.28)
+                                previousMagnification = value.magnification
+                            }
+                            .onEnded { _ in previousMagnification = 1 }
+                    )
 
-                    Spacer()
+                    VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Label("ASSET-DERIVED GENERIC VIEW", systemImage: "view.3d")
+                                .font(.caption2.weight(.bold))
+                                .tracking(0.9)
+                                .foregroundStyle(.cyan)
+                            Text("Drag to orient · pinch to scale")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(13)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 13))
 
-                    HStack(spacing: 7) {
-                        Circle()
-                            .fill(affectedTint)
-                            .frame(width: 8, height: 8)
-                        Text(radiographCaption)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white.opacity(0.78))
+                        Spacer()
+
+                        HStack(spacing: 7) {
+                            Circle()
+                                .fill(affectedTint)
+                                .frame(width: 8, height: 8)
+                            Text(radiographCaption)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.78))
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(.ultraThinMaterial, in: Capsule())
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.ultraThinMaterial, in: Capsule())
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                .padding(14)
-                .allowsHitTesting(false)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .overlay {
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(Color.cyan.opacity(0.18), lineWidth: 1)
+                    .padding(14)
+                    .frame(
+                        width: plateSize.width,
+                        height: plateSize.height,
+                        alignment: .topLeading
+                    )
                     .allowsHitTesting(false)
+                }
+                .frame(width: plateSize.width, height: plateSize.height)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24)
+                        .stroke(Color.cyan.opacity(0.18), lineWidth: 1)
+                        .allowsHitTesting(false)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    "Synthetic generic anatomy teaching image synchronized to \(experience.journeyTitle), \(experience.anatomyPresentation.rawValue), and \(experience.pointField.rawValue); not a patient scan"
+                )
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(
-                "Synthetic generic anatomy teaching image synchronized to \(experience.journeyTitle), \(experience.anatomyPresentation.rawValue), and \(experience.pointField.rawValue); not a patient scan"
-            )
+            .frame(width: plateSize.width, height: plateSize.height)
         }
+        .frame(width: 540, height: 392)
     }
 
     private var affectedTint: Color {

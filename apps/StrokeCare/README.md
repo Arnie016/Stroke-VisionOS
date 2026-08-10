@@ -127,9 +127,28 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 ... com.arnav.StrokeTime --proof-care-purpose
 ... com.arnav.StrokeTime --proof-clinician-pressure
 
-# Isolated shared teaching X-ray surface
+# Isolated shared teaching X-ray states (no immersive launch required)
+... com.arnav.StrokeTime --proof-xray-orient
+... com.arnav.StrokeTime --proof-xray-pressure
+... com.arnav.StrokeTime --proof-xray-make-space
+... com.arnav.StrokeTime --proof-xray-selected-point
+
+# Backward-compatible alias for the pressure state
 ... com.arnav.StrokeTime --proof-xray-window
 ```
+
+The shared teaching X-ray remains compatible with the project's visionOS 2.0
+deployment floor. Its `WindowGroup` uses a shared main-actor lifecycle guard:
+the first family or presenter action atomically reserves and opens the window,
+while later actions are ignored until that surface closes. Appearance,
+disappearance, explicit close, and immersive exit keep the guard synchronized
+so the same teaching surface can be reopened later. Its existing placement
+relative to the presenter/family windows is unchanged.
+
+The four direct routes prepare the exact **Orient**, **Pressure**, **Make
+space**, and selected **Example blockage** states in the ordinary shared X-ray
+view. Each route keeps the persistent synthetic-teaching-image and
+not-a-patient-scan labels visible.
 
 The shared teaching X-ray uses the full registered generic brain, arteries,
 blockage, and reviewed layer hierarchy from the spatial lesson. It preserves
