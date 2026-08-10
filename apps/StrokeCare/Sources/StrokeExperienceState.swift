@@ -1578,6 +1578,27 @@ final class StrokeExperienceState: ObservableObject {
             selectedPointLabel = label
             return
         }
+
+        let isFlowPoint = entityName.hasPrefix(StrokePointField.procedure.entityPrefix)
+        if isFlowPoint {
+            // Selecting a flow cue is the explicit close-up path. Move the
+            // complete registered teaching assembly closer as one object via
+            // the existing root scale; never offset an artery, clot, marker,
+            // or other authored layer out of its registered frame. The wearer
+            // can continue magnifying toward the separate interior threshold.
+            let isBlockagePoint = entityName == "\(StrokePointField.procedure.entityPrefix)2"
+            withAnimation(.easeInOut(duration: 0.58)) {
+                regionPortalActive = true
+                anatomyViewpoint = .free
+                anatomyPresentation = .transparent
+                cortexOpacity = 0.16
+                vesselFocusProgress = 1
+                spatialZoom = max(spatialZoom, isBlockagePoint ? 2.05 : 1.58)
+                if isBlockagePoint {
+                    orbit = [0.12, 0.06]
+                }
+            }
+        }
         selectedPointEntityName = entityName
         selectedPointLabel = label
         // The secondary reference is an outcome of selecting a teaching point,

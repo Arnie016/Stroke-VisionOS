@@ -90,6 +90,7 @@ enum StrokeSceneFactory {
     private static let regionPointFieldName = "clinician-region-point-field"
     private static let procedurePointFieldName = "clinician-procedure-point-field"
     private static let accessPointFieldName = "clinician-access-point-field"
+    private static let lessonPointOrbName = "lesson-point-visible-orb"
     private static let regionPointAnchorName = "registered-region-point-anchor"
     private static let accessPointAnchorName = "registered-access-point-anchor"
     private static let cortexLayerName = "anatomy-cortex-layer"
@@ -1899,6 +1900,11 @@ enum StrokeSceneFactory {
         maximumDistance: Float = 0.036
     ) -> (entityName: String, label: String)? {
         var nearest: (distance: Float, entity: Entity)?
+        // Keep the reviewed 36 mm call-site contract while accepting a wider
+        // miss only after RealityKit has already returned the anatomy proxy.
+        // This is important for a see-through far-side cue: its rendered orb
+        // may be visible even though the opaque proxy wins the ray hit first.
+        let effectiveMaximumDistance = max(maximumDistance, 0.085)
 
         for fieldName in [regionPointFieldName, procedurePointFieldName, accessPointFieldName] {
             guard let field = root.findEntity(named: fieldName), field.isEnabled else { continue }
@@ -1906,7 +1912,7 @@ enum StrokeSceneFactory {
                 guard isPointFieldInteractionTarget(point) else { continue }
                 let pointScenePosition = point.convert(position: .zero, to: nil)
                 let distance = simd_distance(pointScenePosition, scenePosition)
-                if distance <= maximumDistance,
+                if distance <= effectiveMaximumDistance,
                    distance < (nearest?.distance ?? .greatestFiniteMagnitude) {
                     nearest = (distance, point)
                 }
@@ -1951,16 +1957,33 @@ enum StrokeSceneFactory {
         let mesh = MeshResource.generateSphere(radius: 0.0041)
 
         for (index, position) in points.enumerated() {
-            let point = ModelEntity(mesh: mesh, materials: [material])
+            // The interaction root never pulses or scales. Keeping the collider
+            // independent from the animated orb prevents adjacent authored
+            // anchors from growing into one another and makes every visible
+            // point an unambiguous gaze-and-pinch target.
+            let point = Entity()
             point.name = "\(name)-point-\(index)"
             point.position = position
             point.components.set(StrokeLessonPointTargetComponent())
             point.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
-            // Two registered flow cues are only about 15.4 mm apart. A 7.4 mm
-            // radius increases physical-device targeting while preserving a
-            // small non-overlap gap between those closest authored anchors.
-            point.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.0074)]))
+
+            let nearestSpacing = points.indices
+                .filter { $0 != index }
+                .map { simd_distance(position, points[$0]) }
+                .min() ?? 0.024
+            // Forty-two per cent of nearest-neighbour spacing leaves a clear
+            // non-overlap gap even for the two closest registered flow cues.
+            // A lower bound preserves a comfortable indirect target for sparse
+            // region points; the anatomy-hit fallback covers hardware misses.
+            let collisionShape: ShapeResource = nearestSpacing > 0.0185
+                ? .generateSphere(radius: 0.0074)
+                : .generateSphere(radius: max(0.0058, nearestSpacing * 0.42))
+            point.components.set(CollisionComponent(shapes: [collisionShape]))
             point.components.set(HoverEffectComponent())
+
+            let orb = ModelEntity(mesh: mesh, materials: [material])
+            orb.name = lessonPointOrbName
+            point.addChild(orb)
             field.addChild(point)
         }
 
@@ -2176,7 +2199,10 @@ enum StrokeSceneFactory {
             // These remain generic teaching anchors pending specialist review.
             let revealAll = experience.pointField != .craniotomy
             for (index, child) in active.children.enumerated() {
-                guard let point = child as? ModelEntity else { continue }
+                guard isPointFieldInteractionTarget(child),
+                      let orb = child.findEntity(named: lessonPointOrbName) as? ModelEntity else {
+                    continue
+                }
                 let phase = Float(time) * experience.detailLevel.motionRate + Float(index) * 0.42
                 let pulse = 0.96 + sin(phase) * 0.045
                 let isSelected = child.name == experience.selectedPointEntityName
@@ -2190,8 +2216,12 @@ enum StrokeSceneFactory {
                 let emphasis: Float = isSelected
                     ? 1.58
                     : (revealAll ? experience.detailLevel.pointScale : 1)
-                child.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
-                point.model?.materials = [
+                // Animate only the visible orb. The parent collision shape is
+                // fixed, so Scholar scaling cannot make neighbouring point
+                // targets overlap or steal one another's pinch.
+                child.scale = .one
+                orb.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
+                orb.model?.materials = [
                     isSelected
                         ? selectedLessonPointMaterial(opacity: 1)
                         : (experience.pointField == .regions

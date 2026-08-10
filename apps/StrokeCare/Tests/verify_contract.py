@@ -335,6 +335,22 @@ require("pointFieldSelection(for: value.entity)" in immersive and "selectPoint(e
 require("targetedToEntity(where: .has(StrokeLessonPointTargetComponent.self))" in immersive and "isEnabled: !experience.questionPlacementArmed" in immersive, "lesson-point pinch is not isolated from the anatomy proxy or annotation mode")
 require("nearestVisiblePointFieldSelection" in scene and "nearestVisiblePointFieldSelection(" in immersive and "maximumDistance: Float = 0.036" in scene, "anatomy-proxy pinches do not resolve a nearby visible lesson point with the enlarged fallback")
 require("StrokeLessonPointTargetComponent.registerComponent()" in scene and "StrokeSceneFactory.registerCustomComponents()" in app, "lesson-point query component is not registered before scene construction")
+require(
+    "lessonPointOrbName" in scene
+    and "let point = Entity()" in scene
+    and "orb.scale = [pulse * emphasis" in scene,
+    "lesson-point visual pulses are again scaling their collision targets",
+)
+require(
+    "effectiveMaximumDistance = max(maximumDistance, 0.085)" in scene
+    and "spatialZoom = max(spatialZoom, isBlockagePoint ? 2.05 : 1.58)" in state,
+    "visible far-side points or the selected-vessel close-up path are missing",
+)
+require(
+    "wheel.components.set(BillboardComponent())" in immersive
+    and "tools.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])" in immersive,
+    "the clinician hand cuff or held tools can regress to a reversed orientation",
+)
 evidence = (ROOT / "Sources" / "StrokeEvidenceWorkspaceView.swift").read_text()
 deck_canon = (ROOT / "Docs" / "REALITYKIT_DECK_TO_STROKECARE.md").read_text()
 asset_triage = (ROOT / "Docs" / "ASSET_CATALOG_TRIAGE.md").read_text()

@@ -904,11 +904,23 @@ struct StrokeImmersiveView: View {
             // Home and Control Center gestures to the system.
             wheel.position = [0.095, 0.025, 0.110]
             wheel.scale = [0.78, 0.78, 0.78]
+            // A palm anchor carries the hand's full roll. Let the cuff follow
+            // the hand spatially while keeping its SwiftUI face upright and
+            // readable to the wearer instead of occasionally presenting the
+            // text upside down or back-facing.
+            wheel.components.set(BillboardComponent())
             wheel.isEnabled = enabled
         }
 
         if let anchor = content.entities.first(where: { $0.name == clinicianHeldToolAnchorName }),
            let tools = anchor.findEntity(named: StrokeSceneFactory.clinicianHeldToolRootName) {
+            // The right-palm anchor's local +Z points opposite the authored
+            // instrument shafts. Reverse that single forward axis so forceps,
+            // drill, and focus pointer project from the hand toward the shared
+            // anatomy rather than back toward the clinician. The small offset
+            // keeps the normalized asset's grip at the palm after the flip.
+            tools.position = [0, 0.015, 0.055]
+            tools.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
             StrokeSceneFactory.updateClinicianHeldTools(
                 tools,
                 selected: experience.selectedClinicianTool,
