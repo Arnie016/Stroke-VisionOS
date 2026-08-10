@@ -72,9 +72,48 @@ struct StrokeJourneyLaunchView: View {
     @State private var fileDrag = CGSize.zero
     @State private var proofRouteHasRun = false
     @State private var introBeat = 0
+    @State private var showsCaseLibrary = false
+    @State private var selectedCaseID = "CASE-078"
     @StateObject private var prelude = StrokePreludeAudio()
 
     var body: some View {
+        Group {
+            if showsCaseLibrary {
+                StrokeCaseLibraryView(
+                    selectedCaseID: $selectedCaseID,
+                    onBack: {
+                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.32)) {
+                            showsCaseLibrary = false
+                        }
+                    },
+                    onEnterCase: {
+                        Task { await enterSpatialCaseRoom(as: .clinician) }
+                    }
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.985)))
+            } else {
+                intro
+                    .transition(.opacity.combined(with: .scale(scale: 1.015)))
+            }
+        }
+        .frame(
+            width: showsCaseLibrary ? 980 : 620,
+            height: showsCaseLibrary ? 600 : 360
+        )
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.34), value: showsCaseLibrary)
+        .onAppear {
+            prelude.play()
+            if CommandLine.arguments.contains("--proof-case-library") {
+                introBeat = 2
+                showsCaseLibrary = true
+            }
+            routeProofIfNeeded()
+        }
+        .onDisappear { prelude.stop() }
+        .task { await playIntroSequence() }
+    }
+
+    private var intro: some View {
         ZStack {
             LinearGradient(
                 colors: [Color(red: 0.045, green: 0.055, blue: 0.060), .black],
@@ -109,7 +148,9 @@ struct StrokeJourneyLaunchView: View {
                         .tint(.orange)
 
                         Button("Doctor presenter", systemImage: "stethoscope") {
-                            Task { await enterSpatialCaseRoom(as: .clinician) }
+                            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.34)) {
+                                showsCaseLibrary = true
+                            }
                         }
                         .buttonStyle(.bordered)
                     }
@@ -130,13 +171,6 @@ struct StrokeJourneyLaunchView: View {
             .opacity(isOpening ? 0.28 : 1)
             .blur(radius: isOpening && !reduceMotion ? 10 : 0)
         }
-        .frame(width: 620, height: 360)
-        .onAppear {
-            prelude.play()
-            routeProofIfNeeded()
-        }
-        .onDisappear { prelude.stop() }
-        .task { await playIntroSequence() }
     }
 
     private var introTitle: String {
