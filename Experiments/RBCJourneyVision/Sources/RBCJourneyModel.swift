@@ -225,6 +225,38 @@ enum RBCJourneyMotionMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum RBCSceneReadinessPhase: String, Equatable {
+    case loading = "LOADING"
+    case ready = "READY"
+    case degraded = "DEGRADED"
+    case failed = "FAILED"
+}
+
+enum RBCSceneReadinessProof: String {
+    case loading
+    case ready
+    case degraded
+    case failed
+}
+
+struct RBCSceneReadinessReport: Equatable {
+    let phase: RBCSceneReadinessPhase
+    let loadedModelCount: Int
+    let expectedModelCount: Int
+    let portalCount: Int
+    let expectedPortalCount: Int
+    let audioReady: Bool
+    let presentationFrameReady: Bool
+    let issues: [String]
+
+    var receipt: String {
+        let issueList = issues.isEmpty ? "none" : issues.joined(separator: ",")
+        let audioStatus = audioReady ? "ready" : "unavailable"
+        let frameStatus = presentationFrameReady ? "ready" : "unavailable"
+        return "RBC_SCENE_READINESS=\(phase.rawValue) models=\(loadedModelCount)/\(expectedModelCount) portals=\(portalCount)/\(expectedPortalCount) audio=\(audioStatus) presentation_frame=\(frameStatus) issues=\(issueList)"
+    }
+}
+
 enum RBCJourneyExperienceMode: String, CaseIterable, Identifiable {
     case entryPrelude = "Entry prelude"
     case wondrousJourney = "Wondrous journey"
@@ -802,6 +834,8 @@ final class RBCJourneyModel {
     var motionMode: RBCJourneyMotionMode
     var isPresented = false
     var isSceneReady = false
+    var sceneReadinessPhase: RBCSceneReadinessPhase = .loading
+    var sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
     var isPaused = false
     var soundEnabled = true
     var familyNarrationEnabled = false
@@ -822,12 +856,16 @@ final class RBCJourneyModel {
     var isExhibitFactExpanded = false
     var handTrackingStatus = "Hand gestures require Apple Vision Pro"
     let proofMode: Bool
+    let sceneReadinessProof: RBCSceneReadinessProof?
     var proofAutoLaunchConsumed = false
     let regionTransferProofProgress: Float?
     let anteriorGatewayTransitionProofProgress: Float?
     let flowRideProofPhase: Float?
 
     init(arguments: [String] = CommandLine.arguments) {
+        sceneReadinessProof = arguments.first { $0.hasPrefix("--proof-scene-") }
+            .map { $0.replacingOccurrences(of: "--proof-scene-", with: "") }
+            .flatMap(RBCSceneReadinessProof.init(rawValue:))
         let proofArgument = arguments.first { $0.hasPrefix("--proof-station-") }
         let proofIndex = proofArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-station-", with: ""))
@@ -1078,6 +1116,75 @@ final class RBCJourneyModel {
             || posteriorVoyageProofPhase != nil
             || initialFocus != nil
             || initialTransfer != nil
+            || sceneReadinessProof != nil
+    }
+
+    func beginSceneLoading() {
+        isSceneReady = false
+        sceneReadinessPhase = .loading
+        sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
+        print("RBC_SCENE_READINESS=LOADING boundary=generic-synthetic-not-patient-scan review=specialist-and-clinical-pending")
+    }
+
+    func resolveSceneReadiness(_ actualReport: RBCSceneReadinessReport) {
+        let report: RBCSceneReadinessReport
+        switch sceneReadinessProof {
+        case .loading:
+            report = RBCSceneReadinessReport(
+                phase: .loading,
+                loadedModelCount: actualReport.loadedModelCount,
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: actualReport.portalCount,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: actualReport.audioReady,
+                presentationFrameReady: actualReport.presentationFrameReady,
+                issues: ["proof-held-before-readiness"]
+            )
+        case .degraded:
+            report = RBCSceneReadinessReport(
+                phase: .degraded,
+                loadedModelCount: max(actualReport.loadedModelCount - 1, 0),
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: actualReport.portalCount,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: actualReport.audioReady,
+                presentationFrameReady: actualReport.presentationFrameReady,
+                issues: ["proof-injected-partial-entity-load"]
+            )
+        case .failed:
+            report = RBCSceneReadinessReport(
+                phase: .failed,
+                loadedModelCount: 0,
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: 0,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: false,
+                presentationFrameReady: false,
+                issues: ["proof-injected-core-scene-failure"]
+            )
+        case .ready, .none:
+            report = actualReport
+        }
+
+        sceneReadinessPhase = report.phase
+        isSceneReady = report.phase == .ready
+        sceneReadinessDetail = switch report.phase {
+        case .loading:
+            "Preparing the complete teaching scene. The full-detail view will replace this surface only after readiness is confirmed."
+        case .ready:
+            "All \(report.expectedModelCount) bundled teaching models and \(report.expectedPortalCount) portals were verified before presentation."
+        case .degraded:
+            "Some referenced teaching content could not be verified (\(report.issues.joined(separator: ", "))). The notice remains visible so missing detail is not hidden."
+        case .failed:
+            "The core teaching scene could not be verified (\(report.issues.joined(separator: ", "))). Leave full space and try again."
+        }
+        print(report.receipt)
+    }
+
+    func resetSceneReadiness() {
+        isSceneReady = false
+        sceneReadinessPhase = .loading
+        sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
     }
 
     var effectiveReducedMotion: Bool {

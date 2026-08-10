@@ -188,6 +188,17 @@ checks = {
     "blockage_focus": all(token in scene for token in ["ischemic_mca_clot_v2", "applyMaterialRecursively", "example-right-m1-blockage-halo"]),
     "spatial_audio": "SpatialAudioComponent" in scene and (ROOT / "Resources/Audio/FlowBed.wav").exists(),
     "proof_routes": all(token in model for token in ["--proof-station-", "--proof-portals-", "--proof-focus-", "--proof-comfort-still", "--proof-paused", "--proof-transfer-"]),
+    "explicit_scene_readiness": all(token in model + scene + hud + immersive + readme for token in [
+        "RBCSceneReadinessPhase", "case loading", "case ready", "case degraded", "case failed",
+        "RBCSceneReadinessSurface", "model.sceneReadinessPhase != .ready",
+        "expectedBundledModelNames", "requiredEntitiesByModel", "readinessReport(",
+        "waitForFirstPresentationFrame", "presentation:RealityKit-frame",
+        "RBC_SCENE_READINESS=", "RBC_MODEL_LOAD=DEGRADED",
+        "--proof-scene-loading", "--proof-scene-ready",
+        "--proof-scene-degraded", "--proof-scene-failed",
+        "GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN",
+        "SPECIALIST REVIEW PENDING · CLINICAL REVIEW PENDING",
+    ]) and "model.isSceneReady = true" not in immersive,
     "required_assets": all((ROOT / "Resources/Models" / name).exists() for name in required_bundle_model_names | source_library_only_model_names)
         and all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_non_model_resources),
     "self_contained_resources": "- path: Resources" in project and "../Stroke-VisionOS" not in project,

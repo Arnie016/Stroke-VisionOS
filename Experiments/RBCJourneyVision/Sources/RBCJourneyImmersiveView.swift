@@ -10,7 +10,9 @@ struct RBCJourneyImmersiveView: View {
     @State private var familyNarrator = RBCFamilyNarrationEngine()
 
     var body: some View {
-        RealityView { content, attachments in
+        ZStack {
+            RealityView { content, attachments in
+                model.beginSceneLoading()
                 await scene.build()
                 if model.experienceMode == .entryPrelude {
                     scene.prepareForPrelude(model.entryPreludeChapter)
@@ -37,11 +39,16 @@ struct RBCJourneyImmersiveView: View {
                     }
                 }
 
-                await scene.installSpatialAudio()
-                model.isSceneReady = true
+                let audioReady = await scene.installSpatialAudio()
+                let presentationFrameReady = await scene.waitForFirstPresentationFrame()
+                model.resolveSceneReadiness(scene.readinessReport(
+                    audioReady: audioReady,
+                    presentationFrameReady: presentationFrameReady
+                ))
             } update: { _, _ in
                 // The make closure can run before root.scene is populated.
                 // Retry here once the entity belongs to RealityKit's Scene.
+                guard scene.isBuildComplete else { return }
                 scene.installFrameUpdates()
                 updateScene(time: Date.timeIntervalSinceReferenceDate)
             } attachments: {
@@ -101,6 +108,13 @@ struct RBCJourneyImmersiveView: View {
                         }
                     }
             )
+
+            if model.sceneReadinessPhase != .ready {
+                RBCSceneReadinessSurface()
+                    .environment(model)
+                    .zIndex(10)
+            }
+        }
         .task {
             await handGestures.start(model: model)
             model.familyNarrationConfigured = familyNarrator.isConfigured
@@ -210,7 +224,7 @@ struct RBCJourneyImmersiveView: View {
             handGestures.stop()
             familyNarrator.stop()
             model.isPresented = false
-            model.isSceneReady = false
+            model.resetSceneReadiness()
             scene.stopAudio()
             openWindow(id: RBCJourneyModel.trailheadID)
         }

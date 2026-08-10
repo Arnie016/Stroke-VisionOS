@@ -587,6 +587,16 @@ Deterministic proof routes use `--proof-station-0` through
 `--proof-transfer-0` through `--proof-transfer-2` for enlarged region views.
 `--proof-comfort-still` and `--proof-paused` render the held-flow state and
 Resume control without pretending a Simulator launch is wearer interaction.
+Cold-start readiness uses a separate, safety-labelled SwiftUI surface so an
+asynchronous RealityKit build never appears as an unexplained black frame. Use
+`--proof-scene-loading` to hold that pre-readiness state,
+`--proof-scene-ready` to require the live exact-model receipt,
+`--proof-scene-degraded` to inject a reviewable partial-entity notice, and
+`--proof-scene-failed` to inject the blocked core-scene notice. The degraded and
+failed surfaces remain visible rather than allowing partial loads to look
+complete. All four routes remain generic synthetic teaching proof; they are not
+patient-scan, specialist-review, clinical-review, physical-device, or clinical
+validation evidence.
 The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 `--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
 The region reel uses `--proof-region-0` through `--proof-region-9` for its ten

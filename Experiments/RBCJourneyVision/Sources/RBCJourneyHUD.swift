@@ -1,6 +1,6 @@
 import SwiftUI
 
-private struct RBCEducationalBoundaryBadge: View {
+struct RBCEducationalBoundaryBadge: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Label("GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN", systemImage: "shield.lefthalf.filled")
@@ -15,6 +15,110 @@ private struct RBCEducationalBoundaryBadge: View {
         .background(Color.black.opacity(0.34), in: .capsule)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Generic synthetic teaching view. Not a patient scan. Specialist review pending. Clinical review pending.")
+    }
+}
+
+struct RBCSceneReadinessSurface: View {
+    @Environment(RBCJourneyModel.self) private var model
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+
+    private var title: String {
+        switch model.sceneReadinessPhase {
+        case .loading: "Preparing the teaching space"
+        case .ready: "Teaching space ready"
+        case .degraded: "Some teaching detail is unavailable"
+        case .failed: "Teaching space could not open"
+        }
+    }
+
+    private var accent: Color {
+        switch model.sceneReadinessPhase {
+        case .loading, .ready: Color(red: 0.48, green: 0.93, blue: 0.78)
+        case .degraded: Color(red: 0.98, green: 0.70, blue: 0.34)
+        case .failed: Color(red: 1.0, green: 0.36, blue: 0.34)
+        }
+    }
+
+    private var systemImage: String {
+        switch model.sceneReadinessPhase {
+        case .loading: "shippingbox.and.arrow.backward"
+        case .ready: "checkmark.seal.fill"
+        case .degraded: "exclamationmark.triangle.fill"
+        case .failed: "xmark.octagon.fill"
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            RBCEducationalBoundaryBadge()
+
+            HStack(spacing: 16) {
+                if model.sceneReadinessPhase == .loading {
+                    ProgressView()
+                        .controlSize(.large)
+                        .tint(accent)
+                        .accessibilityLabel("Loading full-detail teaching scene")
+                } else {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 34, weight: .semibold))
+                        .foregroundStyle(accent)
+                }
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(model.sceneReadinessPhase.rawValue)
+                        .font(.caption.monospaced().weight(.bold))
+                        .tracking(1.8)
+                        .foregroundStyle(accent)
+                    Text(title)
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                }
+            }
+
+            Text(model.sceneReadinessDetail)
+                .font(.title3)
+                .foregroundStyle(.white.opacity(0.76))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Label(
+                "No patient data is being loaded. This technical check does not provide clinical or specialist validation.",
+                systemImage: "lock.shield"
+            )
+            .font(.footnote.weight(.medium))
+            .foregroundStyle(.white.opacity(0.58))
+            .fixedSize(horizontal: false, vertical: true)
+
+            if model.sceneReadinessPhase == .degraded || model.sceneReadinessPhase == .failed {
+                Button("Leave full space", systemImage: "xmark") {
+                    Task {
+                        await dismissImmersiveSpace()
+                        model.isPresented = false
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(accent)
+                .buttonBorderShape(.capsule)
+            }
+        }
+        .padding(32)
+        .frame(width: 720, alignment: .leading)
+        .frame(minHeight: 390, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(red: 0.055, green: 0.018, blue: 0.030).opacity(0.98),
+                    Color(red: 0.12, green: 0.026, blue: 0.042).opacity(0.96),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: .rect(cornerRadius: 32)
+        )
+        .glassBackgroundEffect(in: .rect(cornerRadius: 32))
+        .overlay {
+            RoundedRectangle(cornerRadius: 32)
+                .stroke(accent.opacity(0.42), lineWidth: 1)
+        }
+        .accessibilityElement(children: .contain)
     }
 }
 

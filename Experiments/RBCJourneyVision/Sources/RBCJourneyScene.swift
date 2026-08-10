@@ -5,6 +5,27 @@ import UIKit
 
 @MainActor
 final class RBCJourneyScene {
+    private static let expectedBundledModelNames: Set<String> = [
+        "brain_anatomy_realistic_v2",
+        "brain_deep_structures_v2",
+        "brain_ventricles_v2",
+        "cerebral_arteries_realistic_v2",
+        "cranial_vascular_registered_assembly_v2",
+        "ischemic_mca_clot_v2",
+        "artery_cutaway_complete_v2",
+        "circle_of_willis_flow_overlay_v2",
+        "microcirculation_arterial_venous_v2",
+        "cerebral_bloodflow_animation_v2",
+    ]
+    private static let requiredEntitiesByModel: [String: [String]] = [
+        "brain_anatomy_realistic_v2": ["Cerebral_Cortex_R", "Cerebellum", "Brainstem"],
+        "cranial_vascular_registered_assembly_v2": [
+            "Assembly__Vertebral_artery_l",
+            "Assembly__Vertebral_artery_r",
+        ],
+        "ischemic_mca_clot_v2": ["Right_M1_Large_Vessel_Occlusion"],
+        "circle_of_willis_flow_overlay_v2": ["Flow_Route_Anterior_Communicating"],
+    ]
     private static let expectedBrainstemVertebralSourceNodes = [
         "Assembly__Vertebral_artery_l",
         "Assembly__Vertebral_artery_r",
@@ -278,6 +299,7 @@ final class RBCJourneyScene {
     private var frameUpdateSubscription: (any Cancellable)?
     private var latestFrameUpdate: ((TimeInterval) -> Void)?
     private var frameAdvanceScheduled = false
+    private var hasPresentedRealityKitFrame = false
     // Keep the USDZ sharing guard shorter than either authored transition.
     // Transfer clocks still advance during this interval, so fast entry never
     // completes behind an unchanging first frame.
@@ -293,7 +315,12 @@ final class RBCJourneyScene {
     private var regionInteriors: [Int: Entity] = [:]
     private var regionBaseScales: [Int: SIMD3<Float>] = [:]
     private var flowController: AudioPlaybackController?
+    private var loadedBundledModelNames: Set<String> = []
+    private var missingBundledModelNames: Set<String> = []
+    private var failedBundledModelNames: Set<String> = []
+    private var missingRequiredEntityReceipts: Set<String> = []
     private var built = false
+    private(set) var isBuildComplete = false
 
     func build() async {
         guard !built else { return }
@@ -378,6 +405,70 @@ final class RBCJourneyScene {
         buildBrainstemRegionInterior()
         buildRegionTransferThreshold()
         buildCausalStoryField()
+        isBuildComplete = true
+    }
+
+    func readinessReport(
+        audioReady: Bool,
+        presentationFrameReady: Bool
+    ) -> RBCSceneReadinessReport {
+        let missingExpectedModels = Self.expectedBundledModelNames
+            .subtracting(loadedBundledModelNames)
+        var issues: [String] = []
+        issues += missingExpectedModels.sorted().map { "model:\($0)" }
+        issues += missingBundledModelNames.sorted().map { "bundle:\($0)" }
+        issues += failedBundledModelNames.sorted().map { "load:\($0)" }
+        issues += missingRequiredEntityReceipts.sorted().map { "entity:\($0)" }
+        if portals.count != RBCVesselPortal.allCases.count {
+            issues.append("portals:\(portals.count)/\(RBCVesselPortal.allCases.count)")
+        }
+        if retainedAuthoredFlowRideCellCount == 0 {
+            issues.append("entity:artery_cutaway_complete_v2/Combined_Blood_RBC")
+        }
+        if brainstemRegisteredVertebralNodeCount != Self.expectedBrainstemVertebralSourceNodes.count {
+            issues.append("vertebral:\(brainstemRegisteredVertebralNodeCount)/\(Self.expectedBrainstemVertebralSourceNodes.count)")
+        }
+        if infoAttachment == nil {
+            issues.append("surface:journey-info")
+        }
+        if !audioReady {
+            issues.append("audio:FlowBed.wav")
+        }
+        if !presentationFrameReady {
+            issues.append("presentation:RealityKit-frame")
+        }
+
+        let coreSceneFailed = loadedBundledModelNames.isEmpty
+            || registeredContent.children.isEmpty
+            || portals.isEmpty
+        let phase: RBCSceneReadinessPhase = if coreSceneFailed {
+            .failed
+        } else if issues.isEmpty {
+            .ready
+        } else {
+            .degraded
+        }
+        return RBCSceneReadinessReport(
+            phase: phase,
+            loadedModelCount: loadedBundledModelNames.count,
+            expectedModelCount: Self.expectedBundledModelNames.count,
+            portalCount: portals.count,
+            expectedPortalCount: RBCVesselPortal.allCases.count,
+            audioReady: audioReady,
+            presentationFrameReady: presentationFrameReady,
+            issues: Array(Set(issues)).sorted()
+        )
+    }
+
+    func waitForFirstPresentationFrame(timeoutMilliseconds: Int = 3_000) async -> Bool {
+        let pollIntervalMilliseconds = 50
+        let pollCount = max(timeoutMilliseconds / pollIntervalMilliseconds, 1)
+        for _ in 0..<pollCount {
+            installFrameUpdates()
+            if hasPresentedRealityKitFrame { return true }
+            try? await Task.sleep(for: .milliseconds(pollIntervalMilliseconds))
+        }
+        return hasPresentedRealityKitFrame
     }
 
     func installFrameUpdates() {
@@ -393,6 +484,7 @@ final class RBCJourneyScene {
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 defer { self.frameAdvanceScheduled = false }
+                self.hasPresentedRealityKitFrame = true
 
                 // These two transitions have bounded task lifetimes (1.45 s
                 // and 1.65 s), so their clocks must begin on the first scene
@@ -1073,17 +1165,25 @@ final class RBCJourneyScene {
         anteriorGatewayTransitionVisualProgress = min(max(rawProgress, 0), 1)
     }
 
-    func installSpatialAudio() async {
-        guard flowController == nil,
-              let url = Bundle.main.url(forResource: "FlowBed", withExtension: "wav")
-        else { return }
+    func installSpatialAudio() async -> Bool {
+        if flowController != nil { return true }
+        guard let url = Bundle.main.url(forResource: "FlowBed", withExtension: "wav") else {
+            print("RBC_SPATIAL_AUDIO=DEGRADED reason=missing_FlowBed.wav")
+            return false
+        }
 
         let configuration = AudioFileResource.Configuration(shouldLoop: true)
-        guard let resource = try? await AudioFileResource(
-            contentsOf: url,
-            withName: "registered-cerebral-flow-bed",
-            configuration: configuration
-        ) else { return }
+        let resource: AudioFileResource
+        do {
+            resource = try await AudioFileResource(
+                contentsOf: url,
+                withName: "registered-cerebral-flow-bed",
+                configuration: configuration
+            )
+        } catch {
+            print("RBC_SPATIAL_AUDIO=DEGRADED reason=resource_load_failed")
+            return false
+        }
 
         let emitter = Entity()
         emitter.name = "anatomy-bound-spatial-flow-emitter"
@@ -1095,6 +1195,8 @@ final class RBCJourneyScene {
         controller.gain = -25
         controller.play()
         flowController = controller
+        print("RBC_SPATIAL_AUDIO=READY source=FlowBed.wav")
+        return true
     }
 
     func stopAudio() {
@@ -6800,8 +6902,30 @@ final class RBCJourneyScene {
     }
 
     private func loadBundledUSDZ(named name: String) async -> Entity? {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "usdz") else { return nil }
-        return try? await Entity(contentsOf: url)
+        guard let url = Bundle.main.url(forResource: name, withExtension: "usdz") else {
+            missingBundledModelNames.insert(name)
+            print("RBC_MODEL_LOAD=DEGRADED model=\(name) reason=missing_bundle_resource")
+            return nil
+        }
+        do {
+            let entity = try await Entity(contentsOf: url)
+            loadedBundledModelNames.insert(name)
+            missingBundledModelNames.remove(name)
+            failedBundledModelNames.remove(name)
+            for requiredEntityName in Self.requiredEntitiesByModel[name] ?? [] {
+                let receipt = "\(name)/\(requiredEntityName)"
+                if entity.findEntity(named: requiredEntityName) == nil {
+                    missingRequiredEntityReceipts.insert(receipt)
+                } else {
+                    missingRequiredEntityReceipts.remove(receipt)
+                }
+            }
+            return entity
+        } catch {
+            failedBundledModelNames.insert(name)
+            print("RBC_MODEL_LOAD=DEGRADED model=\(name) reason=entity_load_failed")
+            return nil
+        }
     }
 
     private func normalize(_ entity: Entity, targetExtent: Float) {
