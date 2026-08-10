@@ -799,6 +799,7 @@ final class RBCJourneyModel {
     var isExhibitFactExpanded = false
     var handTrackingStatus = "Hand gestures require Apple Vision Pro"
     let proofMode: Bool
+    var proofAutoLaunchConsumed = false
     let regionTransferProofProgress: Float?
     let anteriorGatewayTransitionProofProgress: Float?
     let flowRideProofPhase: Float?
@@ -1419,7 +1420,6 @@ final class RBCJourneyModel {
         familyNarrationEnabled = false
         exhibitBeat = .route
         station = exhibitBeat.station
-        motionMode = .continuous
         isPaused = false
         isExhibitFactExpanded = false
         openPortalIDs = [RBCVesselPortal.circleOfWillis.id]
@@ -1757,10 +1757,12 @@ final class RBCJourneyModel {
         closeAllPortals()
     }
 
-    func openNextPortal() {
-        guard let next = (0..<3).first(where: { !openPortalIDs.contains($0) }) else { return }
+    @discardableResult
+    func openNextPortal() -> Bool {
+        guard let next = (0..<3).first(where: { !openPortalIDs.contains($0) }) else { return false }
         openPortalIDs.insert(next)
         focusedPortalID = next
+        return true
     }
 
     func togglePortal(_ id: Int) {

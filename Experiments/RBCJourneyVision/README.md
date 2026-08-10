@@ -489,9 +489,10 @@ on that checkout.
 
 - Full immersion is used for the surrounding world.
 - The wearer and observation field stay fixed.
-- `Living flow` is the default; the registered baked route and a very small
-  anatomy pulse evolve continuously.
-- Pause/Resume controls the actual RealityKit animation playback controllers.
+- `Living flow` is the default; the complete registered authored route remains
+  visible while native RealityKit scene-event choreography evolves smoothly.
+- Pause/Resume holds the native scene-event choreography at its exact visible
+  pose; the imported meshes and animation clips remain bundled and intact.
 - `Comfort still` and system Reduce Motion hold animation without hiding anatomy.
 - Every station is manually selectable and supports back, pause, next, restart,
   and mute.

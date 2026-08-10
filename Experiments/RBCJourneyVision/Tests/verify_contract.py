@@ -32,6 +32,7 @@ app = (ROOT / "Sources/RBCJourneyVisionApp.swift").read_text()
 model = (ROOT / "Sources/RBCJourneyModel.swift").read_text()
 scene = (ROOT / "Sources/RBCJourneyScene.swift").read_text()
 immersive = (ROOT / "Sources/RBCJourneyImmersiveView.swift").read_text()
+trailhead = (ROOT / "Sources/RBCJourneyTrailheadView.swift").read_text()
 narrator = (ROOT / "Sources/RBCFamilyNarrationEngine.swift").read_text()
 gestures = (ROOT / "Sources/RBCPortalGestureController.swift").read_text()
 hud = (ROOT / "Sources/RBCJourneyHUD.swift").read_text()
@@ -62,13 +63,37 @@ checks = {
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
     "manual_station_navigation": all(token in model for token in ["func select", "func back", "func advance", "func restart"]),
     "reduce_motion": "systemReduceMotion" in model and "effectiveReducedMotion" in model,
+    "comfort_selection_persists": "motionMode = .continuous" not in model,
+    "hud_reduce_motion": hud.count("withAnimation(") == hud.count("withAnimation(model.effectiveReducedMotion ? nil :"),
+    "stable_proof_exit": all(token in model + trailhead for token in [
+        "proofAutoLaunchConsumed", "!model.proofAutoLaunchConsumed",
+        "model.proofAutoLaunchConsumed = true",
+    ]),
+    "latched_narration_pause": all(token in narrator + immersive for token in [
+        "pauseRequested", "self.pauseRequested", "familyNarrator.isBusy",
+        "familyNarrator.setPaused(model.isPaused)",
+    ]),
+    "single_realitykit_frame_driver": all(token in scene for token in [
+        "SceneEvents.Update", "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
+        "retainedAuthoredFlowRideCellCount",
+    ]) and "TimelineView" not in immersive and "flowRideCells" not in scene,
+    "truthful_portal_feedback": all(token in model + gestures for token in [
+        "func openNextPortal() -> Bool", "if model.openNextPortal()",
+        "all three portals already open",
+    ]),
     "gaze_pinch_targets": "InputTargetComponent" in scene and "CollisionComponent" in scene and "HoverEffectComponent" in scene,
     "world_anchored_hud": "world-anchored-journey-hud" in scene and "BillboardComponent" in scene,
     "stable_observation_field": "stable-observation-field-segment" in scene,
     "registered_anatomy_system": all(token in scene for token in ["registered-living-brain-system", "brain_anatomy_realistic_v2", "cerebral_arteries_realistic_v2", "cranial_vascular_registered_assembly_v2"]),
     "no_wire_cloud": all(token not in scene for token in ["conceptual-brain-envelope", "whole-space-capillary", "ambient-red-blood-cell", "conceptual-vessel-canopy"]),
-    "continuous_registered_flow": all(token in scene for token in ["cerebral_bloodflow_animation_v2", "availableAnimations", "animation.repeat()", "flowAnimationControllers"]),
-    "true_pause_resume": all(token in scene for token in ["controller.pause()", "controller.resume()", "setAnimationsPaused"]),
+    "continuous_registered_flow": all(token in scene for token in [
+        "cerebral_bloodflow_animation_v2", "SceneEvents.Update",
+        "latestFrameUpdate", "flowLayer.components.set",
+    ]) and "playAllAnimations" not in scene,
+    "true_pause_resume": all(token in scene for token in [
+        "let motionHeld = paused || reducedMotion",
+        "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
+    ]),
     "multi_portal_state": all(token in model + scene for token in ["openPortalIDs", "openNextPortal", "closeAllPortals", "vascular-portal-", "multi-vessel-portal-system"]),
     "maximum_three_portals": "enum RBCVesselPortal" in model and model.count("case lumen") == 1 and "0..<3" in model,
     "user_controlled_region_transfer": all(token in model + scene for token in ["focusedPortalID", "transferredPortalID", "transferToFocusedPortal", "returnToOverview", "user-controlled-region-transfer"]),
@@ -288,7 +313,7 @@ checks = {
         "NOTICE", "FOLLOW", "CONNECT", "minimumDwellSeconds",
         "advanceFamilyNarration", "replayFamilyNarration", "Hear again", "Next idea",
         "familyNarrationAdvanceTitle", "Enter field", "automaticMoments",
-        "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
+        "familyNarrator.isBusy", "requestTask != nil || player != nil",
         "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
     ]) and "model.flowRideRoute == .frontal && !model.familyNarrationEnabled" in hud,
     "cortical_microarchitecture_room": all(token in model + scene + hud + medical_canon for token in [

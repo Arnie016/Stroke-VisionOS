@@ -1,6 +1,7 @@
 import SwiftUI
 
 private struct RBCPreludeChapterText: View {
+    @Environment(RBCJourneyModel.self) private var model
     let chapter: RBCEntryPreludeChapter
     @State private var settled = false
 
@@ -25,7 +26,7 @@ private struct RBCPreludeChapterText: View {
         .opacity(settled ? 1 : 0)
         .scaleEffect(settled ? 1 : 0.84)
         .onAppear {
-            withAnimation(.easeOut(duration: 1.15)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeOut(duration: 1.15)) {
                 settled = true
             }
         }
@@ -43,7 +44,7 @@ struct RBCEntryPreludeHUD: View {
             HStack(spacing: 12) {
                 if model.entryPreludeChapter != .threshold {
                     Button("Back", systemImage: "chevron.left") {
-                        withAnimation(.easeInOut(duration: 0.45)) {
+                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.45)) {
                             if let previous = RBCEntryPreludeChapter(rawValue: model.entryPreludeChapter.rawValue - 1) {
                                 model.entryPreludeChapter = previous
                             }
@@ -52,7 +53,7 @@ struct RBCEntryPreludeHUD: View {
                 }
 
                 Button(model.entryPreludeChapter.actionTitle, systemImage: model.entryPreludeChapter == .invitation ? "arrow.down.right.and.arrow.up.left" : "arrow.right") {
-                    withAnimation(.easeInOut(duration: 0.55)) {
+                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.55)) {
                         model.advanceEntryPrelude()
                     }
                 }
@@ -60,7 +61,7 @@ struct RBCEntryPreludeHUD: View {
                 .tint(Color(red: 0.86, green: 0.12, blue: 0.22))
 
                 Button("Skip", systemImage: "forward.end") {
-                    withAnimation(.easeInOut(duration: 0.45)) {
+                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.45)) {
                         model.startWondrousJourney()
                     }
                 }
@@ -226,7 +227,7 @@ struct RBCExhibitControlsHUD: View {
                 model.isExhibitFactExpanded ? "Close note" : "Explain",
                 systemImage: model.isExhibitFactExpanded ? "sparkles" : "questionmark.circle"
             ) {
-                withAnimation(.easeInOut(duration: 0.22)) {
+                withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.22)) {
                     model.isExhibitFactExpanded.toggle()
                 }
             }
@@ -355,7 +356,7 @@ struct RBCRegionInfoHUD: View {
                             HStack(spacing: 7) {
                                 if let nextTitle = passagePhase.nextActionTitle {
                                     Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
-                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                             model.advanceAnteriorPassage()
                                         }
                                     }
@@ -379,7 +380,7 @@ struct RBCRegionInfoHUD: View {
                                 }
 
                                 Button("Leave passage", systemImage: "arrow.uturn.backward") {
-                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.32)) {
                                         model.stopAnteriorPassage()
                                     }
                                 }
@@ -398,7 +399,7 @@ struct RBCRegionInfoHUD: View {
 
                         if model.willisRouteFocus == .anterior {
                             Button("Enter anterior passage", systemImage: "arrow.forward.circle.fill") {
-                                withAnimation(.easeInOut(duration: 0.42)) {
+                                withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                     model.startAnteriorPassage()
                                 }
                             }
@@ -438,7 +439,7 @@ struct RBCRegionInfoHUD: View {
                             HStack(spacing: 7) {
                                 if let nextTitle = voyagePhase.nextActionTitle {
                                     Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
-                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                             model.advancePosteriorVoyage()
                                         }
                                     }
@@ -462,7 +463,7 @@ struct RBCRegionInfoHUD: View {
                                 }
 
                                 Button("Leave route", systemImage: "arrow.uturn.backward") {
-                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.32)) {
                                         model.stopPosteriorVoyage()
                                     }
                                 }
@@ -473,7 +474,7 @@ struct RBCRegionInfoHUD: View {
                         }
                     } else {
                         Button("Follow posterior route", systemImage: "arrow.triangle.branch") {
-                            withAnimation(.easeInOut(duration: 0.42)) {
+                            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                 model.startPosteriorVoyage()
                             }
                         }
@@ -490,7 +491,7 @@ struct RBCRegionInfoHUD: View {
                             model.isFrontalClotScenarioActive ? "Clear example" : "Place example clot",
                             systemImage: model.isFrontalClotScenarioActive ? "arrow.counterclockwise" : "drop.triangle.fill"
                         ) {
-                            withAnimation(.easeInOut(duration: 0.28)) {
+                            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.28)) {
                                 model.toggleFrontalClotScenario()
                             }
                         }
@@ -705,7 +706,7 @@ private struct RBCRegionModeButton: View {
     var body: some View {
         let selected = mode == model.regionVisualization
         Button {
-            withAnimation(.easeInOut(duration: 0.28)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.28)) {
                 model.selectRegionVisualization(mode)
             }
         } label: {
@@ -726,7 +727,7 @@ private struct RBCWillisRouteFocusButton: View {
     var body: some View {
         let selected = focus == model.willisRouteFocus
         Button(focus.shortTitle, systemImage: focus.systemImage) {
-            withAnimation(.easeInOut(duration: 0.34)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.34)) {
                 model.selectWillisRouteFocus(focus)
             }
         }

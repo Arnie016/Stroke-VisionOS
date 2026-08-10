@@ -20,6 +20,8 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
 
     private var player: AVAudioPlayer?
     private var requestTask: Task<Void, Never>?
+    private var requestGeneration = 0
+    private var pauseRequested = false
     private(set) var state: State = .off
 
     var isConfigured: Bool { realtimeProxyEndpoint != nil }
@@ -28,7 +30,14 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
     /// narration is loading or speaking. Paused and failed narration do not
     /// keep the ambience ducked indefinitely.
     var shouldDuckAmbientAudio: Bool {
-        state == .loading || state == .speaking
+        !pauseRequested && (state == .loading || state == .speaking)
+    }
+
+    /// True while narration is fetching or still owns a player, including a
+    /// player held by Pause. This prevents automatic copy progression from
+    /// replacing a request that has not yet completed.
+    var isBusy: Bool {
+        requestTask != nil || player != nil
     }
 
     func speakExactCaption(_ text: String) {
@@ -39,6 +48,8 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
             return
         }
 
+        requestGeneration += 1
+        let generation = requestGeneration
         state = .loading
         requestTask = Task { [weak self] in
             do {
@@ -57,25 +68,42 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
                       http.value(forHTTPHeaderField: "X-RBC-Narration-Copy-SHA256") == Self.sha256(text),
                       http.value(forHTTPHeaderField: "X-RBC-Narration-Transcript-SHA256") == Self.canonicalSHA256(text)
                 else {
-                    self?.state = .unavailable
+                    guard let self, self.requestGeneration == generation else { return }
+                    self.requestTask = nil
+                    self.state = .unavailable
                     return
                 }
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled,
+                      let self,
+                      self.requestGeneration == generation
+                else { return }
 
                 let player = try AVAudioPlayer(data: audio)
-                self?.player = player
+                self.requestTask = nil
+                self.player = player
                 player.delegate = self
                 player.prepareToPlay()
-                player.play()
-                self?.state = .speaking
+                if self.pauseRequested {
+                    self.state = .paused
+                } else if player.play() {
+                    self.state = .speaking
+                } else {
+                    self.player = nil
+                    self.state = .unavailable
+                }
             } catch {
-                guard !Task.isCancelled else { return }
-                self?.state = .unavailable
+                guard !Task.isCancelled,
+                      let self,
+                      self.requestGeneration == generation
+                else { return }
+                self.requestTask = nil
+                self.state = .unavailable
             }
         }
     }
 
     func stop() {
+        requestGeneration += 1
         requestTask?.cancel()
         requestTask = nil
         player?.stop()
@@ -84,18 +112,30 @@ final class RBCFamilyNarrationEngine: NSObject, AVAudioPlayerDelegate {
     }
 
     func setPaused(_ paused: Bool) {
-        guard let player else { return }
+        pauseRequested = paused
         if paused {
-            player.pause()
-            state = .paused
-        } else {
-            player.play()
-            state = .speaking
+            player?.pause()
+            if requestTask != nil || player != nil {
+                state = .paused
+            }
+            return
+        }
+
+        if let player {
+            if player.play() {
+                state = .speaking
+            } else {
+                self.player = nil
+                state = .unavailable
+            }
+        } else if requestTask != nil {
+            state = .loading
         }
     }
 
     nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Task { @MainActor [weak self] in
+            guard self?.player === player else { return }
             self?.player = nil
             self?.state = flag ? .ready : .unavailable
         }

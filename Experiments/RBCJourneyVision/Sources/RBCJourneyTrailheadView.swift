@@ -128,7 +128,10 @@ struct RBCJourneyTrailheadView: View {
             model.systemReduceMotion = accessibilityReduceMotion
         }
         .task {
-            if model.proofMode && !model.isPresented {
+            if model.proofMode,
+               !model.isPresented,
+               !model.proofAutoLaunchConsumed {
+                model.proofAutoLaunchConsumed = true
                 await openJourney()
             }
         }

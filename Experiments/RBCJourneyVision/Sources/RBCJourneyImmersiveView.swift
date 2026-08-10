@@ -10,12 +10,15 @@ struct RBCJourneyImmersiveView: View {
     @State private var familyNarrator = RBCFamilyNarrationEngine()
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
-            RealityView { content, attachments in
+        RealityView { content, attachments in
                 await scene.build()
                 if model.experienceMode == .entryPrelude {
                     scene.prepareForPrelude(model.entryPreludeChapter)
                 }
+                // Prime all component types before insertion into the shared
+                // RealityKit scene. Live frame mutations begin only after the
+                // loaded resources have completed their short warm-up.
+                updateScene(time: Date.timeIntervalSinceReferenceDate)
                 content.add(scene.root)
                 scene.installFrameUpdates()
 
@@ -40,34 +43,7 @@ struct RBCJourneyImmersiveView: View {
                 // The make closure can run before root.scene is populated.
                 // Retry here once the entity belongs to RealityKit's Scene.
                 scene.installFrameUpdates()
-                model.systemReduceMotion = accessibilityReduceMotion
-                scene.update(
-                    station: model.station,
-                    preludeChapter: model.experienceMode == .entryPrelude ? model.entryPreludeChapter : nil,
-                    exhibitBeat: model.experienceMode == .wondrousJourney ? model.exhibitBeat : nil,
-                    openPortalIDs: model.openPortalIDs,
-                    focusedPortalID: model.focusedPortalID,
-                    transferredPortalID: model.transferredPortalID,
-                    pendingRegionID: model.pendingRegionDestination?.id,
-                    regionTransferProofProgress: model.regionTransferProofProgress,
-                    regionVisualization: model.regionVisualization,
-                    willisRouteFocus: model.willisRouteFocus,
-                    frontalClotScenarioActive: model.isFrontalClotScenarioActive,
-                    anteriorPassagePhase: model.anteriorPassagePhase,
-                    anteriorGatewayTransitionActive: model.isAnteriorGatewayTransitionActive,
-                    anteriorGatewayTransitionProofProgress: model.anteriorGatewayTransitionProofProgress,
-                    posteriorVoyagePhase: model.posteriorVoyagePhase,
-                    flowRideActive: model.isFlowRideActive,
-                    flowRideRoute: model.flowRideRoute,
-                    capillaryFieldFocused: model.isCapillaryFieldFocused,
-                    flowRideProofPhase: model.flowRideProofPhase,
-                    time: timeline.date.timeIntervalSinceReferenceDate,
-                    paused: model.isPaused,
-                    reducedMotion: model.effectiveReducedMotion,
-                    soundEnabled: model.soundEnabled,
-                    narrationDucking: familyNarrator.shouldDuckAmbientAudio,
-                    showTeachingPoints: model.showTeachingPoints
-                )
+                updateScene(time: Date.timeIntervalSinceReferenceDate)
             } attachments: {
                 Attachment(id: "journeyInfo") {
                     if model.pendingRegionDestination != nil {
@@ -125,10 +101,10 @@ struct RBCJourneyImmersiveView: View {
                         }
                     }
             )
-        }
         .task {
             await handGestures.start(model: model)
             model.familyNarrationConfigured = familyNarrator.isConfigured
+            familyNarrator.setPaused(model.isPaused)
             if model.familyNarrationEnabled && familyNarrator.isConfigured {
                 familyNarrator.speakExactCaption(model.familyNarrationText)
             }
@@ -171,8 +147,7 @@ struct RBCJourneyImmersiveView: View {
             for moment in automaticMoments {
                 var remainingSeconds = model.familyNarrationCue.minimumDwellSeconds
                 while remainingSeconds > 0
-                    || familyNarrator.state == .loading
-                    || familyNarrator.state == .speaking {
+                    || familyNarrator.isBusy {
                     try? await Task.sleep(for: .milliseconds(250))
                     guard !Task.isCancelled,
                           model.isFlowRideActive,
@@ -215,5 +190,36 @@ struct RBCJourneyImmersiveView: View {
             scene.stopAudio()
             openWindow(id: RBCJourneyModel.trailheadID)
         }
+    }
+
+    private func updateScene(time: TimeInterval) {
+        model.systemReduceMotion = accessibilityReduceMotion
+        scene.update(
+            station: model.station,
+            preludeChapter: model.experienceMode == .entryPrelude ? model.entryPreludeChapter : nil,
+            exhibitBeat: model.experienceMode == .wondrousJourney ? model.exhibitBeat : nil,
+            openPortalIDs: model.openPortalIDs,
+            focusedPortalID: model.focusedPortalID,
+            transferredPortalID: model.transferredPortalID,
+            pendingRegionID: model.pendingRegionDestination?.id,
+            regionTransferProofProgress: model.regionTransferProofProgress,
+            regionVisualization: model.regionVisualization,
+            willisRouteFocus: model.willisRouteFocus,
+            frontalClotScenarioActive: model.isFrontalClotScenarioActive,
+            anteriorPassagePhase: model.anteriorPassagePhase,
+            anteriorGatewayTransitionActive: model.isAnteriorGatewayTransitionActive,
+            anteriorGatewayTransitionProofProgress: model.anteriorGatewayTransitionProofProgress,
+            posteriorVoyagePhase: model.posteriorVoyagePhase,
+            flowRideActive: model.isFlowRideActive,
+            flowRideRoute: model.flowRideRoute,
+            capillaryFieldFocused: model.isCapillaryFieldFocused,
+            flowRideProofPhase: model.flowRideProofPhase,
+            time: time,
+            paused: model.isPaused,
+            reducedMotion: model.effectiveReducedMotion,
+            soundEnabled: model.soundEnabled,
+            narrationDucking: familyNarrator.shouldDuckAmbientAudio,
+            showTeachingPoints: model.showTeachingPoints
+        )
     }
 }

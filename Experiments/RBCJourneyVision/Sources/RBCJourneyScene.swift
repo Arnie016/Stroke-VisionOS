@@ -202,13 +202,7 @@ final class RBCJourneyScene {
     private var willisRuntimeAnteriorPassagePhase: RBCAnteriorPassagePhase?
     private var willisRuntimeGatewayTransitionProgress: Float?
     private var willisElapsed: Float = 0
-    private var flowRideCells: [(
-        entity: Entity,
-        origin: SIMD3<Float>,
-        baseScale: SIMD3<Float>,
-        baseOrientation: simd_quatf,
-        phase: Float
-    )] = []
+    private var retainedAuthoredFlowRideCellCount = 0
     private var flowRideRibbonPaths: [[SIMD3<Float>]] = []
     private var flowRideRibbonSegments: [(
         entity: ModelEntity,
@@ -223,7 +217,6 @@ final class RBCJourneyScene {
     private var flowRideCurrentBands: [(
         entity: ModelEntity,
         route: RBCFlowRideRoute,
-        baseOpacity: Float,
         phase: Float
     )] = []
     private var flowRideCurrentFronts: [(
@@ -264,6 +257,10 @@ final class RBCJourneyScene {
     private var flowRideGatewayTransitionProgress: Float?
     private var flowRideRuntimeProofPhase: Float?
     private var frameUpdateSubscription: (any Cancellable)?
+    private var latestFrameUpdate: ((TimeInterval) -> Void)?
+    private var frameAdvanceScheduled = false
+    private var frameWarmupRemaining: Float = 2.6
+    private var isReplayingFrameUpdate = false
 
     private var portals: [Int: Entity] = [:]
     private var portalEnergyRoots: [Int: Entity] = [:]
@@ -273,9 +270,7 @@ final class RBCJourneyScene {
     private var portalAnchorGuides: [Int: Entity] = [:]
     private var regionInteriors: [Int: Entity] = [:]
     private var regionBaseScales: [Int: SIMD3<Float>] = [:]
-    private var flowAnimationControllers: [AnimationPlaybackController] = []
     private var flowController: AudioPlaybackController?
-    private var animationsPaused = false
     private var built = false
 
     func build() async {
@@ -359,17 +354,31 @@ final class RBCJourneyScene {
             return
         }
         frameUpdateSubscription = scene.subscribe(to: SceneEvents.Update.self) { [weak self] event in
+            guard let self, !self.frameAdvanceScheduled else { return }
+            self.frameAdvanceScheduled = true
             let deltaTime = Float(event.deltaTime)
             Task { @MainActor [weak self] in
-                self?.advanceRegionTransferFrame(deltaTime: deltaTime)
-                self?.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)
-                self?.advanceWillisNetworkFrame(deltaTime: deltaTime)
-                self?.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
-                self?.advanceCerebellumFrame(deltaTime: deltaTime)
-                self?.advanceDeepStructuresFrame(deltaTime: deltaTime)
-                self?.advanceOccipitalFrame(deltaTime: deltaTime)
-                self?.advanceBrainstemFrame(deltaTime: deltaTime)
-                self?.advanceFlowRideFrame(deltaTime: deltaTime)
+                guard let self else { return }
+                defer { self.frameAdvanceScheduled = false }
+
+                if self.frameWarmupRemaining > 0 {
+                    // Let RealityKit finish sharing freshly loaded USDZ
+                    // resources before the first live component mutation.
+                    // The initial visible pose is primed before insertion.
+                    self.frameWarmupRemaining -= min(max(deltaTime, 0), 0.10)
+                    return
+                }
+
+                self.advanceRegionTransferFrame(deltaTime: deltaTime)
+                self.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)
+                self.advanceWillisNetworkFrame(deltaTime: deltaTime)
+                self.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
+                self.advanceCerebellumFrame(deltaTime: deltaTime)
+                self.advanceDeepStructuresFrame(deltaTime: deltaTime)
+                self.advanceOccipitalFrame(deltaTime: deltaTime)
+                self.advanceBrainstemFrame(deltaTime: deltaTime)
+                self.advanceFlowRideFrame(deltaTime: deltaTime)
+                self.latestFrameUpdate?(Date.timeIntervalSinceReferenceDate)
             }
         }
         print("RBC_FRAME_UPDATES=READY source=RealityKit.SceneEvents.Update")
@@ -402,8 +411,45 @@ final class RBCJourneyScene {
         narrationDucking: Bool,
         showTeachingPoints: Bool
     ) {
+        if !isReplayingFrameUpdate {
+            // Cache the latest value-state snapshot. RealityKit's scene event
+            // is the sole animation clock and replays this snapshot once per
+            // frame; SwiftUI only replaces it when user/model state changes.
+            latestFrameUpdate = { [weak self] nextTime in
+                guard let self else { return }
+                self.isReplayingFrameUpdate = true
+                defer { self.isReplayingFrameUpdate = false }
+                self.update(
+                    station: station,
+                    preludeChapter: preludeChapter,
+                    exhibitBeat: exhibitBeat,
+                    openPortalIDs: openPortalIDs,
+                    focusedPortalID: focusedPortalID,
+                    transferredPortalID: transferredPortalID,
+                    pendingRegionID: pendingRegionID,
+                    regionTransferProofProgress: regionTransferProofProgress,
+                    regionVisualization: regionVisualization,
+                    willisRouteFocus: willisRouteFocus,
+                    frontalClotScenarioActive: frontalClotScenarioActive,
+                    anteriorPassagePhase: anteriorPassagePhase,
+                    anteriorGatewayTransitionActive: anteriorGatewayTransitionActive,
+                    anteriorGatewayTransitionProofProgress: anteriorGatewayTransitionProofProgress,
+                    posteriorVoyagePhase: posteriorVoyagePhase,
+                    flowRideActive: flowRideActive,
+                    flowRideRoute: flowRideRoute,
+                    capillaryFieldFocused: capillaryFieldFocused,
+                    flowRideProofPhase: flowRideProofPhase,
+                    time: nextTime,
+                    paused: paused,
+                    reducedMotion: reducedMotion,
+                    soundEnabled: soundEnabled,
+                    narrationDucking: narrationDucking,
+                    showTeachingPoints: showTeachingPoints
+                )
+            }
+        }
+
         let motionHeld = paused || reducedMotion
-        setAnimationsPaused(motionHeld)
 
         let t = Float(time)
         let preludeActive = preludeChapter != nil
@@ -865,6 +911,11 @@ final class RBCJourneyScene {
             applyRegionTransferThreshold(progress: proofProgress, reducedMotion: reducedMotion)
         } else if reducedMotion {
             applyRegionTransferThreshold(progress: 0.56, reducedMotion: true)
+        } else {
+            applyRegionTransferThreshold(
+                progress: regionTransferElapsed / 1.45,
+                reducedMotion: false
+            )
         }
     }
 
@@ -875,10 +926,6 @@ final class RBCJourneyScene {
         else { return }
 
         regionTransferElapsed = min(regionTransferElapsed + deltaTime, 1.45)
-        applyRegionTransferThreshold(
-            progress: regionTransferElapsed / 1.45,
-            reducedMotion: false
-        )
     }
 
     private func applyRegionTransferThreshold(progress rawProgress: Float, reducedMotion: Bool) {
@@ -945,6 +992,10 @@ final class RBCJourneyScene {
             // A short cross-dissolve substitute: no apparent forward travel,
             // no rotating tunnel, and no camera displacement.
             applyAnteriorGatewayTransition(progress: 0.72)
+        } else {
+            applyAnteriorGatewayTransition(
+                progress: anteriorGatewayTransitionElapsed / 1.65
+            )
         }
     }
 
@@ -957,9 +1008,6 @@ final class RBCJourneyScene {
         anteriorGatewayTransitionElapsed = min(
             anteriorGatewayTransitionElapsed + min(max(deltaTime, 0), 0.10),
             1.65
-        )
-        applyAnteriorGatewayTransition(
-            progress: anteriorGatewayTransitionElapsed / 1.65
         )
     }
 
@@ -1078,7 +1126,11 @@ final class RBCJourneyScene {
                 addBlockageBeacon(to: layer)
             case "cerebral_bloodflow_animation_v2":
                 flowLayer = layer
-                playAllAnimations(in: layer)
+                // Keep every authored mesh and animation clip in the bundle
+                // and hierarchy. The imported transform clips are not played:
+                // this SDK reports invalid bind-point override writes for
+                // them. Native SceneEvents-driven choreography supplies the
+                // visible flow without deleting or simplifying anatomy.
             default: break
             }
             registeredContent.addChild(layer)
@@ -1453,15 +1505,12 @@ final class RBCJourneyScene {
                     replaceMaterials(in: cell, with: cellMaterial)
                     cell.isEnabled = false
                 }
-                flowRideCells = cells.enumerated().map { index, entity in
-                    (
-                        entity,
-                        entity.position,
-                        entity.scale,
-                        entity.orientation,
-                        Float(index) / Float(max(cells.count, 1))
-                    )
-                }
+                // Retain every imported authored cell in the asset hierarchy as
+                // provenance/reference detail. These nodes are intentionally
+                // hidden behind the native branching corridor, so do not put
+                // them into the live mutation arrays. Mutating disabled imported
+                // nodes every frame produced RealityKit component-write faults.
+                retainedAuthoredFlowRideCellCount = cells.count
                 let arrows = descendants(in: rideHero, namePrefix: "Combined_Blood_Arrow_")
                 for arrow in arrows {
                     // Replace the imported yellow droplet-like arrows with a
@@ -1484,7 +1533,7 @@ final class RBCJourneyScene {
                     authoredWallMaterial: authoredWallMaterial
                 )
                 flowRideRoot.isEnabled = false
-                print("RBC_FLOW_RIDE=READY authored_cells=\(flowRideCells.count) journey_cells=\(flowRideJourneyCells.count) ribbons=\(flowRideRibbonPaths.count) fork_routes=2 inward_corridor=true")
+                print("RBC_FLOW_RIDE=READY authored_cells=\(retainedAuthoredFlowRideCellCount) journey_cells=\(flowRideJourneyCells.count) ribbons=\(flowRideRibbonPaths.count) fork_routes=2 inward_corridor=true")
             }
 
             normalize(preview, targetExtent: definition.id == 1 ? 0.32 : 0.31)
@@ -3628,7 +3677,6 @@ final class RBCJourneyScene {
     private func advanceWillisNetworkFrame(deltaTime: Float) {
         guard willisRuntimeActive, !willisRuntimeHeld else { return }
         willisElapsed += deltaTime
-        applyWillisFlowFrame()
     }
 
     private func applyWillisFlowFrame() {
@@ -4285,7 +4333,6 @@ final class RBCJourneyScene {
         if !corticalMicroarchitectureRuntimeHeld {
             corticalMicroarchitectureElapsed += min(max(deltaTime, 0), 0.10)
         }
-        applyCorticalMicroarchitectureMotion()
     }
 
     private func applyCorticalMicroarchitectureMotion() {
@@ -4380,7 +4427,6 @@ final class RBCJourneyScene {
         if !cerebellumRuntimeHeld {
             cerebellumElapsed += min(max(deltaTime, 0), 0.10)
         }
-        applyCerebellumMotion()
     }
 
     private func applyCerebellumMotion() {
@@ -4475,7 +4521,6 @@ final class RBCJourneyScene {
         if !deepStructuresRuntimeHeld {
             deepStructuresElapsed += min(max(deltaTime, 0), 0.10)
         }
-        applyDeepStructuresMotion()
     }
 
     private func applyDeepStructuresMotion() {
@@ -4570,7 +4615,6 @@ final class RBCJourneyScene {
         if !occipitalRuntimeHeld {
             occipitalElapsed += min(max(deltaTime, 0), 0.10)
         }
-        applyOccipitalMotion()
     }
 
     private func applyOccipitalMotion() {
@@ -4661,6 +4705,7 @@ final class RBCJourneyScene {
             }
             target.components.set(OpacityComponent(opacity: opacity))
         }
+        applyBrainstemVoyageComposition()
         applyBrainstemMotion()
     }
 
@@ -4673,8 +4718,6 @@ final class RBCJourneyScene {
                 brainstemVoyageTransitionProgress + min(max(deltaTime, 0), 0.10) / 1.10
             )
         }
-        applyBrainstemVoyageComposition()
-        applyBrainstemMotion()
     }
 
     private func configureBrainstemVoyageTransition(
@@ -4688,7 +4731,6 @@ final class RBCJourneyScene {
         brainstemVoyageTargetTransforms = layout.transforms
         brainstemVoyageTargetOpacities = layout.opacities
         brainstemVoyageTransitionProgress = motionHeld ? 1 : 0
-        applyBrainstemVoyageComposition()
     }
 
     private func brainstemVoyageLayout(
@@ -5272,7 +5314,6 @@ final class RBCJourneyScene {
                 flowRideCurrentBands.append((
                     band,
                     spec.route,
-                    spec.opacity,
                     spec.phase + Float(crossIndex) * 0.31
                 ))
             }
@@ -5799,22 +5840,25 @@ final class RBCJourneyScene {
         if flowRideRuntimeHeld {
             flowRideCapillaryFocusMix = flowRideRuntimeCapillaryFocus ? 1 : 0
         }
+        // SceneEvents advances elapsed state first; this cached full-scene
+        // update then applies the pose exactly once for every subsystem.
         applyFlowRidePose()
     }
 
     private func advanceFlowRideFrame(deltaTime: Float) {
         guard flowRideRuntimeActive else { return }
-        if !flowRideRuntimeHeld && flowRideRuntimeProofPhase == nil {
-            flowRideElapsed += min(max(deltaTime, 0), 0.10)
-            let focusTarget: Float = flowRideRuntimeCapillaryFocus ? 1 : 0
-            let focusStep = min(max(deltaTime, 0), 0.10) * 0.82
-            if flowRideCapillaryFocusMix < focusTarget {
-                flowRideCapillaryFocusMix = min(focusTarget, flowRideCapillaryFocusMix + focusStep)
-            } else if flowRideCapillaryFocusMix > focusTarget {
-                flowRideCapillaryFocusMix = max(focusTarget, flowRideCapillaryFocusMix - focusStep)
-            }
+        // updateFlowRide applies state/proof/held poses once. SceneEvents.Update
+        // owns the only live animation clock, and a held scene performs no
+        // redundant component writes while preserving its exact visible pose.
+        guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }
+        flowRideElapsed += min(max(deltaTime, 0), 0.10)
+        let focusTarget: Float = flowRideRuntimeCapillaryFocus ? 1 : 0
+        let focusStep = min(max(deltaTime, 0), 0.10) * 0.82
+        if flowRideCapillaryFocusMix < focusTarget {
+            flowRideCapillaryFocusMix = min(focusTarget, flowRideCapillaryFocusMix + focusStep)
+        } else if flowRideCapillaryFocusMix > focusTarget {
+            flowRideCapillaryFocusMix = max(focusTarget, flowRideCapillaryFocusMix - focusStep)
         }
-        applyFlowRidePose()
     }
 
     private func applyFlowRidePose() {
@@ -5824,38 +5868,14 @@ final class RBCJourneyScene {
         // moving the wearer's camera or entire world.
         let focusMix = flowRideCapillaryFocusMix * flowRideCapillaryFocusMix
             * (3 - 2 * flowRideCapillaryFocusMix)
-        let near: Float = -0.038
-        let span: Float = 0.112
-        for item in flowRideCells {
-            let progress = (item.phase + flowRideElapsed * 0.055)
-                .truncatingRemainder(dividingBy: 1)
-            item.entity.position = SIMD3<Float>(
-                near + progress * span,
-                item.origin.y,
-                item.origin.z
-            )
-            let tumble = flowRideElapsed * 1.05 + item.phase * .pi * 2
-            let drift = sin(flowRideElapsed * 1.8 + item.phase * 8) * 0.0004
-            item.entity.position.y += drift
-            let tumbleAxis = simd_normalize(SIMD3<Float>(0.16, 0.92, 0.36))
-            item.entity.orientation = item.baseOrientation
-                * simd_quatf(angle: tumble, axis: tumbleAxis)
-            let deformation = sin(tumble * 0.73)
-            item.entity.scale = item.baseScale * SIMD3<Float>(
-                1 + deformation * 0.08,
-                1 - deformation * 0.05,
-                1 - deformation * 0.03
-            )
-            item.entity.components.set(OpacityComponent(opacity: 1 - focusMix * 0.96))
-        }
-
         for item in flowRideRibbonSegments {
             let travel = (flowRideElapsed * 0.18 + item.laneOffset)
                 .truncatingRemainder(dividingBy: 1)
             let rawDistance = abs(item.progress - travel)
             let wrappedDistance = min(rawDistance, 1 - rawDistance)
             let wave = max(0, 1 - wrappedDistance / 0.16)
-            item.entity.components.set(OpacityComponent(opacity: 0.08 + wave * wave * wave * 0.92))
+            let radialPulse = 0.82 + wave * wave * wave * 0.58
+            item.entity.scale = [radialPulse, 1, radialPulse]
         }
 
         for item in flowRideCurrentBands {
@@ -5868,9 +5888,9 @@ final class RBCJourneyScene {
             let breathing = flowRideRuntimeHeld
                 ? 1
                 : 0.86 + sin(flowRideElapsed * 1.12 + item.phase * .pi * 2) * 0.14
-            item.entity.components.set(OpacityComponent(
-                opacity: item.baseOpacity * routeWeight * breathing
-            ))
+            let routeScale = 0.70 + routeWeight * 0.30
+            let pulseScale = routeScale * (0.92 + breathing * 0.08)
+            item.entity.scale = SIMD3<Float>(repeating: pulseScale)
         }
 
         for item in flowRideCurrentFronts {
@@ -5898,8 +5918,8 @@ final class RBCJourneyScene {
             let pulse = flowRideRuntimeHeld
                 ? 1
                 : 0.92 + sin(flowRideElapsed * 2.7 + item.phase * 8) * 0.08
-            item.entity.scale = [pulse, pulse, pulse]
-            item.entity.components.set(OpacityComponent(opacity: selected ? 0.94 : 0.035))
+            let selectedScale: Float = selected ? 1 : 0.72
+            item.entity.scale = SIMD3<Float>(repeating: pulse * selectedScale)
         }
 
         for item in flowRideJourneyCells {
@@ -5923,13 +5943,13 @@ final class RBCJourneyScene {
             )
             item.entity.orientation = routeOrientation * tumble
             let deformation = sin(flowRideElapsed * 1.7 + item.phase * 11)
-            item.entity.scale = item.baseScale * SIMD3<Float>(
+            let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
+            let routeScale: Float = selected ? 1 : 0.78
+            item.entity.scale = item.baseScale * routeScale * SIMD3<Float>(
                 1 + deformation * 0.10,
                 1 - deformation * 0.055,
                 1 - deformation * 0.045
             )
-            let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
-            item.entity.components.set(OpacityComponent(opacity: selected ? 1 : 0.08))
         }
 
         for item in flowRideMicrovascularGlints {
@@ -5959,12 +5979,10 @@ final class RBCJourneyScene {
             let cycle = (item.phase + flowRideElapsed * 0.14)
                 .truncatingRemainder(dividingBy: 1)
             let envelope = sin(cycle * .pi)
-            let scale = 0.58 + cycle * 1.02
+            let visibilityScale = max(0.025, focusMix * envelope * envelope)
+            let scale = (0.58 + cycle * 1.02) * visibilityScale
             item.entity.position = item.origin + SIMD3<Float>(0, 0, cycle * 0.072)
             item.entity.scale = [scale, scale, scale]
-            item.entity.components.set(OpacityComponent(
-                opacity: focusMix * envelope * envelope * 0.46
-            ))
         }
 
         for item in flowRideForkSegments {
@@ -5979,31 +5997,29 @@ final class RBCJourneyScene {
             let rawDistance = abs(item.progress - travel)
             let wrappedDistance = min(rawDistance, 1 - rawDistance)
             let wave = max(0, 1 - wrappedDistance / 0.18)
-            item.entity.components.set(OpacityComponent(
-                opacity: selectedWeight * (0.18 + wave * wave * 0.38)
-            ))
+            let routeScale = 0.62 + selectedWeight * 0.38
+            let waveScale = routeScale * (0.78 + wave * wave * 0.42)
+            item.entity.scale = [waveScale, 1, waveScale]
         }
 
-        let frontalOutlineOpacity: Float = switch flowRideRuntimeRoute {
-        case .overview: 0.72
+        let frontalRouteScale: Float = switch flowRideRuntimeRoute {
+        case .overview: 0.90
         case .frontal: 1.0
-        case .neighboring: 0.10
+        case .neighboring: 0.76
         }
-        flowRideFrontalDestinationRoot.components.set(OpacityComponent(opacity: frontalOutlineOpacity))
-        let neighborFieldOpacity: Float = switch flowRideRuntimeRoute {
-        case .overview: 0.58
-        case .frontal: 0.08
+        let neighborRouteScale: Float = switch flowRideRuntimeRoute {
+        case .overview: 0.88
+        case .frontal: 0.76
         case .neighboring: 1.0
         }
-        flowRideNeighborDestinationRoot.components.set(OpacityComponent(opacity: neighborFieldOpacity))
         let destinationPulse: Float = flowRideRuntimeHeld
             ? 1
             : 1 + sin(flowRideElapsed * 1.8) * 0.035
         let capillaryScale = 1 + focusMix * 0.56
         flowRideFrontalDestinationRoot.scale = [
-            destinationPulse * capillaryScale,
-            destinationPulse * capillaryScale,
-            destinationPulse * (1 + focusMix * 0.92)
+            destinationPulse * capillaryScale * frontalRouteScale,
+            destinationPulse * capillaryScale * frontalRouteScale,
+            destinationPulse * (1 + focusMix * 0.92) * frontalRouteScale
         ]
         let destinationTilt = simd_slerp(
             simd_quatf(angle: 0, axis: [0, 1, 0]),
@@ -6012,12 +6028,15 @@ final class RBCJourneyScene {
             focusMix
         )
         flowRideFrontalDestinationRoot.orientation = destinationTilt
-        flowRideFrontalOutlineRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
-        flowRideFrontalArterioleRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
+        let macroContextScale = 1 - focusMix * 0.24
+        flowRideFrontalOutlineRoot.scale = SIMD3<Float>(repeating: macroContextScale)
+        flowRideFrontalArterioleRoot.scale = SIMD3<Float>(repeating: macroContextScale)
         let neighborPulse: Float = flowRideRuntimeHeld
             ? 1
             : 1 + cos(flowRideElapsed * 1.65) * 0.028
-        flowRideNeighborDestinationRoot.scale = [neighborPulse, neighborPulse, neighborPulse]
+        flowRideNeighborDestinationRoot.scale = SIMD3<Float>(
+            repeating: neighborPulse * neighborRouteScale
+        )
 
         // Route selection is an explicit user-triggered spatial transfer. The
         // selected branch is recomposed around the stationary wearer instead
@@ -6035,11 +6054,7 @@ final class RBCJourneyScene {
             routePosition = [1.09, 0.08, 1.50]
             routeOrientation = simd_quatf(angle: 0.50, axis: [0, 1, 0])
         }
-        let focusedDestinationScale = SIMD3<Float>(
-            destinationPulse * capillaryScale,
-            destinationPulse * capillaryScale,
-            destinationPulse * (1 + focusMix * 0.92)
-        )
+        let focusedDestinationScale = flowRideFrontalDestinationRoot.scale
         let focusedCenter = destinationTilt.act(flowRideFrontalDestinationCenter * focusedDestinationScale)
         let focusWorldTarget = SIMD3<Float>(0.20, 1.40, -2.08)
         let focusedRoutePosition = focusWorldTarget - routeOrientation.act(focusedCenter)
@@ -6048,15 +6063,15 @@ final class RBCJourneyScene {
         flowRideRoot.orientation = routeOrientation
 
         flowRideCapillaryFocusTarget?.isEnabled = flowRideRuntimeRoute == .frontal
-        flowRideInteriorShellRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
-        flowRideForkFieldRoot.components.set(OpacityComponent(opacity: 1 - focusMix * 0.98))
-        flowRideDirectionFieldRoot.components.set(OpacityComponent(opacity: 1 - focusMix * 0.98))
+        let corridorContextScale = max(0.08, 1 - focusMix * 0.92)
+        flowRideInteriorShellRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
+        flowRideForkFieldRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
+        flowRideDirectionFieldRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
 
         // The local clock stops while held, so the vessel, ribbons, and cells
         // retain their exact pose instead of snapping to a generic still pose.
         let environmentPulse: Float = 1 + sin(flowRideElapsed * 1.2) * 0.006
         flowRideRoot.scale = [environmentPulse, environmentPulse, environmentPulse]
-        flowRideRoot.components.set(OpacityComponent(opacity: 1))
 
         if let rawTransitionProgress = flowRideGatewayTransitionProgress {
             let progress = min(max((rawTransitionProgress - 0.08) / 0.88, 0), 1)
@@ -6069,9 +6084,6 @@ final class RBCJourneyScene {
                 + (composedRoutePosition - gatewayLocus) * eased
             let emergenceScale = environmentPulse * (0.055 + eased * 0.945)
             flowRideRoot.scale = SIMD3<Float>(repeating: emergenceScale)
-            flowRideRoot.components.set(OpacityComponent(
-                opacity: max(0.01, eased)
-            ))
         }
     }
 
@@ -6389,32 +6401,6 @@ final class RBCJourneyScene {
             segment.position = center + [cos(angle) * radius, 0, sin(angle) * radius]
             segment.orientation = simd_quatf(angle: -angle, axis: [0, 1, 0])
             observationRoot.addChild(segment)
-        }
-    }
-
-    private func setAnimationsPaused(_ shouldPause: Bool) {
-        guard animationsPaused != shouldPause else { return }
-        animationsPaused = shouldPause
-        for controller in flowAnimationControllers {
-            if shouldPause {
-                controller.pause()
-            } else {
-                controller.resume()
-            }
-        }
-    }
-
-    private func playAllAnimations(in entity: Entity) {
-        for animation in entity.availableAnimations {
-            let controller = entity.playAnimation(
-                animation.repeat(),
-                transitionDuration: 0.18,
-                startsPaused: false
-            )
-            flowAnimationControllers.append(controller)
-        }
-        for child in entity.children {
-            playAllAnimations(in: child)
         }
     }
 
