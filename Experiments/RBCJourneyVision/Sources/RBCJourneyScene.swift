@@ -5599,9 +5599,12 @@ final class RBCJourneyScene {
             }
         }
 
-        let headMesh = MeshResource.generateCone(height: 0.046, radius: 0.015)
-        let tailMesh = MeshResource.generateCylinder(height: 0.072, radius: 0.0050)
-        let wakeMesh = MeshResource.generateCylinder(height: 0.120, radius: 0.0090)
+        // The lumen is room-scale, so the directional front must be readable
+        // from the stable observation origin. The larger head/wake preserves
+        // the same qualitative choreography; it is not a velocity scale.
+        let headMesh = MeshResource.generateCone(height: 0.082, radius: 0.024)
+        let tailMesh = MeshResource.generateCylinder(height: 0.120, radius: 0.0070)
+        let wakeMesh = MeshResource.generateCylinder(height: 0.200, radius: 0.0120)
         let routeSpecs: [(
             route: RBCFlowRideRoute,
             path: [SIMD3<Float>],
@@ -5628,13 +5631,13 @@ final class RBCJourneyScene {
                 front.name = "tangent-aligned-blood-current-front-not-velocity-field-\(spec.route.rawValue)-\(frontIndex)"
                 let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
                 head.name = "blood-current-direction-arrowhead"
-                head.position.y = 0.040
+                head.position.y = 0.066
                 let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
                 tail.name = "blood-current-direction-tail"
-                tail.position.y = -0.020
+                tail.position.y = -0.038
                 let wake = ModelEntity(mesh: wakeMesh, materials: [wakeMaterial])
                 wake.name = "blood-current-direction-fading-wake"
-                wake.position.y = -0.112
+                wake.position.y = -0.190
                 front.addChild(head)
                 front.addChild(tail)
                 front.addChild(wake)
