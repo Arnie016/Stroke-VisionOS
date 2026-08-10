@@ -107,6 +107,8 @@ struct StrokeJourneyLaunchView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.orange)
+                        .disabled(true)
+                        .accessibilityHint("Locked for the live doctor-presenter demo")
 
                         Button("Doctor presenter", systemImage: "stethoscope") {
                             Task { await enterSpatialCaseRoom(as: .clinician) }
