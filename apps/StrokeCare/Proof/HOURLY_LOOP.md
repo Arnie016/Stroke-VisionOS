@@ -977,15 +977,15 @@
   Scripts/deploy_xcat.zsh`, `git diff --check`, and the narrow visionOS
   Simulator Debug build passed. Signed Stroke Care `0.6 (29)` codesign-verified
   and installed on paired XCAT; the installed-app query confirmed build 29.
-  Foreground activation then timed out twice at the CoreDevice transport gate,
-  and the post-attempt process query contained no StrokeTime process. Partial
-  machine receipt: `Proof/xcat/20260810-124735/`.
+  Foreground activation timed out while waiting for the CoreDevice reply, but a
+  subsequent filtered process query confirmed StrokeTime running as PID 1097.
+  Machine receipt: `Proof/xcat/20260810-124735/RECEIPT.md`.
 - Verdict: `IMPROVED` — the verified binary now contains the complete showcase
   route instead of a brain-only proof route, with a deterministic handoff at
   3.2× scale.
-- Blocker: XCAT foreground activation is not proven for this build, and neither
-  the install receipt nor Simulator build proves wearer visibility, pinch
+- Blocker: the XCAT machine receipt does not prove wearer visibility, pinch
   acquisition, spatial audio, comfort, cross-app handoff, anatomical accuracy,
-  or clinical validity.
+  or clinical validity; RBCJourneyVision also lacks a device provisioning
+  profile in this checkout.
 - Next safe action: with XCAT awake and worn, open Stroke Care manually and
   verify role → case → Access point → timeline → 3.2× `Enter brain` once.
