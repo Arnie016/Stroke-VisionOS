@@ -269,6 +269,8 @@ final class RBCJourneyScene {
     private var flowRideRuntimeProofPhase: Float?
     private weak var flowRideCorticalScaffold: Entity?
     private var flowRideSpatialAtlasLocators: [String: Entity] = [:]
+    private var flowRideSpatialAtlasRoutePoints: [SIMD3<Float>] = []
+    private var flowRideSpatialAtlasRouteFronts: [Entity] = []
     private var frameUpdateSubscription: (any Cancellable)?
 
     private var portals: [Int: Entity] = [:]
@@ -1200,6 +1202,7 @@ final class RBCJourneyScene {
         // entities as the locators and is intentionally qualitative—not a
         // patient vessel, CFD streamline, or measured perfusion route.
         if routePoints.count > 1 {
+            flowRideSpatialAtlasRoutePoints = routePoints
             addTubePath(
                 routePoints,
                 to: flowRideSpatialAtlasRouteRoot,
@@ -1207,6 +1210,24 @@ final class RBCJourneyScene {
                 material: flowRideAtlasRouteMaterial(),
                 name: "geometry-derived-atlas-route-trace"
             )
+
+            let frontMaterial = flowRideAtlasRouteFrontMaterial()
+            let headMesh = MeshResource.generateCone(height: 0.018, radius: 0.0048)
+            let tailMesh = MeshResource.generateCylinder(height: 0.022, radius: 0.0014)
+            for index in 0..<3 {
+                let front = Entity()
+                front.name = "geometry-derived-atlas-route-front-\(index)"
+                let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
+                head.name = "atlas-route-direction-arrowhead"
+                head.position.y = 0.010
+                let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
+                tail.name = "atlas-route-direction-tail"
+                tail.position.y = -0.008
+                front.addChild(head)
+                front.addChild(tail)
+                flowRideSpatialAtlasRouteRoot.addChild(front)
+                flowRideSpatialAtlasRouteFronts.append(front)
+            }
         }
 
         flowRideSpatialAtlasRoot.isEnabled = false
@@ -1256,6 +1277,26 @@ final class RBCJourneyScene {
             if key == activeKey {
                 let pulse: Float = motionHeld ? 1 : 1 + sin(time * 2.2) * 0.12
                 locator.scale = [pulse, pulse, pulse]
+            }
+        }
+
+        // Three restrained fronts travel the same geometry-derived path as the
+        // route trace. They establish direction at atlas scale while the
+        // active locator establishes the wearer's current teaching position.
+        if !flowRideSpatialAtlasRoutePoints.isEmpty {
+            for (index, front) in flowRideSpatialAtlasRouteFronts.enumerated() {
+                let base = Float(index) / Float(flowRideSpatialAtlasRouteFronts.count)
+                let progress = motionHeld
+                    ? base
+                    : (base + time * 0.075).truncatingRemainder(dividingBy: 1)
+                let sample = sampleAtlasPolyline(
+                    flowRideSpatialAtlasRoutePoints,
+                    progress: progress
+                )
+                front.position = sample.point
+                front.orientation = simd_quatf(from: [0, 1, 0], to: sample.tangent)
+                let pulse: Float = motionHeld ? 1 : 1 + sin(time * 2.4 + Float(index)) * 0.10
+                front.scale = [pulse, pulse, pulse]
             }
         }
 
@@ -6343,6 +6384,31 @@ final class RBCJourneyScene {
         return target
     }
 
+    private func sampleAtlasPolyline(
+        _ points: [SIMD3<Float>],
+        progress: Float
+    ) -> (point: SIMD3<Float>, tangent: SIMD3<Float>) {
+        guard points.count > 1 else {
+            return (points.first ?? .zero, SIMD3<Float>(0, 1, 0))
+        }
+        let lengths = zip(points.dropFirst(), points).map { simd_length($0.0 - $0.1) }
+        let total = max(lengths.reduce(0, +), 0.0001)
+        var distance = min(max(progress, 0), 0.9999) * total
+        for index in lengths.indices {
+            let length = max(lengths[index], 0.0001)
+            if distance <= length {
+                let from = points[index]
+                let to = points[index + 1]
+                let tangent = simd_normalize(to - from)
+                return (from + (to - from) * (distance / length), tangent)
+            }
+            distance -= length
+        }
+        let from = points[points.count - 2]
+        let to = points[points.count - 1]
+        return (to, simd_normalize(to - from))
+    }
+
     private func addTubePath(
         _ points: [SIMD3<Float>],
         to parent: Entity,
@@ -6819,6 +6885,13 @@ final class RBCJourneyScene {
         glowMaterial(
             color: UIColor(red: 1.00, green: 0.72, blue: 0.28, alpha: 0.62),
             intensity: 1.05
+        )
+    }
+
+    private func flowRideAtlasRouteFrontMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.86, blue: 0.46, alpha: 0.94),
+            intensity: 2.15
         )
     }
 

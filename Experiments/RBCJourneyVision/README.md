@@ -307,6 +307,9 @@ One quiet continuous trace now connects those three named points, so the map
 reads as the route overview while the active outline identifies the red-cell
 lesson position. It remains a qualitative teaching path—not a patient vessel,
 CFD streamline, or measured perfusion route.
+Three low-density arrow fronts travel that trace while the journey is playing;
+Pause freezes them with the rest of the scene. This is the atlas-scale direction
+cue, distinct from the higher-density intraluminal fronts around the wearer.
 
 The strands, wake spacing, cell count, and small lane-speed differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear
