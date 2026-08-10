@@ -1214,23 +1214,28 @@ final class RBCJourneyScene {
             addTubePath(
                 routePoints,
                 to: flowRideSpatialAtlasRouteRoot,
-                radius: 0.0022,
+                // The route trace must survive the scale change from the
+                // inhabited lumen to this compact orientation atlas.
+                radius: 0.0032,
                 material: flowRideAtlasRouteMaterial(),
                 name: "geometry-derived-atlas-route-trace"
             )
 
             let frontMaterial = flowRideAtlasRouteFrontMaterial()
-            let headMesh = MeshResource.generateCone(height: 0.018, radius: 0.0048)
-            let tailMesh = MeshResource.generateCylinder(height: 0.022, radius: 0.0014)
+            // A head and a short wake read as a directional current, not as
+            // another locator bead. Both are rotated from the route tangent
+            // below, so the arrow remains meaningful at every branch.
+            let headMesh = MeshResource.generateCone(height: 0.032, radius: 0.0082)
+            let tailMesh = MeshResource.generateCylinder(height: 0.038, radius: 0.0022)
             for index in 0..<3 {
                 let front = Entity()
                 front.name = "geometry-derived-atlas-route-front-\(index)"
                 let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
                 head.name = "atlas-route-direction-arrowhead"
-                head.position.y = 0.010
+                head.position.y = 0.017
                 let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
                 tail.name = "atlas-route-direction-tail"
-                tail.position.y = -0.008
+                tail.position.y = -0.017
                 front.addChild(head)
                 front.addChild(tail)
                 flowRideSpatialAtlasRouteRoot.addChild(front)
