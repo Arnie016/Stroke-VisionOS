@@ -48,6 +48,9 @@ checks = {
             "CFBundleURLSchemes": ["rbcjourney"],
         }
     ],
+    "supports_multiple_scenes": info.get("UIApplicationSceneManifest", {}).get(
+        "UIApplicationSupportsMultipleScenes"
+    ) is True,
     "compiled_asset_catalog": (bundle / "Assets.car").is_file(),
     "flow_audio": (bundle / "FlowBed.wav").is_file(),
     "provenance_manifest": (bundle / "portal-anchor-manifest.json").is_file(),

@@ -26,6 +26,8 @@ targets:
             CFBundleURLSchemes:
               - rbcjourney
         NSHandsTrackingUsageDescription: Open and close educational vessel portals with deliberate two-hand gestures.
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
         UIApplicationSupportsIndirectInputEvents: true
     sources:
       - path: Sources
@@ -75,7 +77,6 @@ targets:
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 1
         INFOPLIST_FILE: Resources/RBCJourneyVision-Info.plist
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: true
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: 7
 

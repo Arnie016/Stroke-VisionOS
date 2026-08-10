@@ -191,6 +191,15 @@ checks = {
             '"entry_url_scheme"', '"CFBundleURLTypes"', '"CFBundleURLSchemes": ["rbcjourney"]',
         ])
     ),
+    "immersive_multi_scene_manifest": (
+        all(token in info_plist_source for token in [
+            "UIApplicationSceneManifest", "UIApplicationSupportsMultipleScenes", "<true/>",
+        ])
+        and all(token in built_bundle_verifier for token in [
+            '"supports_multiple_scenes"', '"UIApplicationSceneManifest"',
+            '"UIApplicationSupportsMultipleScenes"',
+        ])
+    ),
     "full_immersion": ".immersionStyle(selection: $immersionStyle, in: .full)" in app,
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
     "manual_station_navigation": all(token in model for token in ["func select", "func back", "func advance", "func restart"]),
