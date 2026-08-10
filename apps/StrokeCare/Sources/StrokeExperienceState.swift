@@ -1962,7 +1962,8 @@ final class StrokeExperienceState: ObservableObject {
         clinicianToolKitVisible = true
         anatomyPresentation = .transparent
         cortexOpacity = 0.58
-        spatialZoom = 1.34
+        setAnatomyViewpoint(.lateralA, reduceMotion: true)
+        spatialZoom = 1.12
     }
 
     func prepareClinicianLayerHierarchyProof() {

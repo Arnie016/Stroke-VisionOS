@@ -963,3 +963,29 @@
 - Next safe action: on XCAT, enter `Access`, pinch the orange tethered marker,
   then move Visual Detail through Simplified, Standard, and Full and confirm
   that one reversible access reference remains visible throughout.
+
+## 2026-08-10 12:52 SGT — restore the full showcase entry and brain handoff
+
+- Target: stop launching directly into a proof-only brain state and preserve
+  the complete role → fictional case → explanation flow for the showcase.
+- Bounded action: changed the guarded device route to `--hackathon-demo`,
+  removed the procedural case bust while retaining the case-history
+  constellation, exposed the existing scale-gated `Enter brain` handoff, and
+  kept the revised six-checkpoint timeline, off-surface points, right reference
+  rail, and reversible craniotomy composition in the same build.
+- Evidence: `python3 Tests/verify_contract.py`, `zsh -n
+  Scripts/deploy_xcat.zsh`, `git diff --check`, and the narrow visionOS
+  Simulator Debug build passed. Signed Stroke Care `0.6 (29)` codesign-verified
+  and installed on paired XCAT; the installed-app query confirmed build 29.
+  Foreground activation then timed out twice at the CoreDevice transport gate,
+  and the post-attempt process query contained no StrokeTime process. Partial
+  machine receipt: `Proof/xcat/20260810-124735/`.
+- Verdict: `IMPROVED` — the verified binary now contains the complete showcase
+  route instead of a brain-only proof route, with a deterministic handoff at
+  3.2× scale.
+- Blocker: XCAT foreground activation is not proven for this build, and neither
+  the install receipt nor Simulator build proves wearer visibility, pinch
+  acquisition, spatial audio, comfort, cross-app handoff, anatomical accuracy,
+  or clinical validity.
+- Next safe action: with XCAT awake and worn, open Stroke Care manually and
+  verify role → case → Access point → timeline → 3.2× `Enter brain` once.

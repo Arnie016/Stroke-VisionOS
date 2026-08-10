@@ -17,7 +17,7 @@ readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
 
 case "${PROOF_ROUTE}" in
-    --proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-family-make-space-purpose) ;;
+    --proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose) ;;
     *)
         print -u2 -- "SIMULATOR_PROOF=FAIL unsupported route ${PROOF_ROUTE}"
         exit 64
@@ -36,7 +36,8 @@ xcrun simctl bootstatus "${SIMULATOR_ID}" -b
 # competitors before installing and launching this exact build candidate.
 for competing_bundle in \
     com.arnav.RBCJourneyVision \
-    com.arnav.WaterfallPortalVision
+    com.arnav.WaterfallPortalVision \
+    com.arnav.SpatialPropertiesLab
 do
     xcrun simctl terminate "${SIMULATOR_ID}" "${competing_bundle}" >/dev/null 2>&1 || true
 done
@@ -58,7 +59,9 @@ if ! kill -0 "${pid}" 2>/dev/null; then
 fi
 
 xcrun simctl io "${SIMULATOR_ID}" screenshot "${OUTPUT_PATH}"
-python3 "${APP_ROOT}/Tests/verify_proof_image.py" "${OUTPUT_PATH}"
+python3 "${APP_ROOT}/Tests/verify_proof_image.py" \
+    "${OUTPUT_PATH}" \
+    --route="${PROOF_ROUTE}"
 
 if ! kill -0 "${pid}" 2>/dev/null; then
     print -u2 -- "SIMULATOR_PROOF=FAIL StrokeTime exited after capture pid=${pid}"

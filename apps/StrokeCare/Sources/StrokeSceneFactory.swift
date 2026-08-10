@@ -763,8 +763,17 @@ enum StrokeSceneFactory {
         // space halo, while staying readable in both opaque and transparent
         // presentations.
         let brainRadii = (brainBounds.max - brainBounds.min) / 2 * 1.025
-        let registeredRegionPoints = regionPointDirections.map { direction in
+        let registeredRegionSourcePoints = regionPointDirections.map { direction in
             brainCenter + brainRadii * simd_normalize(direction)
+        }
+        let registeredRegionPoints = zip(
+            registeredRegionSourcePoints,
+            regionPointDirections
+        ).map { source, direction in
+            // Lift the invitation 12 mm off the cortex. A thin tether below
+            // preserves the authored relationship while keeping the gaze and
+            // pinch target clear of the dense brain collision proxy.
+            source + simd_normalize(direction) * 0.012
         }
         let cortexLayer = registered.findEntity(named: cortexLayerName) ?? registered
         let arteriesLayer = registered.findEntity(named: arteriesLayerName) ?? registered
@@ -788,27 +797,54 @@ enum StrokeSceneFactory {
             ? simd_normalize(clotToCortex)
             : simd_normalize(SIMD3<Float>(0.55, 0.48, 0.62))
         let affectedSurfaceMarker = brainCenter + brainRadii * affectedDirection * 1.018
-        let registeredFlowPoints = procedurePointPositions.enumerated().map { index, position in
+        let registeredFlowSourcePoints = procedurePointPositions.enumerated().map { index, position in
             // Keep the blockage marker 3 mm beyond the loaded clot surface so
             // it remains visibly attached instead of being hidden inside it.
             index == 2 ? clotSurfaceMarker : position
+        }
+        let registeredFlowPoints = registeredFlowSourcePoints.map { source in
+            let radial = source - brainCenter
+            let direction = simd_length_squared(radial) > 0.000_000_1
+                ? simd_normalize(radial)
+                : SIMD3<Float>(0, 0, 1)
+            return source + direction * 0.012
         }
 
         let regionPointAnchor = Entity()
         regionPointAnchor.name = regionPointAnchorName
         registered.addChild(regionPointAnchor)
-        regionPointAnchor.addChild(makePointField(
+        let regionPointField = makePointField(
             name: regionPointFieldName,
             points: registeredRegionPoints,
             labels: regionPointLabels,
             material: careMaterial(opacity: 0.92)
-        ))
-        arteriesLayer.addChild(makePointField(
+        )
+        regionPointAnchor.addChild(regionPointField)
+        for index in registeredRegionPoints.indices {
+            guard let point = regionPointField.findEntity(
+                named: "\(regionPointFieldName)-point-\(index)"
+            ) else { continue }
+            addPointInvitationTether(
+                to: point,
+                sourceOffset: registeredRegionSourcePoints[index] - registeredRegionPoints[index]
+            )
+        }
+        let procedurePointField = makePointField(
             name: procedurePointFieldName,
             points: registeredFlowPoints,
             labels: procedurePointLabels,
             material: warningMaterial(opacity: 0.92)
-        ))
+        )
+        arteriesLayer.addChild(procedurePointField)
+        for index in registeredFlowPoints.indices {
+            guard let point = procedurePointField.findEntity(
+                named: "\(procedurePointFieldName)-point-\(index)"
+            ) else { continue }
+            addPointInvitationTether(
+                to: point,
+                sourceOffset: registeredFlowSourcePoints[index] - registeredFlowPoints[index]
+            )
+        }
         arteriesLayer.addChild(makeRegisteredFlowArrows(points: registeredFlowPoints))
 
         let accessPointAnchor = Entity()
@@ -1932,6 +1968,34 @@ enum StrokeSceneFactory {
         return field
     }
 
+    /// Keeps a lifted invitation visually registered to its authored source
+    /// without adding another collision or label surface. This makes all
+    /// lesson points reachable while the brain remains the dominant object.
+    private static func addPointInvitationTether(
+        to point: Entity,
+        sourceOffset: SIMD3<Float>
+    ) {
+        let distance = simd_length(sourceOffset)
+        guard distance > 0.000_1 else { return }
+
+        let tether = ModelEntity(
+            mesh: .generateCylinder(height: distance, radius: 0.00045),
+            materials: [selectedLessonPointMaterial(opacity: 0.30)]
+        )
+        tether.name = "lesson-point-invitation-tether"
+        tether.position = sourceOffset * 0.5
+        tether.orientation = orientation(from: .zero, to: sourceOffset)
+        point.addChild(tether)
+
+        let sourcePin = ModelEntity(
+            mesh: .generateSphere(radius: 0.0018),
+            materials: [selectedLessonPointMaterial(opacity: 0.44)]
+        )
+        sourcePin.name = "lesson-point-invitation-source"
+        sourcePin.position = sourceOffset
+        point.addChild(sourcePin)
+    }
+
     /// The single access-story point needs to read as a deliberate invitation
     /// during a three-minute demo. A soft halo plus four short registration
     /// marks stays non-graphic, inherits the authored access anchor, and adds
@@ -2298,40 +2362,53 @@ enum StrokeSceneFactory {
         setAccessPose(accessBoneFlapName, openness: boneOpen)
         setAccessPose(accessDuraFlapName, openness: duraOpen)
         openCranialReview?.isEnabled = showsOpenCranialReview
-        accessScalpLayer?.isEnabled = showsOpenCranialReview
-        accessBoneLayer?.isEnabled = showsOpenCranialReview
-        accessDuraLayer?.isEnabled = showsOpenCranialReview &&
-            experience.presenterTeachingBeat.rawValue >= StrokePresenterTeachingBeat.protectiveCovering.rawValue
+        // Detail is expressed through authored layer disclosure, not by
+        // alpha-stacking three dense PBR shells. The active checkpoint stays
+        // legible at Simplified; Standard adds the supporting boundary; Full
+        // shows the complete separated cutaway. This is a visual-detail
+        // preference, never an inferred anxiety state or a geometry claim.
+        let accessBeat = experience.presenterTeachingBeat
+        let showsAccessScalp: Bool
+        let showsAccessBone: Bool
+        let showsAccessDura: Bool
+        switch accessBeat {
+        case .discussAccess:
+            showsAccessScalp = false
+            showsAccessBone = true
+            showsAccessDura = false
+        case .protectiveCovering:
+            showsAccessScalp = false
+            showsAccessBone = experience.detailLevel != .calm
+            showsAccessDura = true
+        case .explainPurpose, .teamChecks:
+            showsAccessScalp = experience.detailLevel == .scholar
+            showsAccessBone = experience.detailLevel != .calm
+            showsAccessDura = true
+        case .explainClosure:
+            // Closure returns to one readable exterior boundary. Hidden
+            // internal layers remain in the authored closed pose beneath it.
+            showsAccessScalp = true
+            showsAccessBone = false
+            showsAccessDura = false
+        case .confirmContext:
+            showsAccessScalp = false
+            showsAccessBone = false
+            showsAccessDura = false
+        }
+        accessScalpLayer?.isEnabled = showsOpenCranialReview && showsAccessScalp
+        accessBoneLayer?.isEnabled = showsOpenCranialReview && showsAccessBone
+        accessDuraLayer?.isEnabled = showsOpenCranialReview && showsAccessDura
         accessEdemaLayer?.isEnabled = showsOpenCranialReview && [
             StrokePresenterTeachingBeat.explainPurpose,
             .teamChecks
         ].contains(experience.presenterTeachingBeat) && experience.detailLevel == .scholar
 
-        // One authored assembly supports all three explicit visual-detail
-        // bindings. Simplified keeps the reference translucent and calm;
-        // Standard restores more material separation; Full presents the source
-        // geometry at its strongest legible opacity. This is presentation
-        // density, not three different meshes or a patient-specific operation.
-        let accessScalpOpacity: Float
-        let accessBoneOpacity: Float
-        let accessDuraOpacity: Float
-        switch experience.detailLevel {
-        case .calm:
-            accessScalpOpacity = 0.32
-            accessBoneOpacity = 0.58
-            accessDuraOpacity = 0.28
-        case .guided:
-            accessScalpOpacity = 0.66
-            accessBoneOpacity = 0.82
-            accessDuraOpacity = 0.60
-        case .scholar:
-            accessScalpOpacity = 0.92
-            accessBoneOpacity = 1.00
-            accessDuraOpacity = 0.88
-        }
-        accessScalpLayer?.components.set(OpacityComponent(opacity: accessScalpOpacity))
-        accessBoneLayer?.components.set(OpacityComponent(opacity: accessBoneOpacity))
-        accessDuraLayer?.components.set(OpacityComponent(opacity: accessDuraOpacity))
+        // Preserve each asset's authored RealityKit material. Wrapper opacity
+        // stays opaque so cutaway depth is stable on device; detail changes
+        // which real layer is present instead of merely recolouring it.
+        accessScalpLayer?.components.set(OpacityComponent(opacity: 1))
+        accessBoneLayer?.components.set(OpacityComponent(opacity: 1))
+        accessDuraLayer?.components.set(OpacityComponent(opacity: 1))
         // This app's fictional case is ischemic. The hemorrhage reference stays
         // load-auditable but cannot appear in this story.
         accessHematomaLayer?.isEnabled = false

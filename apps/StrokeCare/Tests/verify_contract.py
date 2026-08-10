@@ -571,18 +571,19 @@ require(all(token in scene for token in (
 )), "RealityKit point and flow presentation does not respond to visual detail")
 require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
-require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "showLabel ? 252 : 65" in immersive and "labelsVisible = false" in immersive, "three-act gaze timeline lacks readable active expansion, timed fade, enlarged targets, or quiet inactive nodes")
+require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "labelsVisible = false" in immersive and "let showsContext = labelsVisible || hoveredStep != nil" in immersive, "three-act gaze timeline lacks quiet nodes or hover/selection context")
 require(all(token in immersive for token in (
     "ForEach(StrokePresenterTeachingBeat.allCases)",
     "experience.selectPresenterTeachingBeat(beat)",
     "SpatialPresenterTeachingBeatNode",
-    "showLabel ? 226 : 58",
+    ".frame(minWidth: 64, minHeight: 64)",
+    ".frame(width: 64, height: 64)",
     "@State private var hoveredBeat",
     "let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat",
-    ".fill(.ultraThinMaterial)",
-    ".opacity(0.58)",
+    "let showsContext = labelsVisible || hoveredBeat != nil",
+    "Text(\"\\(displayedBeat.title) · \\(displayedBeat.summary)\")",
     "Color(red: 0.86, green: 0.31, blue: 0.34)",
-)), "doctor presenter timeline does not expose six compact direct checkpoints")
+)), "doctor presenter timeline does not expose six stable direct checkpoints with context above")
 require("(teachingTimelineID, [0, 1.13, -0.86]" in immersive, "teaching timeline is not staged in the central-lower demo field")
 require(all(token in scene for token in (
     "addAccessTargetHighlight(to: accessPoint, sourceOffset: [0, 0, -0.022])",
@@ -593,22 +594,30 @@ require(all(token in scene for token in (
     'sourcePin.name = "clinician-access-target-source"',
 )), "craniotomy access point is missing its non-graphic halo, tether, or registration marks")
 require("let accessInvitationMarker = accessSourceMarker + SIMD3<Float>(0, 0, 0.022)" in scene, "access invitation is still visually embedded in the anatomy")
+require(all(token in scene for token in (
+    "source + simd_normalize(direction) * 0.012",
+    "return source + direction * 0.012",
+    "addPointInvitationTether(",
+    'tether.name = "lesson-point-invitation-tether"',
+    'sourcePin.name = "lesson-point-invitation-source"',
+)), "region or flow invitations remain embedded in dense anatomy without source tethers")
 require("maximumDistance: Float = 0.036" in scene, "nearest visible lesson-point fallback was not enlarged by twenty percent")
 require("let revealAll = experience.pointField != .craniotomy" in scene, "region or flow point families still hide unselected selectable markers")
 require("activatePresenterAccessStory" in state and "pointField = .craniotomy" in state and "selectDetailLevel(.scholar)" in state, "top Access checkpoint does not enter the craniotomy teaching family")
 require("experience.detailLevel == .scholar &&\n            experience.pointField == .craniotomy" not in scene, "craniotomy reference disappears when visual detail leaves Full")
 require(all(token in scene for token in (
-    "let accessScalpOpacity: Float",
-    "accessScalpOpacity = 0.32",
-    "accessScalpOpacity = 0.66",
-    "accessScalpOpacity = 0.92",
-    "accessBoneOpacity = 0.58",
-    "accessBoneOpacity = 0.82",
-    "accessBoneOpacity = 1.00",
-    "accessDuraOpacity = 0.28",
-    "accessDuraOpacity = 0.60",
-    "accessDuraOpacity = 0.88",
-)), "craniotomy assembly does not visibly adapt across all three visual-detail tiers")
+    "let showsAccessScalp: Bool",
+    "let showsAccessBone: Bool",
+    "let showsAccessDura: Bool",
+    "showsAccessBone = experience.detailLevel != .calm",
+    "showsAccessScalp = experience.detailLevel == .scholar",
+    "accessScalpLayer?.isEnabled = showsOpenCranialReview && showsAccessScalp",
+    "accessBoneLayer?.isEnabled = showsOpenCranialReview && showsAccessBone",
+    "accessDuraLayer?.isEnabled = showsOpenCranialReview && showsAccessDura",
+    "accessScalpLayer?.components.set(OpacityComponent(opacity: 1))",
+    "accessBoneLayer?.components.set(OpacityComponent(opacity: 1))",
+    "accessDuraLayer?.components.set(OpacityComponent(opacity: 1))",
+)), "craniotomy assembly does not disclose stable authored layers across all three visual-detail tiers")
 require(all(token in scene for token in (
     "accessEdemaLayer?.isEnabled = showsOpenCranialReview && [",
     "].contains(experience.presenterTeachingBeat) && experience.detailLevel == .scholar",
@@ -706,10 +715,16 @@ require(all(token in immersive for token in (
     "case medications",
     "case outcomes",
     "case guidelines",
-    "self == .anatomy || self == .imaging",
+    ".frame(minHeight: 60)",
+    "lane.arcInset",
     "experience.selectedPointEntityName != nil",
-    'Image(systemName: "lock.fill")',
-)), "Scholar rail does not expose the reviewed reference lanes or visibly lock unsupported lanes")
+    'return "Select point"',
+    'return "Coming soon"',
+    "experience.selectLessonFamily(.craniotomy)",
+    "experience.selectCareDiscussion(.medicineReview)",
+    "experience.selectEvidence(guideline)",
+    "openWindow(id: StrokeSpace.evidence)",
+)), "Scholar rail lacks large targets, point-gated imaging, or truthful authored actions")
 require(all(token in state for token in (
     "enum StrokeAnatomyFocus",
     'case whole = "Whole"',
@@ -773,6 +788,25 @@ require("--proof-clinician-pressure" in launch, "deterministic presenter proof r
 require("--proof-clinician-six-beat-timeline" in launch and "prepareClinicianSixBeatTimelineProof" in state and "selectPresenterTeachingBeat(.teamChecks" in state, "deterministic six-beat presenter timeline proof is missing")
 require("--proof-clinician-protective-covering" in launch and "prepareClinicianProtectiveCoveringProof" in state and "selectPresenterTeachingBeat(.protectiveCovering" in state, "deterministic protective-covering composition proof is missing")
 require("--proof-clinician-craniotomy" in launch and "prepareClinicianCraniotomyStoryProof" in state, "deterministic conceptual craniotomy-story proof is missing")
+require(
+    'readonly PROOF_ROUTE="--hackathon-demo"' in xcat_deploy,
+    "XCAT deployment bypasses the complete showcase journey",
+)
+require(
+    "caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = false" in immersive,
+    "the unreviewed procedural case bust is still visible",
+)
+require(
+    "setAnatomyViewpoint(.lateralA, reduceMotion: true)" in state
+    and "spatialZoom = 1.12" in state,
+    "the craniotomy proof no longer uses the bounded lateral demo framing",
+)
+require(
+    "experience.isInteriorPortalAvailable" in immersive
+    and 'URL(string: "rbcjourney://enter")' in immersive
+    and '"Enter brain"' in immersive,
+    "room-scale magnification does not expose the separate inside-brain handoff",
+)
 require(all(token in scene for token in (
     'openCranialReviewRootName = "registered-open-cranial-review-root"',
     'importedAccessScalpName = "scalp_access_closure_registered_conceptual_v1"',
@@ -814,7 +848,7 @@ require("BRAIN_REVEAL_RIG" in houdini_builder and "OCCLUSION_RADIUS_PROFILE" in 
 require("XCAT_DEPLOY=BLOCKED" in xcat_deploy and "XCAT_DEPLOY=PASS" in xcat_deploy, "guarded XCAT deployment receipt is missing")
 require("BLOCKED.md" in xcat_deploy and "device-list.json" in xcat_deploy and "Tunnel state:" in xcat_deploy, "blocked XCAT reachability does not create a dated machine receipt")
 require("Install command: PASS" in xcat_deploy and "Running-process query: PASS" in xcat_deploy, "XCAT machine evidence ladder is incomplete")
-require("--proof-main-overview" in xcat_deploy and "-derivedDataPath" in xcat_deploy and "WEARER_RESULT.md" in xcat_deploy and "NOT RUN" in xcat_deploy, "XCAT launch is not tied to the deterministic interactive overview route and receipt")
+require("--hackathon-demo" in xcat_deploy and "-derivedDataPath" in xcat_deploy and "WEARER_RESULT.md" in xcat_deploy and "NOT RUN" in xcat_deploy, "XCAT launch is not tied to the complete showcase journey and receipt")
 require("LEGIBILITY" in xcat_acceptance and "GESTURE" in xcat_acceptance and "COMFORT" in xcat_acceptance and "COMPREHENSION" in xcat_acceptance, "XCAT wearer acceptance protocol is incomplete")
 
 if failures:

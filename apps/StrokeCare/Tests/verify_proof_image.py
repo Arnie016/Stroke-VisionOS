@@ -1,18 +1,60 @@
 #!/usr/bin/env python3
-"""Reject blank or visually empty Simulator proof PNGs without third-party packages."""
+"""Reject blank, visually empty, or wrong-route Simulator proof PNGs."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import math
+import re
 import struct
+import subprocess
 import sys
+import unicodedata
 import zlib
 from pathlib import Path
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+# These are stable labels rendered by each supported deterministic route. The
+# shortened "questions to as" stem tolerates Vision reading the small final
+# glyph as either K or I while still rejecting an empty Simulator room.
+ROUTE_TEXT_TOKENS = {
+    "--proof-spatial-intake": ("patient files",),
+    "--proof-pressure": ("pressure", "questions to as"),
+    "--proof-family-pressure-story": ("pressure", "questions to as"),
+    "--proof-clinician-pressure-story": (
+        "presentation checklist",
+        "clinician lens",
+    ),
+    "--proof-clinician-craniotomy": ("generic craniotomy", "scholar references"),
+    "--proof-family-make-space-purpose": ("make space", "questions to as"),
+}
+
+OCR_SWIFT_SOURCE = r"""
+import Foundation
+import ImageIO
+import Vision
+
+let url = URL(fileURLWithPath: CommandLine.arguments[1])
+guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+      let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+    exit(2)
+}
+
+let request = VNRecognizeTextRequest()
+request.recognitionLevel = .accurate
+request.recognitionLanguages = ["en-US"]
+request.usesLanguageCorrection = false
+try VNImageRequestHandler(cgImage: image).perform([request])
+
+for observation in request.results ?? [] {
+    if let candidate = observation.topCandidates(1).first {
+        print(candidate.string)
+    }
+}
+"""
 
 
 def paeth(a: int, b: int, c: int) -> int:
@@ -141,6 +183,33 @@ def metrics(width: int, height: int, channels: int, pixels: bytes) -> dict[str, 
     }
 
 
+def recognize_text(path: Path) -> str:
+    """Use the macOS Vision framework already present beside simctl/Xcode."""
+    try:
+        result = subprocess.run(
+            ["xcrun", "swift", "-e", OCR_SWIFT_SOURCE, str(path.resolve())],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as error:
+        raise RuntimeError("Vision OCR could not be started") from error
+    if result.returncode != 0:
+        raise RuntimeError(f"Vision OCR exited {result.returncode}")
+    return result.stdout
+
+
+def normalize_text(text: str) -> str:
+    ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    return " ".join(re.findall(r"[a-z0-9]+", ascii_text.casefold()))
+
+
+def missing_route_tokens(route: str, recognized_text: str) -> list[str]:
+    normalized = normalize_text(recognized_text)
+    return [token for token in ROUTE_TEXT_TOKENS[route] if token not in normalized]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("image", type=Path)
@@ -150,6 +219,7 @@ def main() -> int:
     parser.add_argument("--min-luma-std", type=float, default=8.0)
     parser.add_argument("--min-centre-nonblack", type=float, default=0.08)
     parser.add_argument("--min-centre-colour", type=float, default=0.003)
+    parser.add_argument("--route", choices=sorted(ROUTE_TEXT_TOKENS))
     args = parser.parse_args()
 
     try:
@@ -171,12 +241,32 @@ def main() -> int:
     if measured["centre_colour_ratio"] < args.min_centre_colour:
         failures.append("colourless-centre")
 
+    route_summary = ""
+    if args.route:
+        expected_tokens = ROUTE_TEXT_TOKENS[args.route]
+        try:
+            missing_tokens = missing_route_tokens(args.route, recognize_text(args.image))
+        except RuntimeError as error:
+            failures.append("route-ocr-unavailable")
+            route_summary = f" route={args.route} route_ocr_error={error}"
+        else:
+            matched_count = len(expected_tokens) - len(missing_tokens)
+            route_summary = (
+                f" route={args.route} route_tokens={matched_count}/{len(expected_tokens)}"
+            )
+            if missing_tokens:
+                failures.append("wrong-route-content")
+                route_summary += " missing_route_tokens=" + "+".join(
+                    token.replace(" ", "_") for token in missing_tokens
+                )
+
     digest = hashlib.sha256(args.image.read_bytes()).hexdigest()
     summary = (
         f"width={width} height={height} bytes={byte_count} "
         f"luma_std={measured['luma_std']:.2f} "
         f"centre_nonblack={measured['centre_nonblack_ratio']:.4f} "
         f"centre_colour={measured['centre_colour_ratio']:.4f} sha256={digest}"
+        f"{route_summary}"
     )
     if failures:
         print(f"PROOF_IMAGE=FAIL reasons={','.join(failures)} {summary}", file=sys.stderr)

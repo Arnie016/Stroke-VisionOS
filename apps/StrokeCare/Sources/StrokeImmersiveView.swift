@@ -421,7 +421,11 @@ struct StrokeImmersiveView: View {
                         let inReview = experience.spatialPhase == .caseReview
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary
                         caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview
-                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview
+                        // Keep the case-history constellation, but retire the
+                        // procedural bust placeholder. The dossier and its
+                        // connected facts are the spatial case representation
+                        // until a reviewed fictional-person asset exists.
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = false
                         StrokeSceneFactory.updateSpatialCaseIntake(
                             root: caseRoom,
                             experience: experience
@@ -1189,6 +1193,7 @@ private struct SpatialRoleControls: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let role: StrokeAudienceLens
@@ -1297,6 +1302,10 @@ private struct SpatialRoleControls: View {
                     selected: experience.questionPlacementArmed
                 ) {
                     experience.toggleQuestionPlacement()
+                }
+
+                if experience.isInteriorPortalAvailable {
+                    brainInteriorButton(accent: .orange)
                 }
 
                 exitButton
@@ -1466,6 +1475,10 @@ private struct SpatialRoleControls: View {
                 ) {
                     experience.advanceJourney()
                 }
+
+                if experience.isInteriorPortalAvailable {
+                    brainInteriorButton(accent: .mint)
+                }
                 exitButton
             }
 
@@ -1489,6 +1502,20 @@ private struct SpatialRoleControls: View {
                     .accessibilityLabel("Generic separated skull reference. Cross-source alignment requires specialist review.")
             }
         }
+    }
+
+    private func brainInteriorButton(accent: Color) -> some View {
+        bubbleButton(
+            "Enter brain",
+            systemImage: "arrow.down.right.and.arrow.up.left",
+            accent: accent,
+            selected: true
+        ) {
+            guard let url = URL(string: "rbcjourney://enter") else { return }
+            openURL(url)
+        }
+        .accessibilityLabel("Enter the inside-the-brain journey")
+        .accessibilityHint("Opens the separate guided blood-vessel experience after room-scale magnification")
     }
 
     private var consentControls: some View {
@@ -1668,6 +1695,7 @@ private struct StrokeTeachingImagingDrawer: View {
 private struct StrokeScholarReferenceRail: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -1681,16 +1709,30 @@ private struct StrokeScholarReferenceRail: View {
                     Button {
                         select(lane)
                     } label: {
-                        row(for: lane, isSelected: isSelected(lane), isEnabled: true)
+                        row(
+                            for: lane,
+                            isSelected: isSelected(lane),
+                            isEnabled: true,
+                            unavailableStatus: nil
+                        )
                     }
                     .buttonStyle(.plain)
                     .hoverEffect(.highlight)
-                    .contentShape(Rectangle())
+                    .frame(minHeight: 60)
+                    .contentShape(RoundedRectangle(cornerRadius: 14))
+                    .padding(.leading, lane.arcInset)
                     .accessibilityLabel(lane.title)
                     .accessibilityValue(isSelected(lane) ? "Selected" : "Available")
                 } else {
-                    row(for: lane, isSelected: false, isEnabled: false)
-                        .opacity(0.38)
+                    row(
+                        for: lane,
+                        isSelected: false,
+                        isEnabled: false,
+                        unavailableStatus: unavailableStatus(for: lane)
+                    )
+                        .frame(minHeight: 60)
+                        .padding(.leading, lane.arcInset)
+                        .opacity(0.62)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(unavailableLabel(for: lane))
                 }
@@ -1752,7 +1794,8 @@ private struct StrokeScholarReferenceRail: View {
     private func row(
         for lane: StrokeScholarReferenceLane,
         isSelected: Bool,
-        isEnabled: Bool
+        isEnabled: Bool,
+        unavailableStatus: String?
     ) -> some View {
         HStack(spacing: 9) {
             Image(systemName: lane.systemImage)
@@ -1771,10 +1814,11 @@ private struct StrokeScholarReferenceRail: View {
                 Image(systemName: isSelected ? "checkmark" : "chevron.right")
                     .font(.caption2.weight(.black))
                     .foregroundStyle(isSelected ? Color.mint : Color.white.opacity(0.38))
-            } else {
-                Image(systemName: "lock.fill")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.52))
+            } else if let unavailableStatus {
+                Text(unavailableStatus.uppercased())
+                    .font(.system(size: 9, weight: .black, design: .rounded))
+                    .tracking(0.45)
+                    .foregroundStyle(.white.opacity(0.56))
             }
         }
         .padding(.horizontal, 9)
@@ -1791,7 +1835,11 @@ private struct StrokeScholarReferenceRail: View {
             experience.pointField == .regions && !experience.teachingImagingDrawerVisible
         case .imaging:
             experience.teachingImagingDrawerVisible
-        case .interventions, .medications, .outcomes, .guidelines:
+        case .interventions:
+            experience.pointField == .craniotomy
+        case .medications:
+            experience.selectedCareDiscussion == .medicineReview
+        case .outcomes, .guidelines:
             false
         }
     }
@@ -1802,9 +1850,18 @@ private struct StrokeScholarReferenceRail: View {
             true
         case .imaging:
             experience.selectedPointEntityName != nil
-        case .interventions, .medications, .outcomes, .guidelines:
+        case .interventions, .medications, .guidelines:
+            true
+        case .outcomes:
             false
         }
+    }
+
+    private func unavailableStatus(for lane: StrokeScholarReferenceLane) -> String {
+        if lane == .imaging && experience.selectedPointEntityName == nil {
+            return "Select point"
+        }
+        return "Coming soon"
     }
 
     private func unavailableLabel(for lane: StrokeScholarReferenceLane) -> String {
@@ -1820,7 +1877,19 @@ private struct StrokeScholarReferenceRail: View {
             experience.selectLessonFamily(.regions)
         case .imaging:
             experience.selectTeachingImagingLens(.affectedVessel, reduceMotion: reduceMotion)
-        case .interventions, .medications, .outcomes, .guidelines:
+        case .interventions:
+            // Reuses the reviewed, non-graphic access-story point family.
+            experience.selectLessonFamily(.craniotomy)
+        case .medications:
+            // Reuses the authored medicine-review conversation; it does not
+            // calculate eligibility or rank care pathways.
+            experience.selectCareDiscussion(.medicineReview)
+        case .guidelines:
+            if let guideline = StrokeEvidenceSource.library.first(where: { $0.kind == .guideline }) {
+                experience.selectEvidence(guideline)
+            }
+            openWindow(id: StrokeSpace.evidence)
+        case .outcomes:
             break
         }
     }
@@ -1837,8 +1906,14 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String { rawValue.capitalized }
 
-    var isAvailable: Bool {
-        self == .anatomy || self == .imaging
+    /// A shallow visual arc keeps the rail peripheral without reducing any
+    /// row's 60-point interaction target.
+    var arcInset: CGFloat {
+        switch self {
+        case .anatomy, .guidelines: 0
+        case .imaging, .outcomes: 7
+        case .interventions, .medications: 12
+        }
     }
 
     var systemImage: String {
@@ -1893,6 +1968,19 @@ private struct SpatialTeachingTimeline: View {
 
     private var familyTimeline: some View {
         VStack(spacing: 7) {
+            let displayedStep = hoveredStep ?? experience.procedureStep
+            let showsContext = labelsVisible || hoveredStep != nil
+
+            Text("\(title(for: displayedStep)) · \(familySummary(for: displayedStep))")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.white.opacity(0.70))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, minHeight: 18)
+                .opacity(showsContext ? 1 : 0)
+                .contentTransition(.opacity)
+                .animation(.easeOut(duration: 0.22), value: showsContext)
+                .accessibilityHidden(!showsContext)
+
             HStack(spacing: 6) {
                 ForEach(StrokeProcedureStep.allCases) { step in
                     let isActive = step == experience.procedureStep
@@ -1904,7 +1992,7 @@ private struct SpatialTeachingTimeline: View {
                             number: step.number,
                             title: title(for: step),
                             isActive: isActive,
-                            showLabel: (isActive && labelsVisible) || hoveredStep == step,
+                            showLabel: false,
                             tint: tint(for: step)
                         )
                     }
@@ -1917,16 +2005,6 @@ private struct SpatialTeachingTimeline: View {
                     .accessibilityValue(isActive ? "Current act" : "Inactive act")
                 }
             }
-
-            if labelsVisible || hoveredStep != nil {
-                let displayedStep = hoveredStep ?? experience.procedureStep
-                Text("\(title(for: displayedStep)) · \(familySummary(for: displayedStep))")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.white.opacity(0.70))
-                    .lineLimit(1)
-                    .contentTransition(.opacity)
-                    .transition(.opacity)
-            }
         }
     }
 
@@ -1935,7 +2013,20 @@ private struct SpatialTeachingTimeline: View {
     /// existing explicit permission gate before any layer separation.
     private var presenterTimeline: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 6) {
+            let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat
+            let showsContext = labelsVisible || hoveredBeat != nil
+
+            Text("\(displayedBeat.title) · \(displayedBeat.summary)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.white.opacity(0.72))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, minHeight: 18)
+                .opacity(showsContext ? 1 : 0)
+                .contentTransition(.opacity)
+                .animation(.easeOut(duration: 0.22), value: showsContext)
+                .accessibilityHidden(!showsContext)
+
+            HStack(spacing: 5) {
                 ForEach(StrokePresenterTeachingBeat.allCases) { beat in
                     let isActive = beat == experience.presenterTeachingBeat
                     Button {
@@ -1944,12 +2035,13 @@ private struct SpatialTeachingTimeline: View {
                         SpatialPresenterTeachingBeatNode(
                             beat: beat,
                             isActive: isActive,
-                            showLabel: (isActive && labelsVisible) || hoveredBeat == beat,
                             tint: tint(for: beat)
                         )
                     }
                     .buttonStyle(.plain)
                     .hoverEffect(.highlight)
+                    .frame(minWidth: 64, minHeight: 64)
+                    .contentShape(Rectangle())
                     .onHover { isHovering in
                         hoveredBeat = isHovering ? beat : nil
                     }
@@ -1964,16 +2056,6 @@ private struct SpatialTeachingTimeline: View {
                         .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.96 : 0.50))
                         .frame(height: beat == experience.presenterTeachingBeat ? 6 : 4)
                 }
-            }
-
-            if labelsVisible || hoveredBeat != nil {
-                let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat
-                Text("\(displayedBeat.title) · \(displayedBeat.summary)")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.white.opacity(0.72))
-                    .lineLimit(1)
-                    .contentTransition(.opacity)
-                    .transition(.opacity)
             }
         }
     }
@@ -2031,38 +2113,29 @@ private struct SpatialTeachingTimeline: View {
 private struct SpatialPresenterTeachingBeatNode: View {
     let beat: StrokePresenterTeachingBeat
     let isActive: Bool
-    let showLabel: Bool
     let tint: Color
 
     var body: some View {
-        HStack(spacing: showLabel ? 8 : 4) {
+        ZStack {
+            Circle()
+                .fill(isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)))
+                .frame(width: 48, height: 48)
+
+            Circle()
+                .stroke(
+                    isActive ? tint.opacity(0.78) : Color.white.opacity(0.10),
+                    lineWidth: isActive ? 1.6 : 1
+                )
+                .frame(width: 48, height: 48)
+
             Text(String(beat.number))
                 .font(.caption.monospacedDigit().weight(.black))
                 .frame(width: 34, height: 34)
                 .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.62))
-
-            if showLabel {
-                Text(beat.title)
-                    .font(.callout.weight(.bold))
-                    .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.82))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
-            }
         }
-        .padding(.horizontal, showLabel ? 12 : 7)
-        .frame(width: showLabel ? 226 : 58, height: 67)
-        .contentShape(Capsule())
-        .background(
-            isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
-            in: Capsule()
-        )
-        .overlay(
-            Capsule().stroke(
-                isActive ? tint.opacity(0.72) : Color.white.opacity(0.08),
-                lineWidth: isActive ? 1.5 : 1
-            )
-        )
+        .frame(width: 64, height: 64)
+        .contentShape(Rectangle())
     }
 }
 
