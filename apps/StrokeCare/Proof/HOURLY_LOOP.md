@@ -1011,3 +1011,24 @@
   clinical validity on the wearer.
 - Next safe action: while wearing XCAT, pinch each visible point once, then open
   Tools and confirm one held instrument points toward the central anatomy.
+
+## 2026-08-10 13:53 SGT — isolate Realtime playback capture
+
+- Target: keep family GPT-Realtime narration compile-clean and isolated after
+  the XCAT tunnel gate.
+- Bounded action: captured `StrokeAudioPlayback` directly in the narration task
+  instead of retaining an unused weak reference to the main-actor narration
+  engine.
+- Evidence: `python3 Tests/verify_contract.py`, `git diff --check`, and the
+  narrow visionOS Simulator Debug build passed. The guarded XCAT pass built and
+  codesign-verified Stroke Care `0.6 (29)`, but failed before install with
+  CoreDevice error 4, RemotePairing error 4, and Network `NWError 60` (`Operation
+  timed out`). No install, launch, or running-process receipt was produced by
+  this pass.
+- Verdict: `IMPROVED` — the Swift 6 capture warnings are removed while audio
+  preparation and playback remain behind the existing actor boundary.
+- Blocker: the XCAT tunnel timed out before install; Simulator compilation does
+  not prove narration playback, latency, spatial-audio perception, or wearer
+  comfort.
+- Next safe action: when XCAT is awake, unlocked, and its developer tunnel is
+  available, rerun `Scripts/deploy_xcat.zsh` once.

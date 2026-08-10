@@ -136,7 +136,7 @@ private final class StrokeNarrationEngine: ObservableObject {
         stop()
         guard let endpoint = realtimeProxyEndpoint else { return }
 
-        requestTask = Task { [weak self] in
+        requestTask = Task { [playback] in
             do {
                 var request = URLRequest(url: endpoint)
                 request.httpMethod = "POST"
