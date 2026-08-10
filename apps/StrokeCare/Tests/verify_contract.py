@@ -101,6 +101,26 @@ require("frontZ" not in scene and all(anchor in scene for anchor in ("[-0.028297
 require("defaultLessonPointIndex" in state and "case .procedure: 2" in state and "index == experience.pointField.defaultLessonPointIndex" in scene, "Vessel Story does not default to its clot-bound marker")
 require(all(layer in scene for layer in ("anatomy-cortex-layer", "anatomy-arteries-layer", "anatomy-blockage-layer", "anatomy-dura-layer")), "semantic sibling anatomy layers are missing")
 require("OpacityComponent(opacity:" in scene and "anatomyPresentation" in scene and "approach(cortexLayer" in scene, "reversible opacity or exploded-layer rendering is missing")
+imported_update = scene.split("private static func updateImportedAnatomy", 1)[1].split(
+    "private static func updateBrainReveal", 1
+)[0]
+require(
+    "setSemanticLayerOpacity(cortexOpacity, on: cortexLayer)" in imported_update
+    and "cortexOpacity = Float(experience.cortexOpacity)" in imported_update
+    and "let separation: Float = presentation == .exploded ? 1 : 0" in imported_update
+    and "setSemanticLayerOpacity(presentation == .assembled ? 0.90 : 1, on: arteriesLayer)" in imported_update
+    and "setSemanticLayerOpacity(1, on: blockageLayer)" in imported_update
+    and "setSemanticLayerOpacity(presentation == .exploded ? 0.20 : 0.14, on: duraLayer)" in imported_update
+    and ".components.set(OpacityComponent" not in imported_update,
+    "imported semantic layers still replace HierarchicalFade every frame",
+)
+require(
+    "initialSemanticLayerOpacity" in scene
+    and "abs(currentOpacity - targetOpacity) <= 0.000_001" in scene
+    and "simd_length_squared(delta) <= 0.000_000_01" in imported_update
+    and "setEnabledIfChanged" in imported_update,
+    "imported hierarchy updates are not state-change-driven or fail to settle",
+)
 require("isPointFieldInteractionTarget" in scene and "pointFieldSelection" in scene and "InputTargetComponent(allowedInputTypes: [.direct, .indirect])" in scene, "point fields are not directly targetable")
 require("StrokeLessonPointTargetComponent" in scene and "point.components.set(StrokeLessonPointTargetComponent())" in scene and "generateSphere(radius: 0.006)" in scene and "HoverEffectComponent" in scene, "point interaction affordance is missing")
 require("setAnatomyPresentation" in immersive and "Brain transparency" in immersive and "selectedPointLabel" in immersive, "clinician layer-study controls are incomplete")
