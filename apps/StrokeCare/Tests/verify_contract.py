@@ -16,10 +16,12 @@ def require(condition: bool, message: str) -> None:
 state = (ROOT / "Sources" / "StrokeExperienceState.swift").read_text()
 deck = (ROOT / "Sources" / "StrokeControlDeck.swift").read_text()
 app = (ROOT / "Sources" / "StrokeTimeApp.swift").read_text()
+project = (ROOT / "StrokeTime.xcodeproj" / "project.pbxproj").read_text()
 launch = (ROOT / "Sources" / "StrokeJourneyLaunchView.swift").read_text()
 scene = (ROOT / "Sources" / "StrokeSceneFactory.swift").read_text()
 immersive = (ROOT / "Sources" / "StrokeImmersiveView.swift").read_text()
 model_board = (ROOT / "Sources" / "StrokeModelBoardView.swift").read_text()
+xray = (ROOT / "Sources" / "StrokeXrayWorkspaceView.swift").read_text()
 readme = (ROOT / "README.md").read_text()
 houdini = (ROOT / "Docs" / "HOUDINI_STROKE_PIPELINE.md").read_text()
 clinical_packet = (ROOT / "Docs" / "ISCHEMIC_STROKE_CLINICAL_REVIEW.md").read_text()
@@ -99,6 +101,26 @@ require("frontZ" not in scene and all(anchor in scene for anchor in ("[-0.028297
 require("defaultLessonPointIndex" in state and "case .procedure: 2" in state and "index == experience.pointField.defaultLessonPointIndex" in scene, "Vessel Story does not default to its clot-bound marker")
 require(all(layer in scene for layer in ("anatomy-cortex-layer", "anatomy-arteries-layer", "anatomy-blockage-layer", "anatomy-dura-layer")), "semantic sibling anatomy layers are missing")
 require("OpacityComponent(opacity:" in scene and "anatomyPresentation" in scene and "approach(cortexLayer" in scene, "reversible opacity or exploded-layer rendering is missing")
+imported_update = scene.split("private static func updateImportedAnatomy", 1)[1].split(
+    "private static func updateBrainReveal", 1
+)[0]
+require(
+    "setSemanticLayerOpacity(cortexOpacity, on: cortexLayer)" in imported_update
+    and "cortexOpacity = Float(experience.cortexOpacity)" in imported_update
+    and "let separation: Float = presentation == .exploded ? 1 : 0" in imported_update
+    and "setSemanticLayerOpacity(presentation == .assembled ? 0.90 : 1, on: arteriesLayer)" in imported_update
+    and "setSemanticLayerOpacity(1, on: blockageLayer)" in imported_update
+    and "setSemanticLayerOpacity(presentation == .exploded ? 0.20 : 0.14, on: duraLayer)" in imported_update
+    and ".components.set(OpacityComponent" not in imported_update,
+    "imported semantic layers still replace HierarchicalFade every frame",
+)
+require(
+    "initialSemanticLayerOpacity" in scene
+    and "abs(currentOpacity - targetOpacity) <= 0.000_001" in scene
+    and "simd_length_squared(delta) <= 0.000_000_01" in imported_update
+    and "setEnabledIfChanged" in imported_update,
+    "imported hierarchy updates are not state-change-driven or fail to settle",
+)
 require("isPointFieldInteractionTarget" in scene and "pointFieldSelection" in scene and "InputTargetComponent(allowedInputTypes: [.direct, .indirect])" in scene, "point fields are not directly targetable")
 require("StrokeLessonPointTargetComponent" in scene and "point.components.set(StrokeLessonPointTargetComponent())" in scene and "generateSphere(radius: 0.006)" in scene and "HoverEffectComponent" in scene, "point interaction affordance is missing")
 require("setAnatomyPresentation" in immersive and "Brain transparency" in immersive and "selectedPointLabel" in immersive, "clinician layer-study controls are incomplete")
@@ -114,6 +136,35 @@ dcc_pipeline = (ROOT / "Docs" / "DCC_LAYER_STUDY_PIPELINE.md").read_text()
 blender_builder = (ROOT / "Scripts" / "build_blender_layer_study.py").read_text()
 blender_manifest = (ROOT / "TechnicalArt" / "Generated" / "StrokeLayerStudy.manifest.json").read_text()
 require("StrokeEvidenceWorkspaceView()" in app and "StrokeSpace.evidence" in app, "upper evidence window is missing")
+require("StrokeXrayWorkspaceView()" in app and "StrokeSpace.xray" in app, "shared teaching X-ray window is missing")
+require("WindowGroup(id: StrokeSpace.xray)" in app and 'Window("Shared teaching X-ray", id: StrokeSpace.xray)' not in app, "shared teaching X-ray must retain its visionOS 2.0 WindowGroup")
+require(project.count("XROS_DEPLOYMENT_TARGET = 2.0;") == 4 and "XROS_DEPLOYMENT_TARGET = 26.0;" not in project, "X-ray singleton guard must not raise the visionOS 2.0 deployment floor")
+require(all(route in app for route in (
+    "--proof-xray-orient", "--proof-xray-pressure",
+    "--proof-xray-make-space", "--proof-xray-selected-point",
+)), "direct X-ray proof routes are incomplete")
+require(all(mapping in app for mapping in (
+    "experience.prepareProof(step: .chooseCase)",
+    "experience.prepareProof(step: .inspectOcclusion)",
+    "experience.prepareProof(step: .discussCare)",
+    "experience.prepareProcedureFieldProof()",
+)), "direct X-ray routes do not prepare Orient, Pressure, Make space, and selected-point state")
+require("--proof-xray-window" in app and "return .pressure" in app, "original X-ray proof route is not retained as a pressure alias")
+normal_xray_open_calls = [line for line in immersive.splitlines() if line.strip() == "openXrayWindowIfNeeded()"]
+normal_xray_close_calls = [line for line in immersive.splitlines() if line.strip() == "closeXrayWindowIfNeeded()"]
+require(len(normal_xray_open_calls) == 4, "every family and presenter X-ray entry point must use the singleton guard")
+require(immersive.count("openWindow(id: StrokeSpace.xray)") == 2 and immersive.count("guard experience.requestXrayWindowOpen() else { return }") == 2, "each X-ray WindowGroup open must be atomically reserved in shared state")
+require(len(normal_xray_close_calls) == 2 and immersive.count("dismissWindow(id: StrokeSpace.xray)") == 2 and immersive.count("experience.beginXrayWindowClose()") == 2, "both immersive exit paths must synchronize the X-ray lifecycle guard")
+require("@MainActor\nfinal class StrokeExperienceState" in state and all(token in state for token in ("requestXrayWindowOpen()", "guard xrayWindowLifecycle == .closed", "xrayWindowLifecycle = .requested", "markXrayWindowPresented()", "beginXrayWindowClose()", "markXrayWindowClosed()")), "shared main-actor X-ray lifecycle guard is incomplete")
+require("case .requested:" in state and "xrayWindowLifecycle = .closed" in state[state.index("func beginXrayWindowClose()"):state.index("func markXrayWindowClosed()")], "canceling an unpresented X-ray request must synchronously release the singleton guard")
+require("tracksXrayWindowLifecycle: true" in app and all(token in xray for token in ("experience.markXrayWindowPresented()", "experience.beginXrayWindowClose()", "experience.markXrayWindowClosed()")), "X-ray appearance, close, and disappearance do not keep the singleton guard truthful")
+require(all(token in xray for token in ("procedureStep", "anatomyPresentation", "cortexOpacity", "pointField", "selectedPointLabel")), "X-ray window is not synchronized to shared teaching state")
+require("makeScene(compact: false)" in xray and "RealityView" in xray, "X-ray surface does not use the full registered asset scene")
+require("synthetic teaching image" in xray and "not a patient scan" in xray and "does not display uploaded imaging" in xray, "X-ray teaching boundary is incomplete")
+require("boundary=synthetic-not-patient" in app, "direct X-ray proof receipts omit the persistent synthetic/not-patient boundary")
+require("1.0 / 30.0" in xray and "experience.requestedPause" in xray, "X-ray scene lacks its smooth bounded-cadence update contract")
+require("GeometryReader" in xray and "let plateSize = geometry.size" in xray and xray.count(".frame(width: plateSize.width, height: plateSize.height)") >= 4, "X-ray background, RealityView, and overlay do not share exact plate geometry")
+require(".frame(width: 540, height: 392)" in xray and ".clipped()" in xray and all(token in xray for token in ("ASSET-DERIVED GENERIC VIEW", "radiographCaption")), "X-ray interaction and state overlays are not clipped to the 540x392 plate")
 require("Clinical evidence" in evidence and "Search sources" in evidence and "Pin in space" in evidence and "Compose draft" in evidence, "citation search, pin, and compose workflow is incomplete")
 require("SOURCE-BOUND TEACHING DRAFT" in evidence and "not approved clinical copy" in evidence, "generated evidence copy lacks its draft boundary")
 require("fullCitation" in state and "stableURL" in state and "limitation" in state, "evidence sources lack immutable citation context")

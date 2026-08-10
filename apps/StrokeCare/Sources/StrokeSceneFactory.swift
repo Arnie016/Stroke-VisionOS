@@ -463,6 +463,13 @@ enum StrokeSceneFactory {
                 entity.name = name
                 let layer = Entity()
                 layer.name = semanticLayerName(for: name)
+                // Install HierarchicalFade before the imported hierarchy is
+                // attached. Runtime updates then mutate it only when teaching
+                // state actually changes instead of replacing the same
+                // component on every display frame.
+                layer.components.set(OpacityComponent(
+                    opacity: initialSemanticLayerOpacity(for: name)
+                ))
                 layer.addChild(entity)
                 registered.addChild(layer)
             }
@@ -575,6 +582,39 @@ enum StrokeSceneFactory {
         default:
             "anatomy-context-layer"
         }
+    }
+
+    private static func initialSemanticLayerOpacity(for assetName: String) -> Float {
+        switch assetName {
+        case importedArteriesName:
+            0.90
+        case importedDuraName:
+            0.14
+        default:
+            1
+        }
+    }
+
+    /// `OpacityComponent` owns RealityKit's HierarchicalFade network state.
+    /// Replacing an unchanged component at display rate needlessly dirties the
+    /// complete imported hierarchy and produces NetworkComponent diagnostics.
+    /// A slider or presentation change still applies on the next scene update;
+    /// stable frames perform no hierarchy component write.
+    private static func setSemanticLayerOpacity(
+        _ targetOpacity: Float,
+        on entity: Entity?
+    ) {
+        guard let entity else { return }
+        if let currentOpacity = entity.components[OpacityComponent.self]?.opacity,
+           abs(currentOpacity - targetOpacity) <= 0.000_001 {
+            return
+        }
+        entity.components.set(OpacityComponent(opacity: targetOpacity))
+    }
+
+    private static func setEnabledIfChanged(_ enabled: Bool, on entity: Entity?) {
+        guard let entity, entity.isEnabled != enabled else { return }
+        entity.isEnabled = enabled
     }
 
     private static func loadBundledUSDZ(named name: String) async -> Entity? {
@@ -1446,7 +1486,15 @@ enum StrokeSceneFactory {
 
         func approach(_ entity: Entity?, _ target: SIMD3<Float>) {
             guard let entity else { return }
-            entity.position += (target - entity.position) * 0.14
+            let delta = target - entity.position
+            // Preserve the existing eased layer motion, then stop touching the
+            // imported parent transform once it is within 0.1 mm of target.
+            // This removes indefinite idle writes without a visible snap.
+            if simd_length_squared(delta) <= 0.000_000_01 {
+                if entity.position != target { entity.position = target }
+                return
+            }
+            entity.position += delta * 0.14
         }
 
         let cortexLayer = imported.findEntity(named: cortexLayerName)
@@ -1461,10 +1509,10 @@ enum StrokeSceneFactory {
         approach(blockageLayer, [0.014 * separation, 0, 0.004 * separation])
         approach(duraLayer, [0.036 * separation, 0, 0])
 
-        cortexLayer?.components.set(OpacityComponent(opacity: cortexOpacity))
-        arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
-        blockageLayer?.components.set(OpacityComponent(opacity: 1))
-        duraLayer?.components.set(OpacityComponent(opacity: presentation == .exploded ? 0.20 : 0.14))
+        setSemanticLayerOpacity(cortexOpacity, on: cortexLayer)
+        setSemanticLayerOpacity(presentation == .assembled ? 0.90 : 1, on: arteriesLayer)
+        setSemanticLayerOpacity(1, on: blockageLayer)
+        setSemanticLayerOpacity(presentation == .exploded ? 0.20 : 0.14, on: duraLayer)
 
         // Once the hero brain exists, procedural anatomy becomes an explicit
         // fallback rather than a competing visible model. The transparent
@@ -1476,24 +1524,27 @@ enum StrokeSceneFactory {
         root.findEntity(named: penumbraName)?.isEnabled = false
         root.findEntity(named: coreName)?.isEnabled = false
 
-        imported.findEntity(named: importedBrainName)?.isEnabled = true
-        imported.findEntity(named: importedArteriesName)?.isEnabled = true
-        imported.findEntity(named: importedClotName)?.isEnabled = experience.procedureStep != .chooseCase || presentation == .exploded
-        imported.findEntity(named: importedDuraName)?.isEnabled = showsPurpose
+        setEnabledIfChanged(true, on: imported.findEntity(named: importedBrainName))
+        setEnabledIfChanged(true, on: imported.findEntity(named: importedArteriesName))
+        setEnabledIfChanged(
+            experience.procedureStep != .chooseCase || presentation == .exploded,
+            on: imported.findEntity(named: importedClotName)
+        )
+        setEnabledIfChanged(showsPurpose, on: imported.findEntity(named: importedDuraName))
 
         // These prototype-v1 meshes are intentionally quarantined. The first
         // integration render proved that their coordinate frame does not match
         // the registered v2 anatomy; displaying them now would imply a false
         // anatomical relationship. The app keeps the files for the Houdini /
         // Blender registration pass and uses reviewed schematic cues meanwhile.
-        imported.findEntity(named: importedEdemaName)?.isEnabled = false
-        imported.findEntity(named: importedFlapName)?.isEnabled = false
-        imported.findEntity(named: importedPatchName)?.isEnabled = false
+        setEnabledIfChanged(false, on: imported.findEntity(named: importedEdemaName))
+        setEnabledIfChanged(false, on: imported.findEntity(named: importedFlapName))
+        setEnabledIfChanged(false, on: imported.findEntity(named: importedPatchName))
 
         // The full semantic skull is kept off in the patient path because its
         // atlas registration is approximate and its opaque shell would conceal
         // the brain. The procedural fixed-space shell carries that one message.
-        imported.findEntity(named: importedSkullName)?.isEnabled = false
+        setEnabledIfChanged(false, on: imported.findEntity(named: importedSkullName))
 
         _ = time
     }

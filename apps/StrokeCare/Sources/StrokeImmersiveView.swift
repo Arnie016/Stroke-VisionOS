@@ -982,6 +982,7 @@ private struct SpatialRoleControls: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let role: StrokeAudienceLens
@@ -1058,6 +1059,10 @@ private struct SpatialRoleControls: View {
                     selected: true
                 ) {
                     experience.advanceJourney()
+                }
+
+                bubbleButton("X-ray", systemImage: "viewfinder", accent: .orange) {
+                    openXrayWindowIfNeeded()
                 }
             }
 
@@ -1160,6 +1165,9 @@ private struct SpatialRoleControls: View {
                     Button("Evidence", systemImage: "text.book.closed.fill") {
                         openWindow(id: StrokeSpace.evidence)
                     }
+                    Button("X-ray", systemImage: "viewfinder") {
+                        openXrayWindowIfNeeded()
+                    }
                     Button("Reset view", systemImage: "arrow.counterclockwise") {
                         experience.resetSpatialView()
                     }
@@ -1172,7 +1180,7 @@ private struct SpatialRoleControls: View {
                     )
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Environment, evidence, and view options")
+                .accessibilityLabel("Environment, evidence, X-ray, and view options")
             }
 
             HStack(spacing: 8) {
@@ -1275,7 +1283,20 @@ private struct SpatialRoleControls: View {
         await dismissImmersiveSpace()
         experience.isImmersivePresented = false
         experience.reset()
+        closeXrayWindowIfNeeded()
         openWindow(id: StrokeSpace.window)
+    }
+
+    @MainActor
+    private func openXrayWindowIfNeeded() {
+        guard experience.requestXrayWindowOpen() else { return }
+        openWindow(id: StrokeSpace.xray)
+    }
+
+    @MainActor
+    private func closeXrayWindowIfNeeded() {
+        experience.beginXrayWindowClose()
+        dismissWindow(id: StrokeSpace.xray)
     }
 }
 
@@ -1771,6 +1792,16 @@ private struct JourneyCaption: View {
                 .buttonStyle(.bordered)
                 .tint(.cyan)
                 .accessibilityLabel("Open clinical evidence space")
+
+                Button {
+                    openXrayWindowIfNeeded()
+                } label: {
+                    Image(systemName: "viewfinder")
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                .accessibilityLabel("Open shared teaching X-ray")
             }
 
             if experience.anatomyPresentation != .assembled {
@@ -1877,6 +1908,12 @@ private struct JourneyCaption: View {
             }
             .buttonStyle(.bordered)
             .tint(.orange)
+
+            Button("X-ray", systemImage: "viewfinder") {
+                openXrayWindowIfNeeded()
+            }
+            .buttonStyle(.bordered)
+            .tint(.cyan)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Family pace and clarification controls")
@@ -1927,7 +1964,20 @@ private struct JourneyCaption: View {
         experience.isImmersivePresented = false
         openWindow(id: StrokeSpace.window)
         dismissWindow(id: StrokeSpace.evidence)
+        closeXrayWindowIfNeeded()
         dismissWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+    }
+
+    @MainActor
+    private func openXrayWindowIfNeeded() {
+        guard experience.requestXrayWindowOpen() else { return }
+        openWindow(id: StrokeSpace.xray)
+    }
+
+    @MainActor
+    private func closeXrayWindowIfNeeded() {
+        experience.beginXrayWindowClose()
+        dismissWindow(id: StrokeSpace.xray)
     }
 
     private var consentChoice: some View {

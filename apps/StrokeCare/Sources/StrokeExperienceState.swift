@@ -330,6 +330,13 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
     }
 }
 
+enum StrokeXrayWindowLifecycle {
+    case closed
+    case requested
+    case presented
+    case closing
+}
+
 @MainActor
 final class StrokeExperienceState: ObservableObject {
     let teachingCase = TeachingStrokeCase.case78
@@ -364,6 +371,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var careViewPermissionGranted = false
     @Published var isConsentPromptVisible = false
     @Published var isImmersivePresented = false
+    @Published private(set) var xrayWindowLifecycle: StrokeXrayWindowLifecycle = .closed
     @Published var spatialPhase: StrokeSpatialPhase = .caseLibrary
     @Published var spatialCaseDocked = false
     @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
@@ -380,6 +388,37 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var planPreviewProgress: Double = 0
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
+
+    /// `openWindow` can create another member of a `WindowGroup`, so all
+    /// family and presenter entry points reserve the shared teaching window
+    /// here before asking SwiftUI to open it. Main-actor isolation makes the
+    /// closed-to-requested transition atomic across simultaneous controls.
+    @discardableResult
+    func requestXrayWindowOpen() -> Bool {
+        guard xrayWindowLifecycle == .closed else { return false }
+        xrayWindowLifecycle = .requested
+        return true
+    }
+
+    func markXrayWindowPresented() {
+        guard xrayWindowLifecycle != .closing else { return }
+        xrayWindowLifecycle = .presented
+    }
+
+    func beginXrayWindowClose() {
+        switch xrayWindowLifecycle {
+        case .requested:
+            xrayWindowLifecycle = .closed
+        case .presented:
+            xrayWindowLifecycle = .closing
+        case .closed, .closing:
+            break
+        }
+    }
+
+    func markXrayWindowClosed() {
+        xrayWindowLifecycle = .closed
+    }
 
     func selectTeachingCase() {
         spatialCaseDocked = true
