@@ -6857,11 +6857,17 @@ final class RBCJourneyScene {
 
     private func bloodCellMaterial() -> RealityKit.Material {
         var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: UIColor(red: 0.48, green: 0.010, blue: 0.020, alpha: 1))
-        material.emissiveColor = .init(color: UIColor(red: 0.15, green: 0.001, blue: 0.004, alpha: 1))
-        material.emissiveIntensity = 0.075
-        material.roughness = 0.46
+        // Keep the imported biconcave silhouette, but give it enough warm
+        // reflected light to read inside the dark lumen. This is a teaching
+        // accent—not a claim about measured oxygenation or blood chemistry.
+        material.baseColor = .init(tint: UIColor(red: 0.72, green: 0.028, blue: 0.050, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.22, green: 0.004, blue: 0.010, alpha: 1))
+        material.emissiveIntensity = 0.18
+        material.roughness = 0.52
         material.metallic = .init(floatLiteral: 0)
+        material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
         return material
     }
 
