@@ -896,3 +896,25 @@
 - Next safe action: on an awake and unlocked XCAT, select and clear the same
   point once; verify that one local reference appears on selection and that the
   broader access context returns only after clearing it.
+
+## 2026-08-10 07:58 SGT — selected blockage owns the flow explanation
+
+- Target: make the selected blood-flow point and its annotation tell the same
+  story while preserving the always-visible presenter timeline.
+- Bounded action: added authored point-specific annotation meanings, corrected
+  `Example blockage` to describe an interrupted qualitative route, and recorded
+  a short Simulator motion receipt.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (27)` with 17 USDZs; Proof 94 is 3840×2160
+  with SHA-256 `299698cf…b6e45a45`; Proof 95 is a six-second 1920×1080 H.264
+  clip with SHA-256 `b9c18dff…7419244e`; StrokeTime remained listed.
+- Verdict: `IMPROVED` — a selected flow point now produces one concise,
+  anatomically relevant explanation and an explicit not-CFD boundary.
+- Blocker: XCAT is unavailable, and Simulator motion does not establish
+  physical point acquisition, stereo placement, wearer comfort, AirPlay
+  legibility, anatomical registration, specialist approval, or clinical
+  validity.
+- Next safe action: after reviewing Prakash's `a9b64b8` five-asset surgical
+  state pack, promote only an applicable clinician-gated registered state and
+  bind it to one of the existing six checkpoints; do not bulk-enable the pack
+  in the ischemic family path.

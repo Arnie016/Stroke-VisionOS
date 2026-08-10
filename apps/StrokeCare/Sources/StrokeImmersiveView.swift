@@ -2341,6 +2341,9 @@ private struct StrokeIntentionAnnotation: View {
         if experience.isClinicianScholarSkullInspectionActive {
             return "Generic cross-source teaching skull. Inspect shape only; alignment and landmarks still require specialist review."
         }
+        if let selectedPointMeaning {
+            return selectedPointMeaning
+        }
         if experience.audienceLens == .clinician {
             return switch experience.presenterTeachingBeat {
             case .confirmContext: "Generic anatomy only—not this person's scan."
@@ -2355,6 +2358,36 @@ private struct StrokeIntentionAnnotation: View {
         case .chooseCase: "Start with the blockage in this generic teaching model."
         case .inspectOcclusion: "Swelling presses inside the fixed skull."
         case .discussCare: "The procedure can make room; it cannot undo stroke injury."
+        }
+    }
+
+    /// A selected point owns the nearby disclosure. Keeping this copy keyed to
+    /// the authored point prevents a checkpoint-level skull or dura sentence
+    /// from describing a vessel, territory, or cortex marker.
+    private var selectedPointMeaning: String? {
+        guard let selectedPointLabel = experience.selectedPointLabel else { return nil }
+
+        return switch selectedPointLabel {
+        case "Example affected area":
+            "Generic example only—not a scan or measured injury."
+        case "Nearby brain tissue":
+            "Nearby tissue stays visible so the explanation keeps context."
+        case "Brain surface":
+            "Surface orientation only; no incision or access site is planned."
+        case "Opposite-side context":
+            "A comparison reference—not a claim of normal function."
+        case "Blood supply approaches":
+            "Follow the cues toward the brain: direction only, not speed or volume."
+        case "Arteries branch":
+            "Branches distribute supply; this generic map is not patient-specific."
+        case "Example blockage":
+            "A teaching clot interrupts the route; motion is qualitative—not CFD."
+        case "Flow beyond the blockage changes":
+            "Fewer cues continue beyond the example blockage; no perfusion value is inferred."
+        case "Affected territory":
+            "The highlighted territory explains risk—not prognosis or measured damage."
+        default:
+            "Generic teaching reference—not a patient scan or measurement."
         }
     }
 

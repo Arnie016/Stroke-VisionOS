@@ -607,6 +607,13 @@ require(
     "experience.presenterTeachingBeat == .discussAccess &&\n            experience.selectedPointEntityName == nil" in scene,
     "selected-point reference competes with the large access-skull composition",
 )
+require(all(token in immersive for token in (
+    "private var selectedPointMeaning: String?",
+    'case "Example blockage":',
+    '"A teaching clot interrupts the route; motion is qualitative—not CFD."',
+    'case "Flow beyond the blockage changes":',
+    '"Fewer cues continue beyond the example blockage; no perfusion value is inferred."',
+)), "selected flow points can inherit unrelated checkpoint copy or quantitative physiology claims")
 require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selected.position + [0.038, 0.020, 0.012]" in immersive, "selected-point disclosure is still a permanent label rail or is not depth-attached")
 require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
 require(all(token in immersive for token in (

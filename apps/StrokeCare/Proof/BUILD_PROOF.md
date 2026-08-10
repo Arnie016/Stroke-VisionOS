@@ -942,3 +942,37 @@ This is Simulator state, build, bundle, and composition evidence only. It does
 not prove physical point acquisition, pinch reliability, stereo placement,
 wearer comfort, AirPlay legibility, anatomical registration, specialist
 approval, or clinical validity. XCAT was still `unavailable`.
+
+## 2026-08-10 07:58 SGT — point-authored qualitative flow language
+
+Build `0.6 (27)` fixes the selected blood-flow disclosure so the authored
+`Example blockage` point explains the visible interrupted route instead of
+reusing the unrelated separated-skull checkpoint sentence. The displayed copy
+states that motion is qualitative and not CFD; no speed, volume, perfusion,
+pressure, diagnosis, prognosis, or patient-specific value is inferred.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator Debug build at
+`/tmp/strokecare-build27` ended `** BUILD SUCCEEDED **`. The installed app
+reports `0.6 (27)`, contains 17 unique USDZ resources, and its debug
+implementation dylib has SHA-256
+`4fc8cb4c742fc940f1b81159240aaf88e7b79f055a3a9a2ef951f0b4d280abf9`.
+
+`Proof/94-qualitative-flow-copy-build27-simulator.png`, 3840×2160, has
+SHA-256
+`299698cfe1b3926ce7620147d06341c8983f84f44629334ece42e970b6e45a45`.
+It visibly shows the six-stop presenter timeline before any new point choice,
+direct viewpoints and reference depth, central registered anatomy, one
+selected blockage point, restrained directional chevrons, and the corrected
+point-local explanation.
+
+`Proof/95-qualitative-flow-motion-build27-simulator-1080p.mp4` is a six-second
+1920×1080 H.264 Simulator capture, 397,243 bytes, with SHA-256
+`b9c18dffa71e4931a6418014b518c4f496729c833fcde8c7f12b9a7d7419244e`.
+It records the qualitative route cues in motion; it is not evidence of fluid
+dynamics, anatomy registration, clinical correctness, physical-device
+performance, or wearer comprehension.
+
+The Simulator process remained listed after capture. XCAT still reported
+`unavailable`, so physical gaze-and-pinch selection, stereo depth, comfort,
+AirPlay legibility, specialist approval, and clinical validity remain open.

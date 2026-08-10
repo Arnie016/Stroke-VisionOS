@@ -364,6 +364,10 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 ... com.arnav.StrokeTime --proof-main-overview
 ... com.arnav.StrokeTime --proof-main-selected-point
 
+# Selected qualitative blood-flow lesson; the six-checkpoint presenter
+# timeline is already visible before point selection.
+... com.arnav.StrokeTime --proof-procedure-field
+
 # Doctor-worn hand arc and mirrored family cue field
 ... com.arnav.StrokeTime --proof-clinician-toolkit
 ... com.arnav.StrokeTime --proof-family-question
@@ -376,8 +380,13 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 Simulator builds and screenshots do not prove XCAT performance, physical
 comfort, clinical accuracy, or clinician acceptance.
 
-Current proof debt is tracked openly: the integrated overview and selected-point
-states now build, launch, and render in Simulator. XCAT gaze-and-pinch,
+Current proof debt is tracked openly: the integrated overview, selected-point,
+and qualitative flow states now build, launch, and render in Simulator. Build
+`0.6 (27)` binds the selected blockage copy to the selected anatomy point and
+records a six-second motion receipt in
+`Proof/95-qualitative-flow-motion-build27-simulator-1080p.mp4`. The motion is a
+directional teaching cue, not CFD, perfusion measurement, or patient data.
+XCAT gaze-and-pinch,
 stereo-depth, legibility, comfort, family comprehension, and clinical review
 remain separate gates.
 
