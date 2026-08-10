@@ -9,6 +9,49 @@ enum StrokeDetailLevel: String, CaseIterable, Identifiable, Comparable {
 
     var id: String { rawValue }
 
+    /// Mirrors the audited three-tier sidecar vocabulary without pretending
+    /// that the repository contains three different meshes for every asset.
+    /// The source USDZ stays fixed; RealityKit changes presentation density.
+    var variantBindingID: String {
+        switch self {
+        case .calm: "minimal"
+        case .guided: "reduced80"
+        case .scholar: "full"
+        }
+    }
+
+    var visualDetailTitle: String {
+        switch self {
+        case .calm: "Simplified"
+        case .guided: "Standard"
+        case .scholar: "Full"
+        }
+    }
+
+    var pointOpacity: Float {
+        switch self {
+        case .calm: 0.68
+        case .guided: 0.84
+        case .scholar: 0.96
+        }
+    }
+
+    var pointScale: Float {
+        switch self {
+        case .calm: 0.94
+        case .guided: 1.04
+        case .scholar: 1.14
+        }
+    }
+
+    var motionRate: Float {
+        switch self {
+        case .calm: 0.58
+        case .guided: 0.78
+        case .scholar: 0.92
+        }
+    }
+
     private var rank: Int {
         switch self {
         case .calm: 0
@@ -78,6 +121,19 @@ enum StrokeAssetBundleStatus: String {
 enum StrokeAssetLoadStatus: String {
     case metadataOnlyNotRequested = "METADATA_ONLY_NOT_REQUESTED"
     case blockedByLicenseHold = "BLOCKED_BY_LICENSE_HOLD"
+}
+
+/// Audited chocoHacks33 presentation-sidecar snapshot. The branch contains
+/// 150 physical USDZ files and 450 virtual bindings (150 x three tiers), not
+/// 450 independently authored meshes. It remains catalog input only: mixed
+/// licenses, coordinate frames, and review gates prohibit bulk runtime loads.
+enum StrokeVisualDetailVariantAudit {
+    static let branch = "codex/three-tier-visual-detail-assets"
+    static let head = "6127cf38f500c2f2d6975df2d6cc945f526e08af"
+    static let manifestPath = "RealityKitContent/InterfaceMedia/visual_detail_variants_v1/asset_manifest_visual_detail_variants_v1.json"
+    static let physicalUSDZCount = 150
+    static let virtualBindingCount = 450
+    static let runtimeGeometryIncluded = false
 }
 
 struct StrokeAssetRecord: Identifiable, Hashable {
@@ -305,7 +361,7 @@ enum StrokeAssetCatalog {
         )
     ]
 
-    /// These seventeen resources are explicitly listed in project.yml. The
+    /// These twenty-two resources are explicitly listed in project.yml. The
     /// static catalog itself still adds no implicit bundle membership.
     private static let existingProjectBundleIDs: Set<String> = [
         "brain_anatomy_realistic_v2",
@@ -320,6 +376,11 @@ enum StrokeAssetCatalog {
         "circle_of_willis_flow_overlay_v2",
         "external_head_scalp_cutaway_v2",
         "eyes_context_realistic_v2",
+        "scalp_access_closure_registered_conceptual_v1",
+        "cranial_bone_access_closure_registered_conceptual_v1",
+        "dural_access_closure_registered_conceptual_v1",
+        "intracerebral_hematoma_registered_conceptual_v1",
+        "cerebral_edema_registered_conceptual_v1",
         "edema_swelling",
         "craniotomy_bone_flap",
         "dural_patch",

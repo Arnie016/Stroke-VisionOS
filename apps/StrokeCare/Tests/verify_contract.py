@@ -58,6 +58,14 @@ require(presenter_beat_contract.count("\n    case ") == 6, "presenter teaching s
 detail_contract = catalog.split("enum StrokeDetailLevel", 1)[1].split("enum StrokeAssetFamily", 1)[0]
 require(all(case in detail_contract for case in ("case calm", "case guided", "case scholar")), "presentation detail levels are incomplete")
 require(detail_contract.count("\n    case ") == 3, "detail level must remain a three-state presentation filter")
+require(all(token in detail_contract for token in (
+    'case .calm: "minimal"',
+    'case .guided: "reduced80"',
+    'case .scholar: "full"',
+    'case .calm: "Simplified"',
+    'case .guided: "Standard"',
+    'case .scholar: "Full"',
+)), "three-tier visual-detail binding is incomplete")
 catalog_groups = {
     "v1": swift_string_array(catalog, "v1PrototypeIDs"),
     "v2_core": swift_string_array(catalog, "v2CoreIDs"),
@@ -87,10 +95,17 @@ require(not set(held_catalog_ids).intersection(release_catalog_ids), "held sourc
 require(all(token in catalog for token in ("auditedPullRequestHead = \"12728df2e856897a44df2bbfbe01236f8b142303\"", "nonV1CandidateCount = 105", "candidateMetadata", "quarantinedPrototype", "heldSourceBuildRecords")), "catalog provenance or release gates are incomplete")
 require(all(token in catalog for token in ("StrokeAssetLane", "StrokeAssetFrameDomain", "StrokeAssetReviewGate", "StrokeAssetBundleStatus", "StrokeAssetLoadStatus")), "catalog routing/status metadata is incomplete")
 require("Entity.load" not in catalog and "loadBundledUSDZ" not in catalog and "ModelEntity" not in catalog, "static catalog must not load scene assets")
+require(all(token in catalog for token in (
+    'branch = "codex/three-tier-visual-detail-assets"',
+    'head = "6127cf38f500c2f2d6975df2d6cc945f526e08af"',
+    "physicalUSDZCount = 150",
+    "virtualBindingCount = 450",
+    "runtimeGeometryIncluded = false",
+)), "audited 150-source / 450-binding visual-detail snapshot is incomplete")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
-require(len(declared_usdz_paths) == 17 and len(set(declared_usdz_paths)) == 17 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly seventeen unique explicit USDZ resources")
+require(len(declared_usdz_paths) == 22 and len(set(declared_usdz_paths)) == 22 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly twenty-two unique explicit USDZ resources")
 require(
-    len({Path(path).name for path in declared_usdz_paths}) == 17
+    len({Path(path).name for path in declared_usdz_paths}) == 22
     and all((ROOT / path).resolve().exists() for path in declared_usdz_paths),
     "every explicit USDZ resource must exist and have a unique bundle basename",
 )
@@ -102,13 +117,18 @@ require(all(name in project_yml for name in (
     "circle_of_willis_flow_overlay_v2.usdz",
     "external_head_scalp_cutaway_v2.usdz",
     "eyes_context_realistic_v2.usdz",
-)), "seven reviewed-frame detail/context assets are not declared in the app bundle")
+    "scalp_access_closure_registered_conceptual_v1.usdz",
+    "cranial_bone_access_closure_registered_conceptual_v1.usdz",
+    "dural_access_closure_registered_conceptual_v1.usdz",
+    "intracerebral_hematoma_registered_conceptual_v1.usdz",
+    "cerebral_edema_registered_conceptual_v1.usdz",
+)), "reviewed-frame detail/context and registered conceptual access assets are not declared in the app bundle")
 require(all(token in catalog for token in (
     "dural_sinuses_jugulars_realistic_v2",
     "circle_of_willis_flow_overlay_v2",
     "external_head_scalp_cutaway_v2",
     "eyes_context_realistic_v2",
-    "seventeen resources",
+    "twenty-two resources",
 )), "registered-v2 detail/context references are not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
 require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices and "HRA Skin" in third_party_notices and "Visible Human eye context" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
@@ -260,16 +280,16 @@ require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior", "case inferior")), "named registered model-frame viewpoints are missing")
-require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)" in immersive and '.accessibilityLabel("Anatomy viewpoint")' in immersive, "named views and direct free-orbit handoff are not wired into the anatomy control")
+require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "SpatialViewpointDot" in immersive and "experience.setAnatomyViewpoint(viewpoints[nextIndex], reduceMotion: reduceMotion)" in immersive and '.accessibilityLabel("Anatomy viewpoint")' in immersive, "named views and direct free-orbit handoff are not wired into the quiet viewpoint control")
 require(all(token in immersive for token in (
     'Text("CLINICIAN LENS")',
-    'Text("REFERENCE DEPTH")',
-    '[.anterior, .lateralA, .lateralB, .superior, .inferior]',
-    'LazyVGrid(',
-    'experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)',
-    'experience.selectDetailLevel(level)',
+    'Text("VISUAL DETAIL · USER SELECTED")',
+    'viewpointControlID = "spatial-viewpoint-control"',
+    '.threeQuarter, .anterior, .lateralA, .lateralB, .superior, .inferior',
+    'private func advanceViewpoint()',
+    'experience.selectDetailLevel(StrokeDetailLevel.allCases[index])',
     'GENERIC VENOUS ATLAS · COLOUR CONVENTION · REVIEW PENDING',
-)), "clinician left rail lacks direct viewpoints or progressive detail controls")
+)), "clinician scene lacks the quiet viewpoint dot or progressive detail controls")
 require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior", "--proof-view-inferior")), "deterministic anatomy-viewpoint proof routes are missing")
 require("true medial view is intentionally not" in state, "single-surface anatomy is mislabeled as a medial view")
 require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
@@ -302,17 +322,18 @@ require("clinician-region-point-field" in scene and "clinician-procedure-point-f
 require("regionPointDirections" in scene and "procedurePointPositions" in scene, "sparse spatial reference data is missing")
 require("Example affected area" in scene and "Flow beyond the blockage changes" in scene, "intention-based point labels are missing")
 require("experience.lessonPointsVisible" in scene and "experience.pointField" in scene, "point fields are not discoverable or switchable")
-require("visualBounds(relativeTo: registered)" in scene and "* 1.025" in scene and "radius: 0.0032" in scene, "point fields are not derived from registered anatomy bounds at a precise readable scale")
+require("visualBounds(relativeTo: registered)" in scene and "* 1.025" in scene and "radius: 0.0041" in scene, "point fields are not derived from registered anatomy bounds at a precise readable scale")
 require("clotSurfaceMarker" in scene and "bounds.max.z + 0.003" in scene and 'selectedPointEntityName = "clinician-procedure-point-field-point-2"' in state, "blockage marker is not bound to the registered clot surface or proof semantics disagree")
 require("frontZ" not in scene and all(anchor in scene for anchor in ("[-0.028297, -0.142271, 0.010944]", "[-0.012158, -0.059836, 0.030163]", "[-0.043842, -0.014646, 0.029223]", "[-0.053607, -0.011508, 0.017754]")), "procedure markers still use a detached screen plane instead of registered-v2 mesh samples")
 require("defaultLessonPointIndex" in state and "case .procedure: 2" in state and "index == experience.pointField.defaultLessonPointIndex" in scene, "Vessel Story does not default to its clot-bound marker")
 require(all(layer in scene for layer in ("anatomy-cortex-layer", "anatomy-arteries-layer", "anatomy-blockage-layer", "anatomy-dura-layer")), "semantic sibling anatomy layers are missing")
 require("OpacityComponent(opacity:" in scene and "anatomyPresentation" in scene and "approach(cortexLayer" in scene, "reversible opacity or exploded-layer rendering is missing")
 require("isPointFieldInteractionTarget" in scene and "pointFieldSelection" in scene and "InputTargetComponent(allowedInputTypes: [.direct, .indirect])" in scene, "point fields are not directly targetable")
-require("StrokeLessonPointTargetComponent" in scene and "point.components.set(StrokeLessonPointTargetComponent())" in scene and "generateSphere(radius: 0.006)" in scene and "HoverEffectComponent" in scene, "point interaction affordance is missing")
+require("StrokeLessonPointTargetComponent" in scene and "point.components.set(StrokeLessonPointTargetComponent())" in scene and "generateSphere(radius: 0.0074)" in scene and "HoverEffectComponent" in scene, "point interaction affordance is missing")
 require("setAnatomyPresentation" in immersive and "Brain transparency" in immersive and "selectedPointLabel" in immersive, "clinician layer-study controls are incomplete")
 require("pointFieldSelection(for: value.entity)" in immersive and "selectPoint(entityName:" in immersive, "point pinch selection is not routed into shared state")
 require("targetedToEntity(where: .has(StrokeLessonPointTargetComponent.self))" in immersive and "isEnabled: !experience.questionPlacementArmed" in immersive, "lesson-point pinch is not isolated from the anatomy proxy or annotation mode")
+require("nearestVisiblePointFieldSelection" in scene and "nearestVisiblePointFieldSelection(" in immersive and "maximumDistance: Float = 0.036" in scene, "anatomy-proxy pinches do not resolve a nearby visible lesson point with the enlarged fallback")
 require("StrokeLessonPointTargetComponent.registerComponent()" in scene and "StrokeSceneFactory.registerCustomComponents()" in app, "lesson-point query component is not registered before scene construction")
 evidence = (ROOT / "Sources" / "StrokeEvidenceWorkspaceView.swift").read_text()
 deck_canon = (ROOT / "Docs" / "REALITYKIT_DECK_TO_STROKECARE.md").read_text()
@@ -349,12 +370,13 @@ require(all(token in scene for token in (
     "let isolateScholarSkull = experience.isClinicianScholarSkullInspectionActive",
     "importedSkull != nil",
     "imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull",
-    "imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull",
-    "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull",
-    "let showsConceptualDura = !isolateScholarSkull && showsPurpose",
+    "imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull &&",
+    "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&",
+    "let showsConceptualDura = !showsOpenCranialReview && !isolateScholarSkull && showsPurpose",
     "let showsClinicianSkullContext = isClinicianExplanation",
     "showsAccessReference || showsClosureReference",
-    "importedSkull?.isEnabled = isolateScholarSkull || showsClinicianSkullContext",
+    "importedSkull?.isEnabled = !showsOpenCranialReview &&",
+    "(isolateScholarSkull || showsClinicianSkullContext)",
     "showsClinicianSkullContext ? skullOffset : .zero",
     "showsAccessReference ? 0.42 : (showsClosureReference ? 0.18 : 0)",
     "no transform or exact",
@@ -453,7 +475,7 @@ require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PR
 require("LessonSpecimenRail" in immersive and "lesson-specimen-rail" in immersive and "selectLessonPoint" in state and "Native two-hand magnification remains the only zoom" in state, "role-aware specimen focus rail is missing")
 require("selected.position + [0.038, 0.020, 0.012]" in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "depth-attached lesson disclosure or direct presenter cycle controls are incomplete")
 require(not re.search(r"\bMenu\s*\{", immersive), "immersive controls must not use SwiftUI Menu presentation")
-require("[-0.58, 1.34, -0.92]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
+require("[-0.43, 1.28, -0.90]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
 require("openWindow(id: companion)" not in immersive, "immersive case docking still opens a desktop-like companion window")
 require("StrokeClinicianTool" in state and "clinicianToolKitVisible" in state and "selectClinicianTool" in state, "clinician tool-kit state is missing")
 require("clinician-hand-tool-wheel" in immersive and "ClinicianHandToolWheel" in immersive, "palm tool selector is missing")
@@ -474,7 +496,7 @@ require("134 unique USDZ assets" in asset_triage and all(name in asset_triage fo
     "brain_deep_structures_v2",
     "brain_ventricles_v2",
     "cerebral_bloodflow_animation_v2",
-)), "expanded asset catalog is not triaged separately from the seventeen-file runtime slice")
+)), "expanded asset catalog is not triaged separately from the twenty-two-file runtime slice")
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -491,7 +513,7 @@ require("root.convert(position: scenePoint, from: nil)" in immersive, "scene hit
 require("root.convert(position: placement.rootLocalPosition, to: nil)" in immersive, "anatomy-local question is not reconstructed in world space")
 require(immersive.count("guard StrokeSceneFactory.isAnatomyInteractionTarget(value.entity) else { return }") >= 2, "orbit and magnify are not routed to anatomy targets")
 require("spatial-patient-drawer" in immersive and "SpatialPatientDrawer" in immersive and "drawer.isEnabled = experience.spatialPhase == .caseLibrary" in immersive, "focused dossier briefing is missing or persists beyond the archive")
-require("VESSEL STORY" in immersive and "BRAIN ATLAS" in immersive and "let revealAll = experience.pointField == .regions" in scene, "focused specimen rail or registered transparent region-family rendering is missing")
+require("VESSEL STORY" in immersive and "BRAIN ATLAS" in immersive and "let revealAll = experience.pointField != .craniotomy" in scene, "focused specimen rail or fully discoverable registered lesson-family rendering is missing")
 require("FLOW_ANCHOR exports" in scene, "unreviewed flow markers are not quarantined from all-marker presentation")
 require("registered-region-point-anchor" in scene and "approach(regionPointAnchor" in scene, "region lesson markers remain coupled to cortical opacity or layer motion")
 require("horizon.isEnabled = experience.environmentMode == .warmHorizon" in immersive and "case .focusField: .full" in immersive, "environment state does not control horizon visibility and system immersion")
@@ -532,15 +554,66 @@ require(all(token in state for token in (
 )), "presenter technical-to-plain authored pointer state is missing")
 require("experience.selectPresenterKeyPoint(index)" in immersive and "experience.presenterPlainLanguagePoints[index]" in immersive and "authored plain-language phrasing" in immersive, "presenter pointers do not reveal authored plain-language lines")
 require("ASK ALOUD" not in immersive and "familyComfort" not in state and "familyComfort" not in immersive, "misleading voice or comfort terminology remains")
+require(all(token in immersive for token in (
+    "VISUAL DETAIL · USER SELECTED",
+    'Text("Simplified")',
+    'Text("Standard")',
+    'Text("Full")',
+    "experience.selectDetailLevel(StrokeDetailLevel.allCases[index])",
+)), "explicit three-stop visual-detail slider is incomplete")
+require("familyClarityCheck < 0.5" in state and "familyClarityCheck < 1.5" in state, "family question suggestions do not adapt to explicit clarity")
+require("if detailLevel == .calm" in state and "if detailLevel == .scholar" in state, "presenter wording does not adapt to the selected visual-detail tier")
+require(all(token in scene for token in (
+    "experience.detailLevel.motionRate",
+    "experience.detailLevel.pointScale",
+    "experience.detailLevel.pointOpacity",
+    "let flowOpacity: Float = switch experience.detailLevel",
+)), "RealityKit point and flow presentation does not respond to visual detail")
 require("experience.present(step: step)" in immersive, "presenter-controlled act targeting is missing")
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
-require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "isActive ? 220 : 154" in immersive, "three-act gaze timeline lacks readable active expansion or quiet inactive nodes")
+require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "showLabel ? 252 : 65" in immersive and "labelsVisible = false" in immersive, "three-act gaze timeline lacks readable active expansion, timed fade, enlarged targets, or quiet inactive nodes")
 require(all(token in immersive for token in (
     "ForEach(StrokePresenterTeachingBeat.allCases)",
     "experience.selectPresenterTeachingBeat(beat)",
     "SpatialPresenterTeachingBeatNode",
-    "isActive ? 158 : 94",
+    "showLabel ? 226 : 58",
+    "@State private var hoveredBeat",
+    "let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat",
+    ".fill(.ultraThinMaterial)",
+    ".opacity(0.58)",
+    "Color(red: 0.86, green: 0.31, blue: 0.34)",
 )), "doctor presenter timeline does not expose six compact direct checkpoints")
+require("(teachingTimelineID, [0, 1.13, -0.86]" in immersive, "teaching timeline is not staged in the central-lower demo field")
+require(all(token in scene for token in (
+    "addAccessTargetHighlight(to: accessPoint, sourceOffset: [0, 0, -0.022])",
+    'highlight.name = "clinician-access-target-highlight"',
+    'halo.name = "clinician-access-target-halo"',
+    'tick.name = "clinician-access-target-mark-\\(index)"',
+    'tether.name = "clinician-access-target-tether"',
+    'sourcePin.name = "clinician-access-target-source"',
+)), "craniotomy access point is missing its non-graphic halo, tether, or registration marks")
+require("let accessInvitationMarker = accessSourceMarker + SIMD3<Float>(0, 0, 0.022)" in scene, "access invitation is still visually embedded in the anatomy")
+require("maximumDistance: Float = 0.036" in scene, "nearest visible lesson-point fallback was not enlarged by twenty percent")
+require("let revealAll = experience.pointField != .craniotomy" in scene, "region or flow point families still hide unselected selectable markers")
+require("activatePresenterAccessStory" in state and "pointField = .craniotomy" in state and "selectDetailLevel(.scholar)" in state, "top Access checkpoint does not enter the craniotomy teaching family")
+require("experience.detailLevel == .scholar &&\n            experience.pointField == .craniotomy" not in scene, "craniotomy reference disappears when visual detail leaves Full")
+require(all(token in scene for token in (
+    "let accessScalpOpacity: Float",
+    "accessScalpOpacity = 0.32",
+    "accessScalpOpacity = 0.66",
+    "accessScalpOpacity = 0.92",
+    "accessBoneOpacity = 0.58",
+    "accessBoneOpacity = 0.82",
+    "accessBoneOpacity = 1.00",
+    "accessDuraOpacity = 0.28",
+    "accessDuraOpacity = 0.60",
+    "accessDuraOpacity = 0.88",
+)), "craniotomy assembly does not visibly adapt across all three visual-detail tiers")
+require(all(token in scene for token in (
+    "accessEdemaLayer?.isEnabled = showsOpenCranialReview && [",
+    "].contains(experience.presenterTeachingBeat) && experience.detailLevel == .scholar",
+)), "the optional edema cue is not explicitly restricted to Full clinician detail")
+require("clinicianToolKitVisible = true" in state, "pinching the access invitation does not reveal the clinician toolkit")
 require(all(token in state for token in (
     "pendingPresenterTeachingBeat",
     "beat.procedureStep == .discussCare, !careViewPermissionGranted",
@@ -566,7 +639,7 @@ require("--proof-teaching-imaging" in launch and "prepareTeachingImagingProof" i
 require("--proof-main-overview" in launch and "prepareMainOverviewProof" in state, "dots-first main overview proof route is missing")
 require("--proof-clinician-layer-hierarchy" in launch and "prepareClinicianLayerHierarchyProof" in state and "selectDetailLevel(.scholar)" in state, "scholar clinician layer-hierarchy proof route is missing")
 require("--proof-main-selected-point" in launch and "prepareTeachingImagingProof" in state, "selected-point main proof route is missing")
-require("let revealAll = experience.pointField == .regions" in scene and "generateSphere(radius: 0.0042)" in scene and "selectedLessonPointMaterial" in scene, "regional lesson cloud is not visibly distinct around the main anatomy")
+require("let revealAll = experience.pointField != .craniotomy" in scene and "generateSphere(radius: 0.0042)" in scene and "selectedLessonPointMaterial" in scene, "lesson clouds are not visibly distinct and fully discoverable around the main anatomy")
 require("selectLessonPoint(initialPoint)" not in state and "clearPointSelection()" in state, "lesson family still auto-selects a label instead of beginning dots-first")
 require("clotTarget.position = clotSurfaceMarker" in scene and 'clotBeacon.name = "registered-clot-focus-beacon"' in scene, "registered clot target is not visibly derived from the loaded clot surface")
 require(all(token in scene for token in (
@@ -699,6 +772,15 @@ require('title: "Act \\(experience.procedureStep.number)"' not in immersive and 
 require("--proof-clinician-pressure" in launch, "deterministic presenter proof route is missing")
 require("--proof-clinician-six-beat-timeline" in launch and "prepareClinicianSixBeatTimelineProof" in state and "selectPresenterTeachingBeat(.teamChecks" in state, "deterministic six-beat presenter timeline proof is missing")
 require("--proof-clinician-protective-covering" in launch and "prepareClinicianProtectiveCoveringProof" in state and "selectPresenterTeachingBeat(.protectiveCovering" in state, "deterministic protective-covering composition proof is missing")
+require("--proof-clinician-craniotomy" in launch and "prepareClinicianCraniotomyStoryProof" in state, "deterministic conceptual craniotomy-story proof is missing")
+require(all(token in scene for token in (
+    'openCranialReviewRootName = "registered-open-cranial-review-root"',
+    'importedAccessScalpName = "scalp_access_closure_registered_conceptual_v1"',
+    'importedAccessBoneName = "cranial_bone_access_closure_registered_conceptual_v1"',
+    'importedAccessDuraName = "dural_access_closure_registered_conceptual_v1"',
+    'importedAccessHematomaName = "intracerebral_hematoma_registered_conceptual_v1"',
+    'importedAccessEdemaName = "cerebral_edema_registered_conceptual_v1"',
+)), "registered conceptual access-layer assets are not loaded into one review-gated hierarchy")
 require(all(token in scene for token in (
     "let showsAccessReference",
     "let showsProtectiveCovering",
@@ -732,7 +814,7 @@ require("BRAIN_REVEAL_RIG" in houdini_builder and "OCCLUSION_RADIUS_PROFILE" in 
 require("XCAT_DEPLOY=BLOCKED" in xcat_deploy and "XCAT_DEPLOY=PASS" in xcat_deploy, "guarded XCAT deployment receipt is missing")
 require("BLOCKED.md" in xcat_deploy and "device-list.json" in xcat_deploy and "Tunnel state:" in xcat_deploy, "blocked XCAT reachability does not create a dated machine receipt")
 require("Install command: PASS" in xcat_deploy and "Running-process query: PASS" in xcat_deploy, "XCAT machine evidence ladder is incomplete")
-require("--hackathon-demo" in xcat_deploy and "-derivedDataPath" in xcat_deploy and "WEARER_RESULT.md" in xcat_deploy and "NOT RUN" in xcat_deploy, "XCAT launch is not tied to the complete deterministic wearer route and receipt")
+require("--proof-main-overview" in xcat_deploy and "-derivedDataPath" in xcat_deploy and "WEARER_RESULT.md" in xcat_deploy and "NOT RUN" in xcat_deploy, "XCAT launch is not tied to the deterministic interactive overview route and receipt")
 require("LEGIBILITY" in xcat_acceptance and "GESTURE" in xcat_acceptance and "COMFORT" in xcat_acceptance and "COMPREHENSION" in xcat_acceptance, "XCAT wearer acceptance protocol is incomplete")
 
 if failures:
@@ -748,7 +830,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=SEVENTEEN_ASSET_STAGED_SLICE")
+print("github_asset_runtime=TWENTY_TWO_ASSET_STAGED_SLICE")
 print("required_asset_failure=VISIBLE_COMPLETE_PROCEDURAL_FALLBACK")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")

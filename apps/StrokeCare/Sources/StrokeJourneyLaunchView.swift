@@ -525,6 +525,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-protective-covering") {
             experience.prepareClinicianProtectiveCoveringProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-craniotomy") {
+            experience.prepareClinicianCraniotomyStoryProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-main-overview") {
             experience.prepareMainOverviewProof()
             Task { await openProofSpace() }

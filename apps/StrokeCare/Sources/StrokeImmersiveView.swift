@@ -232,6 +232,7 @@ struct StrokeImmersiveView: View {
     private let caseReviewActionsID = "spatial-case-review-actions"
     private let caseHistoryTimelineID = "spatial-case-history-timeline"
     private let teachingTimelineID = "spatial-teaching-timeline"
+    private let viewpointControlID = "spatial-viewpoint-control"
     private let roleMicroCuesID = "spatial-role-micro-cues"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
     private let scholarReferenceRailID = "spatial-scholar-reference-rail"
@@ -346,7 +347,7 @@ struct StrokeImmersiveView: View {
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
                         caseHistoryTimelineID,
-                        teachingTimelineID, roleMicroCuesID, teachingImagingDrawerID,
+                        teachingTimelineID, viewpointControlID, roleMicroCuesID, teachingImagingDrawerID,
                         scholarReferenceRailID,
                         familyControlsID, presenterControlsID
                     ] {
@@ -431,7 +432,10 @@ struct StrokeImmersiveView: View {
                         let inReview = experience.spatialPhase == .caseReview
                         let reveal = Float(experience.caseReviewRevealProgress)
                         let lift = min(reveal / 0.34, 1)
-                        let dissolve = min(max((reveal - 0.34) / 0.42, 0), 1)
+                        let dissolveStart: Float = 0.34
+                        let dissolveDuration: Float = 0.42
+                        let normalizedDissolve = (reveal - dissolveStart) / dissolveDuration
+                        let dissolve = min(max(normalizedDissolve, Float(0)), Float(1))
                         file.position = inReview
                             ? simd_mix(
                                 SIMD3<Float>(0, 1.43, -0.82),
@@ -602,7 +606,12 @@ struct StrokeImmersiveView: View {
                     Attachment(id: teachingTimelineID) {
                         SpatialTeachingTimeline()
                             .environmentObject(experience)
-                            .frame(width: 690, height: 126)
+                            .frame(width: 720, height: 154)
+                    }
+                    Attachment(id: viewpointControlID) {
+                        SpatialViewpointDot()
+                            .environmentObject(experience)
+                            .frame(width: 132, height: 88)
                     }
                     Attachment(id: roleMicroCuesID) {
                         SpatialRoleMicroCues()
@@ -690,6 +699,11 @@ struct StrokeImmersiveView: View {
                     SpatialTapGesture()
                         .targetedToAnyEntity()
                         .onEnded { value in
+                            let scenePoint = value.convert(
+                                value.location3D,
+                                from: .local,
+                                to: .scene
+                            )
                             if experience.questionPlacementArmed {
                                 guard
                                     StrokeSceneFactory.isAnatomyInteractionTarget(value.entity),
@@ -698,16 +712,17 @@ struct StrokeImmersiveView: View {
                                 // Standard visionOS gaze selects the entity;
                                 // pinch confirms. The app receives the targeted
                                 // 3D hit, not a raw eye-tracking coordinate.
-                                let scenePoint = value.convert(
-                                    value.location3D,
-                                    from: .local,
-                                    to: .scene
-                                )
                                 let rootLocalPoint = root.convert(position: scenePoint, from: nil)
                                 experience.placeQuestionMarker(
                                     at: rootLocalPoint,
                                     target: StrokeSceneFactory.semanticTarget(for: value.entity)
                                 )
+                            } else if let root = sceneRoot(for: value.entity),
+                                      let point = StrokeSceneFactory.nearestVisiblePointFieldSelection(
+                                        to: scenePoint,
+                                        in: root
+                                      ) {
+                                experience.selectPoint(entityName: point.entityName, label: point.label)
                             } else if StrokeSceneFactory.semanticTarget(for: value.entity) == "blocked vessel" ||
                                 StrokeSceneFactory.semanticTarget(for: value.entity) == "affected brain region" {
                                 experience.focusOcclusion()
@@ -805,9 +820,15 @@ struct StrokeImmersiveView: View {
 
     private func updateSpatialTeachingAttachments(_ attachments: RealityViewAttachments) {
         let visible = experience.spatialPhase == .explanation
+        let isFamily = experience.audienceLens == .family
         let placements: [(String, SIMD3<Float>, Float)] = [
-            (teachingTimelineID, [0, 2.02, -0.88], 0.95),
-            (roleMicroCuesID, [-0.56, 1.72, -0.90], 0.82)
+            // Keep the active chapter comfortably inside the primary field.
+            // Inactive chapters collapse to quiet numbered dots below, so the
+            // timeline reads as orientation rather than another toolbar.
+            (teachingTimelineID, [0, 1.13, -0.86], isFamily ? 0.80 : 0.82),
+            // Family questions are shared content, not a far-peripheral
+            // presenter rail. Pull them inward and keep the anatomy dominant.
+            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.56, 1.72, -0.90], isFamily ? 0.72 : 0.82)
         ]
 
         for (id, position, scale) in placements {
@@ -816,6 +837,13 @@ struct StrokeImmersiveView: View {
             attachment.scale = [scale, scale, scale]
             attachment.isEnabled = visible
             attachment.components.set(BillboardComponent())
+        }
+
+        if let viewpoint = attachments.entity(for: viewpointControlID) {
+            viewpoint.position = [0.52, 1.18, -0.84]
+            viewpoint.scale = [0.72, 0.72, 0.72]
+            viewpoint.isEnabled = visible && experience.audienceLens == .clinician
+            viewpoint.components.set(BillboardComponent())
         }
 
         if let drawer = attachments.entity(for: teachingImagingDrawerID) {
@@ -839,16 +867,16 @@ struct StrokeImmersiveView: View {
         _ attachments: RealityViewAttachments,
         stageRoot: Entity
     ) {
-        let controls: [(String, SIMD3<Float>, Bool)] = [
-            (familyControlsID, [-0.58, 1.34, -0.92], experience.audienceLens == .family),
-            (presenterControlsID, [0.58, 1.38, -0.92], experience.audienceLens == .clinician)
+        let controls: [(String, SIMD3<Float>, Float, Bool)] = [
+            (familyControlsID, [-0.43, 1.28, -0.90], 0.74, experience.audienceLens == .family),
+            (presenterControlsID, [0.58, 1.38, -0.92], 0.86, experience.audienceLens == .clinician)
         ]
 
-        for (id, position, correctRole) in controls {
+        for (id, position, scale, correctRole) in controls {
             guard let attachment = attachments.entity(for: id) else { continue }
             if attachment.parent == nil { stageRoot.addChild(attachment) }
             attachment.position = position
-            attachment.scale = [0.86, 0.86, 0.86]
+            attachment.scale = [scale, scale, scale]
             attachment.isEnabled = experience.spatialPhase == .explanation && correctRole
             attachment.components.set(BillboardComponent())
         }
@@ -1289,16 +1317,6 @@ private struct SpatialRoleControls: View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
                 bubbleButton(
-                    experience.anatomyViewpoint.shortTitle,
-                    systemImage: experience.anatomyViewpoint.systemImage,
-                    accent: .cyan,
-                    selected: experience.anatomyViewpoint != .threeQuarter
-                ) {
-                    experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
-                }
-                .accessibilityLabel("Skull viewpoint")
-
-                bubbleButton(
                     environmentBubbleTitle,
                     systemImage: experience.environmentMode.systemImage,
                     accent: .cyan,
@@ -1354,18 +1372,6 @@ private struct SpatialRoleControls: View {
     private var regularPresenterControls: some View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
-                bubbleButton(
-                    experience.anatomyViewpoint.shortTitle,
-                    systemImage: experience.anatomyViewpoint.systemImage,
-                    accent: .mint,
-                    selected: experience.anatomyViewpoint != .threeQuarter
-                ) {
-                    experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
-                }
-                .accessibilityLabel("Anatomy viewpoint")
-                .accessibilityValue(experience.anatomyViewpoint.rawValue)
-                .accessibilityHint("Pinch to move to the next viewpoint")
-
                 bubbleButton(
                     layerBubbleTitle,
                     systemImage: "square.3.layers.3d",
@@ -1537,7 +1543,11 @@ private struct SpatialRoleControls: View {
     }
 
     private var lessonFamilyBubbleTitle: String {
-        experience.pointField == .regions ? "Regions" : "Flow"
+        switch experience.pointField {
+        case .regions: "Regions"
+        case .procedure: "Flow"
+        case .craniotomy: "Access"
+        }
     }
 
     private var environmentBubbleTitle: String {
@@ -1560,7 +1570,16 @@ private struct SpatialRoleControls: View {
     }
 
     private func cycleLessonFamily() {
-        experience.selectLessonFamily(experience.pointField == .regions ? .procedure : .regions)
+        let next: StrokePointField
+        switch experience.pointField {
+        case .regions:
+            next = .procedure
+        case .procedure:
+            next = experience.audienceLens == .clinician ? .craniotomy : .regions
+        case .craniotomy:
+            next = .regions
+        }
+        experience.selectLessonFamily(next)
     }
 
     private func cycleEnvironment() {
@@ -1838,6 +1857,9 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
 /// at a glance while the other two remain quiet navigation targets.
 private struct SpatialTeachingTimeline: View {
     @EnvironmentObject private var experience: StrokeExperienceState
+    @State private var hoveredBeat: StrokePresenterTeachingBeat?
+    @State private var hoveredStep: StrokeProcedureStep?
+    @State private var labelsVisible = true
 
     var body: some View {
         Group {
@@ -1847,28 +1869,63 @@ private struct SpatialTeachingTimeline: View {
                 familyTimeline
             }
         }
-        .padding(8)
+        .padding(.horizontal, 13)
+        .padding(.vertical, 10)
+        .background {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .opacity(0.58)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.10), radius: 14, y: 5)
+        .task(id: revealKey) {
+            labelsVisible = true
+            try? await Task.sleep(for: .seconds(2.6))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.42)) {
+                labelsVisible = false
+            }
+        }
     }
 
     private var familyTimeline: some View {
-        HStack(spacing: 10) {
-            ForEach(StrokeProcedureStep.allCases) { step in
-                let isActive = step == experience.procedureStep
-                Button {
-                    // `present` retains the existing Make-space consent gate.
-                    experience.present(step: step)
-                } label: {
-                    SpatialTeachingTimelineNode(
-                        number: step.number,
-                        title: title(for: step),
-                        isActive: isActive,
-                        tint: tint(for: step)
-                    )
+        VStack(spacing: 7) {
+            HStack(spacing: 6) {
+                ForEach(StrokeProcedureStep.allCases) { step in
+                    let isActive = step == experience.procedureStep
+                    Button {
+                        // `present` retains the existing Make-space consent gate.
+                        experience.present(step: step)
+                    } label: {
+                        SpatialTeachingTimelineNode(
+                            number: step.number,
+                            title: title(for: step),
+                            isActive: isActive,
+                            showLabel: (isActive && labelsVisible) || hoveredStep == step,
+                            tint: tint(for: step)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .onHover { isHovering in
+                        hoveredStep = isHovering ? step : nil
+                    }
+                    .accessibilityLabel("Act \(step.number), \(title(for: step))")
+                    .accessibilityValue(isActive ? "Current act" : "Inactive act")
                 }
-                .buttonStyle(.plain)
-                .hoverEffect(.highlight)
-                .accessibilityLabel("Act \(step.number), \(title(for: step))")
-                .accessibilityValue(isActive ? "Current act" : "Inactive act")
+            }
+
+            if labelsVisible || hoveredStep != nil {
+                let displayedStep = hoveredStep ?? experience.procedureStep
+                Text("\(title(for: displayedStep)) · \(familySummary(for: displayedStep))")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color.white.opacity(0.70))
+                    .lineLimit(1)
+                    .contentTransition(.opacity)
+                    .transition(.opacity)
             }
         }
     }
@@ -1877,23 +1934,55 @@ private struct SpatialTeachingTimeline: View {
     /// losing the three-act patient story. Beats 3–6 continue to use the
     /// existing explicit permission gate before any layer separation.
     private var presenterTimeline: some View {
-        HStack(spacing: 6) {
-            ForEach(StrokePresenterTeachingBeat.allCases) { beat in
-                let isActive = beat == experience.presenterTeachingBeat
-                Button {
-                    experience.selectPresenterTeachingBeat(beat)
-                } label: {
-                    SpatialPresenterTeachingBeatNode(
-                        beat: beat,
-                        isActive: isActive,
-                        tint: tint(for: beat.procedureStep)
-                    )
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
+                ForEach(StrokePresenterTeachingBeat.allCases) { beat in
+                    let isActive = beat == experience.presenterTeachingBeat
+                    Button {
+                        experience.selectPresenterTeachingBeat(beat)
+                    } label: {
+                        SpatialPresenterTeachingBeatNode(
+                            beat: beat,
+                            isActive: isActive,
+                            showLabel: (isActive && labelsVisible) || hoveredBeat == beat,
+                            tint: tint(for: beat)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .onHover { isHovering in
+                        hoveredBeat = isHovering ? beat : nil
+                    }
+                    .accessibilityLabel("Presenter beat \(beat.number), \(beat.title)")
+                    .accessibilityValue(isActive ? "Current checkpoint" : "Available checkpoint")
                 }
-                .buttonStyle(.plain)
-                .hoverEffect(.highlight)
-                .accessibilityLabel("Presenter beat \(beat.number), \(beat.title)")
-                .accessibilityValue(isActive ? "Current checkpoint" : "Available checkpoint")
             }
+
+            HStack(spacing: 3) {
+                ForEach(StrokePresenterTeachingBeat.allCases) { beat in
+                    Capsule()
+                        .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.96 : 0.50))
+                        .frame(height: beat == experience.presenterTeachingBeat ? 6 : 4)
+                }
+            }
+
+            if labelsVisible || hoveredBeat != nil {
+                let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat
+                Text("\(displayedBeat.title) · \(displayedBeat.summary)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color.white.opacity(0.72))
+                    .lineLimit(1)
+                    .contentTransition(.opacity)
+                    .transition(.opacity)
+            }
+        }
+    }
+
+    private var revealKey: String {
+        if experience.audienceLens == .clinician {
+            "clinician-\(experience.presenterTeachingBeat.rawValue)"
+        } else {
+            "family-\(experience.procedureStep.number)"
         }
     }
 
@@ -1902,6 +1991,14 @@ private struct SpatialTeachingTimeline: View {
         case .chooseCase: "Orient"
         case .inspectOcclusion: "Pressure"
         case .discussCare: "Make space"
+        }
+    }
+
+    private func familySummary(for step: StrokeProcedureStep) -> String {
+        switch step {
+        case .chooseCase: "See the whole brain and its vessels"
+        case .inspectOcclusion: "See where flow is interrupted"
+        case .discussCare: "See why making room may be discussed"
         }
     }
 
@@ -1915,29 +2012,46 @@ private struct SpatialTeachingTimeline: View {
         case .discussCare: Color(red: 0.95, green: 0.48, blue: 0.29)
         }
     }
+
+    /// The six checkpoints form one calm intensity arc: cool orientation,
+    /// warmer access/purpose, then a deliberate return to cool context. Color
+    /// communicates story position only; it is never a severity score.
+    private func tint(for beat: StrokePresenterTeachingBeat) -> Color {
+        switch beat {
+        case .confirmContext: Color(red: 0.50, green: 0.58, blue: 0.82)
+        case .discussAccess: Color(red: 0.61, green: 0.62, blue: 0.84)
+        case .protectiveCovering: Color(red: 0.73, green: 0.58, blue: 0.77)
+        case .explainPurpose: Color(red: 0.95, green: 0.48, blue: 0.29)
+        case .teamChecks: Color(red: 0.86, green: 0.31, blue: 0.34)
+        case .explainClosure: Color(red: 0.58, green: 0.60, blue: 0.82)
+        }
+    }
 }
 
 private struct SpatialPresenterTeachingBeatNode: View {
     let beat: StrokePresenterTeachingBeat
     let isActive: Bool
+    let showLabel: Bool
     let tint: Color
 
     var body: some View {
-        HStack(spacing: isActive ? 8 : 4) {
+        HStack(spacing: showLabel ? 8 : 4) {
             Text(String(beat.number))
                 .font(.caption.monospacedDigit().weight(.black))
-                .frame(width: 28, height: 28)
+                .frame(width: 34, height: 34)
                 .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.62))
 
-            Text(isActive ? beat.title : beat.shortTitle)
-                .font(isActive ? .callout.weight(.bold) : .caption2.weight(.semibold))
-                .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.52))
-                .lineLimit(1)
-                .minimumScaleFactor(isActive ? 0.72 : 0.62)
+            if showLabel {
+                Text(beat.title)
+                    .font(.callout.weight(.bold))
+                    .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.82))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
         }
-        .padding(.horizontal, isActive ? 12 : 7)
-        .frame(width: isActive ? 158 : 94, height: 58)
+        .padding(.horizontal, showLabel ? 12 : 7)
+        .frame(width: showLabel ? 226 : 58, height: 67)
         .contentShape(Capsule())
         .background(
             isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
@@ -1956,23 +2070,26 @@ private struct SpatialTeachingTimelineNode: View {
     let number: Int
     let title: String
     let isActive: Bool
+    let showLabel: Bool
     let tint: Color
 
     var body: some View {
-        HStack(spacing: isActive ? 10 : 6) {
+        HStack(spacing: showLabel ? 10 : 6) {
             Text(String(number))
                 .font(.callout.monospacedDigit().weight(.black))
-                .frame(width: 32, height: 32)
+                .frame(width: 38, height: 38)
                 .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.58))
 
-            Text(title)
-                .font(isActive ? .body.weight(.bold) : .callout.weight(.semibold))
-                .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.52))
-                .lineLimit(1)
+            if showLabel {
+                Text(title)
+                    .font(.body.weight(.bold))
+                    .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.82))
+                    .lineLimit(1)
+            }
         }
-        .padding(.horizontal, isActive ? 16 : 10)
-        .frame(width: isActive ? 220 : 154, height: 64)
+        .padding(.horizontal, showLabel ? 16 : 10)
+        .frame(width: showLabel ? 252 : 65, height: 72)
         .background(
             isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
             in: Capsule()
@@ -1983,6 +2100,53 @@ private struct SpatialTeachingTimelineNode: View {
                 lineWidth: isActive ? 1.5 : 1
             )
         )
+    }
+}
+
+/// A quiet lower-corner orientation affordance. It replaces a row of view
+/// buttons: gaze shows the current authored view and one pinch advances to the
+/// next repeatable whole-assembly viewpoint.
+private struct SpatialViewpointDot: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private let viewpoints: [StrokeAnatomyViewpoint] = [
+        .threeQuarter, .anterior, .lateralA, .lateralB, .superior, .inferior
+    ]
+
+    var body: some View {
+        Button(action: advanceViewpoint) {
+            VStack(spacing: 5) {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                    Circle()
+                        .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                    Image(systemName: experience.anatomyViewpoint.systemImage)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(Color.white.opacity(0.88))
+                }
+                .frame(width: 48, height: 48)
+
+                Text(experience.anatomyViewpoint.shortTitle.uppercased())
+                    .font(.caption2.monospaced().weight(.bold))
+                    .foregroundStyle(Color.white.opacity(0.62))
+                    .lineLimit(1)
+            }
+            .frame(width: 92, height: 78)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .accessibilityLabel("Anatomy viewpoint")
+        .accessibilityValue(experience.anatomyViewpoint.rawValue)
+        .accessibilityHint("Pinch to move to the next whole-anatomy view")
+    }
+
+    private func advanceViewpoint() {
+        let currentIndex = viewpoints.firstIndex(of: experience.anatomyViewpoint) ?? -1
+        let nextIndex = (currentIndex + 1) % viewpoints.count
+        experience.setAnatomyViewpoint(viewpoints[nextIndex], reduceMotion: reduceMotion)
     }
 }
 
@@ -2156,67 +2320,41 @@ private struct SpatialRoleMicroCues: View {
                 .tracking(0.8)
                 .foregroundStyle(accent)
 
-            LazyVGrid(
-                columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3),
-                spacing: 6
-            ) {
-                ForEach(directViewpoints) { viewpoint in
-                    let isSelected = experience.anatomyViewpoint == viewpoint
-                    Button {
-                        experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)
-                    } label: {
-                        Label(viewpoint.shortTitle, systemImage: viewpoint.systemImage)
-                            .font(.caption2.weight(.bold))
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                            .foregroundStyle(isSelected ? Color.black.opacity(0.80) : Color.white.opacity(0.76))
-                            .background(
-                                isSelected ? accent : Color.white.opacity(0.06),
-                                in: Capsule()
-                            )
-                    }
-                    .buttonStyle(.plain)
-                    .hoverEffect(.highlight)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Show \(viewpoint.rawValue)")
-                    .accessibilityValue(isSelected ? "Selected" : "Not selected")
-                }
-            }
-
             HStack {
-                Text("REFERENCE DEPTH")
+                Text("VISUAL DETAIL · USER SELECTED")
                     .font(.caption2.weight(.black))
                     .tracking(0.65)
                 Spacer()
-                Text(experience.detailLevel.rawValue.uppercased())
+                Text(experience.detailLevel.visualDetailTitle.uppercased())
                     .font(.caption2.monospaced().weight(.bold))
                     .foregroundStyle(accent)
             }
             .foregroundStyle(.white.opacity(0.62))
 
-            HStack(spacing: 6) {
-                ForEach(StrokeDetailLevel.allCases) { level in
-                    let isSelected = experience.detailLevel == level
-                    Button {
-                        experience.selectDetailLevel(level)
-                    } label: {
-                        Text(level.rawValue.capitalized)
-                            .font(.caption2.weight(.bold))
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                            .foregroundStyle(isSelected ? Color.black.opacity(0.80) : Color.white.opacity(0.70))
-                            .background(
-                                isSelected ? accent : Color.white.opacity(0.05),
-                                in: Capsule()
-                            )
+            Slider(
+                value: Binding(
+                    get: { Double(StrokeDetailLevel.allCases.firstIndex(of: experience.detailLevel) ?? 0) },
+                    set: { value in
+                        let index = min(max(Int(value.rounded()), 0), StrokeDetailLevel.allCases.count - 1)
+                        experience.selectDetailLevel(StrokeDetailLevel.allCases[index])
                     }
-                    .buttonStyle(.plain)
-                    .hoverEffect(.highlight)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Reference depth \(level.rawValue)")
-                    .accessibilityValue(isSelected ? "Selected" : "Not selected")
-                }
+                ),
+                in: 0...2,
+                step: 1
+            )
+            .tint(accent)
+            .accessibilityLabel("Visual explanation detail")
+            .accessibilityValue(experience.detailLevel.visualDetailTitle)
+
+            HStack {
+                Text("Simplified")
+                Spacer()
+                Text("Standard")
+                Spacer()
+                Text("Full")
             }
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(.white.opacity(0.58))
 
             if experience.detailLevel >= .guided &&
                 experience.pointField == .regions &&
@@ -2237,9 +2375,6 @@ private struct SpatialRoleMicroCues: View {
         }
     }
 
-    private var directViewpoints: [StrokeAnatomyViewpoint] {
-        [.anterior, .lateralA, .lateralB, .superior, .inferior]
-    }
 }
 
 /// A single spatial affordance rather than a miniature desktop toolbar.

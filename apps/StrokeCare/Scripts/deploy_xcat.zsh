@@ -5,7 +5,10 @@ set -euo pipefail
 readonly DEVICE_ID="613CC48C-A6AD-5170-A238-D518B6012491"
 readonly DEVICE_NAME="XCAT"
 readonly BUNDLE_ID="com.arnav.StrokeTime"
-readonly PROOF_ROUTE="--hackathon-demo"
+# Launch the verified explanation composition directly for physical interaction
+# testing. `--hackathon-demo` intentionally starts at the prelude and does not
+# auto-open the immersive space, which is unsuitable for a guarded deploy test.
+readonly PROOF_ROUTE="--proof-main-overview"
 readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly PROJECT_PATH="${APP_ROOT}/StrokeTime.xcodeproj"

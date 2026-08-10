@@ -918,3 +918,48 @@
   state pack, promote only an applicable clinician-gated registered state and
   bind it to one of the existing six checkpoints; do not bulk-enable the pack
   in the ischemic family path.
+
+## 2026-08-10 10:21 SGT — restore a testable XCAT overview and point acquisition
+
+- Target: replace the stale black launch state with the complete main anatomy
+  overview and make anatomy-attached lesson points more reliably selectable on
+  the physical headset.
+- Bounded action: changed the guarded device route to
+  `--proof-main-overview`, enlarged point visuals and non-overlapping collision
+  proxies slightly, and added a nearest-visible-point fallback when the larger
+  transparent brain proxy receives the pinch first.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  signed visionOS device build `0.6 (29)` succeeded, installed on XCAT,
+  foreground-launched, and remained listed as PID 801. Machine receipt:
+  `Proof/xcat/20260810-102108/RECEIPT.md`.
+- Verdict: `IMPROVED` — XCAT now starts from the bright, complete overview and
+  the input path no longer depends solely on the small point collider winning
+  ray selection.
+- Blocker: the machine receipt cannot prove wearer visibility, gaze-and-pinch
+  acquisition, stereo placement, comfort, comprehension, anatomical accuracy,
+  or clinical validity.
+- Next safe action: while wearing XCAT, gaze at one mint point and pinch once;
+  confirm that it enlarges and reveals exactly one right-side teaching
+  reference.
+
+## 2026-08-10 11:49 SGT — adaptive craniotomy reference on XCAT
+
+- Target: keep the reversible craniotomy teaching reference legible when the
+  presenter changes the explicit visual-detail level.
+- Bounded action: retained one registered access assembly across Simplified,
+  Standard, and Full, with progressively stronger scalp, bone, and dura
+  opacity; kept the optional edema cue restricted to Full clinician detail.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  the generic visionOS Simulator Debug build succeeded; signed XCAT build
+  `0.6 (29)` codesign-verified, installed, foreground-launched, and remained
+  listed as PID 986. Machine receipt:
+  `Proof/xcat/20260810-114913/RECEIPT.md`.
+- Verdict: `IMPROVED` — changing explicit visual detail no longer makes the
+  access reference disappear, while higher-detail secondary anatomy remains
+  gated.
+- Blocker: the machine receipt cannot prove wearer visibility, point
+  acquisition, stereo registration, comfort, comprehension, or clinical
+  correctness.
+- Next safe action: on XCAT, enter `Access`, pinch the orange tethered marker,
+  then move Visual Detail through Simplified, Standard, and Full and confirm
+  that one reversible access reference remains visible throughout.

@@ -14,8 +14,10 @@ it explicitly records that build, install, launch, wearer, and clinical checks
 were not run. If XCAT is reachable, the same guarded command continues through
 the signed build log, install receipt, installed-app query, foreground-launch
 receipt, and running-process query. It launches the deterministic
-`--hackathon-demo` route so the wearer starts at the prelude and follows the
-complete 0.6 flow. It also creates `WEARER_RESULT.md` with every human field set
+`--proof-main-overview` route so the wearer starts in the complete interactive
+explanation composition and can immediately validate point targeting. The
+complete prelude-to-case flow remains available through a normal app launch.
+The script also creates `WEARER_RESULT.md` with every human field set
 to `NOT RUN`.
 
 After entering the immersive anatomy stage once, collect the separate

@@ -12,7 +12,7 @@ Updated after `git fetch --all --prune` on 10 August 2026.
   adds 69 v3 packages, bringing the repository candidate catalog to **134 unique USDZ assets**.
   Those draft files are metadata candidates, not current
   app runtime dependencies.
-- Stroke Care deliberately declares a seventeen-asset runtime slice today. A
+- Stroke Care deliberately declares a twenty-two-asset runtime slice today. A
   catalog file existing in Git is not proof that it is registered, clinically
   suitable, performant, or visible in the app.
 
@@ -26,6 +26,7 @@ Updated after `git fetch --all --prune` on 10 August 2026.
 | `circle_of_willis_flow_overlay_v2` | 0.48 MB | Registered directional teaching cue | Bundled in the registered-v2 frame and point-gated; authored route lines/chevrons are qualitative, not CFD or a patient measurement. Simulator composition proof exists; XCAT and specialist review remain required. |
 | `dural_sinuses_jugulars_realistic_v2` | 4.22 MB | Clinician Guided/Scholar venous reference | Bundled in the registered-v2 frame; generic atlas only. Z-Anatomy/BodyParts3D ShareAlike attribution and specialist review are mandatory. Blue/purple is a UI convention, not venous blood colour or flow. |
 | `external_head_scalp_cutaway_v2` + `eyes_context_realistic_v2` | 9.60 MB | Scholar exterior orientation | Bundled and jointly gated behind Surface. The HRA scalp cutaway is illustrative—not a surgical opening—and eye alignment is approximate; generic CC BY 4.0 teaching context pending specialist review. |
+| Five Page 2 access-state assets | staged registered conceptual slice | Clinician-only reversible access story | Bundled as conceptual presentation states for scalp, cranial bone, dura, edema, and hematoma. They do not authorize cutting, tool contact, operative training, or a patient-specific site; specialist review remains pending. |
 | `artery_cutaway_complete_v2` | 6.5 MB | Magnified vessel close-up | Separate on-demand volume, never permanent centre clutter. |
 | `thrombectomy_device_set_educational_v2` | 2.47 MB | Presenter-only Plan B tool tray | Use only when thrombectomy is the chosen discussion; label magnification and generic-device status. |
 | Individual v2 guidewire/catheters/stent | 0.24–1.05 MB each | Grabbable clinician inventory | Prefer lazy individual loading over the combined set. |

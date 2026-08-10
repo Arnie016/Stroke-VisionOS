@@ -41,6 +41,7 @@ enum StrokeEnvironmentMode: String, CaseIterable, Identifiable {
 enum StrokePointField: String, CaseIterable, Identifiable {
     case regions = "Brain regions"
     case procedure = "Blood flow"
+    case craniotomy = "Access story"
 
     var id: String { rawValue }
 
@@ -48,6 +49,7 @@ enum StrokePointField: String, CaseIterable, Identifiable {
         switch self {
         case .regions: "brain.head.profile"
         case .procedure: "point.3.connected.trianglepath.dotted"
+        case .craniotomy: "circle.dotted.and.circle"
         }
     }
 
@@ -68,6 +70,14 @@ enum StrokePointField: String, CaseIterable, Identifiable {
                 StrokeLessonPoint(index: 3, shortTitle: "Beyond", fullTitle: "Flow beyond the blockage changes"),
                 StrokeLessonPoint(index: 4, shortTitle: "Territory", fullTitle: "Affected territory")
             ]
+        case .craniotomy:
+            [
+                StrokeLessonPoint(
+                    index: 0,
+                    shortTitle: "Access",
+                    fullTitle: "Generic craniotomy teaching story"
+                )
+            ]
         }
     }
 
@@ -75,6 +85,7 @@ enum StrokePointField: String, CaseIterable, Identifiable {
         switch self {
         case .regions: "clinician-region-point-field-point-"
         case .procedure: "clinician-procedure-point-field-point-"
+        case .craniotomy: "clinician-access-point-field-point-"
         }
     }
 
@@ -82,6 +93,7 @@ enum StrokePointField: String, CaseIterable, Identifiable {
         switch self {
         case .regions: 0
         case .procedure: 2
+        case .craniotomy: 0
         }
     }
 }
@@ -284,23 +296,37 @@ enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .confirmContext: "Confirm context"
+        case .confirmContext: "Orient the case"
         case .discussAccess: "Discuss access"
-        case .protectiveCovering: "Protective covering"
-        case .explainPurpose: "Explain purpose"
-        case .teamChecks: "Team checks"
-        case .explainClosure: "Explain closure"
+        case .protectiveCovering: "Protective layer"
+        case .explainPurpose: "Explain making room"
+        case .teamChecks: "What the team checks"
+        case .explainClosure: "Return to whole"
         }
     }
 
     var shortTitle: String {
         switch self {
-        case .confirmContext: "Context"
+        case .confirmContext: "Orient"
         case .discussAccess: "Access"
         case .protectiveCovering: "Covering"
-        case .explainPurpose: "Purpose"
+        case .explainPurpose: "Make room"
         case .teamChecks: "Checks"
-        case .explainClosure: "Closure"
+        case .explainClosure: "Whole again"
+        }
+    }
+
+    /// One human sentence appears only for the active or gaze-hovered beat.
+    /// The detailed technical boundary remains in the presenter's peripheral
+    /// cue, keeping this top history control readable at a glance.
+    var summary: String {
+        switch self {
+        case .confirmContext: "Start with the whole teaching model."
+        case .discussAccess: "Show where access may be discussed."
+        case .protectiveCovering: "Reveal the protective covering gently."
+        case .explainPurpose: "Explain why the team may make more room."
+        case .teamChecks: "Name what the team continues to watch."
+        case .explainClosure: "Bring the teaching layers back together."
         }
     }
 
@@ -827,7 +853,7 @@ final class StrokeExperienceState: ObservableObject {
         // a label or teaching reference on their behalf.
         clearPointSelection()
         requestedPause = false
-        if field == .procedure {
+        if field == .procedure || field == .craniotomy {
             withAnimation(.easeInOut(duration: 0.65)) {
                 brainRevealProgress = max(brainRevealProgress, 0.42)
                 vesselFocusProgress = 1
@@ -1043,9 +1069,20 @@ final class StrokeExperienceState: ObservableObject {
     ) {
         guard audienceLens == .clinician, spatialPhase == .explanation else { return }
 
+        let preservedAccessSelection: (entityName: String, label: String)? = {
+            guard let entityName = selectedPointEntityName,
+                  entityName.hasPrefix("clinician-access-point-field-point-"),
+                  let label = selectedPointLabel else { return nil }
+            return (entityName, label)
+        }()
+        let isAccessBeat = beat.rawValue >= StrokePresenterTeachingBeat.discussAccess.rawValue
+
         if beat.procedureStep == .discussCare, !careViewPermissionGranted {
             pendingPresenterTeachingBeat = beat
             present(step: .discussCare, reduceMotion: reduceMotion)
+            if isAccessBeat {
+                activatePresenterAccessStory(preserving: preservedAccessSelection)
+            }
             return
         }
 
@@ -1053,12 +1090,30 @@ final class StrokeExperienceState: ObservableObject {
         present(step: beat.procedureStep, reduceMotion: reduceMotion)
         guard procedureStep == beat.procedureStep else { return }
         presenterTeachingBeat = beat
+        if isAccessBeat {
+            activatePresenterAccessStory(preserving: preservedAccessSelection)
+        }
         if beat == .explainClosure {
             cancelLayerReveal()
             withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.55)) {
                 anatomyPresentation = .assembled
                 brainRevealProgress = 0.28
             }
+        }
+    }
+
+    /// The top Access checkpoint is the authoritative way into the bounded
+    /// craniotomy teaching story. It reveals one quiet, anatomy-referenced
+    /// invitation; only a deliberate pinch opens its local explanation.
+    private func activatePresenterAccessStory(
+        preserving selection: (entityName: String, label: String)?
+    ) {
+        selectDetailLevel(.scholar)
+        pointField = .craniotomy
+        lessonPointsVisible = true
+        if let selection {
+            selectedPointEntityName = selection.entityName
+            selectedPointLabel = selection.label
         }
     }
 
@@ -1154,7 +1209,27 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     var familyQuestionSuggestions: [String] {
-        switch procedureStep {
+        if familyClarityWasSet, familyClarityCheck < 0.5 {
+            return switch procedureStep {
+            case .chooseCase:
+                ["Can we start with the whole brain again?", "Where is the affected area?", "What do we know for sure?"]
+            case .inspectOcclusion:
+                ["Can you show the blockage again?", "Which change is pressure?", "What remains uncertain?"]
+            case .discussCare:
+                ["Can you show the purpose again?", "What can this change?", "What can this not change?"]
+            }
+        }
+        if familyClarityWasSet, familyClarityCheck < 1.5 {
+            return switch procedureStep {
+            case .chooseCase:
+                ["Can you point to the affected side?", "Which layer am I seeing?", "Is this a teaching model?"]
+            case .inspectOcclusion:
+                ["Can we compare blockage and swelling?", "Why is space limited?", "Can we pause here?"]
+            case .discussCare:
+                ["Where is more room being made?", "What will the team check?", "What remains uncertain?"]
+            }
+        }
+        return switch procedureStep {
         case .chooseCase:
             [familyTimelineQuestion, "Can you show where this is?", "What do we know for sure?"]
         case .inspectOcclusion:
@@ -1182,6 +1257,28 @@ final class StrokeExperienceState: ObservableObject {
             ]
         }
 
+        if detailLevel == .calm {
+            return switch presenterTeachingBeat {
+            case .confirmContext: ["Teaching model", "Whole brain first", "Not a patient scan"]
+            case .discussAccess: ["Show the blockage", "Name each change", "Pause for questions"]
+            case .protectiveCovering: ["Ask before reveal", "Protective layer", "Concept only"]
+            case .explainPurpose: ["Ask before reveal", "More room", "Not repaired tissue"]
+            case .teamChecks: ["What the team checks", "Imaging may guide", "No result shown"]
+            case .explainClosure: ["Bring layers together", "No graphic detail", "Invite questions"]
+            }
+        }
+
+        if detailLevel == .scholar {
+            return switch presenterTeachingBeat {
+            case .confirmContext: ["Generic registered-v2 assembly", "Cortex before subsystems", "Registration review pending"]
+            case .discussAccess: ["Occlusion, injury, pressure", "Keep causal claims bounded", "No prognosis inferred"]
+            case .protectiveCovering: ["Permission before separation", "Conceptual dura reference", "No operative technique"]
+            case .explainPurpose: ["Permission before separation", "Decompression concept", "No outcome promise"]
+            case .teamChecks: ["Pressure and bleeding checks", "Imaging and monitoring", "No pass/fail result"]
+            case .explainClosure: ["Return authored layers", "No fixation simulation", "Restate model limits"]
+            }
+        }
+
         return switch presenterTeachingBeat {
         case .confirmContext:
             ["Generic scenario", "Whole brain first", "Not a patient scan"]
@@ -1206,6 +1303,76 @@ final class StrokeExperienceState: ObservableObject {
                 "Use it only to discuss shape and relative position.",
                 "A specialist still needs to review this anatomy.",
             ]
+        }
+
+        if detailLevel == .calm {
+            return switch presenterTeachingBeat {
+            case .confirmContext: [
+                "This is a general teaching model.",
+                "We will begin with the whole brain.",
+                "It is not the person's scan.",
+            ]
+            case .discussAccess: [
+                "This marker opens a calm explanation of the affected area.",
+                "We will name the blockage, injury, and pressure separately.",
+                "Please stop me whenever something is unclear.",
+            ]
+            case .protectiveCovering: [
+                "I will ask before showing the next layer.",
+                "This layer protects the brain.",
+                "The motion explains an idea, not an operation.",
+            ]
+            case .explainPurpose: [
+                "I will ask before showing deeper layers.",
+                "This view explains making more room.",
+                "It does not show injured tissue becoming repaired.",
+            ]
+            case .teamChecks: [
+                "This is what the clinical team may check.",
+                "Imaging can help the team reassess.",
+                "The app is not reporting a result.",
+            ]
+            case .explainClosure: [
+                "The teaching layers come back together.",
+                "Graphic closure details are not shown.",
+                "We can return to any question.",
+            ]
+            }
+        }
+
+        if detailLevel == .scholar {
+            return switch presenterTeachingBeat {
+            case .confirmContext: [
+                "This generic assembly uses registered-v2 source layers pending specialist review.",
+                "Establish cortex orientation before isolating vascular or internal subsystems.",
+                "Do not describe this model as patient-specific imaging.",
+            ]
+            case .discussAccess: [
+                "Keep arterial occlusion, ischemic injury, and pressure effects conceptually distinct.",
+                "Use the authored access cue only as a teaching reference.",
+                "Do not infer prognosis, eligibility, or a patient-specific access site.",
+            ]
+            case .protectiveCovering: [
+                "Obtain permission before separating the conceptual dura reference.",
+                "The dura cue communicates a protective boundary, not tissue mechanics.",
+                "No operative opening or instrument technique is simulated.",
+            ]
+            case .explainPurpose: [
+                "Obtain permission before revealing the decompression concept.",
+                "The authored separation communicates additional room within a fixed boundary.",
+                "The model does not promise reversal of established injury.",
+            ]
+            case .teamChecks: [
+                "The team may reassess pressure, bleeding, imaging, and monitoring information.",
+                "These references support communication, not automated decision-making.",
+                "No measurement, pass/fail result, or clinical validation is implied.",
+            ]
+            case .explainClosure: [
+                "Return the authored layers to the assembled teaching state.",
+                "Do not represent suturing, fixation, or closure mechanics.",
+                "Restate the generic-model and review-pending boundaries.",
+            ]
+            }
         }
 
         return switch presenterTeachingBeat {
@@ -1390,6 +1557,27 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func selectPoint(entityName: String, label: String) {
+        if pointField == .craniotomy {
+            // The access point opens the six-checkpoint clinician story rather
+            // than the generic vessel miniature. The point stays attached to
+            // the authored access region while the top timeline changes only
+            // reversible presentation states.
+            teachingImagingDrawerVisible = false
+            requestedPause = false
+            if audienceLens == .clinician {
+                if presenterTeachingBeat == .confirmContext {
+                    selectPresenterTeachingBeat(.discussAccess)
+                }
+                clinicianToolKitVisible = true
+            }
+            // `selectPresenterTeachingBeat` intentionally clears a stale point
+            // while it changes acts. Store this deliberate selection after the
+            // act transition so the anatomy-attached access marker remains the
+            // source of the teaching story.
+            selectedPointEntityName = entityName
+            selectedPointLabel = label
+            return
+        }
         selectedPointEntityName = entityName
         selectedPointLabel = label
         // The secondary reference is an outcome of selecting a teaching point,
@@ -1464,8 +1652,13 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func magnifySpatialView(ratio: Double) {
-        spatialZoom = min(max(spatialZoom * ratio, 0.72), 1.45)
+        // A wide but finite numerical envelope supports tabletop, life-size,
+        // and room-scale inspection. The app never teleports on scale alone;
+        // a future interior-brain experience can use the explicit threshold.
+        spatialZoom = min(max(spatialZoom * ratio, 0.18), 8.0)
     }
+
+    var isInteriorPortalAvailable: Bool { spatialZoom >= 3.2 }
 
     func resetSpatialView() {
         spatialZoom = 1
@@ -1753,6 +1946,23 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
         selectPresenterTeachingBeat(.protectiveCovering, reduceMotion: true)
         spatialZoom = 1.28
+    }
+
+    func prepareClinicianCraniotomyStoryProof() {
+        prepareClinicianProof(step: .discussCare)
+        environmentMode = .surroundings
+        selectDetailLevel(.scholar)
+        pointField = .craniotomy
+        lessonPointsVisible = true
+        careViewPermissionGranted = true
+        selectPresenterTeachingBeat(.explainPurpose, reduceMotion: true)
+        selectedPointEntityName = "clinician-access-point-field-point-0"
+        selectedPointLabel = "Generic craniotomy teaching story"
+        selectedClinicianTool = .cranialDrill
+        clinicianToolKitVisible = true
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.58
+        spatialZoom = 1.34
     }
 
     func prepareClinicianLayerHierarchyProof() {

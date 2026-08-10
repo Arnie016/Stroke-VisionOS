@@ -7,7 +7,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     MARKETING_VERSION: "0.6"
-    CURRENT_PROJECT_VERSION: "27"
+    CURRENT_PROJECT_VERSION: "29"
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: VV6YGTA587
 targets:
@@ -54,6 +54,16 @@ targets:
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/cranial_drill_generic.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/suction_and_forceps.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/scalp_access_closure_registered_conceptual_v1.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cranial_bone_access_closure_registered_conceptual_v1.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/dural_access_closure_registered_conceptual_v1.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/intracerebral_hematoma_registered_conceptual_v1.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_edema_registered_conceptual_v1.usdz
         buildPhase: resources
     settings:
       base:
