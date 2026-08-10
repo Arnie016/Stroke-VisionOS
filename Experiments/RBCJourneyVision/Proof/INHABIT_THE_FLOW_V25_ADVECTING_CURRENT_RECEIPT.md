@@ -48,10 +48,11 @@ Only the continuous opaque-luminance route shown in 260–264 is promoted.
 ## Verification
 
 - `python3 Tests/verify_contract.py` → **73 / 73 PASS**, `RBC_JOURNEY_CONTRACT=PASS`.
+- Isolated exact-commit verifier: `4d54993df7e6d3cbbab6f1e3c0112eedc23ce77b`.
 - Generic unsigned visionOS Simulator build using XRSimulator 26.5 → `** BUILD SUCCEEDED **`.
-- Built app: 57,900 KiB; universal Simulator executable contains arm64 and x86_64.
+- Exact-commit built app: 57,896 KiB; universal Simulator executable contains arm64 and x86_64.
 - `git diff --check` → clean before staging.
-- Existing compiler warning remains: the pre-existing local `outlineMaterial` value near `RBCJourneyScene.swift:2165` is unused. It is unrelated to this slice.
+- Existing compiler warning remains: the pre-existing local `outlineMaterial` value near `RBCJourneyScene.swift:2157` is unused. It is unrelated to this slice.
 
 ## Physical-device gate
 
