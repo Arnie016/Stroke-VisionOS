@@ -194,7 +194,8 @@ checks = {
     "frontal_region_directional_flow": all(token in model + scene + hud for token in [
         "case frontalLobe", "frontal-region-orientation-outline-not-segmentation",
         "frontal-lobe-directional-blood-flow-field", "frontal-flow-direction-arrow",
-        "generateCone", "INSIDE  ·",
+        "generateCone", "INSIDE  ·", "frontalOutlineOpacity",
+        "Frontal lobe · capillary field",
     ]),
     "brain_observatory_views": all(token in model + scene + hud for token in [
         "enum RBCRegionVisualizationMode", "case locate", "case xray", "case flow",
@@ -399,7 +400,7 @@ checks = {
     ]) and "oxygen concentration measurement" not in scene + model,
     "flow_ride_brain_locator": all(token in scene + model + hud + immersive for token in [
         "RBCFlowRideMiniMapHUD", "HStack(alignment: .bottom, spacing: 18)",
-        "BRAIN ATLAS", "ANTERIOR VIEW", "YOU ARE HERE", "Frontal capillary field",
+        "BRAIN ATLAS", "ANTERIOR VIEW", "YOU ARE HERE", "Frontal lobe · capillary field",
         "registered-three-dimensional-brain-route-locator", "miniature-registered-cortex-and-cerebral-arteries",
         "geometry-derived-spatial-atlas-locator-", "Flow_Route_Anterior_Communicating",
         "Right_M1_Large_Vessel_Occlusion", "Cerebral_Cortex_R", "patient_registration=false",

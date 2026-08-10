@@ -6225,12 +6225,12 @@ final class RBCJourneyScene {
             ))
         }
 
-        let frontalOutlineOpacity: Float = switch flowRideRuntimeRoute {
+        let frontalDestinationOpacity: Float = switch flowRideRuntimeRoute {
         case .overview: 0.72
         case .frontal: 1.0
         case .neighboring: 0.10
         }
-        flowRideFrontalDestinationRoot.components.set(OpacityComponent(opacity: frontalOutlineOpacity))
+        flowRideFrontalDestinationRoot.components.set(OpacityComponent(opacity: frontalDestinationOpacity))
         let neighborFieldOpacity: Float = switch flowRideRuntimeRoute {
         case .overview: 0.58
         case .frontal: 0.08
@@ -6253,7 +6253,13 @@ final class RBCJourneyScene {
             focusMix
         )
         flowRideFrontalDestinationRoot.orientation = destinationTilt
-        flowRideFrontalOutlineRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
+        // Keep the named frontal boundary visible when the journey reaches
+        // the capillary scale. The vessel expands, but the learner should not
+        // lose the region they are studying as the destination comes forward.
+        let frontalOutlineOpacity = 0.28 + (1 - focusMix) * 0.72
+        flowRideFrontalOutlineRoot.components.set(
+            OpacityComponent(opacity: frontalOutlineOpacity)
+        )
         flowRideFrontalArterioleRoot.components.set(OpacityComponent(opacity: 1 - focusMix))
         let neighborPulse: Float = flowRideRuntimeHeld
             ? 1

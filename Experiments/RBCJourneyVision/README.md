@@ -298,6 +298,11 @@ from the same phase. During playback the only action is **Pause journey** or
 complete and the learner explicitly chooses **Explore**. RealityKit recomposes
 the world around a fixed wearer; there is no app camera or forced locomotion.
 
+At the capillary destination the frontal orientation outline remains present at
+reduced emphasis instead of disappearing behind the enlarged microvascular
+field. The locator names this as **Frontal lobe · capillary field**, preserving
+the region identity while the scale changes.
+
 The locator is a stationary anterior-view 3D atlas built from the same bundled
 registered cortex and cerebral-artery teaching assets as the surrounding scene.
 The fork and example right-M1 markers are derived from named USD entities. The

@@ -811,10 +811,10 @@ struct RBCFlowRideMiniMapHUD: View {
     @Environment(RBCJourneyModel.self) private var model
 
     private var locationTitle: String {
-        if model.isCapillaryFieldFocused { return "Frontal capillary field" }
+        if model.isCapillaryFieldFocused { return "Frontal lobe · capillary field" }
         return switch model.flowRideRoute {
         case .overview: "Cerebral artery fork"
-        case .frontal: "Frontal branch"
+        case .frontal: "Frontal lobe branch"
         case .neighboring: "Neighboring branch"
         }
     }
@@ -828,11 +828,11 @@ struct RBCFlowRideMiniMapHUD: View {
 
     private var routeDetail: String {
         if model.isCapillaryFieldFocused {
-            return "Representative frontal cortical surface"
+            return "Frontal lobe → representative cortical surface"
         }
         return switch model.flowRideRoute {
         case .overview: "Circle of Willis → cerebral branch fork"
-        case .frontal: "Named right-M1 teaching locus → frontal route"
+        case .frontal: "Named right-M1 teaching locus → frontal lobe route"
         case .neighboring: "Cerebral fork → neighboring teaching route"
         }
     }
