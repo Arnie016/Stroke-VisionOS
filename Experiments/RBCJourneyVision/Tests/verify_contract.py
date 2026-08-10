@@ -3,6 +3,7 @@ from pathlib import Path
 import hashlib
 import json
 import re
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +19,7 @@ required_files = [
     ROOT / "Sources/RBCJourneyScene.swift",
     ROOT / "Sources/RBCPortalGestureController.swift",
     ROOT / "Tests/verify_built_bundle.py",
+    ROOT / "Tests/verify_app_icon_layers.swift",
     ROOT / "Docs/existing-app-inventory.json",
     ROOT / "Docs/medical-content-canon.md",
     ROOT / "Resources/Provenance/portal-anchor-manifest.json",
@@ -112,6 +114,21 @@ registration_fixtures_pass = (
 brainstem_source_path = ROOT / "Resources/Models" / brainstem_reference["source_asset"]
 brainstem_source_sha256 = hashlib.sha256(brainstem_source_path.read_bytes()).hexdigest()
 
+icon_verifier = subprocess.run(
+    [
+        "/usr/bin/xcrun", "--sdk", "macosx", "swift",
+        str(ROOT / "Tests/verify_app_icon_layers.swift"),
+        str(ROOT / "Resources/Assets.xcassets/AppIcon.solidimagestack"),
+    ],
+    capture_output=True,
+    text=True,
+    check=False,
+)
+if icon_verifier.stdout:
+    print(icon_verifier.stdout, end="" if icon_verifier.stdout.endswith("\n") else "\n")
+if icon_verifier.stderr:
+    print(icon_verifier.stderr, end="" if icon_verifier.stderr.endswith("\n") else "\n", file=sys.stderr)
+
 checks = {
     "standalone_bundle": "com.arnav.RBCJourneyVision" in project,
     "intentional_app_identity": all(token in project + pbx_project for token in [
@@ -122,6 +139,10 @@ checks = {
         "Resources/Assets.xcassets/AppIcon.solidimagestack/Middle.solidimagestacklayer/Content.imageset/icon.png",
         "Resources/Assets.xcassets/AppIcon.solidimagestack/Front.solidimagestacklayer/Content.imageset/icon.png",
     ]),
+    "decoded_layered_app_icon": (
+        icon_verifier.returncode == 0
+        and "RBC_APP_ICON_LAYERS=PASS|layers=3" in icon_verifier.stdout
+    ),
     "exact_model_bundle_contract": (
         source_model_names == required_bundle_model_names | source_library_only_model_names
         and runtime_referenced_model_names == required_bundle_model_names
