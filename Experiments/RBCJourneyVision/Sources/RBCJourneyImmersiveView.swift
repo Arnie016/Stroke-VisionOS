@@ -10,111 +10,115 @@ struct RBCJourneyImmersiveView: View {
     @State private var familyNarrator = RBCFamilyNarrationEngine()
 
     var body: some View {
-        ZStack {
-            RealityView { content, attachments in
-                model.beginSceneLoading()
-                await scene.build()
-                if model.experienceMode == .entryPrelude {
-                    scene.prepareForPrelude(model.entryPreludeChapter)
-                }
-                // Prime all component types before insertion into the shared
-                // RealityKit scene. Live frame mutations begin only after the
-                // loaded resources have completed their short warm-up.
-                updateScene(time: Date.timeIntervalSinceReferenceDate)
-                content.add(scene.root)
-                scene.installFrameUpdates()
+        RealityView { content, attachments in
+            model.beginSceneLoading()
+            content.add(scene.root)
+            if let readinessSurface = attachments.entity(for: "sceneReadiness") {
+                scene.attachReadinessSurface(readinessSurface, isVisible: true)
+            }
+            await scene.build()
+            if model.experienceMode == .entryPrelude {
+                scene.prepareForPrelude(model.entryPreludeChapter)
+            }
+            // Prime all component types before insertion into the shared
+            // RealityKit scene. Live frame mutations begin only after the
+            // loaded resources have completed their short warm-up.
+            updateScene(time: Date.timeIntervalSinceReferenceDate)
 
-                if let infoHUD = attachments.entity(for: "journeyInfo") {
-                    scene.attachInfo(infoHUD)
-                }
-                if let controlsHUD = attachments.entity(for: "journeyControls") {
-                    scene.attachControls(controlsHUD)
-                }
-                if let regionReel = attachments.entity(for: "regionPortalReel") {
-                    scene.attachRegionReel(regionReel)
-                }
-                for landmark in BrainOrientationLandmark.allCases {
-                    if let label = attachments.entity(for: landmark.attachmentID) {
-                        scene.attachLandmark(label, landmark: landmark)
-                    }
-                }
-
-                let audioReady = await scene.installSpatialAudio()
-                let presentationFrameReady = await scene.waitForFirstPresentationFrame()
-                model.resolveSceneReadiness(scene.readinessReport(
-                    audioReady: audioReady,
-                    presentationFrameReady: presentationFrameReady
-                ))
-            } update: { _, _ in
-                // The make closure can run before root.scene is populated.
-                // Retry here once the entity belongs to RealityKit's Scene.
-                guard scene.isBuildComplete else { return }
-                scene.installFrameUpdates()
-                updateScene(time: Date.timeIntervalSinceReferenceDate)
-            } attachments: {
-                Attachment(id: "journeyInfo") {
-                    if model.pendingRegionDestination != nil {
-                        RBCRegionTransferHUD()
-                            .environment(model)
-                    } else if model.experienceMode == .entryPrelude {
-                        RBCEntryPreludeHUD()
-                            .environment(model)
-                    } else if model.experienceMode == .wondrousJourney {
-                        RBCExhibitInfoHUD()
-                            .environment(model)
-                    } else if model.experienceMode == .regionAtlas {
-                        RBCRegionInfoHUD()
-                            .environment(model)
-                    } else {
-                        RBCJourneyInfoHUD()
-                            .environment(model)
-                    }
-                }
-                Attachment(id: "journeyControls") {
-                    if model.experienceMode == .openAtlas {
-                        RBCJourneyControlsHUD()
-                            .environment(model)
-                    }
-                }
-                Attachment(id: "regionPortalReel") {
-                    if model.experienceMode == .wondrousJourney
-                        || (model.experienceMode == .regionAtlas
-                            && !model.isFlowRideActive
-                            && !model.isAnteriorGatewayTransitionActive) {
-                        RBCRegionPortalReelHUD()
-                            .environment(model)
-                    }
-                }
-                ForEach(BrainOrientationLandmark.allCases) { landmark in
-                    Attachment(id: landmark.attachmentID) {
-                        BrainOrientationLandmarkHUD(landmark: landmark)
-                    }
+            if let infoHUD = attachments.entity(for: "journeyInfo") {
+                scene.attachInfo(infoHUD)
+            }
+            if let controlsHUD = attachments.entity(for: "journeyControls") {
+                scene.attachControls(controlsHUD)
+            }
+            if let regionReel = attachments.entity(for: "regionPortalReel") {
+                scene.attachRegionReel(regionReel)
+            }
+            for landmark in BrainOrientationLandmark.allCases {
+                if let label = attachments.entity(for: landmark.attachmentID) {
+                    scene.attachLandmark(label, landmark: landmark)
                 }
             }
-            .gesture(
-                TapGesture()
-                    .targetedToAnyEntity()
-                    .onEnded { value in
-                        if scene.isAnteriorPassageGatewayTarget(value.entity) {
-                            model.chooseAnteriorDestination(.arterialLumen)
-                        } else if scene.isCapillaryFocusTarget(value.entity) {
-                            model.toggleCapillaryFieldFocus()
-                        } else if scene.isFrontalClotTarget(value.entity) {
-                            model.toggleFrontalClotScenario()
-                        } else if let portalID = scene.portalID(for: value.entity) {
-                            model.focusPortal(portalID)
-                        } else if let regionID = scene.brainRegionID(for: value.entity) {
-                            model.activateRegionDiscovery(regionID)
-                        }
-                    }
-            )
 
-            if model.sceneReadinessPhase != .ready {
+            let audioReady = await scene.installSpatialAudio()
+            scene.resolveReadinessAfterFirstPresentationFrame { [weak readinessScene = scene] in
+                guard let readinessScene else { return }
+                model.resolveSceneReadiness(readinessScene.readinessReport(
+                    audioReady: audioReady,
+                    presentationFrameReady: true
+                ))
+            }
+        } update: { _, attachments in
+            if let readinessSurface = attachments.entity(for: "sceneReadiness") {
+                scene.attachReadinessSurface(
+                    readinessSurface,
+                    isVisible: model.sceneReadinessPhase != .ready
+                )
+            }
+            guard scene.isBuildComplete else { return }
+            scene.installFrameUpdates()
+            updateScene(time: Date.timeIntervalSinceReferenceDate)
+        } attachments: {
+            Attachment(id: "sceneReadiness") {
                 RBCSceneReadinessSurface()
                     .environment(model)
-                    .zIndex(10)
+            }
+            Attachment(id: "journeyInfo") {
+                if model.pendingRegionDestination != nil {
+                    RBCRegionTransferHUD()
+                        .environment(model)
+                } else if model.experienceMode == .entryPrelude {
+                    RBCEntryPreludeHUD()
+                        .environment(model)
+                } else if model.experienceMode == .wondrousJourney {
+                    RBCExhibitInfoHUD()
+                        .environment(model)
+                } else if model.experienceMode == .regionAtlas {
+                    RBCRegionInfoHUD()
+                        .environment(model)
+                } else {
+                    RBCJourneyInfoHUD()
+                        .environment(model)
+                }
+            }
+            Attachment(id: "journeyControls") {
+                if model.experienceMode == .openAtlas {
+                    RBCJourneyControlsHUD()
+                        .environment(model)
+                }
+            }
+            Attachment(id: "regionPortalReel") {
+                if model.experienceMode == .wondrousJourney
+                    || (model.experienceMode == .regionAtlas
+                        && !model.isFlowRideActive
+                        && !model.isAnteriorGatewayTransitionActive) {
+                    RBCRegionPortalReelHUD()
+                        .environment(model)
+                }
+            }
+            ForEach(BrainOrientationLandmark.allCases) { landmark in
+                Attachment(id: landmark.attachmentID) {
+                    BrainOrientationLandmarkHUD(landmark: landmark)
+                }
             }
         }
+        .gesture(
+            TapGesture()
+                .targetedToAnyEntity()
+                .onEnded { value in
+                    if scene.isAnteriorPassageGatewayTarget(value.entity) {
+                        model.chooseAnteriorDestination(.arterialLumen)
+                    } else if scene.isCapillaryFocusTarget(value.entity) {
+                        model.toggleCapillaryFieldFocus()
+                    } else if scene.isFrontalClotTarget(value.entity) {
+                        model.toggleFrontalClotScenario()
+                    } else if let portalID = scene.portalID(for: value.entity) {
+                        model.focusPortal(portalID)
+                    } else if let regionID = scene.brainRegionID(for: value.entity) {
+                        model.activateRegionDiscovery(regionID)
+                    }
+                }
+        )
         .task {
             await handGestures.start(model: model)
             model.familyNarrationConfigured = familyNarrator.isConfigured

@@ -300,6 +300,7 @@ final class RBCJourneyScene {
     private var latestFrameUpdate: ((TimeInterval) -> Void)?
     private var frameAdvanceScheduled = false
     private var hasPresentedRealityKitFrame = false
+    private var firstPresentationFrameAction: (() -> Void)?
     // Keep the USDZ sharing guard shorter than either authored transition.
     // Transfer clocks still advance during this interval, so fast entry never
     // completes behind an unchanging first frame.
@@ -460,15 +461,12 @@ final class RBCJourneyScene {
         )
     }
 
-    func waitForFirstPresentationFrame(timeoutMilliseconds: Int = 3_000) async -> Bool {
-        let pollIntervalMilliseconds = 50
-        let pollCount = max(timeoutMilliseconds / pollIntervalMilliseconds, 1)
-        for _ in 0..<pollCount {
-            installFrameUpdates()
-            if hasPresentedRealityKitFrame { return true }
-            try? await Task.sleep(for: .milliseconds(pollIntervalMilliseconds))
+    func resolveReadinessAfterFirstPresentationFrame(_ action: @escaping () -> Void) {
+        guard !hasPresentedRealityKitFrame else {
+            action()
+            return
         }
-        return hasPresentedRealityKitFrame
+        firstPresentationFrameAction = action
     }
 
     func installFrameUpdates() {
@@ -484,7 +482,12 @@ final class RBCJourneyScene {
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 defer { self.frameAdvanceScheduled = false }
-                self.hasPresentedRealityKitFrame = true
+                if !self.hasPresentedRealityKitFrame {
+                    self.hasPresentedRealityKitFrame = true
+                    let action = self.firstPresentationFrameAction
+                    self.firstPresentationFrameAction = nil
+                    action?()
+                }
 
                 // These two transitions have bounded task lifetimes (1.45 s
                 // and 1.65 s), so their clocks must begin on the first scene
@@ -912,6 +915,17 @@ final class RBCJourneyScene {
         entity.scale = [0.86, 0.86, 0.86]
         entity.components.set(BillboardComponent())
         hudRoot.addChild(entity)
+    }
+
+    func attachReadinessSurface(_ entity: Entity, isVisible: Bool) {
+        if entity.parent == nil {
+            entity.name = "scene-readiness-attachment"
+            entity.position = [0, 1.40, -0.82]
+            entity.scale = [0.74, 0.74, 0.74]
+            entity.components.set(BillboardComponent())
+            hudRoot.addChild(entity)
+        }
+        entity.isEnabled = isVisible
     }
 
     func prepareForPrelude(_ chapter: RBCEntryPreludeChapter) {

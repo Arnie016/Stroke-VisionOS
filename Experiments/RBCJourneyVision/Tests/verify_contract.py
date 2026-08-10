@@ -192,13 +192,22 @@ checks = {
         "RBCSceneReadinessPhase", "case loading", "case ready", "case degraded", "case failed",
         "RBCSceneReadinessSurface", "model.sceneReadinessPhase != .ready",
         "expectedBundledModelNames", "requiredEntitiesByModel", "readinessReport(",
-        "waitForFirstPresentationFrame", "presentation:RealityKit-frame",
+        "resolveReadinessAfterFirstPresentationFrame", "presentation:RealityKit-frame",
         "RBC_SCENE_READINESS=", "RBC_MODEL_LOAD=DEGRADED",
         "--proof-scene-loading", "--proof-scene-ready",
         "--proof-scene-degraded", "--proof-scene-failed",
         "GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN",
         "SPECIALIST REVIEW PENDING · CLINICAL REVIEW PENDING",
     ]) and "model.isSceneReady = true" not in immersive,
+    "live_scene_readiness_attachment": (
+        'Attachment(id: "sceneReadiness")' in immersive
+        and "scene.attachReadinessSurface(" in immersive
+        and "scene.resolveReadinessAfterFirstPresentationFrame" in immersive
+        and "firstPresentationFrameAction" in scene
+        and "await scene.waitForFirstPresentationFrame()" not in immersive
+        and immersive.index("content.add(scene.root)") < immersive.index("await scene.build()")
+        and immersive.index("scene.installFrameUpdates()") > immersive.index("} update:")
+    ),
     "required_assets": all((ROOT / "Resources/Models" / name).exists() for name in required_bundle_model_names | source_library_only_model_names)
         and all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_non_model_resources),
     "self_contained_resources": "- path: Resources" in project and "../Stroke-VisionOS" not in project,
