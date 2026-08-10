@@ -290,6 +290,10 @@ two branches and across the lumen rather than along one bead-like centerline.
 The neighboring intravascular cue is warm amber rather than teal; teal remains
 outside the vessel as destination navigation only.
 
+The surrounding cortical fold scaffold is deliberately lower-emission and
+cooler than the blood fronts. It remains a living inside-brain atmosphere, but
+does not wash the arterial route into a red fog wall.
+
 The default lesson is now an automatic six-beat journey: source → division →
 frontal turn → frontal branch → narrowing arteriole → cortical capillary field.
 Scene composition, exact caption, optional exact-copy voice, and locator update

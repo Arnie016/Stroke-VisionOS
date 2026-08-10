@@ -5155,7 +5155,7 @@ final class RBCJourneyScene {
         scaffold.position = [0.10, 1.34, -2.28]
         scaffold.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
         applyMaterialRecursively(flowRideCorticalScaffoldMaterial(), to: scaffold)
-        scaffold.components.set(OpacityComponent(opacity: 0.82))
+        scaffold.components.set(OpacityComponent(opacity: 0.58))
         flowRideCorticalContextRoot.addChild(scaffold)
         flowRideCorticalScaffold = scaffold
 
@@ -6377,8 +6377,8 @@ final class RBCJourneyScene {
         flowRideCorticalContextRoot.scale = [corticalPulse, corticalPulse, corticalPulse]
         flowRideCorticalContextRoot.orientation = simd_quatf(angle: corticalYaw, axis: [0, 1, 0])
             * simd_quatf(angle: corticalPitch, axis: [1, 0, 0])
-        let corticalContextOpacity: Float = (0.78 + sin(flowRideElapsed * 0.24) * 0.08)
-            * (1 - focusMix * 0.34)
+        let corticalContextOpacity: Float = (0.58 + sin(flowRideElapsed * 0.24) * 0.05)
+            * (1 - focusMix * 0.28)
         flowRideCorticalContextRoot.components.set(OpacityComponent(opacity: corticalContextOpacity))
 
         // The local clock stops while held, so the vessel, ribbons, and cells
@@ -6909,12 +6909,15 @@ final class RBCJourneyScene {
 
     private func flowRideCorticalScaffoldMaterial() -> RealityKit.Material {
         var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: UIColor(red: 0.31, green: 0.075, blue: 0.11, alpha: 1))
-        material.emissiveColor = .init(color: UIColor(red: 0.52, green: 0.10, blue: 0.19, alpha: 1))
-        material.emissiveIntensity = 0.52
+        // The folds are a living backdrop, not a red fog wall. Lowering their
+        // emission keeps the authored tissue readable while directional blood
+        // fronts remain the high-signal layer in the wearer's view.
+        material.baseColor = .init(tint: UIColor(red: 0.19, green: 0.045, blue: 0.095, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.18, green: 0.025, blue: 0.070, alpha: 1))
+        material.emissiveIntensity = 0.24
         material.roughness = 0.72
         material.metallic = .init(floatLiteral: 0)
-        material.blending = .transparent(opacity: .init(floatLiteral: 0.24))
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.18))
         material.faceCulling = .none
         material.readsDepth = true
         material.writesDepth = false
