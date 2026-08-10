@@ -404,6 +404,8 @@ checks = {
         "geometry-derived-spatial-atlas-locator-", "Flow_Route_Anterior_Communicating",
         "Right_M1_Large_Vessel_Occlusion", "Cerebral_Cortex_R", "patient_registration=false",
         "capillary_proxy=true", "The atlas is an orientation instrument",
+        "geometry-derived-atlas-route-trace", "geometry-derived-atlas-route-front-",
+        "flowRideSpatialAtlasRouteFronts", "sampleAtlasPolyline",
     ]) and "Canvas {" not in hud,
     "living_inside_brain_cortical_context": all(token in scene for token in [
         "surrounding-inside-brain-cortical-fold-scaffold-not-segmentation",
