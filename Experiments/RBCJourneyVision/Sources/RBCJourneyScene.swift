@@ -1275,17 +1275,32 @@ final class RBCJourneyScene {
 
         // Replace a bead-like ring with one continuous, quiet outline so the
         // marker reads as a selected region, not a second set of blood cells.
+        let isFrontalLobe = key == "frontal"
+        let pointCount = isFrontalLobe ? 32 : 24
+        let xRadius: Float = isFrontalLobe ? 0.058 : 0.038
+        let yRadius: Float = isFrontalLobe ? 0.043 : 0.038
         var ringPoints: [SIMD3<Float>] = []
-        for index in 0...24 {
-            let angle = Float(index) / 24 * 2 * .pi
-            ringPoints.append([cos(angle) * 0.038, sin(angle) * 0.038, 0])
+        for index in 0...pointCount {
+            let angle = Float(index) / Float(pointCount) * 2 * .pi
+            // This is an orientation contour for the named teaching locus,
+            // not a segmentation boundary or patient-specific anatomy.
+            let irregularity = isFrontalLobe
+                ? 1 + sin(angle * 3.0 + 0.35) * 0.10 + cos(angle * 5.0) * 0.045
+                : 1
+            ringPoints.append([
+                cos(angle) * xRadius * irregularity,
+                sin(angle) * yRadius * irregularity,
+                isFrontalLobe ? sin(angle * 2) * 0.004 : 0
+            ])
         }
         addTubePath(
             ringPoints,
             to: locator,
-            radius: 0.00125,
+            radius: isFrontalLobe ? 0.0015 : 0.00125,
             material: material,
-            name: "spatial-atlas-selected-region-outline"
+            name: isFrontalLobe
+                ? "spatial-atlas-frontal-lobe-orientation-outline-not-segmentation"
+                : "spatial-atlas-selected-region-outline"
         )
         return locator
     }
