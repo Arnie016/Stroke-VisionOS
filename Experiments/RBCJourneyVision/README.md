@@ -480,17 +480,30 @@ emotion, or mental state.
 The full named head-and-neck vascular assembly remains bundled for provenance
 and geometry audit but is not rendered at room scale: its large neck vessels
 crossed the viewing origin and failed the composition gate. The visible atlas
-uses only the brain-scale layers needed for this lesson.
+uses only the brain-scale layers needed for this lesson. The source-library
+models `artery_wall_cutaway_v2`, `artery_interior_bloodflow_v2`,
+`red_blood_cells_closeup_v2`, and `cerebral_bloodflow_teaching_set_v2` remain
+unchanged in `Resources/Models` for provenance and future review but are
+intentionally excluded from the app target because no current runtime path
+uses them. Exclusion does not promote or reject their specialist-review state.
 
 This project is intentionally separate from Stroke Care. It does not import or
 modify Stroke Care source, targets, bundle identifiers, branches, or product
 state. Integration requires Arnav's explicit later approval.
 
-The vetted generic teaching USDZ files and ambient flow bed are copied into this
-project's own `Resources` directory. The registered vascular assembly is an
-exact SHA-256-preserving copy from Arnav's `Stroke-VisionOS` checkout
+The ten runtime-referenced generic teaching USDZ files and ambient flow bed are
+copied from this project's own `Resources` directory into the built bundle. The
+four source-library-only USDZ files are not packaged. The registered vascular
+assembly is an exact SHA-256-preserving copy from Arnav's `Stroke-VisionOS` checkout
 (`45080b42…9d6`). The built app therefore has no runtime or build-time dependency
 on that checkout.
+
+Every immersive information surface carries the persistent boundary **Generic
+synthetic teaching view · not a patient scan · specialist review pending ·
+clinical review pending**. Family companion replaces clinician atlas terms with
+plain-language copy for the same selected region and teaching point; ending the
+companion restores the clinician-detail wording. Neither layer supplies
+patient-specific advice or clinical validation.
 
 ## Open Atlas — seven stations
 
@@ -527,9 +540,10 @@ on that checkout.
 
 - Full immersion is used for the surrounding world.
 - The wearer and observation field stay fixed.
-- `Living flow` is the default; the registered baked route and a very small
-  anatomy pulse evolve continuously.
-- Pause/Resume controls the actual RealityKit animation playback controllers.
+- `Living flow` is the default; the complete registered authored route remains
+  visible while native RealityKit scene-event choreography evolves smoothly.
+- Pause/Resume holds the native scene-event choreography at its exact visible
+  pose; the imported meshes and animation clips remain bundled and intact.
 - `Comfort still` and system Reduce Motion hold animation without hiding anatomy.
 - Every station is manually selectable and supports back, pause, next, restart,
   and mute.
@@ -578,6 +592,16 @@ Deterministic proof routes use `--proof-station-0` through
 `--proof-transfer-0` through `--proof-transfer-2` for enlarged region views.
 `--proof-comfort-still` and `--proof-paused` render the held-flow state and
 Resume control without pretending a Simulator launch is wearer interaction.
+Cold-start readiness uses a separate, safety-labelled SwiftUI surface so an
+asynchronous RealityKit build never appears as an unexplained black frame. Use
+`--proof-scene-loading` to hold that pre-readiness state,
+`--proof-scene-ready` to require the live exact-model receipt,
+`--proof-scene-degraded` to inject a reviewable partial-entity notice, and
+`--proof-scene-failed` to inject the blocked core-scene notice. The degraded and
+failed surfaces remain visible rather than allowing partial loads to look
+complete. All four routes remain generic synthetic teaching proof; they are not
+patient-scan, specialist-review, clinical-review, physical-device, or clinical
+validation evidence.
 The compact exhibit uses `--proof-exhibit-0`, `--proof-exhibit-1`, and
 `--proof-exhibit-2` for Route, Blockage, and Consequence respectively.
 The region reel uses `--proof-region-0` through `--proof-region-9` for its ten

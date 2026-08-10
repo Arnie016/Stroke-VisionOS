@@ -171,8 +171,11 @@ final class RBCPortalGestureController {
             let began = tCandidateSince ?? timestamp
             tCandidateSince = began
             if timestamp - began >= tHoldDuration {
-                model.openNextPortal()
-                model.handTrackingStatus = "T recognized · portal opened"
+                if model.openNextPortal() {
+                    model.handTrackingStatus = "T recognized · portal opened"
+                } else {
+                    model.handTrackingStatus = "T recognized · all three portals already open"
+                }
                 lastGestureTime = timestamp
                 tCandidateSince = nil
             }

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import hashlib
 import json
+import re
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +18,9 @@ required_files = [
     ROOT / "Sources/RBCFamilyNarrationEngine.swift",
     ROOT / "Sources/RBCJourneyScene.swift",
     ROOT / "Sources/RBCPortalGestureController.swift",
+    ROOT / "Tests/verify_built_bundle.py",
+    ROOT / "Tests/verify_app_icon_layers.swift",
+    ROOT / "Resources/RBCJourneyVision-Info.plist",
     ROOT / "Docs/existing-app-inventory.json",
     ROOT / "Docs/medical-content-canon.md",
     ROOT / "Resources/Provenance/portal-anchor-manifest.json",
@@ -28,10 +34,14 @@ for path in required_files:
         raise SystemExit(f"MISSING|{path}")
 
 project = (ROOT / "project.yml").read_text()
+pbx_project = (ROOT / "RBCJourneyVision.xcodeproj/project.pbxproj").read_text()
+info_plist_source = (ROOT / "Resources/RBCJourneyVision-Info.plist").read_text()
+built_bundle_verifier = (ROOT / "Tests/verify_built_bundle.py").read_text()
 app = (ROOT / "Sources/RBCJourneyVisionApp.swift").read_text()
 model = (ROOT / "Sources/RBCJourneyModel.swift").read_text()
 scene = (ROOT / "Sources/RBCJourneyScene.swift").read_text()
 immersive = (ROOT / "Sources/RBCJourneyImmersiveView.swift").read_text()
+trailhead = (ROOT / "Sources/RBCJourneyTrailheadView.swift").read_text()
 narrator = (ROOT / "Sources/RBCFamilyNarrationEngine.swift").read_text()
 gestures = (ROOT / "Sources/RBCPortalGestureController.swift").read_text()
 hud = (ROOT / "Sources/RBCJourneyHUD.swift").read_text()
@@ -41,7 +51,7 @@ realtime_proxy = (ROOT / "Scripts/rbc_realtime_narration_proxy.mjs").read_text()
 realtime_runner = (ROOT / "Scripts/run_rbc_realtime_proxy.zsh").read_text()
 anchor_manifest = json.loads((ROOT / "Resources/Provenance/portal-anchor-manifest.json").read_text())
 all_source = "\n".join(path.read_text() for path in required_files if path.suffix in {".swift", ".md", ".yml"})
-required_resource_names = [
+required_bundle_model_names = {
     "brain_anatomy_realistic_v2.usdz",
     "brain_deep_structures_v2.usdz",
     "brain_ventricles_v2.usdz",
@@ -50,29 +60,205 @@ required_resource_names = [
     "ischemic_mca_clot_v2.usdz",
     "artery_cutaway_complete_v2.usdz",
     "circle_of_willis_flow_overlay_v2.usdz",
-    "red_blood_cells_closeup_v2.usdz",
     "microcirculation_arterial_venous_v2.usdz",
     "cerebral_bloodflow_animation_v2.usdz",
+}
+source_library_only_model_names = {
+    "artery_wall_cutaway_v2.usdz",
+    "artery_interior_bloodflow_v2.usdz",
+    "red_blood_cells_closeup_v2.usdz",
+    "cerebral_bloodflow_teaching_set_v2.usdz",
+}
+required_non_model_resources = [
     "FlowBed.wav",
 ]
+source_model_names = {path.name for path in (ROOT / "Resources/Models").glob("*.usdz")}
+runtime_referenced_model_names = {
+    name
+    for name in source_model_names
+    if f'"{Path(name).stem}"' in scene
+}
+declared_resource_model_names = set(re.findall(
+    r"- path: Resources/Models/([^\s]+\.usdz)\s+buildPhase: resources",
+    project,
+))
+declared_source_only_model_names = set(re.findall(
+    r"- path: Resources/Models/([^\s]+\.usdz)\s+buildPhase: none",
+    project,
+))
+pbx_resource_model_names = set(re.findall(
+    r"/\* ([^*]+\.usdz) in Resources \*/",
+    pbx_project,
+))
+
+brainstem_reference = anchor_manifest["registered_references"]["brainstem_vertebral_pair"]
+brainstem_expected_nodes = brainstem_reference["source_entities"]
+family_companion_source = model[
+    model.index("var regionFamilyCompanionTitle"):
+    model.index("var familyNarrationCue")
+]
+narration_startup_task = immersive[
+    immersive.index("        .task {"):
+    immersive.index("        .task(id: model.regionTransferSequenceKey)")
+]
+narration_opt_in_change = immersive[
+    immersive.index("        .onChange(of: model.familyNarrationEnabled)"):
+    immersive.index("        .onChange(of: model.familyNarrationText)")
+]
+guided_flow_task = immersive[
+    immersive.index("        .task(id: model.guidedFlowTourSequenceKey)"):
+    immersive.index("        .task(id: model.familyNarrationSequenceKey)")
+]
+flow_current_band_pose = scene[
+    scene.index("        for item in flowRideCurrentBands {"):
+    scene.index("        for item in flowRideJourneyCells {")
+]
+family_forbidden_clinician_terms = [
+    "SCA", "AICA", "PICA", "M1", "lenticulostriate", "anterior choroidal",
+    "posterior perforator", "calcarine", "parieto-occipital", "lingual",
+]
+
+def registration_receipt(expected_nodes, available_nodes):
+    found = [name for name in expected_nodes if name in available_nodes]
+    return {
+        "count": len(found),
+        "status": "READY" if len(found) == len(expected_nodes) else "DEGRADED",
+    }
+
+registration_fixtures_pass = (
+    registration_receipt(brainstem_expected_nodes, set()) == {"count": 0, "status": "DEGRADED"}
+    and registration_receipt(brainstem_expected_nodes, {brainstem_expected_nodes[0]}) == {"count": 1, "status": "DEGRADED"}
+    and registration_receipt(brainstem_expected_nodes, set(brainstem_expected_nodes)) == {"count": 2, "status": "READY"}
+)
+brainstem_source_path = ROOT / "Resources/Models" / brainstem_reference["source_asset"]
+brainstem_source_sha256 = hashlib.sha256(brainstem_source_path.read_bytes()).hexdigest()
+
+icon_verifier = subprocess.run(
+    [
+        "/usr/bin/xcrun", "--sdk", "macosx", "swift",
+        str(ROOT / "Tests/verify_app_icon_layers.swift"),
+        str(ROOT / "Resources/Assets.xcassets/AppIcon.solidimagestack"),
+    ],
+    capture_output=True,
+    text=True,
+    check=False,
+)
+if icon_verifier.stdout:
+    print(icon_verifier.stdout, end="" if icon_verifier.stdout.endswith("\n") else "\n")
+if icon_verifier.stderr:
+    print(icon_verifier.stderr, end="" if icon_verifier.stderr.endswith("\n") else "\n", file=sys.stderr)
 
 checks = {
     "standalone_bundle": "com.arnav.RBCJourneyVision" in project,
-    "stroke_care_entry_deep_link": all(token in project + app + (ROOT / "Sources/RBCJourneyTrailheadView.swift").read_text() for token in [
-        "CFBundleURLTypes", "rbcjourney", "entryHost = \"enter\"",
-        ".onOpenURL", "RBCJourneyDeepLink.isEntry", "model.startEntryPrelude()",
-    ]),
+    "intentional_app_identity": all(token in project + pbx_project for token in [
+        "Resources/Assets.xcassets", "ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon",
+        "MARKETING_VERSION: 0.1.0", "CURRENT_PROJECT_VERSION: 1",
+        "INFOPLIST_FILE", "RBCJourneyVision-Info.plist",
+    ]) and all((ROOT / path).exists() for path in [
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Back.solidimagestacklayer/Content.imageset/icon.png",
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Middle.solidimagestacklayer/Content.imageset/icon.png",
+        "Resources/Assets.xcassets/AppIcon.solidimagestack/Front.solidimagestacklayer/Content.imageset/icon.png",
+    ]) and pbx_project.count("ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;") == 2,
+    "decoded_layered_app_icon": (
+        icon_verifier.returncode == 0
+        and "RBC_APP_ICON_LAYERS=PASS|layers=3" in icon_verifier.stdout
+    ),
+    "exact_model_bundle_contract": (
+        source_model_names == required_bundle_model_names | source_library_only_model_names
+        and runtime_referenced_model_names == required_bundle_model_names
+        and declared_resource_model_names == required_bundle_model_names
+        and pbx_resource_model_names == required_bundle_model_names
+        and declared_source_only_model_names == source_library_only_model_names
+    ),
+    "stroke_care_entry_deep_link": (
+        all(token in project + info_plist_source for token in [
+            "CFBundleURLTypes", "CFBundleURLSchemes", "rbcjourney",
+            "$(MARKETING_VERSION)", "$(CURRENT_PROJECT_VERSION)",
+        ])
+        and all(token in app for token in [
+            "static let scheme = \"rbcjourney\"", "static let entryHost = \"enter\"",
+            "url.scheme?.lowercased() == scheme", "url.host?.lowercased() == entryHost",
+        ])
+        and all(token in trailhead for token in [
+            ".onOpenURL", "RBCJourneyDeepLink.isEntry", "openEntryDeepLink()",
+            "model.startEntryPrelude()", "await openJourney(starting: .entryPrelude)",
+            "!model.proofAutoLaunchConsumed", "model.proofAutoLaunchConsumed = true",
+        ])
+        and all(token in immersive for token in [
+            ".onOpenURL", "RBCJourneyDeepLink.isEntry", "model.startEntryPrelude()",
+        ])
+        and all(token in built_bundle_verifier for token in [
+            '"entry_url_scheme"', '"CFBundleURLTypes"', '"CFBundleURLSchemes": ["rbcjourney"]',
+        ])
+    ),
+    "immersive_multi_scene_manifest": (
+        all(token in info_plist_source for token in [
+            "UIApplicationSceneManifest", "UIApplicationSupportsMultipleScenes", "<true/>",
+        ])
+        and all(token in built_bundle_verifier for token in [
+            '"supports_multiple_scenes"', '"UIApplicationSceneManifest"',
+            '"UIApplicationSupportsMultipleScenes"',
+        ])
+    ),
     "full_immersion": ".immersionStyle(selection: $immersionStyle, in: .full)" in app,
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
     "manual_station_navigation": all(token in model for token in ["func select", "func back", "func advance", "func restart"]),
     "reduce_motion": "systemReduceMotion" in model and "effectiveReducedMotion" in model,
+    "comfort_selection_persists": "motionMode = .continuous" not in model,
+    "hud_reduce_motion": hud.count("withAnimation(") == hud.count("withAnimation(model.effectiveReducedMotion ? nil :"),
+    "stable_proof_exit": all(token in model + trailhead for token in [
+        "proofAutoLaunchConsumed", "!model.proofAutoLaunchConsumed",
+        "model.proofAutoLaunchConsumed = true",
+    ]),
+    "latched_narration_pause": all(token in narrator + immersive for token in [
+        "pauseRequested", "self.pauseRequested", "familyNarrator.isBusy",
+        "familyNarrator.setPaused(paused)",
+    ]),
+    "opt_in_region_narration_starts_unpaused": (
+        "func beginOptInExactCaption" in narrator
+        and "pauseRequested = false" in narrator[
+            narrator.index("func beginOptInExactCaption"):
+            narrator.index("func speakExactCaption")
+        ]
+        and "familyNarrator.beginOptInExactCaption(model.familyNarrationText)" in narration_startup_task
+        and "familyNarrator.setPaused(model.isPaused)" not in narration_startup_task
+        and "familyNarrator.beginOptInExactCaption(model.familyNarrationText)" in narration_opt_in_change
+    ),
+    "paused_inflight_caption_blocks_guided_advance": (
+        "familyNarrator.isBusy" in guided_flow_task
+        and "familyNarrator.state == .loading" not in guided_flow_task
+        and "familyNarrator.state == .speaking" not in guided_flow_task
+    ),
+    "single_realitykit_frame_driver": all(token in scene for token in [
+        "SceneEvents.Update", "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
+        "retainedAuthoredFlowRideCellCount", "flowRidePoseNeedsRefresh = true",
+        "guard flowRidePoseNeedsRefresh else { return }", "flowRidePoseNeedsRefresh = false",
+    ]) and scene.count("scene.subscribe(to: SceneEvents.Update.self)") == 1
+        and "TimelineView" not in immersive and "flowRideCells" not in scene,
+    "startup_transitions_outlive_warmup": all(token in scene for token in [
+        "private var frameWarmupRemaining: Float = 0.20",
+        "self.advanceRegionTransferFrame(deltaTime: deltaTime)",
+        "self.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)",
+        "if self.frameWarmupRemaining > 0",
+    ]) and scene.index("self.advanceRegionTransferFrame(deltaTime: deltaTime)")
+        < scene.index("if self.frameWarmupRemaining > 0"),
+    "truthful_portal_feedback": all(token in model + gestures for token in [
+        "func openNextPortal() -> Bool", "if model.openNextPortal()",
+        "all three portals already open",
+    ]),
     "gaze_pinch_targets": "InputTargetComponent" in scene and "CollisionComponent" in scene and "HoverEffectComponent" in scene,
     "world_anchored_hud": "world-anchored-journey-hud" in scene and "BillboardComponent" in scene,
     "stable_observation_field": "stable-observation-field-segment" in scene,
     "registered_anatomy_system": all(token in scene for token in ["registered-living-brain-system", "brain_anatomy_realistic_v2", "cerebral_arteries_realistic_v2", "cranial_vascular_registered_assembly_v2"]),
     "no_wire_cloud": all(token not in scene for token in ["conceptual-brain-envelope", "whole-space-capillary", "ambient-red-blood-cell", "conceptual-vessel-canopy"]),
-    "continuous_registered_flow": all(token in scene for token in ["cerebral_bloodflow_animation_v2", "availableAnimations", "animation.repeat()", "flowAnimationControllers"]),
-    "true_pause_resume": all(token in scene for token in ["controller.pause()", "controller.resume()", "setAnimationsPaused"]),
+    "continuous_registered_flow": all(token in scene for token in [
+        "cerebral_bloodflow_animation_v2", "SceneEvents.Update",
+        "latestFrameUpdate", "flowLayer.components.set",
+    ]) and "playAllAnimations" not in scene,
+    "true_pause_resume": all(token in scene for token in [
+        "let motionHeld = paused || reducedMotion",
+        "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
+    ]),
     "multi_portal_state": all(token in model + scene for token in ["openPortalIDs", "openNextPortal", "closeAllPortals", "vascular-portal-", "multi-vessel-portal-system"]),
     "maximum_three_portals": "enum RBCVesselPortal" in model and model.count("case lumen") == 1 and "0..<3" in model,
     "user_controlled_region_transfer": all(token in model + scene for token in ["focusedPortalID", "transferredPortalID", "transferToFocusedPortal", "returnToOverview", "user-controlled-region-transfer"]),
@@ -90,9 +276,41 @@ checks = {
     "blockage_focus": all(token in scene for token in ["ischemic_mca_clot_v2", "applyMaterialRecursively", "example-right-m1-blockage-halo"]),
     "spatial_audio": "SpatialAudioComponent" in scene and (ROOT / "Resources/Audio/FlowBed.wav").exists(),
     "proof_routes": all(token in model for token in ["--proof-station-", "--proof-portals-", "--proof-focus-", "--proof-comfort-still", "--proof-paused", "--proof-transfer-"]),
-    "required_assets": all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_resource_names),
+    "explicit_scene_readiness": all(token in model + scene + hud + immersive + readme for token in [
+        "RBCSceneReadinessPhase", "case loading", "case ready", "case degraded", "case failed",
+        "RBCSceneReadinessSurface", "model.sceneReadinessPhase != .ready",
+        "expectedBundledModelNames", "requiredEntitiesByModel", "readinessReport(",
+        "resolveReadinessAfterFirstPresentationFrame", "presentation:RealityKit-frame",
+        "RBC_SCENE_READINESS=", "RBC_MODEL_LOAD=DEGRADED",
+        "--proof-scene-loading", "--proof-scene-ready",
+        "--proof-scene-degraded", "--proof-scene-failed",
+        "GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN",
+        "SPECIALIST REVIEW PENDING · CLINICAL REVIEW PENDING",
+    ]) and "model.isSceneReady = true" not in immersive,
+    "live_scene_readiness_attachment": (
+        'Attachment(id: "sceneReadiness")' in immersive
+        and "scene.attachReadinessSurface(" in immersive
+        and "scene.resolveReadinessAfterFirstPresentationFrame" in immersive
+        and "firstPresentationFrameAction" in scene
+        and "await scene.waitForFirstPresentationFrame()" not in immersive
+        and immersive.index("content.add(scene.root)") < immersive.index("await scene.build()")
+        and immersive.index("scene.installFrameUpdates()") > immersive.index("} update:")
+    ),
+    "required_assets": all((ROOT / "Resources/Models" / name).exists() for name in required_bundle_model_names | source_library_only_model_names)
+        and all(any(ROOT.glob(f"Resources/**/{name}")) for name in required_non_model_resources),
     "self_contained_resources": "- path: Resources" in project and "../Stroke-VisionOS" not in project,
     "medical_boundary": all(term in all_source for term in ["not patient-specific", "not CFD", "specialist review"]),
+    "persistent_immersive_boundary": all(token in hud for token in [
+        "RBCEducationalBoundaryBadge", "GENERIC SYNTHETIC TEACHING VIEW",
+        "NOT A PATIENT SCAN", "SPECIALIST REVIEW PENDING", "CLINICAL REVIEW PENDING",
+        "RBCEntryPreludeHUD", "RBCExhibitInfoHUD", "RBCRegionInfoHUD", "RBCRegionTransferHUD",
+    ]) and hud.count("RBCEducationalBoundaryBadge()") >= 5,
+    "family_clinician_audience_separation": all(token in model + hud for token in [
+        "regionFamilyCompanionTitle", "regionFamilyCompanionSubtitle", "regionFamilyCompanionFact",
+        "FAMILY COMPANION", "CLINICIAN DETAIL", "Small arteries reach deep tissue",
+        "Blood routes reach the visual area", "Two blood routes join into one",
+        "SCA, AICA, and PICA", "M1 lenticulostriate", "calcarine, parieto-occipital, and lingual",
+    ]) and all(term not in family_companion_source for term in family_forbidden_clinician_terms),
     "no_custom_camera": "PerspectiveCameraComponent" not in all_source,
     "no_direct_provider_secret": all(term not in all_source for term in [
         "OPENAI_API_KEY", "https://api.openai"
@@ -198,7 +416,7 @@ checks = {
     "frontal_region_directional_flow": all(token in model + scene + hud for token in [
         "case frontalLobe", "frontal-region-orientation-outline-not-segmentation",
         "frontal-lobe-directional-blood-flow-field", "frontal-flow-direction-arrow",
-        "generateCone", "INSIDE  ·", "frontalOutlineOpacity",
+        "generateCone", "CLINICIAN DETAIL  ·", "INSIDE  ·", "macroContextScale",
         "Frontal lobe · capillary field",
     ]),
     "brain_observatory_views": all(token in model + scene + hud for token in [
@@ -229,14 +447,19 @@ checks = {
     "layered_directional_blood_current": all(token in scene + model + immersive + medical_canon + readme for token in [
         "--proof-flow-phase-", "flowRideProofPhase", "flowRideRuntimeProofPhase",
         "buildFlowCurrentChoreography", "offsetFlowStrandPath", "makeBloodPulseTexture",
-        "advectingBloodCurrentMaterial", "textureCoordinateTransform.offset.x = -travel",
+        "advectingBloodCurrentMaterial", "textureCoordinateTransform.offset.x = pulseOffset",
         "--proof-flow-pulse-", "flowRidePulseProofPhase",
         "rounded-blood-current-with-traveling-surface-pulse-not-cfd-",
         "rounded_current_volumes=", "surface_pulse=", "static_route_chevrons=10",
         "moving_front_geometry=0", "addRideRoutePath", "-direction-chevron-",
+        "baseOpacity", "applyFlowRideCurrentBandOpacities",
+        "opacity: item.baseOpacity * routeWeight",
+        "flowRideCurrentBandLastPulseOffsets",
+        "if flowRideCurrentBandLastPulseOffsets[index] != pulseOffset",
         "Forty-two clones", "for index in 0..<42", "warm amber", "teal remains",
         "velocity profile", "hematocrit", "multi-cell simulation",
-    ]),
+    ]) and "OpacityComponent" not in flow_current_band_pose
+        and "item.entity.components.set(OpacityComponent(opacity: selected ? 1 : 0.08))" not in scene,
     "opt_in_family_realtime_guide": all(token in model + immersive + hud + narrator + realtime_proxy + realtime_runner for token in [
         "--proof-family-guide", "Optional voice", "familyNarrationEnabled",
         "gpt-realtime-2.1", "RBC_REALTIME_PROXY_URL", "marin",
@@ -251,7 +474,8 @@ checks = {
         "regionFamilyCompanionSubtitle", "Family companion",
         "Voice reads this exact view.", "familyNarrationText",
         "X-RBC-Narration-Transcript-SHA256",
-    ]) and "NSMicrophoneUsageDescription" not in project,
+    ]) and "NSMicrophoneUsageDescription" not in project
+        and "regionFamilyCompanionProofRequested && regionIndex == nil" in model,
     "family_voice_spatial_thresholds": all(token in model + hud + immersive + scene + narrator for token in [
         "regionTransferFamilyTitle", "regionTransferFamilySubtitle",
         "regionTransferNarrationWaitLimitMilliseconds", "shouldDuckAmbientAudio",
@@ -291,13 +515,20 @@ checks = {
         "--proof-family-guide-beat-", "minimumDwellSeconds",
         "Caption-led; optional voice is not connected.",
     ]) and "|| (model.proofMode && model.familyNarrationEnabled)" not in immersive,
+    "parent_paced_family_scaffold": all(token in model + hud + immersive + narrator for token in [
+        "NOTICE", "FOLLOW", "CONNECT", "minimumDwellSeconds",
+        "advanceFamilyNarration", "replayFamilyNarration", "Hear again", "Next idea",
+        "familyNarrationAdvanceTitle", "Enter field", "automaticMoments",
+        "familyNarrator.isBusy", "requestTask != nil || player != nil",
+        "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
+    ]),
     "automatic_guided_vascular_journey": all(token in model + hud + immersive + narrator for token in [
         "enum RBCGuidedFlowTourPhase", "case source", "case division", "case chooseFrontal",
         "case enterFrontal", "case narrowTowardCortex", "case capillaryArrival", "case complete",
         "guidedFlowTourSequenceKey", "isGuidedFlowTourPlaying", "advanceGuidedFlowTour",
         "restartGuidedFlowTour", "applyGuidedFlowTourPhase", "while model.isGuidedFlowTourPlaying",
         "Pause journey", "Resume journey", "Journey complete", "minimumDwellSeconds",
-        "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
+        "familyNarrator.isBusy", "requestTask != nil || player != nil",
         "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
     ]),
     "cortical_microarchitecture_room": all(token in model + scene + hud + medical_canon for token in [
@@ -355,7 +586,7 @@ checks = {
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "brainstem_posterior_circulation_bridge": all(token in model + scene + hud + medical_canon for token in [
         "case brainstem", "Brainstem bridge",
-        "RBC_BRAINSTEM_OBSERVATORY=READY",
+        "RBC_BRAINSTEM_OBSERVATORY=\\(registrationStatus)",
         "registered-brainstem-relational-context-combined-source-not-segmentation",
         "registered-paired-vertebral-artery-reference-source-nodes",
         r"brainstem-\(level.name)-broken-constellation-arc-",
@@ -363,12 +594,23 @@ checks = {
         "qualitative-vertebral-basilar-pica-aica-sca-pca-and-pontine-routes-not-fixed-territories",
         "levels=3", "broken_outline_arcs=9", "environmental_wall_sheets=4", "peripheral_ribs=16",
         "longitudinal_guides=9", "transverse_pons_guides=9", "tegmental_points=72",
-        "arterial_paths=17", "moving_fronts=23", "registered_vertebral_nodes=2",
+        "arterial_paths=17", "moving_fronts=23", "registered_vertebral_nodes=\\(brainstemRegisteredVertebralNodeCount)",
+        "expected_vertebral_nodes=\\(expectedVertebralNodeCount)", "DEGRADED",
         "brainstem-flow-front-arrowhead", "brainstem-flow-front-tail",
         "updateBrainstemRegion", "advanceBrainstemFrame", "SceneEvents.Update",
         "region == .brainstem", "Two vertebral routes become one",
         "midbrain, pons, and medulla", "not brainstem segmentation",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
+    "truthful_brainstem_registration_receipt": (
+        len(brainstem_expected_nodes) == brainstem_reference["required_count"] == 2
+        and all(name in scene for name in brainstem_expected_nodes)
+        and brainstem_reference["review_status"].endswith("PENDING_SPECIALIST_REVIEW")
+        and brainstem_reference["display_status"] == "DISABLED_PROVENANCE_REFERENCE"
+        and brainstem_source_sha256 == brainstem_reference["source_asset_sha256"]
+        and "brainstemRegisteredVertebralNodeCount += 1" in scene
+        and "registered_vertebral_nodes=2" not in scene
+        and registration_fixtures_pass
+    ),
     "user_directed_posterior_voyage": all(token in model + scene + hud + immersive + medical_canon + readme for token in [
         "enum RBCPosteriorVoyagePhase", "case convergence", "case basilarBridge", "case destinations",
         "--proof-posterior-voyage-convergence", "--proof-posterior-voyage-bridge",
@@ -403,7 +645,13 @@ checks = {
         "Red cells stay inside the vessels while soft rings show exchange with nearby tissue conceptually",
         "not at real scale or measured flow",
         "oxygen moves from blood toward tissue by diffusion",
-    ]) and "oxygen concentration measurement" not in scene + model,
+    ]) and "oxygen concentration measurement" not in scene + model
+        and "ripple.components.set(OpacityComponent(opacity: 0))" not in scene,
+    "route_front_selection_contrast": all(token in scene for token in [
+        "applyFlowRideCurrentBandOpacities", "opacity: item.baseOpacity * routeWeight",
+        "let routeScale = 0.70 + routeWeight * 0.30", "default: 0.04",
+        "|| item.route == .overview || flowRideRuntimeRoute == item.route",
+    ]) and "flowRideCurrentFronts" not in scene,
     "flow_ride_brain_locator": all(token in scene + model + hud + immersive for token in [
         "RBCFlowRideMiniMapHUD", "HStack(alignment: .bottom, spacing: 18)",
         "BRAIN ATLAS", "ANTERIOR VIEW", "YOU ARE HERE", "Frontal lobe · capillary field",

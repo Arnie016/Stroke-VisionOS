@@ -26,9 +26,13 @@ targets:
             CFBundleURLSchemes:
               - rbcjourney
         NSHandsTrackingUsageDescription: Open and close educational vessel portals with deliberate two-hand gestures.
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
         UIApplicationSupportsIndirectInputEvents: true
     sources:
       - path: Sources
+      - path: Resources/Assets.xcassets
+        buildPhase: resources
       - path: Resources/Models/brain_anatomy_realistic_v2.usdz
         buildPhase: resources
       - path: Resources/Models/brain_deep_structures_v2.usdz
@@ -41,22 +45,25 @@ targets:
         buildPhase: resources
       - path: Resources/Models/ischemic_mca_clot_v2.usdz
         buildPhase: resources
-      - path: Resources/Models/artery_wall_cutaway_v2.usdz
-        buildPhase: resources
-      - path: Resources/Models/artery_interior_bloodflow_v2.usdz
-        buildPhase: resources
       - path: Resources/Models/artery_cutaway_complete_v2.usdz
         buildPhase: resources
       - path: Resources/Models/circle_of_willis_flow_overlay_v2.usdz
-        buildPhase: resources
-      - path: Resources/Models/red_blood_cells_closeup_v2.usdz
         buildPhase: resources
       - path: Resources/Models/microcirculation_arterial_venous_v2.usdz
         buildPhase: resources
       - path: Resources/Models/cerebral_bloodflow_animation_v2.usdz
         buildPhase: resources
+      # These provenance-tracked source-library models intentionally remain in
+      # the repository but are not copied into the application bundle. None has
+      # a reviewed runtime role in this experiment.
+      - path: Resources/Models/artery_wall_cutaway_v2.usdz
+        buildPhase: none
+      - path: Resources/Models/artery_interior_bloodflow_v2.usdz
+        buildPhase: none
+      - path: Resources/Models/red_blood_cells_closeup_v2.usdz
+        buildPhase: none
       - path: Resources/Models/cerebral_bloodflow_teaching_set_v2.usdz
-        buildPhase: resources
+        buildPhase: none
       - path: Resources/Audio/FlowBed.wav
         buildPhase: resources
       - path: Resources/Provenance/ATTRIBUTION.md
@@ -67,8 +74,10 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.arnav.RBCJourneyVision
         PRODUCT_NAME: RBCJourneyVision
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: true
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        MARKETING_VERSION: 0.1.0
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_FILE: Resources/RBCJourneyVision-Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: 7
 
 schemes:

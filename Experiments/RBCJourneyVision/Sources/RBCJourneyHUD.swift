@@ -1,6 +1,129 @@
 import SwiftUI
 
+struct RBCEducationalBoundaryBadge: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Label("GENERIC SYNTHETIC TEACHING VIEW · NOT A PATIENT SCAN", systemImage: "shield.lefthalf.filled")
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundStyle(Color(red: 0.98, green: 0.70, blue: 0.34))
+            Text("SPECIALIST REVIEW PENDING · CLINICAL REVIEW PENDING")
+                .font(.system(size: 9, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.white.opacity(0.64))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.black.opacity(0.34), in: .capsule)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Generic synthetic teaching view. Not a patient scan. Specialist review pending. Clinical review pending.")
+    }
+}
+
+struct RBCSceneReadinessSurface: View {
+    @Environment(RBCJourneyModel.self) private var model
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
+
+    private var title: String {
+        switch model.sceneReadinessPhase {
+        case .loading: "Preparing the teaching space"
+        case .ready: "Teaching space ready"
+        case .degraded: "Some teaching detail is unavailable"
+        case .failed: "Teaching space could not open"
+        }
+    }
+
+    private var accent: Color {
+        switch model.sceneReadinessPhase {
+        case .loading, .ready: Color(red: 0.48, green: 0.93, blue: 0.78)
+        case .degraded: Color(red: 0.98, green: 0.70, blue: 0.34)
+        case .failed: Color(red: 1.0, green: 0.36, blue: 0.34)
+        }
+    }
+
+    private var systemImage: String {
+        switch model.sceneReadinessPhase {
+        case .loading: "shippingbox.and.arrow.backward"
+        case .ready: "checkmark.seal.fill"
+        case .degraded: "exclamationmark.triangle.fill"
+        case .failed: "xmark.octagon.fill"
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            RBCEducationalBoundaryBadge()
+
+            HStack(spacing: 16) {
+                if model.sceneReadinessPhase == .loading {
+                    ProgressView()
+                        .controlSize(.large)
+                        .tint(accent)
+                        .accessibilityLabel("Loading full-detail teaching scene")
+                } else {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 34, weight: .semibold))
+                        .foregroundStyle(accent)
+                }
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(model.sceneReadinessPhase.rawValue)
+                        .font(.caption.monospaced().weight(.bold))
+                        .tracking(1.8)
+                        .foregroundStyle(accent)
+                    Text(title)
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                }
+            }
+
+            Text(model.sceneReadinessDetail)
+                .font(.title3)
+                .foregroundStyle(.white.opacity(0.76))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Label(
+                "No patient data is being loaded. This technical check does not provide clinical or specialist validation.",
+                systemImage: "lock.shield"
+            )
+            .font(.footnote.weight(.medium))
+            .foregroundStyle(.white.opacity(0.58))
+            .fixedSize(horizontal: false, vertical: true)
+
+            if model.sceneReadinessPhase == .degraded || model.sceneReadinessPhase == .failed {
+                Button("Leave full space", systemImage: "xmark") {
+                    Task {
+                        await dismissImmersiveSpace()
+                        model.isPresented = false
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(accent)
+                .buttonBorderShape(.capsule)
+            }
+        }
+        .padding(32)
+        .frame(width: 720, alignment: .leading)
+        .frame(minHeight: 390, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(red: 0.055, green: 0.018, blue: 0.030).opacity(0.98),
+                    Color(red: 0.12, green: 0.026, blue: 0.042).opacity(0.96),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: .rect(cornerRadius: 32)
+        )
+        .glassBackgroundEffect(in: .rect(cornerRadius: 32))
+        .overlay {
+            RoundedRectangle(cornerRadius: 32)
+                .stroke(accent.opacity(0.42), lineWidth: 1)
+        }
+        .accessibilityElement(children: .contain)
+    }
+}
+
 private struct RBCPreludeChapterText: View {
+    @Environment(RBCJourneyModel.self) private var model
     let chapter: RBCEntryPreludeChapter
     @State private var settled = false
 
@@ -25,7 +148,7 @@ private struct RBCPreludeChapterText: View {
         .opacity(settled ? 1 : 0)
         .scaleEffect(settled ? 1 : 0.84)
         .onAppear {
-            withAnimation(.easeOut(duration: 1.15)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeOut(duration: 1.15)) {
                 settled = true
             }
         }
@@ -37,13 +160,15 @@ struct RBCEntryPreludeHUD: View {
 
     var body: some View {
         VStack(spacing: 26) {
+            RBCEducationalBoundaryBadge()
+
             RBCPreludeChapterText(chapter: model.entryPreludeChapter)
                 .id(model.entryPreludeChapter.id)
 
             HStack(spacing: 12) {
                 if model.entryPreludeChapter != .threshold {
                     Button("Back", systemImage: "chevron.left") {
-                        withAnimation(.easeInOut(duration: 0.45)) {
+                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.45)) {
                             if let previous = RBCEntryPreludeChapter(rawValue: model.entryPreludeChapter.rawValue - 1) {
                                 model.entryPreludeChapter = previous
                             }
@@ -52,7 +177,7 @@ struct RBCEntryPreludeHUD: View {
                 }
 
                 Button(model.entryPreludeChapter.actionTitle, systemImage: model.entryPreludeChapter == .invitation ? "arrow.down.right.and.arrow.up.left" : "arrow.right") {
-                    withAnimation(.easeInOut(duration: 0.55)) {
+                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.55)) {
                         model.advanceEntryPrelude()
                     }
                 }
@@ -60,7 +185,7 @@ struct RBCEntryPreludeHUD: View {
                 .tint(Color(red: 0.86, green: 0.12, blue: 0.22))
 
                 Button("Skip", systemImage: "forward.end") {
-                    withAnimation(.easeInOut(duration: 0.45)) {
+                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.45)) {
                         model.startWondrousJourney()
                     }
                 }
@@ -116,6 +241,8 @@ struct RBCJourneyInfoHUD: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            RBCEducationalBoundaryBadge()
+
             HStack {
                 Text(model.lessonEyebrow)
                     .font(.caption2.monospacedDigit().weight(.bold))
@@ -165,6 +292,8 @@ struct RBCExhibitInfoHUD: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            RBCEducationalBoundaryBadge()
+
             HStack(spacing: 10) {
                 Text(model.lessonEyebrow)
                     .font(.caption2.monospacedDigit().weight(.bold))
@@ -226,7 +355,7 @@ struct RBCExhibitControlsHUD: View {
                 model.isExhibitFactExpanded ? "Close note" : "Explain",
                 systemImage: model.isExhibitFactExpanded ? "sparkles" : "questionmark.circle"
             ) {
-                withAnimation(.easeInOut(duration: 0.22)) {
+                withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.22)) {
                     model.isExhibitFactExpanded.toggle()
                 }
             }
@@ -266,6 +395,67 @@ struct RBCRegionInfoHUD: View {
             let occipitalActive = region == .occipitalLobe
             let brainstemActive = region == .brainstem
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
+            let displayTitle = if flowRideActive && model.familyNarrationEnabled {
+                model.familyNarrationCue.title
+            } else if flowRideActive {
+                model.activeFlowRideTitle
+            } else if regionCompanionActive {
+                model.regionFamilyCompanionTitle
+            } else if willisRouteActive {
+                model.activeWillisTitle
+            } else if cerebellumActive {
+                model.activeCerebellumTitle
+            } else if deepStructuresActive {
+                model.activeDeepStructuresTitle
+            } else if occipitalActive {
+                model.activeOccipitalTitle
+            } else if brainstemActive {
+                model.activeBrainstemTitle
+            } else if exampleClotActive {
+                "One branch, interrupted"
+            } else {
+                region.title
+            }
+            let displaySubtitle = if flowRideActive && model.familyNarrationEnabled {
+                model.familyNarrationCue.caption
+            } else if flowRideActive {
+                model.activeFlowRideSubtitle
+            } else if regionCompanionActive {
+                model.regionFamilyCompanionSubtitle
+            } else if willisRouteActive {
+                model.activeWillisSubtitle
+            } else if cerebellumActive {
+                model.activeCerebellumSubtitle
+            } else if deepStructuresActive {
+                model.activeDeepStructuresSubtitle
+            } else if occipitalActive {
+                model.activeOccipitalSubtitle
+            } else if brainstemActive {
+                model.activeBrainstemSubtitle
+            } else if exampleClotActive {
+                "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+            } else {
+                region.subtitle
+            }
+            let displayFact = if regionCompanionActive {
+                model.regionFamilyCompanionFact
+            } else if flowRideActive {
+                model.activeFlowRideFact
+            } else if willisRouteActive {
+                model.activeWillisFact
+            } else if cerebellumActive {
+                model.activeCerebellumFact
+            } else if deepStructuresActive {
+                model.activeDeepStructuresFact
+            } else if occipitalActive {
+                model.activeOccipitalFact
+            } else if brainstemActive {
+                model.activeBrainstemFact
+            } else if exampleClotActive {
+                "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
+            } else {
+                region.fact
+            }
             HStack(alignment: .bottom, spacing: 18) {
                 if flowRideActive {
                     RBCFlowRideMiniMapHUD()
@@ -273,6 +463,8 @@ struct RBCRegionInfoHUD: View {
                 }
 
                 VStack(alignment: .leading, spacing: 9) {
+                RBCEducationalBoundaryBadge()
+
                 Text(flowRideActive && model.isGuidedFlowTourActive
                     ? model.guidedFlowTourProgressLabel
                     : (flowRideActive && model.familyNarrationEnabled
@@ -281,65 +473,25 @@ struct RBCRegionInfoHUD: View {
                         ? "RIDE  ·  ARTERIAL LUMEN"
                         : (regionCompanionActive
                             ? "FAMILY COMPANION  ·  \(region.shortTitle.uppercased())"
-                            : "INSIDE  ·  \(region.shortTitle.uppercased())"))))
+                            : "CLINICIAN DETAIL  ·  INSIDE  ·  \(region.shortTitle.uppercased())"))))
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .tracking(1.3)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
 
-                Text(flowRideActive && model.familyNarrationEnabled
-                    ? model.familyNarrationCue.title
-                    : (flowRideActive
-                        ? model.activeFlowRideTitle
-                        : (willisRouteActive
-                            ? model.activeWillisTitle
-                            : (cerebellumActive
-                                ? model.activeCerebellumTitle
-                                : (deepStructuresActive
-                                    ? model.activeDeepStructuresTitle
-                                    : (occipitalActive
-                                        ? model.activeOccipitalTitle
-                                        : (brainstemActive
-                                            ? model.activeBrainstemTitle
-                                            : (exampleClotActive ? "One branch, interrupted" : region.title))))))))
+                Text(displayTitle)
                     .font(.system(size: 34, weight: .semibold, design: .rounded))
 
-                Text(flowRideActive && model.familyNarrationEnabled
-                    ? model.familyNarrationCue.caption
-                    : (flowRideActive
-                        ? model.activeFlowRideSubtitle
-                        : (willisRouteActive
-                            ? model.activeWillisSubtitle
-                            : (cerebellumActive
-                                ? model.activeCerebellumSubtitle
-                                : (deepStructuresActive
-                                    ? model.activeDeepStructuresSubtitle
-                                    : (occipitalActive
-                                        ? model.activeOccipitalSubtitle
-                                        : (brainstemActive
-                                            ? model.activeBrainstemSubtitle
-                                            : (exampleClotActive
-                                                ? "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
-                                                : region.subtitle))))))))
+                Text(displaySubtitle)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
 
-                Label(flowRideActive
-                    ? model.activeFlowRideFact
-                    : (willisRouteActive
-                        ? model.activeWillisFact
-                        : (cerebellumActive
-                            ? model.activeCerebellumFact
-                            : (deepStructuresActive
-                                ? model.activeDeepStructuresFact
-                                : (occipitalActive
-                                    ? model.activeOccipitalFact
-                                    : (brainstemActive
-                                        ? model.activeBrainstemFact
-                                        : (exampleClotActive
-                                            ? "An occlusion can reduce downstream blood delivery. Alternative routes vary between people; this scene is not measured flow or a patient scan."
-                                            : region.fact)))))),
-                    systemImage: flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
+                Label(
+                    displayFact,
+                    systemImage: regionCompanionActive
+                        ? "person.2.fill"
+                        : (flowRideActive ? "arrow.forward.circle.fill" : (exampleClotActive ? "exclamationmark.triangle.fill" : "viewfinder"))
+                )
                     .font(.footnote)
                     .foregroundStyle(exampleClotActive ? Color.orange : Color(red: 0.48, green: 0.93, blue: 0.78))
                     .fixedSize(horizontal: false, vertical: true)
@@ -363,7 +515,7 @@ struct RBCRegionInfoHUD: View {
                             HStack(spacing: 7) {
                                 if let nextTitle = passagePhase.nextActionTitle {
                                     Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
-                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                             model.advanceAnteriorPassage()
                                         }
                                     }
@@ -387,7 +539,7 @@ struct RBCRegionInfoHUD: View {
                                 }
 
                                 Button("Leave passage", systemImage: "arrow.uturn.backward") {
-                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.32)) {
                                         model.stopAnteriorPassage()
                                     }
                                 }
@@ -406,7 +558,7 @@ struct RBCRegionInfoHUD: View {
 
                         if model.willisRouteFocus == .anterior {
                             Button("Enter anterior passage", systemImage: "arrow.forward.circle.fill") {
-                                withAnimation(.easeInOut(duration: 0.42)) {
+                                withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                     model.startAnteriorPassage()
                                 }
                             }
@@ -446,7 +598,7 @@ struct RBCRegionInfoHUD: View {
                             HStack(spacing: 7) {
                                 if let nextTitle = voyagePhase.nextActionTitle {
                                     Button(nextTitle, systemImage: "arrow.forward.circle.fill") {
-                                        withAnimation(.easeInOut(duration: 0.42)) {
+                                        withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                             model.advancePosteriorVoyage()
                                         }
                                     }
@@ -470,7 +622,7 @@ struct RBCRegionInfoHUD: View {
                                 }
 
                                 Button("Leave route", systemImage: "arrow.uturn.backward") {
-                                    withAnimation(.easeInOut(duration: 0.32)) {
+                                    withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.32)) {
                                         model.stopPosteriorVoyage()
                                     }
                                 }
@@ -481,7 +633,7 @@ struct RBCRegionInfoHUD: View {
                         }
                     } else {
                         Button("Follow posterior route", systemImage: "arrow.triangle.branch") {
-                            withAnimation(.easeInOut(duration: 0.42)) {
+                            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.42)) {
                                 model.startPosteriorVoyage()
                             }
                         }
@@ -498,7 +650,7 @@ struct RBCRegionInfoHUD: View {
                             model.isFrontalClotScenarioActive ? "Clear example" : "Place example clot",
                             systemImage: model.isFrontalClotScenarioActive ? "arrow.counterclockwise" : "drop.triangle.fill"
                         ) {
-                            withAnimation(.easeInOut(duration: 0.28)) {
+                            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.28)) {
                                 model.toggleFrontalClotScenario()
                             }
                         }
@@ -656,7 +808,7 @@ private struct RBCRegionModeButton: View {
     var body: some View {
         let selected = mode == model.regionVisualization
         Button {
-            withAnimation(.easeInOut(duration: 0.28)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.28)) {
                 model.selectRegionVisualization(mode)
             }
         } label: {
@@ -677,7 +829,7 @@ private struct RBCWillisRouteFocusButton: View {
     var body: some View {
         let selected = focus == model.willisRouteFocus
         Button(focus.shortTitle, systemImage: focus.systemImage) {
-            withAnimation(.easeInOut(duration: 0.34)) {
+            withAnimation(model.effectiveReducedMotion ? nil : .easeInOut(duration: 0.34)) {
                 model.selectWillisRouteFocus(focus)
             }
         }
@@ -698,6 +850,8 @@ struct RBCRegionTransferHUD: View {
     var body: some View {
         if model.pendingRegionDestination != nil {
             VStack(spacing: 10) {
+                RBCEducationalBoundaryBadge()
+
                 Text(model.regionTransferFamilyTitle.uppercased())
                     .font(.caption.monospacedDigit().weight(.bold))
                     .tracking(1.8)

@@ -225,6 +225,38 @@ enum RBCJourneyMotionMode: String, CaseIterable, Identifiable {
     }
 }
 
+enum RBCSceneReadinessPhase: String, Equatable {
+    case loading = "LOADING"
+    case ready = "READY"
+    case degraded = "DEGRADED"
+    case failed = "FAILED"
+}
+
+enum RBCSceneReadinessProof: String {
+    case loading
+    case ready
+    case degraded
+    case failed
+}
+
+struct RBCSceneReadinessReport: Equatable {
+    let phase: RBCSceneReadinessPhase
+    let loadedModelCount: Int
+    let expectedModelCount: Int
+    let portalCount: Int
+    let expectedPortalCount: Int
+    let audioReady: Bool
+    let presentationFrameReady: Bool
+    let issues: [String]
+
+    var receipt: String {
+        let issueList = issues.isEmpty ? "none" : issues.joined(separator: ",")
+        let audioStatus = audioReady ? "ready" : "unavailable"
+        let frameStatus = presentationFrameReady ? "ready" : "unavailable"
+        return "RBC_SCENE_READINESS=\(phase.rawValue) models=\(loadedModelCount)/\(expectedModelCount) portals=\(portalCount)/\(expectedPortalCount) audio=\(audioStatus) presentation_frame=\(frameStatus) issues=\(issueList)"
+    }
+}
+
 enum RBCJourneyExperienceMode: String, CaseIterable, Identifiable {
     case entryPrelude = "Entry prelude"
     case wondrousJourney = "Wondrous journey"
@@ -802,6 +834,8 @@ final class RBCJourneyModel {
     var motionMode: RBCJourneyMotionMode
     var isPresented = false
     var isSceneReady = false
+    var sceneReadinessPhase: RBCSceneReadinessPhase = .loading
+    var sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
     var isPaused = false
     var soundEnabled = true
     var familyNarrationEnabled = false
@@ -822,11 +856,16 @@ final class RBCJourneyModel {
     var isExhibitFactExpanded = false
     var handTrackingStatus = "Hand gestures require Apple Vision Pro"
     let proofMode: Bool
+    let sceneReadinessProof: RBCSceneReadinessProof?
+    var proofAutoLaunchConsumed = false
     let regionTransferProofProgress: Float?
     let anteriorGatewayTransitionProofProgress: Float?
     let flowRideProofPhase: Float?
 
     init(arguments: [String] = CommandLine.arguments) {
+        sceneReadinessProof = arguments.first { $0.hasPrefix("--proof-scene-") }
+            .map { $0.replacingOccurrences(of: "--proof-scene-", with: "") }
+            .flatMap(RBCSceneReadinessProof.init(rawValue:))
         let proofArgument = arguments.first { $0.hasPrefix("--proof-station-") }
         let proofIndex = proofArgument.flatMap {
             Int($0.replacingOccurrences(of: "--proof-station-", with: ""))
@@ -934,7 +973,8 @@ final class RBCJourneyModel {
             .circleOfWillis
         } else if posteriorVoyageProofPhase != nil {
             .brainstem
-        } else if willisRouteProofRequested || regionFamilyCompanionProofRequested {
+        } else if willisRouteProofRequested
+            || (regionFamilyCompanionProofRequested && regionIndex == nil) {
             .circleOfWillis
         } else {
             regionIndex.flatMap(RBCBrainRegionDestination.init(rawValue:))
@@ -1076,6 +1116,75 @@ final class RBCJourneyModel {
             || posteriorVoyageProofPhase != nil
             || initialFocus != nil
             || initialTransfer != nil
+            || sceneReadinessProof != nil
+    }
+
+    func beginSceneLoading() {
+        isSceneReady = false
+        sceneReadinessPhase = .loading
+        sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
+        print("RBC_SCENE_READINESS=LOADING boundary=generic-synthetic-not-patient-scan review=specialist-and-clinical-pending")
+    }
+
+    func resolveSceneReadiness(_ actualReport: RBCSceneReadinessReport) {
+        let report: RBCSceneReadinessReport
+        switch sceneReadinessProof {
+        case .loading:
+            report = RBCSceneReadinessReport(
+                phase: .loading,
+                loadedModelCount: actualReport.loadedModelCount,
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: actualReport.portalCount,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: actualReport.audioReady,
+                presentationFrameReady: actualReport.presentationFrameReady,
+                issues: ["proof-held-before-readiness"]
+            )
+        case .degraded:
+            report = RBCSceneReadinessReport(
+                phase: .degraded,
+                loadedModelCount: max(actualReport.loadedModelCount - 1, 0),
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: actualReport.portalCount,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: actualReport.audioReady,
+                presentationFrameReady: actualReport.presentationFrameReady,
+                issues: ["proof-injected-partial-entity-load"]
+            )
+        case .failed:
+            report = RBCSceneReadinessReport(
+                phase: .failed,
+                loadedModelCount: 0,
+                expectedModelCount: actualReport.expectedModelCount,
+                portalCount: 0,
+                expectedPortalCount: actualReport.expectedPortalCount,
+                audioReady: false,
+                presentationFrameReady: false,
+                issues: ["proof-injected-core-scene-failure"]
+            )
+        case .ready, .none:
+            report = actualReport
+        }
+
+        sceneReadinessPhase = report.phase
+        isSceneReady = report.phase == .ready
+        sceneReadinessDetail = switch report.phase {
+        case .loading:
+            "Preparing the complete teaching scene. The full-detail view will replace this surface only after readiness is confirmed."
+        case .ready:
+            "All \(report.expectedModelCount) bundled teaching models and \(report.expectedPortalCount) portals were verified before presentation."
+        case .degraded:
+            "Some referenced teaching content could not be verified (\(report.issues.joined(separator: ", "))). The notice remains visible so missing detail is not hidden."
+        case .failed:
+            "The core teaching scene could not be verified (\(report.issues.joined(separator: ", "))). Leave full space and try again."
+        }
+        print(report.receipt)
+    }
+
+    func resetSceneReadiness() {
+        isSceneReady = false
+        sceneReadinessPhase = .loading
+        sceneReadinessDetail = "Preparing the complete teaching scene and checking every bundled model."
     }
 
     var effectiveReducedMotion: Bool {
@@ -1117,28 +1226,172 @@ final class RBCJourneyModel {
 
     var regionFamilyCompanionTitle: String {
         guard let region = activeRegionDestination else { return "" }
-        if region == .circleOfWillis { return activeWillisTitle }
-        if region == .cerebellum { return activeCerebellumTitle }
-        if region == .deepStructures { return activeDeepStructuresTitle }
-        if region == .occipitalLobe { return activeOccipitalTitle }
-        if region == .brainstem { return activeBrainstemTitle }
-        if region == .frontalLobe && isFrontalClotScenarioActive {
-            return "One branch, interrupted"
+        switch region {
+        case .arterialLumen:
+            return "Inside a blood vessel"
+        case .circleOfWillis:
+            if let anteriorPassagePhase {
+                return switch anteriorPassagePhase {
+                case .carotidApproach: "Two routes rise toward the brain"
+                case .circleCrossroads: "The main routes meet and connect"
+                case .middleCerebralContinuation: "Follow one route toward the side of the brain"
+                }
+            }
+            return switch willisRouteFocus {
+            case .overview: "Where the brain's main blood routes meet"
+            case .anterior: "Routes toward the front of the brain"
+            case .posterior: "Routes toward the back of the brain"
+            }
+        case .corticalExchange:
+            return "Where blood supports brain tissue"
+        case .ventricularSystem:
+            return "Fluid spaces inside the brain"
+        case .cerebellum:
+            return switch regionVisualization {
+            case .locate: "A folded area low at the back"
+            case .xray: "Branches inside the folds"
+            case .flow: "Blood routes approach the folded surface"
+            }
+        case .deepStructures:
+            return switch regionVisualization {
+            case .locate: "Structures deep inside the brain"
+            case .xray: "A pathway corridor between them"
+            case .flow: "Small arteries reach deep tissue"
+            }
+        case .frontalLobe:
+            return isFrontalClotScenarioActive ? "One branch, interrupted" : "The front of the brain"
+        case .corticalMicroarchitecture:
+            return "Layers in the brain's outer surface"
+        case .occipitalLobe:
+            return switch regionVisualization {
+            case .locate: "The brain area that receives visual signals"
+            case .xray: "A folded surface involved in vision"
+            case .flow: "Blood routes reach the visual area"
+            }
+        case .brainstem:
+            if let posteriorVoyagePhase {
+                return switch posteriorVoyagePhase {
+                case .convergence: "Two blood routes approach"
+                case .basilarBridge: "The routes join into one bridge"
+                case .destinations: "Choose where to continue"
+                }
+            }
+            return switch regionVisualization {
+            case .locate: "The bridge between brain and body"
+            case .xray: "Many pathways pass through a small space"
+            case .flow: "Two blood routes join into one"
+            }
         }
-        return region.title
     }
 
     var regionFamilyCompanionSubtitle: String {
         guard let region = activeRegionDestination else { return "" }
-        if region == .circleOfWillis { return activeWillisSubtitle }
-        if region == .cerebellum { return activeCerebellumSubtitle }
-        if region == .deepStructures { return activeDeepStructuresSubtitle }
-        if region == .occipitalLobe { return activeOccipitalSubtitle }
-        if region == .brainstem { return activeBrainstemSubtitle }
-        if region == .frontalLobe && isFrontalClotScenarioActive {
-            return "An illustrative obstruction occupies one teaching branch. Flow light holds upstream while the surrounding arterial context stays visible."
+        switch region {
+        case .arterialLumen:
+            return "This enlarged view shows the open channel where blood cells move. The wall around it is living tissue."
+        case .circleOfWillis:
+            if let anteriorPassagePhase {
+                return switch anteriorPassagePhase {
+                case .carotidApproach:
+                    "A pair of arteries carries blood upward toward the connected network at the base of the brain."
+                case .circleCrossroads:
+                    "Several arteries meet here. The connections can offer alternate routes, but the pattern differs from person to person."
+                case .middleCerebralContinuation:
+                    "One example route stays bright as it continues toward the side of the brain. This is a teaching path, not patient-specific anatomy."
+                }
+            }
+            return switch willisRouteFocus {
+            case .overview:
+                "Several arteries connect near the base of the brain. The exact pattern is different from person to person."
+            case .anterior:
+                "This view highlights blood routes continuing toward the front and sides of the brain."
+            case .posterior:
+                "This view highlights blood routes continuing toward the back of the brain."
+            }
+        case .corticalExchange:
+            return "Very small vessels bring blood close to brain tissue. Oxygen can cross the vessel wall while blood cells remain inside."
+        case .ventricularSystem:
+            return "These connected spaces hold protective fluid. They are separate from the blood-vessel network."
+        case .cerebellum:
+            return switch regionVisualization {
+            case .locate:
+                "This folded part sits behind and below the larger brain. It helps coordinate movement."
+            case .xray:
+                "The teaching view opens the folds to show a branching inner pattern. It is enlarged and simplified for orientation."
+            case .flow:
+                "Several arteries approach this folded surface from the circulation at the back of the brain. Their exact paths vary."
+            }
+        case .deepStructures:
+            return switch regionVisualization {
+            case .locate:
+                "Several important structures sit close together beneath the brain's outer surface. The outlines show their relationship."
+            case .xray:
+                "A compact passage carries many connections between the brain's surface and the rest of the body."
+            case .flow:
+                "Small branching arteries bring blood into deep brain tissue. A blockage here can affect nearby pathways."
+            }
+        case .frontalLobe:
+            if isFrontalClotScenarioActive {
+                return "A teaching blockage interrupts one example branch. The view shows the tissue beyond it without predicting an individual outcome."
+            }
+            return "This forward part of the brain supports planning, movement, speech, and behavior. Bright markers show an example blood route."
+        case .corticalMicroarchitecture:
+            return "This enlarged teaching fold shows layers around a small blood vessel. It is an orientation model, not a tissue sample."
+        case .occipitalLobe:
+            return switch regionVisualization {
+            case .locate:
+                "This area at the back of the brain helps process visual information. The opposite side stays visible for orientation."
+            case .xray:
+                "The teaching view opens a folded inner surface linked with vision. It is enlarged and is not a patient scan."
+            case .flow:
+                "Several arteries approach the brain's visual area from the circulation at the back. Their exact paths vary."
+            }
+        case .brainstem:
+            if let posteriorVoyagePhase {
+                return switch posteriorVoyagePhase {
+                case .convergence:
+                    "A pair of arteries approaches from below while the wearer stays still."
+                case .basilarBridge:
+                    "The two routes join and continue upward along the front of the brainstem."
+                case .destinations:
+                    "From this bridge, blood routes continue toward the folded area for coordination and the area for vision."
+                }
+            }
+            return switch regionVisualization {
+            case .locate:
+                "This compact bridge connects the brain with the spinal cord and sits in front of the cerebellum."
+            case .xray:
+                "Many pathways pass through this compact area. The view separates them for teaching rather than showing a tissue scan."
+            case .flow:
+                "A pair of arteries joins into one main route, then branches toward nearby brain areas. The pattern varies between people."
+            }
         }
-        return region.subtitle
+    }
+
+    var regionFamilyCompanionFact: String {
+        guard let region = activeRegionDestination else { return "" }
+        return switch region {
+        case .arterialLumen:
+            "Blood cells stay inside the vessel as they travel through its open channel."
+        case .circleOfWillis:
+            "The connected arterial pattern is not identical in every person."
+        case .corticalExchange:
+            "Oxygen crosses toward tissue; the red blood cell remains inside the vessel."
+        case .ventricularSystem:
+            "The brain's fluid spaces are not part of its arterial blood-flow network."
+        case .cerebellum:
+            "This area lies low at the back of the brain and helps coordinate movement."
+        case .deepStructures:
+            "Several small artery groups can supply deep tissue, and the pattern varies."
+        case .frontalLobe:
+            "This generic teaching view cannot predict what a particular person will experience."
+        case .corticalMicroarchitecture:
+            "The outer brain has layers, but their thickness and cell patterns vary by area."
+        case .occipitalLobe:
+            "The area at the back of the brain is central to processing visual information."
+        case .brainstem:
+            "The brainstem contains many pathways and supports vital connections between brain and body."
+        }
     }
 
     var familyNarrationCue: RBCFamilyNarrationCue {
@@ -1527,7 +1780,6 @@ final class RBCJourneyModel {
         familyNarrationEnabled = false
         exhibitBeat = .route
         station = exhibitBeat.station
-        motionMode = .continuous
         isPaused = false
         isExhibitFactExpanded = false
         openPortalIDs = [RBCVesselPortal.circleOfWillis.id]
@@ -1871,10 +2123,12 @@ final class RBCJourneyModel {
         closeAllPortals()
     }
 
-    func openNextPortal() {
-        guard let next = (0..<3).first(where: { !openPortalIDs.contains($0) }) else { return }
+    @discardableResult
+    func openNextPortal() -> Bool {
+        guard let next = (0..<3).first(where: { !openPortalIDs.contains($0) }) else { return false }
         openPortalIDs.insert(next)
         focusedPortalID = next
+        return true
     }
 
     func togglePortal(_ id: Int) {

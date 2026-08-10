@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		03FDF42C4CF1605105F222F9 /* RBCJourneyTrailheadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0211755FDA61F0AB2C8189 /* RBCJourneyTrailheadView.swift */; };
-		1F1DC8F3E8428ECE12372E4E /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 72F1174096295A38060CF3FF /* cerebral_bloodflow_teaching_set_v2.usdz */; };
+		1345D0B9F8A14A6E9D4E67B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78E5A8914E9945C884B0A879 /* Assets.xcassets */; };
 		2A89701998AABFB71DDD2E1C /* brain_ventricles_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A09DF472EDF15D89791B41AD /* brain_ventricles_v2.usdz */; };
 		39C7C51371060A910DD3B5ED /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 781BCC05DB7D478159B46A0C /* ischemic_mca_clot_v2.usdz */; };
 		3A78146196913CBB60E2127A /* ATTRIBUTION.md in Resources */ = {isa = PBXBuildFile; fileRef = 1FAAE6AC17C97701B0E53C82 /* ATTRIBUTION.md */; };
@@ -23,12 +23,9 @@
 		A40E80961C96736227DDE6E0 /* brain_deep_structures_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 70918A2FDD79BA174A3B92B4 /* brain_deep_structures_v2.usdz */; };
 		A698438CF855DEC897DD85FF /* cranial_vascular_registered_assembly_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8675C0C263C1492A8D9808EB /* cranial_vascular_registered_assembly_v2.usdz */; };
 		B026F90EDA741A6A379C89EF /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 6A7C575A5D2F2E0F78DF6157 /* brain_anatomy_realistic_v2.usdz */; };
-		BF405E1F30C87373B40FC733 /* red_blood_cells_closeup_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 494A074BCAE5BE78E2FC3D48 /* red_blood_cells_closeup_v2.usdz */; };
 		C5BC4AE9CAF9E4080A85FE15 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 49FD574C0AF5C96E8B6EB0C7 /* cerebral_bloodflow_animation_v2.usdz */; };
 		D24B19C567650584FCDE21BB /* cerebral_arteries_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = AB6B4EAFA92BE6CA2A7BC631 /* cerebral_arteries_realistic_v2.usdz */; };
 		DB4B63232624E6765553D02F /* RBCJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52D93C80BE13778725C82FE /* RBCJourneyModel.swift */; };
-		DB9C6F166DE4B2FB2EC587B3 /* artery_wall_cutaway_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A8566F55C828B6891A4A1064 /* artery_wall_cutaway_v2.usdz */; };
-		E59611D2187653A84B2DACCF /* artery_interior_bloodflow_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CAF3961D7E6CBDB20275DBC7 /* artery_interior_bloodflow_v2.usdz */; };
 		E7EDB5EFA53B0E6E36F51F7E /* RBCJourneyImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4793D2DB4A6F981FA36A973D /* RBCJourneyImmersiveView.swift */; };
 		ED9D09BCC37337667834FE6A /* RBCJourneyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E555E0C3686F9534F946B8 /* RBCJourneyScene.swift */; };
 		FC6A72F4141DD66CE7AA91BA /* RBCFamilyNarrationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C463D9C3D7F6403E15CEB5D /* RBCFamilyNarrationEngine.swift */; };
@@ -49,6 +46,7 @@
 		6EA0E71C36649CA3E3395F1A /* RBCJourneyVision.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RBCJourneyVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70918A2FDD79BA174A3B92B4 /* brain_deep_structures_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_deep_structures_v2.usdz; sourceTree = "<group>"; };
 		72F1174096295A38060CF3FF /* cerebral_bloodflow_teaching_set_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_teaching_set_v2.usdz; sourceTree = "<group>"; };
+		78E5A8914E9945C884B0A879 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7730EA5B8B8D8E1DC5FEC82A /* RBCJourneyHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyHUD.swift; sourceTree = "<group>"; };
 		781BCC05DB7D478159B46A0C /* ischemic_mca_clot_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = ischemic_mca_clot_v2.usdz; sourceTree = "<group>"; };
 		8675C0C263C1492A8D9808EB /* cranial_vascular_registered_assembly_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_vascular_registered_assembly_v2.usdz; sourceTree = "<group>"; };
@@ -76,6 +74,7 @@
 		3750384ED35E503198574E01 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				78E5A8914E9945C884B0A879 /* Assets.xcassets */,
 				4198DE34B9423C96EC15319B /* Audio */,
 				651FE0A2390FE288820596B5 /* Models */,
 				0D38EAC4076491458EFE981E /* Provenance */,
@@ -205,22 +204,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A78146196913CBB60E2127A /* ATTRIBUTION.md in Resources */,
+				1345D0B9F8A14A6E9D4E67B1 /* Assets.xcassets in Resources */,
 				9834E5B0A5E0804C07FE0258 /* FlowBed.wav in Resources */,
 				9A4EE6EEF25A91A711E5E0DA /* artery_cutaway_complete_v2.usdz in Resources */,
-				E59611D2187653A84B2DACCF /* artery_interior_bloodflow_v2.usdz in Resources */,
-				DB9C6F166DE4B2FB2EC587B3 /* artery_wall_cutaway_v2.usdz in Resources */,
 				B026F90EDA741A6A379C89EF /* brain_anatomy_realistic_v2.usdz in Resources */,
 				A40E80961C96736227DDE6E0 /* brain_deep_structures_v2.usdz in Resources */,
 				2A89701998AABFB71DDD2E1C /* brain_ventricles_v2.usdz in Resources */,
 				D24B19C567650584FCDE21BB /* cerebral_arteries_realistic_v2.usdz in Resources */,
 				C5BC4AE9CAF9E4080A85FE15 /* cerebral_bloodflow_animation_v2.usdz in Resources */,
-				1F1DC8F3E8428ECE12372E4E /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */,
 				8F1759B747470278B5F51538 /* circle_of_willis_flow_overlay_v2.usdz in Resources */,
 				A698438CF855DEC897DD85FF /* cranial_vascular_registered_assembly_v2.usdz in Resources */,
 				39C7C51371060A910DD3B5ED /* ischemic_mca_clot_v2.usdz in Resources */,
 				4CEF82EDFAF608BEF14BBEDE /* microcirculation_arterial_venous_v2.usdz in Resources */,
 				8784FB12C8C5C9A155645FD4 /* portal-anchor-manifest.json in Resources */,
-				BF405E1F30C87373B40FC733 /* red_blood_cells_closeup_v2.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,13 +244,14 @@
 		355F1291DA3CEBD08A69B315 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "Resources/RBCJourneyVision-Info.plist";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.RBCJourneyVision;
 				PRODUCT_NAME = RBCJourneyVision;
 				SDKROOT = xros;
@@ -388,13 +385,14 @@
 		A894867D3192F671D714927B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "Resources/RBCJourneyVision-Info.plist";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.arnav.RBCJourneyVision;
 				PRODUCT_NAME = RBCJourneyVision;
 				SDKROOT = xros;
