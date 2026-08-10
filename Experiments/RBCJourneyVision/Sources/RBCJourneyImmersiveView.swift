@@ -122,9 +122,8 @@ struct RBCJourneyImmersiveView: View {
         .task {
             await handGestures.start(model: model)
             model.familyNarrationConfigured = familyNarrator.isConfigured
-            familyNarrator.setPaused(model.isPaused)
             if model.familyNarrationEnabled && familyNarrator.isConfigured {
-                familyNarrator.speakExactCaption(model.familyNarrationText)
+                familyNarrator.beginOptInExactCaption(model.familyNarrationText)
             }
         }
         .task(id: model.regionTransferSequenceKey) {
@@ -161,8 +160,7 @@ struct RBCJourneyImmersiveView: View {
                 let heldPhase = model.guidedFlowTourPhase
                 var remainingSeconds = model.familyNarrationCue.minimumDwellSeconds
                 while remainingSeconds > 0
-                    || familyNarrator.state == .loading
-                    || familyNarrator.state == .speaking {
+                    || familyNarrator.isBusy {
                     try? await Task.sleep(for: .milliseconds(250))
                     guard !Task.isCancelled,
                           model.isGuidedFlowTourPlaying,
@@ -209,7 +207,7 @@ struct RBCJourneyImmersiveView: View {
         }
         .onChange(of: model.familyNarrationEnabled) { _, enabled in
             if enabled && familyNarrator.isConfigured {
-                familyNarrator.speakExactCaption(model.familyNarrationText)
+                familyNarrator.beginOptInExactCaption(model.familyNarrationText)
             } else {
                 familyNarrator.stop()
             }

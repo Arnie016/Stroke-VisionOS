@@ -92,6 +92,18 @@ family_companion_source = model[
     model.index("var regionFamilyCompanionTitle"):
     model.index("var familyNarrationCue")
 ]
+narration_startup_task = immersive[
+    immersive.index("        .task {"):
+    immersive.index("        .task(id: model.regionTransferSequenceKey)")
+]
+narration_opt_in_change = immersive[
+    immersive.index("        .onChange(of: model.familyNarrationEnabled)"):
+    immersive.index("        .onChange(of: model.familyNarrationText)")
+]
+guided_flow_task = immersive[
+    immersive.index("        .task(id: model.guidedFlowTourSequenceKey)"):
+    immersive.index("        .task(id: model.familyNarrationSequenceKey)")
+]
 family_forbidden_clinician_terms = [
     "SCA", "AICA", "PICA", "M1", "lenticulostriate", "anterior choroidal",
     "posterior perforator", "calcarine", "parieto-occipital", "lingual",
@@ -141,8 +153,23 @@ checks = {
     ]),
     "latched_narration_pause": all(token in narrator + immersive for token in [
         "pauseRequested", "self.pauseRequested", "familyNarrator.isBusy",
-        "familyNarrator.setPaused(model.isPaused)",
+        "familyNarrator.setPaused(paused)",
     ]),
+    "opt_in_region_narration_starts_unpaused": (
+        "func beginOptInExactCaption" in narrator
+        and "pauseRequested = false" in narrator[
+            narrator.index("func beginOptInExactCaption"):
+            narrator.index("func speakExactCaption")
+        ]
+        and "familyNarrator.beginOptInExactCaption(model.familyNarrationText)" in narration_startup_task
+        and "familyNarrator.setPaused(model.isPaused)" not in narration_startup_task
+        and "familyNarrator.beginOptInExactCaption(model.familyNarrationText)" in narration_opt_in_change
+    ),
+    "paused_inflight_caption_blocks_guided_advance": (
+        "familyNarrator.isBusy" in guided_flow_task
+        and "familyNarrator.state == .loading" not in guided_flow_task
+        and "familyNarrator.state == .speaking" not in guided_flow_task
+    ),
     "single_realitykit_frame_driver": all(token in scene for token in [
         "SceneEvents.Update", "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
         "retainedAuthoredFlowRideCellCount",
@@ -433,7 +460,7 @@ checks = {
         "guidedFlowTourSequenceKey", "isGuidedFlowTourPlaying", "advanceGuidedFlowTour",
         "restartGuidedFlowTour", "applyGuidedFlowTourPhase", "while model.isGuidedFlowTourPlaying",
         "Pause journey", "Resume journey", "Journey complete", "minimumDwellSeconds",
-        "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
+        "familyNarrator.isBusy", "requestTask != nil || player != nil",
         "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
     ]),
     "cortical_microarchitecture_room": all(token in model + scene + hud + medical_canon for token in [
