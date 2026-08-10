@@ -841,6 +841,19 @@ struct RBCFlowRideMiniMapHUD: View {
         model.isCapillaryFieldFocused ? "CORTICAL PROXY" : "GEOMETRY-DERIVED"
     }
 
+    private var activeJourneyStage: Int {
+        if model.isCapillaryFieldFocused || model.guidedFlowTourPhase == .capillaryArrival || model.guidedFlowTourPhase == .complete {
+            return 2
+        }
+        if model.flowRideRoute == .frontal
+            || model.guidedFlowTourPhase == .chooseFrontal
+            || model.guidedFlowTourPhase == .enterFrontal
+            || model.guidedFlowTourPhase == .narrowTowardCortex {
+            return 1
+        }
+        return 0
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 7) {
@@ -863,6 +876,23 @@ struct RBCFlowRideMiniMapHUD: View {
                 .font(.caption)
                 .foregroundStyle(.white.opacity(0.68))
                 .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 5) {
+                ForEach(Array(["FORK", "FRONTAL", "CORTEX"].enumerated()), id: \.offset) { index, stage in
+                    if index > 0 {
+                        Rectangle()
+                            .fill(.white.opacity(0.20))
+                            .frame(width: 12, height: 1)
+                    }
+                    Text(stage)
+                        .font(.caption2.monospaced().weight(.bold))
+                        .tracking(0.7)
+                        .foregroundStyle(index == activeJourneyStage
+                            ? locationColor
+                            : .white.opacity(index < activeJourneyStage ? 0.62 : 0.28))
+                }
+            }
+            .accessibilityLabel("Journey stages: fork, frontal lobe, cortex. Current stage (activeJourneyStage + 1) of 3.")
 
             HStack(spacing: 6) {
                 Image(systemName: model.isCapillaryFieldFocused ? "scope" : "viewfinder")

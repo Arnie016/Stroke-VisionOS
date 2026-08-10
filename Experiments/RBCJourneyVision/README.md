@@ -315,6 +315,9 @@ CFD streamline, or measured perfusion route.
 Three low-density arrow fronts travel that trace while the journey is playing;
 Pause freezes them with the rest of the scene. This is the atlas-scale direction
 cue, distinct from the higher-density intraluminal fronts around the wearer.
+The atlas legend also carries a compact three-stage breadcrumb—**FORK →
+FRONTAL → CORTEX**—driven by the same guided phase as the surrounding scene, so
+the family can read both the current region and the next anatomical scale.
 
 The strands, wake spacing, cell count, and small lane-speed differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear

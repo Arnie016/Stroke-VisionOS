@@ -407,6 +407,7 @@ checks = {
         "capillary_proxy=true", "The atlas is an orientation instrument",
         "geometry-derived-atlas-route-trace", "geometry-derived-atlas-route-front-",
         "flowRideSpatialAtlasRouteFronts", "sampleAtlasPolyline",
+        "activeJourneyStage", "FORK", "FRONTAL", "CORTEX",
     ]) and "Canvas {" not in hud,
     "living_inside_brain_cortical_context": all(token in scene for token in [
         "surrounding-inside-brain-cortical-fold-scaffold-not-segmentation",
