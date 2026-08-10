@@ -1445,17 +1445,32 @@ final class RBCJourneyScene {
 
         // Replace a bead-like ring with one continuous, quiet outline so the
         // marker reads as a selected region, not a second set of blood cells.
+        let isFrontalLobe = key == "frontal"
+        let pointCount = isFrontalLobe ? 32 : 24
+        let xRadius: Float = isFrontalLobe ? 0.058 : 0.038
+        let yRadius: Float = isFrontalLobe ? 0.043 : 0.038
         var ringPoints: [SIMD3<Float>] = []
-        for index in 0...24 {
-            let angle = Float(index) / 24 * 2 * .pi
-            ringPoints.append([cos(angle) * 0.038, sin(angle) * 0.038, 0])
+        for index in 0...pointCount {
+            let angle = Float(index) / Float(pointCount) * 2 * .pi
+            // This is an orientation contour for the named teaching locus,
+            // not a segmentation boundary or patient-specific anatomy.
+            let irregularity = isFrontalLobe
+                ? 1 + sin(angle * 3.0 + 0.35) * 0.10 + cos(angle * 5.0) * 0.045
+                : 1
+            ringPoints.append([
+                cos(angle) * xRadius * irregularity,
+                sin(angle) * yRadius * irregularity,
+                isFrontalLobe ? sin(angle * 2) * 0.004 : 0
+            ])
         }
         addTubePath(
             ringPoints,
             to: locator,
-            radius: 0.00125,
+            radius: isFrontalLobe ? 0.0015 : 0.00125,
             material: material,
-            name: "spatial-atlas-selected-region-outline"
+            name: isFrontalLobe
+                ? "spatial-atlas-frontal-lobe-orientation-outline-not-segmentation"
+                : "spatial-atlas-selected-region-outline"
         )
         return locator
     }
@@ -5751,9 +5766,12 @@ final class RBCJourneyScene {
             }
         }
 
-        let headMesh = MeshResource.generateCone(height: 0.046, radius: 0.015)
-        let tailMesh = MeshResource.generateCylinder(height: 0.072, radius: 0.0050)
-        let wakeMesh = MeshResource.generateCylinder(height: 0.120, radius: 0.0090)
+        // The lumen is room-scale, so the directional front must be readable
+        // from the stable observation origin. The larger head/wake preserves
+        // the same qualitative choreography; it is not a velocity scale.
+        let headMesh = MeshResource.generateCone(height: 0.082, radius: 0.024)
+        let tailMesh = MeshResource.generateCylinder(height: 0.120, radius: 0.0070)
+        let wakeMesh = MeshResource.generateCylinder(height: 0.200, radius: 0.0120)
         let routeSpecs: [(
             route: RBCFlowRideRoute,
             path: [SIMD3<Float>],
@@ -5780,13 +5798,13 @@ final class RBCJourneyScene {
                 front.name = "tangent-aligned-blood-current-front-not-velocity-field-\(spec.route.rawValue)-\(frontIndex)"
                 let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
                 head.name = "blood-current-direction-arrowhead"
-                head.position.y = 0.040
+                head.position.y = 0.066
                 let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
                 tail.name = "blood-current-direction-tail"
-                tail.position.y = -0.020
+                tail.position.y = -0.038
                 let wake = ModelEntity(mesh: wakeMesh, materials: [wakeMaterial])
                 wake.name = "blood-current-direction-fading-wake"
-                wake.position.y = -0.112
+                wake.position.y = -0.190
                 front.addChild(head)
                 front.addChild(tail)
                 front.addChild(wake)
