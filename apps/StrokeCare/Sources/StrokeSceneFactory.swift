@@ -26,6 +26,8 @@ enum StrokeSceneFactory {
     private static let importedArteriesName = "cerebral_arteries_realistic_v2"
     private static let importedClotName = "ischemic_mca_clot_v2"
     private static let importedDuraName = "dura_mater_cutaway_conceptual_v2"
+    private static let importedBloodflowName = "cerebral_bloodflow_animation_v2"
+    private static let importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"
     private static let importedEdemaName = "edema_swelling"
     private static let importedFlapName = "craniotomy_bone_flap"
     private static let importedPatchName = "dural_patch"
@@ -65,6 +67,13 @@ enum StrokeSceneFactory {
     private static let arteriesLayerName = "anatomy-arteries-layer"
     private static let blockageLayerName = "anatomy-blockage-layer"
     private static let duraLayerName = "anatomy-dura-layer"
+    private static let authoredBloodflowLayerName = "anatomy-authored-bloodflow-layer"
+    private static let qualitativeFlowOverlayLayerName = "anatomy-qualitative-flow-overlay-layer"
+
+    /// The USDZ owns the detailed authored transform tracks. Retaining their
+    /// controllers lets Pause and Reduce Motion freeze the loop without hiding
+    /// the registered route geometry or replacing it with a lower-detail cue.
+    private static var authoredBloodflowControllers: [AnimationPlaybackController] = []
 
     private enum HemisphereSide: Float {
         case left = -1
@@ -457,12 +466,22 @@ enum StrokeSceneFactory {
             importedSkullName,
             importedArteriesName,
             importedClotName,
-            importedDuraName
+            importedDuraName,
+            importedBloodflowName,
+            importedFlowOverlayName
         ] {
             if let entity = await loadBundledUSDZ(named: name) {
                 entity.name = name
+                if name == importedBloodflowName {
+                    startAuthoredBloodflowAnimations(in: entity)
+                }
                 let layer = Entity()
                 layer.name = semanticLayerName(for: name)
+                if name == importedBloodflowName || name == importedFlowOverlayName {
+                    // Both registered flow cues are opt-in and cannot flash
+                    // over Orient while the remaining anatomy finishes loading.
+                    layer.isEnabled = false
+                }
                 layer.addChild(entity)
                 registered.addChild(layer)
             }
@@ -476,6 +495,9 @@ enum StrokeSceneFactory {
         }
 
         guard let importedBrain = registered.findEntity(named: importedBrainName) else {
+            // `imported` will be discarded, so do not retain controllers for a
+            // detached flow asset if the required registered brain failed.
+            stopAuthoredBloodflowAnimations()
             return nil
         }
 
@@ -572,9 +594,69 @@ enum StrokeSceneFactory {
             blockageLayerName
         case importedDuraName:
             duraLayerName
+        case importedBloodflowName:
+            authoredBloodflowLayerName
+        case importedFlowOverlayName:
+            qualitativeFlowOverlayLayerName
         default:
             "anatomy-context-layer"
         }
+    }
+
+    /// RealityKit exposes the imported USD stage's one authored scene timeline
+    /// alongside generated subtree and per-entity aliases. Playing every alias
+    /// duplicates the same transforms, raises CPU use, and can emit bind-point
+    /// override warnings. One global scene controller drives all seven pulse
+    /// meshes smoothly without altering the asset's registered frame or hiding
+    /// any static route detail. This is illustrative movement—not CFD,
+    /// perfusion, velocity, or a patient measurement.
+    private static func startAuthoredBloodflowAnimations(in entity: Entity) {
+        let sceneAnimation = entity.availableAnimations.first {
+            $0.name == "global scene animation"
+        } ?? entity.availableAnimations.first
+
+        guard let sceneAnimation else { return }
+        authoredBloodflowControllers.append(
+            entity.playAnimation(sceneAnimation.repeat(), startsPaused: true)
+        )
+    }
+
+    private static func updateAuthoredBloodflowPlayback(
+        layer: Entity?,
+        isVisible: Bool,
+        isPaused: Bool
+    ) {
+        layer?.isEnabled = isVisible
+        authoredBloodflowControllers = authoredBloodflowControllers.filter(\.isValid)
+
+        for controller in authoredBloodflowControllers {
+            guard let controlledEntity = controller.entity,
+                  let layer,
+                  isEntity(controlledEntity, descendantOf: layer)
+            else { continue }
+
+            if isVisible && !isPaused {
+                if controller.isPaused { controller.resume() }
+            } else if !controller.isPaused {
+                controller.pause()
+            }
+        }
+    }
+
+    static func stopAuthoredBloodflowAnimations() {
+        for controller in authoredBloodflowControllers where controller.isValid {
+            controller.stop()
+        }
+        authoredBloodflowControllers.removeAll(keepingCapacity: true)
+    }
+
+    private static func isEntity(_ entity: Entity, descendantOf ancestor: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current === ancestor { return true }
+            candidate = current.parent
+        }
+        return false
     }
 
     private static func loadBundledUSDZ(named name: String) async -> Entity? {
@@ -1304,7 +1386,12 @@ enum StrokeSceneFactory {
 
     // MARK: - Per-frame update
 
-    static func update(root: Entity, experience: StrokeExperienceState, time: TimeInterval) {
+    static func update(
+        root: Entity,
+        experience: StrokeExperienceState,
+        time: TimeInterval,
+        reduceMotion: Bool = false
+    ) {
         let reveal = Float(experience.brainRevealProgress)
         let focus = Float(experience.vesselFocusProgress)
 
@@ -1368,7 +1455,12 @@ enum StrokeSceneFactory {
 
         updateCarePreview(root: root, experience: experience, time: time)
         updatePointFields(root: root, experience: experience, time: time)
-        updateImportedAnatomy(root: root, experience: experience, time: time)
+        updateImportedAnatomy(
+            root: root,
+            experience: experience,
+            time: time,
+            reduceMotion: reduceMotion
+        )
     }
 
     private static func updatePointFields(
@@ -1425,7 +1517,8 @@ enum StrokeSceneFactory {
     private static func updateImportedAnatomy(
         root: Entity,
         experience: StrokeExperienceState,
-        time: TimeInterval
+        time: TimeInterval,
+        reduceMotion: Bool
     ) {
         guard let imported = root.findEntity(named: importedRootName) else { return }
 
@@ -1454,6 +1547,8 @@ enum StrokeSceneFactory {
         let arteriesLayer = imported.findEntity(named: arteriesLayerName)
         let blockageLayer = imported.findEntity(named: blockageLayerName)
         let duraLayer = imported.findEntity(named: duraLayerName)
+        let authoredBloodflowLayer = imported.findEntity(named: authoredBloodflowLayerName)
+        let qualitativeFlowOverlayLayer = imported.findEntity(named: qualitativeFlowOverlayLayerName)
 
         approach(cortexLayer, [-0.026 * separation, 0, 0])
         approach(regionPointAnchor, [-0.026 * separation, 0, 0])
@@ -1480,6 +1575,27 @@ enum StrokeSceneFactory {
         imported.findEntity(named: importedArteriesName)?.isEnabled = true
         imported.findEntity(named: importedClotName)?.isEnabled = experience.procedureStep != .chooseCase || presentation == .exploded
         imported.findEntity(named: importedDuraName)?.isEnabled = showsPurpose
+
+        // These two USDZs were authored in the same registered-v2 head frame.
+        // The overlay retains every route line and chevron; the baked marker
+        // loop supplies smooth directional movement. The known detached room-
+        // space arrows remain quarantined below and are never re-enabled.
+        let showsAuthoredBloodflow = experience.spatialPhase == .explanation
+            && experience.lessonPointsVisible
+            && experience.pointField == .procedure
+            && experience.selectedPointEntityName?.hasPrefix(
+                "clinician-procedure-point-field-point-"
+            ) == true
+            && experience.procedureStep != .chooseCase
+        qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow
+        qualitativeFlowOverlayLayer?.components.set(
+            OpacityComponent(opacity: showsAuthoredBloodflow ? 0.90 : 0)
+        )
+        updateAuthoredBloodflowPlayback(
+            layer: authoredBloodflowLayer,
+            isVisible: showsAuthoredBloodflow,
+            isPaused: experience.requestedPause || reduceMotion
+        )
 
         // These prototype-v1 meshes are intentionally quarantined. The first
         // integration render proved that their coordinate frame does not match

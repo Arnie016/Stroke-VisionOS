@@ -25,6 +25,16 @@ The current Simulator build also loads the reviewed PR #2 shortlist. Registered
 v2 brain, cerebral arteries, right-M1 teaching marker, and conceptual dura are
 visible in the three-act path. Prototype-v1 edema/flap/patch remain bundled but
 disabled after a visual integration render demonstrated a mismatched frame.
+The exact declaration is ten story assets plus two clinician-only concept
+tools. The generic drill and forceps remain presenter-only, display-only, and
+specialist-review pending. The two flow assets are registered qualitative
+teaching cues—not CFD or patient-specific perfusion.
+
+Device Hub deliberately retains the authored 1.62 m eye-height frame instead
+of applying its floor-origin world anchor. That Simulator-only fallback emits
+no tracked-anchor receipt and proves only the visible Simulator render. Physical
+builds continue to sample `WorldTrackingProvider.queryDeviceAnchor`; physical
+placement, comfort, and wearer interaction remain unverified.
 
 The 0.6 spatial-workspace pass separates the experience into three explicit
 phases: one angled dossier archive, a connected case review, and explanation.

@@ -40,10 +40,17 @@ tear away from the brain.
 
 ## Spatial rig
 
-- The default immersive path loads the exact PR #2 registered-v2 brain,
-  cerebral arteries, right-M1 teaching marker, and conceptual dura from the
-  canonical repository asset catalog. The app project references only its
-  eight-file shortlist and does not duplicate the 65-asset source library.
+- The default immersive path declares exactly **ten story assets plus two
+  clinician-only concept tools** from the canonical repository catalog. The
+  story slice is `brain_anatomy_realistic_v2`,
+  `cerebral_arteries_realistic_v2`, `ischemic_mca_clot_v2`,
+  `skull_semantic_realistic_v2`, `dura_mater_cutaway_conceptual_v2`,
+  `cerebral_bloodflow_animation_v2`, `circle_of_willis_flow_overlay_v2`,
+  `edema_swelling`, `craniotomy_bone_flap`, and `dural_patch`. The tools are
+  `cranial_drill_generic` and `suction_and_forceps`; both are generic concepts
+  pending specialist review, presenter-only, display-only, and never exposed
+  as patient-specific or approved operative instruments. The wider 65-asset
+  source catalog is not duplicated into the runtime bundle.
   Authored child transforms are not
   rewritten; one outer placement root owns orbit, zoom, and the initial
   three-quarter presentation.
@@ -56,6 +63,10 @@ tear away from the brain.
   They must not be overlaid on v2 anatomy until the fit is reviewed.
 - Downstream droplets become a fixed residual cue after the occlusion. This is
   qualitative animation, not CFD or a collateral-flow estimate.
+- The selected Blood-flow lesson uses the same-frame authored Circle-of-Willis
+  overlay and its complete directional chevrons together with the baked marker
+  loop. Pause and Reduce Motion freeze marker movement without removing route
+  detail; the cue remains qualitative, generic, and not CFD.
 - Quiet mono audio beds are anchored separately to the vessel and affected
   hemisphere. Their mix follows the visible act; it never responds to inferred
   emotion, gaze, voice, heart rate, or a patient measurement.

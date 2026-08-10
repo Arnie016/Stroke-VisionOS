@@ -2,17 +2,27 @@ import AVFoundation
 import RealityKit
 import SwiftUI
 
-@MainActor
-private final class StrokePreludeAudio: ObservableObject {
+/// Serialises every `AVAudioPlayer` operation away from the main actor.
+/// Preparing an audio graph can block while AVFoundation activates its
+/// session, so the journey UI never constructs, prepares, plays, or stops a
+/// player directly.
+actor StrokeAudioPlayback {
     private var player: AVAudioPlayer?
 
-    func play() {
-        guard player == nil,
-              let url = Bundle.main.url(forResource: "FlowBed", withExtension: "wav"),
-              let audio = try? AVAudioPlayer(contentsOf: url)
-        else { return }
+    func playLoop(from url: URL, volume: Float) {
+        stop()
+        guard let audio = try? AVAudioPlayer(contentsOf: url) else { return }
         audio.numberOfLoops = -1
-        audio.volume = 0.12
+        audio.volume = volume
+        audio.prepareToPlay()
+        audio.play()
+        player = audio
+    }
+
+    func playOnce(_ data: Data) throws {
+        stop()
+        let audio = try AVAudioPlayer(data: data)
+        audio.numberOfLoops = 0
         audio.prepareToPlay()
         audio.play()
         player = audio
@@ -21,6 +31,29 @@ private final class StrokePreludeAudio: ObservableObject {
     func stop() {
         player?.stop()
         player = nil
+    }
+}
+
+@MainActor
+private final class StrokePreludeAudio: ObservableObject {
+    private let playback = StrokeAudioPlayback()
+    private var playbackTask: Task<Void, Never>?
+
+    func play() {
+        guard playbackTask == nil,
+              let url = Bundle.main.url(forResource: "FlowBed", withExtension: "wav")
+        else { return }
+        playbackTask = Task { [playback] in
+            await playback.playLoop(from: url, volume: 0.12)
+        }
+    }
+
+    func stop() {
+        playbackTask?.cancel()
+        playbackTask = nil
+        Task { [playback] in
+            await playback.stop()
+        }
     }
 }
 
@@ -422,8 +455,11 @@ struct StrokeJourneyLaunchView: View {
         proofRouteHasRun = true
         if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
-            caseRevealProgress = 1
-            casePlaced = true
+            // The named proof follows the current immersive case-review state,
+            // not the retired launch-window constellation below. Keeping the
+            // compatibility alias is intentional for existing proof runners.
+            experience.prepareSpatialDockedCaseProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-evidence-window") {
             experience.prepareEvidenceProof()
             Task { await openEvidenceProofWindow() }
@@ -462,6 +498,13 @@ struct StrokeJourneyLaunchView: View {
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-clinician-toolkit") {
             experience.prepareClinicianToolKitProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-exit-reset") {
+            // Exercises reachability of the direct Reset and Exit controls in
+            // the same presenter surface; the route does not claim that a
+            // screenshot proves physical gaze or pinch dispatch.
+            experience.prepareClinicianProof(step: .inspectOcclusion)
+            experience.resetSpatialView()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-spatial-intake") {
             experience.reset()

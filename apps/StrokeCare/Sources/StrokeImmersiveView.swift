@@ -33,6 +33,15 @@ private final class StrokeStagePlacement: ObservableObject {
     private var placementTask: Task<Void, Never>?
 
     func start() {
+        #if targetEnvironment(simulator)
+        // Device Hub reports a world-anchor origin at floor height rather than
+        // the authored 1.62 m eye plane. Applying that transform moves the
+        // complete teaching stage out of view. Simulator therefore preserves
+        // the authored frame. It intentionally emits no tracked-anchor receipt
+        // and is not evidence for physical placement or wearer comfort.
+        transform = nil
+        return
+        #else
         placementTask?.cancel()
         placementTask = Task { [weak self] in
             guard let self, WorldTrackingProvider.isSupported else { return }
@@ -53,6 +62,7 @@ private final class StrokeStagePlacement: ObservableObject {
                 // Simulator/build proof must not be reported as device placement.
             }
         }
+        #endif
     }
 
     func stop() {
@@ -119,9 +129,9 @@ private final class StrokeStagePlacement: ObservableObject {
 }
 
 @MainActor
-private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate {
+private final class StrokeNarrationEngine: ObservableObject {
     private static let model = "gpt-realtime-2.1"
-    private var player: AVAudioPlayer?
+    private let playback = StrokeAudioPlayback()
     private var requestTask: Task<Void, Never>?
 
     func speak(_ text: String) {
@@ -142,11 +152,7 @@ private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPl
                     return
                 }
                 guard !Task.isCancelled else { return }
-                let player = try AVAudioPlayer(data: audio)
-                player.delegate = self
-                self?.player = player
-                player.prepareToPlay()
-                player.play()
+                try await self?.playback.playOnce(audio)
             } catch {
                 // Deliberately no system speech fallback: the voice is either
                 // GPT-Realtime-2.1 or silent with a visible setup state.
@@ -157,8 +163,9 @@ private final class StrokeNarrationEngine: NSObject, ObservableObject, AVAudioPl
     func stop() {
         requestTask?.cancel()
         requestTask = nil
-        player?.stop()
-        player = nil
+        Task { [playback] in
+            await playback.stop()
+        }
     }
 
     var isConfigured: Bool { realtimeProxyEndpoint != nil }
@@ -235,7 +242,7 @@ struct StrokeImmersiveView: View {
     private let stageRootName = "stroke-world-locked-stage"
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
+        TimelineView(.periodic(from: .now, by: sceneRefreshInterval)) { timeline in
             RealityView { content, attachments in
                     let stageRoot = Entity()
                     stageRoot.name = stageRootName
@@ -349,7 +356,15 @@ struct StrokeImmersiveView: View {
                     }
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
-                    StrokeSceneFactory.update(root: root, experience: experience, time: now)
+                    let anatomyVisible = experience.spatialPhase == .explanation
+                    if anatomyVisible {
+                        StrokeSceneFactory.update(
+                            root: root,
+                            experience: experience,
+                            time: now,
+                            reduceMotion: reduceMotion
+                        )
+                    }
 
                     // Ported from the proven Heart Field interaction engine:
                     // state-owned orbit/zoom, smoothed presentation, entity-
@@ -360,7 +375,7 @@ struct StrokeImmersiveView: View {
                     let smoothedOrbit = experience.orbit
                     let smoothedZoom = Float(experience.spatialZoom)
 
-                    root.isEnabled = experience.spatialPhase == .explanation
+                    root.isEnabled = anatomyVisible
                     if let caseRoom = stageRoot.findEntity(named: StrokeSceneFactory.spatialCaseRoomName) {
                         caseRoom.isEnabled = experience.spatialPhase != .explanation
                         let inLibrary = experience.spatialPhase == .caseLibrary
@@ -618,28 +633,54 @@ struct StrokeImmersiveView: View {
             .onAppear {
                 stagePlacement.start()
                 synchronizeImmersionStyle()
-                if experience.narrationEnabled {
-                    narrator.speak(experience.journeyCaption)
-                }
+                synchronizeNarration()
             }
             .onChange(of: experience.environmentMode) { _, _ in
                 synchronizeImmersionStyle()
             }
-            .onChange(of: experience.narrationEnabled) { _, enabled in
-                enabled ? narrator.speak(experience.journeyCaption) : narrator.stop()
+            .onChange(of: experience.narrationEnabled) { _, _ in
+                synchronizeNarration()
             }
             .onChange(of: experience.procedureStep) { _, _ in
-                if experience.narrationEnabled { narrator.speak(experience.journeyCaption) }
+                synchronizeNarration()
             }
-            .onChange(of: experience.requestedPause) { _, _ in updateAudioMix() }
+            .onChange(of: experience.audienceLens) { _, _ in
+                synchronizeNarration()
+            }
+            .onChange(of: experience.requestedPause) { _, _ in
+                updateAudioMix()
+                synchronizeNarration()
+            }
             .onDisappear {
                 stagePlacement.stop()
                 narrator.stop()
+                StrokeSceneFactory.stopAuthoredBloodflowAnimations()
                 flowController?.stop()
                 pressureController?.stop()
                 experience.isImmersivePresented = false
             }
         }
+    }
+
+    /// Intake and case-review spaces are static after a state transition. A
+    /// one-hertz maintenance tick keeps attachment recovery possible without
+    /// paying for a hidden 60 Hz anatomy loop. Active anatomy retains display-
+    /// rate timing so directional cues remain smooth and no detail is removed.
+    private var sceneRefreshInterval: TimeInterval {
+        experience.spatialPhase == .explanation && !experience.requestedPause
+            ? 1.0 / 60.0
+            : 1.0
+    }
+
+    private func synchronizeNarration() {
+        guard experience.narrationEnabled,
+              !experience.requestedPause,
+              experience.spatialPhase == .explanation
+        else {
+            narrator.stop()
+            return
+        }
+        narrator.speak(experience.journeyCaption)
     }
 
     private var annotationPosition: SIMD3<Float> {
@@ -1021,26 +1062,27 @@ private struct SpatialRoleControls: View {
     private var familyControls: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Menu {
-                    ForEach(StrokePointField.allCases) { field in
-                        Button(field.rawValue, systemImage: field.systemImage) {
-                            experience.selectLessonFamily(field)
-                        }
-                    }
-                    Divider()
-                    Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
-                        experience.toggleLessonPoints()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: experience.pointField == .regions ? "Regions" : "Flow",
-                        systemImage: experience.pointField.systemImage,
-                        accent: .orange,
-                        selected: experience.lessonPointsVisible
-                    )
+                bubbleButton(
+                    lessonFamilyBubbleTitle,
+                    systemImage: experience.pointField.systemImage,
+                    accent: .orange,
+                    selected: experience.pointField == .procedure
+                ) {
+                    cycleLessonFamily()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
+                .accessibilityLabel("Lesson family")
+                .accessibilityValue(experience.pointField.rawValue)
+                .accessibilityHint("Pinch to show the next lesson family")
+
+                bubbleButton(
+                    "Points",
+                    systemImage: experience.lessonPointsVisible ? "eye.fill" : "eye.slash",
+                    accent: .orange,
+                    selected: experience.lessonPointsVisible
+                ) {
+                    experience.toggleLessonPoints()
+                }
+                .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
 
                 bubbleButton(
                     experience.narrationEnabled ? "Voice off" : "Voice",
@@ -1098,84 +1140,74 @@ private struct SpatialRoleControls: View {
     private var presenterControls: some View {
         VStack(alignment: .trailing, spacing: 8) {
             HStack(spacing: 8) {
-                Menu {
-                    Section("Perspective") {
-                        ForEach(StrokeAnatomyViewpoint.allCases) { viewpoint in
-                            Button(viewpoint.rawValue, systemImage: viewpoint.systemImage) {
-                                experience.setAnatomyViewpoint(viewpoint, reduceMotion: reduceMotion)
-                            }
-                        }
-                    }
-                    Divider()
-                    Section("Layers") {
-                    ForEach(StrokeAnatomyPresentation.allCases) { presentation in
-                        Button(presentation.rawValue) {
-                            experience.setAnatomyPresentation(presentation)
-                        }
-                    }
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: anatomyBubbleTitle,
-                        systemImage: experience.anatomyViewpoint.systemImage,
-                        accent: .mint,
-                        selected: experience.anatomyPresentation != .assembled || experience.anatomyViewpoint != .threeQuarter
-                    )
-                } primaryAction: {
+                bubbleButton(
+                    experience.anatomyViewpoint.shortTitle,
+                    systemImage: experience.anatomyViewpoint.systemImage,
+                    accent: .mint,
+                    selected: experience.anatomyViewpoint != .threeQuarter
+                ) {
                     experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)
                 }
-                .buttonStyle(.plain)
                 .accessibilityLabel("Anatomy viewpoint")
-                .accessibilityValue("\(experience.anatomyViewpoint.rawValue), \(experience.anatomyPresentation.rawValue)")
-                .accessibilityHint("Pinch to move to the next view. Open the menu for an exact view or layer style.")
+                .accessibilityValue(experience.anatomyViewpoint.rawValue)
+                .accessibilityHint("Pinch to move to the next viewpoint")
 
-                Menu {
-                    ForEach(StrokePointField.allCases) { field in
-                        Button(field.rawValue, systemImage: field.systemImage) {
-                            experience.selectLessonFamily(field)
-                        }
-                    }
-                    Divider()
-                    Button(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points") {
-                        experience.toggleLessonPoints()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: experience.pointField == .regions ? "Regions" : "Flow",
-                        systemImage: experience.pointField.systemImage,
-                        accent: .mint,
-                        selected: experience.lessonPointsVisible
-                    )
+                bubbleButton(
+                    layerBubbleTitle,
+                    systemImage: "square.3.layers.3d",
+                    accent: .mint,
+                    selected: experience.anatomyPresentation != .assembled
+                ) {
+                    cycleAnatomyPresentation()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Lesson points: \(experience.pointField.rawValue)")
+                .accessibilityLabel("Layer style")
+                .accessibilityValue(experience.anatomyPresentation.rawValue)
+                .accessibilityHint("Pinch to show the next layer style")
 
-                Menu {
-                    ForEach(StrokeEnvironmentMode.allCases) { mode in
-                        Button(mode.rawValue, systemImage: mode.systemImage) {
-                            experience.setEnvironmentMode(mode)
-                        }
-                    }
-                    Divider()
-                    Button("Evidence", systemImage: "text.book.closed.fill") {
-                        openWindow(id: StrokeSpace.evidence)
-                    }
-                    Button("Reset view", systemImage: "arrow.counterclockwise") {
-                        experience.resetSpatialView()
-                    }
-                } label: {
-                    SpatialControlBubbleLabel(
-                        title: "More",
-                        systemImage: "ellipsis.circle.fill",
-                        accent: .mint,
-                        selected: experience.environmentMode != .surroundings
-                    )
+                bubbleButton(
+                    lessonFamilyBubbleTitle,
+                    systemImage: experience.pointField.systemImage,
+                    accent: .mint,
+                    selected: experience.pointField == .procedure
+                ) {
+                    cycleLessonFamily()
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Environment, evidence, and view options")
+                .accessibilityLabel("Lesson family")
+                .accessibilityValue(experience.pointField.rawValue)
+
+                bubbleButton(
+                    environmentBubbleTitle,
+                    systemImage: experience.environmentMode.systemImage,
+                    accent: .mint,
+                    selected: experience.environmentMode != .surroundings
+                ) {
+                    cycleEnvironment()
+                }
+                .accessibilityLabel("Environment")
+                .accessibilityValue(experience.environmentMode.rawValue)
+
+                bubbleButton("Evidence", systemImage: "text.book.closed.fill", accent: .mint) {
+                    openWindow(id: StrokeSpace.evidence)
+                }
+                .accessibilityLabel("Open clinical evidence")
             }
 
             HStack(spacing: 8) {
+                bubbleButton(
+                    "Points",
+                    systemImage: experience.lessonPointsVisible ? "eye.fill" : "eye.slash",
+                    accent: .mint,
+                    selected: experience.lessonPointsVisible
+                ) {
+                    experience.toggleLessonPoints()
+                }
+                .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
+
+                bubbleButton("Reset", systemImage: "arrow.counterclockwise", accent: .mint) {
+                    experience.resetSpatialView()
+                }
+                .accessibilityLabel("Reset view")
+
                 bubbleButton(
                     experience.requestedPause ? "Resume" : "Pause",
                     systemImage: experience.requestedPause ? "play.fill" : "pause.fill",
@@ -1259,14 +1291,39 @@ private struct SpatialRoleControls: View {
         .accessibilityLabel(title)
     }
 
-    private var anatomyBubbleTitle: String {
-        if experience.anatomyViewpoint != .threeQuarter {
-            return experience.anatomyViewpoint.shortTitle
-        }
-        return switch experience.anatomyPresentation {
+    private var layerBubbleTitle: String {
+        switch experience.anatomyPresentation {
         case .assembled: "Layers"
         case .transparent: "Clear"
         case .exploded: "Apart"
+        }
+    }
+
+    private var lessonFamilyBubbleTitle: String {
+        experience.pointField == .regions ? "Regions" : "Flow"
+    }
+
+    private var environmentBubbleTitle: String {
+        experience.environmentMode.shortTitle
+    }
+
+    private func cycleAnatomyPresentation() {
+        switch experience.anatomyPresentation {
+        case .assembled: experience.setAnatomyPresentation(.transparent)
+        case .transparent: experience.setAnatomyPresentation(.exploded)
+        case .exploded: experience.setAnatomyPresentation(.assembled)
+        }
+    }
+
+    private func cycleLessonFamily() {
+        experience.selectLessonFamily(experience.pointField == .regions ? .procedure : .regions)
+    }
+
+    private func cycleEnvironment() {
+        switch experience.environmentMode {
+        case .surroundings: experience.setEnvironmentMode(.warmHorizon)
+        case .warmHorizon: experience.setEnvironmentMode(.focusField)
+        case .focusField: experience.setEnvironmentMode(.surroundings)
         }
     }
 
@@ -1607,6 +1664,13 @@ private struct LessonSpecimenRail: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+            }
+
+            if experience.pointField == .procedure {
+                Text("DIRECTION CUE · QUALITATIVE · NOT CFD")
+                    .font(.caption2.monospaced().weight(.semibold))
+                    .tracking(0.35)
+                    .foregroundStyle(.orange.opacity(0.78))
             }
 
             HStack(spacing: 10) {

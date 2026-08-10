@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static product-contract checks; not device, wearer, or clinical proof."""
 
+import re
 from pathlib import Path
 
 
@@ -27,6 +28,10 @@ houdini_builder = (ROOT / "Scripts" / "build_houdini_stroke_graph.py").read_text
 xcat_deploy = (ROOT / "Scripts" / "deploy_xcat.zsh").read_text()
 xcat_stage_collect = (ROOT / "Scripts" / "collect_xcat_stage_placement.zsh").read_text()
 xcat_acceptance = (ROOT / "Proof" / "XCAT_ACCEPTANCE.md").read_text()
+project_yml = (ROOT / "project.yml").read_text()
+asset_intake = (ROOT / "Docs" / "GITHUB_ASSET_INTAKE_PR2.md").read_text()
+simulator_proof = (ROOT / "Scripts" / "capture_simulator_route_proof.zsh").read_text()
+proof_route_image = (ROOT / "Tests" / "verify_proof_route_image.swift").read_text()
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("struct TeachingStrokeCase", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
@@ -36,7 +41,12 @@ require("ImmersionStyle = .progressive" in app, "progressive immersion is not th
 require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixed, .progressive, .full" in app, "three deliberate system immersion styles are not wired")
 require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 'case focusField')), "three-state spatial environment contract is missing")
 require("Who are you guiding today?" in launch and "Doctor → family" in launch and "Clinician teaching" in launch and "enterSpatialCaseRoom" in launch, "role-separated spatial threshold is missing")
-require("--proof-case-unfold" in launch and "CaseFactConstellation" in launch, "progressive case-file proof route is missing")
+require(
+    'CommandLine.arguments.contains("--proof-case-unfold")' in launch
+    and "experience.prepareSpatialDockedCaseProof()" in launch
+    and "Task { await openProofSpace() }" in launch,
+    "case-unfold proof does not reach the current immersive case-review state",
+)
 require("DragGesture" in launch and "caseRevealProgress" in launch, "progressive case-file drag interaction is missing")
 require("hospital protocol" in launch and "Presenter rail" in launch, "emergency accountability boundary is missing")
 require(all(route in launch for route in ("--proof-orient", "--proof-pressure", "--proof-care-purpose")), "deterministic spatial proof routes are missing")
@@ -59,6 +69,19 @@ require(all(name in scene for name in ("fixed-skull-context", "bone-flap", "dura
 require("does not restore or shrink established injury" in scene, "non-restoration visual boundary is missing")
 require("authored teaching motion" in scene and "not a patient measurement" in scene, "animation evidence boundary is missing")
 require("TimelineView" in immersive and "focusOcclusion()" in immersive, "runtime spatial animation or focus gesture is missing")
+require(
+    "#if targetEnvironment(simulator)" in immersive
+    and "transform = nil" in immersive
+    and "intentionally emits no tracked-anchor receipt" in immersive
+    and "WorldTrackingProvider.queryDeviceAnchor" in immersive,
+    "Simulator authored-frame fallback or physical world-tracking boundary is missing",
+)
+require(
+    "TimelineView(.periodic" in immersive
+    and "sceneRefreshInterval" in immersive
+    and "if anatomyVisible" in immersive,
+    "static phases still drive hidden anatomy at display rate",
+)
 require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "PressureBed" in immersive, "entity-anchored spatial audio is missing")
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
@@ -66,7 +89,7 @@ require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior")), "named registered model-frame viewpoints are missing")
-require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and 'Section("Perspective")' in immersive, "named views and free-orbit handoff are not wired into the existing anatomy control")
+require("setAnatomyViewpoint" in state and "cycleAnatomyViewpoint" in state and "anatomyViewpoint = .free" in state and "experience.cycleAnatomyViewpoint(reduceMotion: reduceMotion)" in immersive, "named views and free-orbit handoff are not wired into the existing anatomy control")
 require(all(route in launch for route in ("--proof-view-anterior", "--proof-view-lateral-a", "--proof-view-lateral-b", "--proof-view-superior")), "deterministic anatomy-viewpoint proof routes are missing")
 require("true medial view is intentionally not" in state, "single-surface anatomy is mislabeled as a medial view")
 require("smoothedOrbit" in immersive and "smoothedZoom" in immersive, "Heart Field smoothing pattern is missing")
@@ -129,24 +152,67 @@ require("--proof-spatial-intake" in launch and "makeSpatialCaseIntake" in scene,
 require("--proof-spatial-docked-case" in launch and "prepareSpatialDockedCaseProof" in state, "deterministic docked-case constellation proof is missing")
 require("spatialCaseFilePosition" in state and "settleSpatialCaseFile" in state and "isSpatialCaseFileTarget" in scene, "spatial case carry-and-dock loop is incomplete")
 require("StrokeSpatialPhase" in state and "caseLibrary" in state and "caseReview" in state and "explanation" in state, "case room and anatomy are not separated into explicit phases")
-require("root.isEnabled = experience.spatialPhase == .explanation" in immersive and "caseRoom.isEnabled = experience.spatialPhase != .explanation" in immersive, "patient cabinet still persists into the brain explanation")
+require("root.isEnabled = anatomyVisible" in immersive and "caseRoom.isEnabled = experience.spatialPhase != .explanation" in immersive, "patient cabinet still persists into the brain explanation")
 require("spatial-case-archive" in scene and "archive-dossier-bay" in scene and "[0.19, 0.25, 0.018]" in scene, "case library is not a single angled dossier archive with an upright selected file")
 require("spatial-case-constellation" in scene and scene.count("case-constellation-filament-") == 4, "selected case does not unfold as a four-signal spatial constellation")
 require("StrokeSceneFactory.spatialCaseArchiveName)?.isEnabled = inLibrary" in immersive and "StrokeSceneFactory.spatialCaseConstellationName)?.isEnabled = inReview" in immersive, "archive and case constellation do not hand off by phase")
 require("SpatialCaseReviewActions" in immersive and "beginExplanation" in state, "selected-case review lacks an explicit explanation threshold")
 require("calm-flow-direction-arrows" in scene and "updateFlowArrows" in scene, "calm directional flow lesson is missing")
+require(all(token in scene for token in (
+    'importedBloodflowName = "cerebral_bloodflow_animation_v2"',
+    'importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"',
+    "startAuthoredBloodflowAnimations",
+    "updateAuthoredBloodflowPlayback",
+    "experience.requestedPause || reduceMotion",
+    "qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow",
+    "registeredArrows.isEnabled = false",
+)), "registered qualitative droplets/chevrons are absent or the detached-arrow quarantine regressed")
+authored_flow_loader = scene.split("private static func startAuthoredBloodflowAnimations", 1)[1].split(
+    "private static func updateAuthoredBloodflowPlayback", 1
+)[0]
+require(
+    'name == "global scene animation"' in authored_flow_loader
+    and "for child in entity.children" not in authored_flow_loader,
+    "blood-flow loader still duplicates generated subtree animation aliases",
+)
+require(
+    "DIRECTION CUE · QUALITATIVE · NOT CFD" in immersive,
+    "blood-flow motion lacks its visible qualitative/non-CFD boundary",
+)
 require("gpt-realtime-2.1" in immersive and "STROKE_REALTIME_PROXY_URL" in immersive and "AVSpeechSynthesizer" not in immersive and "narrationEnabled" in state, "GPT-Realtime-2.1-only narrator boundary is missing")
 realtime_proxy = (ROOT / "Scripts" / "realtime_narration_proxy.mjs").read_text()
 realtime_runner = (ROOT / "Scripts" / "run_realtime_proxy.zsh").read_text()
 require('const MODEL = "gpt-realtime-2.1"' in realtime_proxy and 'body.model !== MODEL' in realtime_proxy, "Realtime proxy does not lock the requested model")
 require('response.output_audio.delta' in realtime_proxy and 'pcm16MonoToWAV' in realtime_proxy, "Realtime audio stream is not converted into app-playable WAV")
 require('AVSpeechSynthesizer' not in realtime_proxy and 'apikey get OPENAI_API_KEY' in realtime_runner, "Narration can fall back to system speech or bypass the keychain router")
-require('--proof-realtime-narration' in launch and 'if experience.narrationEnabled' in immersive, "deterministic Realtime playback route is missing")
+require('--proof-realtime-narration' in launch and "private func synchronizeNarration()" in immersive, "deterministic Realtime playback route is missing")
+require(all(token in launch for token in (
+    "actor StrokeAudioPlayback",
+    "func playLoop(from url: URL, volume: Float)",
+    "func playOnce(_ data: Data) throws",
+    "await playback.playLoop",
+)), "prelude audio preparation is not isolated from the main actor")
+require(
+    "try await self?.playback.playOnce(audio)" in immersive
+    and "AVAudioPlayerDelegate" not in immersive
+    and "private func synchronizeNarration()" in immersive
+    and "!experience.requestedPause" in immersive,
+    "Realtime narration still prepares audio on the main actor or ignores Pause",
+)
 require("spatial-family-controls" in immersive and "spatial-presenter-controls" in immersive and "SpatialRoleControls" in immersive, "role controls are not embedded in the immersive room")
+spatial_controls = immersive.split("private struct SpatialRoleControls", 1)[1].split("private struct SpatialTeachingTimeline", 1)[0]
+require("Menu {" not in spatial_controls, "immersive role controls still use unsupported SwiftUI Menu presentation")
+require(all(token in spatial_controls for token in (
+    "cycleAnatomyPresentation()",
+    "cycleLessonFamily()",
+    "cycleEnvironment()",
+    'bubbleButton("Evidence"',
+    'bubbleButton("Reset"',
+)), "immersive direct controls do not expose every former menu action")
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
 require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PRESSURE BUILD?", "WHAT CAN MAKING SPACE DO?")), "top intention questions are missing")
 require("LessonSpecimenRail" in immersive and "lesson-specimen-rail" in immersive and "selectLessonPoint" in state and "Native two-hand magnification remains the only zoom" in state, "role-aware specimen focus rail is missing")
-require("rail.position = [-0.44, 1.82, -0.86]" in immersive and 'title: "More"' in immersive, "lesson title is not upper-field or presenter controls remain over-expanded")
+require("rail.position = [-0.44, 1.82, -0.86]" in immersive and 'bubbleButton("Evidence"' in immersive and 'bubbleButton("Reset"' in immersive, "lesson title is not upper-field or presenter direct controls remain incomplete")
 require("[-0.58, 1.34, -0.92]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
 require("openWindow(id: companion)" not in immersive, "immersive case docking still opens a desktop-like companion window")
 require("StrokeClinicianTool" in state and "clinicianToolKitVisible" in state and "selectClinicianTool" in state, "clinician tool-kit state is missing")
@@ -156,7 +222,60 @@ require("experience.audienceLens == .clinician" in immersive and "enabled && exp
 require("makeClinicianHeldTools" in scene and "suction_and_forceps" in scene and "cranial_drill_generic" in scene, "clinician concept tools are not bundled into the held-tool rig")
 require("No selection mutates anatomy or simulates a cut" in scene, "clinician tool safety boundary is missing")
 require("proofRouteHasRun" in launch and "guard !proofRouteHasRun" in launch, "proof routing can open duplicate companion windows")
+proof_routes = (
+    "--proof-case-unfold",
+    "--proof-spatial-intake",
+    "--proof-spatial-docked-case",
+    "--proof-pressure",
+    "--proof-family-question",
+    "--proof-procedure-field",
+    "--proof-layer-study",
+    "--proof-view-anterior",
+    "--proof-evidence-window",
+    "--proof-clinician-toolkit",
+    "--proof-care-purpose",
+    "--proof-exit-reset",
+)
+require(
+    all(route in simulator_proof and route in proof_route_image for route in proof_routes)
+    and "VNRecognizeTextRequest" in proof_route_image
+    and "PROOF_ROUTE_IMAGE=FAIL" in proof_route_image,
+    "route proof does not reject blank or wrong-screen captures for the required UI states",
+)
 require("65 manifest-backed USDZ" in asset_triage and "cerebral_bloodflow_animation_v2" in asset_triage, "expanded asset catalog is not triaged for runtime use")
+bundled_usdz_paths = re.findall(r"^\s+- path: (.+\.usdz)\s*$", project_yml, re.MULTILINE)
+bundled_usdz_names = [Path(path).name for path in bundled_usdz_paths]
+expected_story_assets = {
+    "brain_anatomy_realistic_v2.usdz",
+    "cerebral_arteries_realistic_v2.usdz",
+    "ischemic_mca_clot_v2.usdz",
+    "skull_semantic_realistic_v2.usdz",
+    "dura_mater_cutaway_conceptual_v2.usdz",
+    "cerebral_bloodflow_animation_v2.usdz",
+    "circle_of_willis_flow_overlay_v2.usdz",
+    "edema_swelling.usdz",
+    "craniotomy_bone_flap.usdz",
+    "dural_patch.usdz",
+}
+expected_clinician_tools = {
+    "cranial_drill_generic.usdz",
+    "suction_and_forceps.usdz",
+}
+require(
+    len(bundled_usdz_names) == 12
+    and len(set(bundled_usdz_names)) == 12
+    and set(bundled_usdz_names) == expected_story_assets | expected_clinician_tools
+    and all((ROOT / path).resolve().is_file() for path in bundled_usdz_paths),
+    "project USDZ declaration must be exactly ten story assets plus two clinician-only tools",
+)
+require(
+    all("ten story assets plus two clinician-only concept tools" in " ".join(document.lower().split()) for document in (
+        readme,
+        asset_triage,
+        asset_intake,
+    )),
+    "runtime asset-count documentation is not exact and consistent",
+)
 require("museum drawer" in presentation_canon and "MetaHuman" in presentation_canon and "information state" in presentation_canon and "90-second presentation script" in presentation_canon, "presentation canon is missing the case-discovery and ethical-avatar contract")
 require("anatomy-anchored handle" in presentation_canon and "Reversible layer study" in presentation_canon and "never literal peeling" in presentation_canon, "presentation canon lacks the reversible layer-study interaction contract")
 require("Core spatial choreography" in product_map and "Annotation engineering contract" in product_map and "Implementation map" in product_map, "product and UI map is incomplete")
@@ -225,7 +344,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=PR2_EIGHT_ASSET_SHORTLIST")
+print("github_asset_runtime=TEN_STORY_PLUS_TWO_CLINICIAN_TOOLS")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")
 print("physical_device=NOT_PROVEN")
