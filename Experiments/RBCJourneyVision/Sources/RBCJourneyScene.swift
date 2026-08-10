@@ -1,4 +1,6 @@
 import Combine
+import CoreGraphics
+import Foundation
 import RealityKit
 import SwiftUI
 import UIKit
@@ -252,16 +254,10 @@ final class RBCJourneyScene {
     private var flowRideCurrentBands: [(
         entity: ModelEntity,
         route: RBCFlowRideRoute,
+        baseOpacity: Float,
         phase: Float
     )] = []
-    private var flowRideCurrentFronts: [(
-        entity: Entity,
-        path: [SIMD3<Float>],
-        radialOffset: SIMD2<Float>,
-        phase: Float,
-        speed: Float,
-        route: RBCFlowRideRoute
-    )] = []
+    private var flowRideCurrentBandLastPulseOffsets: [Float?] = []
     private var flowRideJourneyCells: [(
         entity: Entity,
         path: [SIMD3<Float>],
@@ -291,6 +287,14 @@ final class RBCJourneyScene {
     private var flowRideRuntimeHeld = false
     private var flowRideGatewayTransitionProgress: Float?
     private var flowRideRuntimeProofPhase: Float?
+    private var flowRidePoseNeedsRefresh = false
+    private let flowRidePulseProofPhase: Float? = CommandLine.arguments.first {
+        $0.hasPrefix("--proof-flow-pulse-")
+    }.flatMap {
+        Float($0.replacingOccurrences(of: "--proof-flow-pulse-", with: ""))
+    }.map {
+        min(max($0 / 100, 0), 1)
+    }
     private weak var flowRideCorticalScaffold: Entity?
     private var flowRideSpatialAtlasLocators: [String: Entity] = [:]
     private var flowRideSpatialAtlasRoutePoints: [SIMD3<Float>] = []
@@ -1953,7 +1957,7 @@ final class RBCJourneyScene {
                 // produced oversized lines after a route transfer; the native
                 // branching corridor now owns the visible continuous route.
                 flowRideDirectionFieldRoot.isEnabled = false
-                buildInhabitedArterialCorridor(
+                await buildInhabitedArterialCorridor(
                     cellPrototype: authoredCellPrototype,
                     authoredWallMaterial: authoredWallMaterial
                 )
@@ -5368,7 +5372,7 @@ final class RBCJourneyScene {
     private func buildInhabitedArterialCorridor(
         cellPrototype: Entity?,
         authoredWallMaterial: PhysicallyBasedMaterial?
-    ) {
+    ) async {
         let mainShellPath = sampleCubicBezier(
             [0.00, 1.49, 3.00],
             [0.12, 1.54, 0.20],
@@ -5492,34 +5496,48 @@ final class RBCJourneyScene {
         addRideRoutePath(
             mainJourneyPath,
             route: .overview,
-            radius: 0.004,
+            radius: 0.006,
             material: mainFlowMaterial,
             name: "continuous-main-direction-ribbon"
         )
         addRideRoutePath(
             frontalShellPath,
             route: .frontal,
-            radius: 0.005,
+            radius: 0.008,
             material: frontalFlowMaterial,
             name: "frontal-destination-direction-ribbon"
         )
         addRideRoutePath(
             neighboringShellPath,
             route: .neighboring,
-            radius: 0.004,
+            radius: 0.006,
             material: neighboringFlowMaterial,
             name: "neighboring-destination-direction-ribbon"
         )
+        let pulseTexture = await makeBloodPulseTexture()
         buildFlowCurrentChoreography(
             mainPath: mainJourneyPath,
             frontalPath: frontalJourneyPath,
-            neighboringPath: neighboringJourneyPath
+            neighboringPath: neighboringJourneyPath,
+            pulseTexture: pulseTexture
         )
 
         if let cellPrototype {
+            let frontalBranchPath = Array(frontalJourneyPath.dropFirst(mainJourneyPath.count - 1))
+            let neighboringBranchPath = Array(neighboringJourneyPath.dropFirst(mainJourneyPath.count - 1))
             for index in 0..<42 {
-                let route: RBCFlowRideRoute = index.isMultiple(of: 2) ? .frontal : .neighboring
-                let path = route == .frontal ? frontalJourneyPath : neighboringJourneyPath
+                let route: RBCFlowRideRoute = if index < 18 {
+                    .overview
+                } else {
+                    (index - 18).isMultiple(of: 2) ? .frontal : .neighboring
+                }
+                let path: [SIMD3<Float>] = switch route {
+                case .overview: mainJourneyPath
+                case .frontal: frontalBranchPath
+                case .neighboring: neighboringBranchPath
+                }
+                let routeIndex = route == .overview ? index : (index - 18) / 2
+                let routeCount = route == .overview ? 18 : 12
                 let container = Entity()
                 container.name = "full-lumen-distributed-authored-biconcave-cell-\(index)-route-\(route.rawValue)"
                 let visual = cellPrototype.clone(recursive: true)
@@ -5539,7 +5557,7 @@ final class RBCJourneyScene {
                     path,
                     container.scale,
                     radialOffset,
-                    Float(index) / 42,
+                    Float(routeIndex) / Float(routeCount),
                     0.037 + Float(index % 5) * 0.0028,
                     route
                 ))
@@ -5722,29 +5740,31 @@ final class RBCJourneyScene {
     }
 
     /// Builds a legible room-scale current without pretending to solve blood
-    /// rheology. Crossed translucent ribbons make the current continuous while
-    /// tangent-aligned fronts and their wakes make its downstream direction
-    /// unmistakable. Small lane-speed differences are choreography only—not a
+    /// rheology. Soft, round current volumes carry a reusable traveling surface
+    /// pulse while fixed route chevrons make downstream direction unmistakable
+    /// without adding a bead-like train. Small lane-speed differences are
+    /// choreography only—not a
     /// velocity profile, wall-shear model, hematocrit estimate, or CFD output.
     private func buildFlowCurrentChoreography(
         mainPath: [SIMD3<Float>],
         frontalPath: [SIMD3<Float>],
-        neighboringPath: [SIMD3<Float>]
+        neighboringPath: [SIMD3<Float>],
+        pulseTexture: TextureResource?
     ) {
         let strandSpecs: [(
             path: [SIMD3<Float>],
             route: RBCFlowRideRoute,
             color: UIColor,
-            strandRadius: Float,
+            tubeRadius: Float,
             radialOffset: Float,
             opacity: Float,
             phase: Float
         )] = [
-            (mainPath, .overview, UIColor(red: 0.82, green: 0.030, blue: 0.045, alpha: 1), 0.018, 0.20, 0.24, 0.00),
-            (mainPath, .overview, UIColor(red: 1.00, green: 0.18, blue: 0.11, alpha: 1), 0.014, 0.40, 0.20, 0.33),
-            (mainPath, .overview, UIColor(red: 0.92, green: 0.055, blue: 0.075, alpha: 1), 0.011, 0.62, 0.17, 0.67),
-            (Array(frontalPath.dropFirst(mainPath.count - 1)), .frontal, UIColor(red: 1.00, green: 0.13, blue: 0.17, alpha: 1), 0.014, 0.30, 0.24, 0.18),
-            (Array(neighboringPath.dropFirst(mainPath.count - 1)), .neighboring, UIColor(red: 1.00, green: 0.38, blue: 0.09, alpha: 1), 0.013, 0.30, 0.23, 0.68),
+            (mainPath, .overview, UIColor(red: 0.82, green: 0.030, blue: 0.045, alpha: 1), 0.040, 0.20, 0.46, 0.00),
+            (mainPath, .overview, UIColor(red: 1.00, green: 0.18, blue: 0.11, alpha: 1), 0.033, 0.40, 0.40, 0.33),
+            (mainPath, .overview, UIColor(red: 0.92, green: 0.055, blue: 0.075, alpha: 1), 0.027, 0.62, 0.34, 0.67),
+            (Array(frontalPath.dropFirst(mainPath.count - 1)), .frontal, UIColor(red: 1.00, green: 0.13, blue: 0.17, alpha: 1), 0.036, 0.30, 0.46, 0.18),
+            (Array(neighboringPath.dropFirst(mainPath.count - 1)), .neighboring, UIColor(red: 1.00, green: 0.38, blue: 0.09, alpha: 1), 0.033, 0.30, 0.42, 0.68),
         ]
 
         for (strandIndex, spec) in strandSpecs.enumerated() where spec.path.count > 1 {
@@ -5755,94 +5775,40 @@ final class RBCJourneyScene {
                     radialAngle: radialAngle,
                     offset: spec.radialOffset * (crossIndex == 0 ? 1 : 0.78)
                 )
-                guard let mesh = try? makeInwardFacingTubeMesh(
+                let radius = spec.tubeRadius * (crossIndex == 0 ? 1 : 0.76)
+                guard let currentMesh = try? makeInwardFacingTubeMesh(
                     path: strandPath,
-                    startRadius: spec.strandRadius * (crossIndex == 0 ? 1 : 0.78),
-                    endRadius: spec.strandRadius * (crossIndex == 0 ? 1 : 0.78),
-                    radialSegments: 10,
-                    name: "full-lumen-blood-current-strand-\(strandIndex)-cross-\(crossIndex)",
-                    inwardFacing: false
+                    startRadius: radius,
+                    endRadius: radius * 0.88,
+                    radialSegments: 12,
+                    name: "rounded-full-lumen-blood-current-volume-\(strandIndex)-cross-\(crossIndex)",
+                    inwardFacing: false,
+                    longitudinalRepeatsPerMeter: 0.82,
+                    circumferentialRepeats: 1
                 ) else { continue }
-                let material = bloodCurrentMaterial(
+                let material = advectingBloodCurrentMaterial(
                     color: spec.color,
-                    opacity: spec.opacity,
-                    emissiveIntensity: crossIndex == 0 ? 0.96 : 0.72
+                    opacity: crossIndex == 0 ? 0.66 : 0.52,
+                    emissiveIntensity: crossIndex == 0 ? 0.78 : 0.50,
+                    pulseTexture: pulseTexture,
+                    initialPhase: spec.phase + Float(crossIndex) * 0.31
                 )
-                let band = ModelEntity(mesh: mesh, materials: [material])
-                band.name = "continuous-layered-blood-current-not-cfd-strand-\(strandIndex)-cross-\(crossIndex)"
+                let band = ModelEntity(mesh: currentMesh, materials: [material])
+                band.name = "rounded-blood-current-with-traveling-surface-pulse-not-cfd-\(strandIndex)-cross-\(crossIndex)"
                 band.components.set(OpacityComponent(opacity: spec.opacity))
                 flowRideForkFieldRoot.addChild(band)
                 flowRideCurrentBands.append((
                     band,
                     spec.route,
+                    spec.opacity,
                     spec.phase + Float(crossIndex) * 0.31
                 ))
+                flowRideCurrentBandLastPulseOffsets.append(nil)
             }
         }
 
-        // The lumen is room-scale, so the directional front must be readable
-        // from the stable observation origin. The larger head/wake preserves
-        // the same qualitative choreography; it is not a velocity scale.
-        let headMesh = MeshResource.generateCone(height: 0.082, radius: 0.024)
-        let tailMesh = MeshResource.generateCylinder(height: 0.120, radius: 0.0070)
-        let wakeMesh = MeshResource.generateCylinder(height: 0.200, radius: 0.0120)
-        let routeSpecs: [(
-            route: RBCFlowRideRoute,
-            path: [SIMD3<Float>],
-            color: UIColor,
-            count: Int
-        )] = [
-            (.frontal, frontalPath, UIColor(red: 1.00, green: 0.18, blue: 0.17, alpha: 1), 9),
-            (.neighboring, neighboringPath, UIColor(red: 1.00, green: 0.49, blue: 0.13, alpha: 1), 9),
-        ]
-
-        for spec in routeSpecs {
-            let frontMaterial = bloodCurrentMaterial(
-                color: spec.color,
-                opacity: 0.82,
-                emissiveIntensity: 1.10
-            )
-            let wakeMaterial = bloodCurrentMaterial(
-                color: spec.color,
-                opacity: 0.085,
-                emissiveIntensity: 0.18
-            )
-            for frontIndex in 0..<spec.count {
-                let front = Entity()
-                front.name = "tangent-aligned-blood-current-front-not-velocity-field-\(spec.route.rawValue)-\(frontIndex)"
-                let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
-                head.name = "blood-current-direction-arrowhead"
-                head.position.y = 0.066
-                let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
-                tail.name = "blood-current-direction-tail"
-                tail.position.y = -0.038
-                let wake = ModelEntity(mesh: wakeMesh, materials: [wakeMaterial])
-                wake.name = "blood-current-direction-fading-wake"
-                wake.position.y = -0.190
-                front.addChild(head)
-                front.addChild(tail)
-                front.addChild(wake)
-                flowRideForkFieldRoot.addChild(front)
-
-                let angle = Float(frontIndex) * 2.399_963
-                    + (spec.route == .neighboring ? 0.72 : 0)
-                let radius = 0.26 + Float(frontIndex % 3) * 0.18
-                flowRideCurrentFronts.append((
-                    front,
-                    spec.path,
-                    SIMD2<Float>(
-                        cos(angle) * radius,
-                        sin(angle) * radius * 0.24
-                    ),
-                    (Float(frontIndex) / Float(spec.count)
-                        + (spec.route == .neighboring ? 0.10 : 0))
-                        .truncatingRemainder(dividingBy: 1),
-                    0.052 + Float(frontIndex % 4) * 0.0065,
-                    spec.route
-                ))
-            }
-        }
-        print("RBC_LAYERED_CURRENT=READY flow_strands=\(flowRideCurrentBands.count) tangent_fronts=\(flowRideCurrentFronts.count) full_lumen=true qualitative_only=true")
+        let textureStatus = pulseTexture == nil ? "fallback" : "ready"
+        print("RBC_LAYERED_CURRENT=READY rounded_current_volumes=\(flowRideCurrentBands.count) surface_pulse=\(textureStatus) static_route_chevrons=10 moving_front_geometry=0 full_lumen=true qualitative_only=true")
     }
 
     private func offsetFlowStrandPath(
@@ -6280,23 +6246,41 @@ final class RBCJourneyScene {
         time _: Float,
         motionHeld: Bool
     ) {
+        let runtimeCapillaryFocus = capillaryFieldFocused && route == .frontal
+        let routeSelectionChanged = flowRideRuntimeRoute != route
+        let poseInputsChanged = flowRideRuntimeActive != active
+            || flowRideRuntimeHeld != motionHeld
+            || routeSelectionChanged
+            || flowRideRuntimeCapillaryFocus != runtimeCapillaryFocus
+            || flowRideGatewayTransitionProgress != gatewayTransitionProgress
+            || flowRideRuntimeProofPhase != proofPhase
+        let shouldRefreshCurrentBandOpacities = active
+            && (routeSelectionChanged || !flowRideWasActive)
+        flowRidePoseNeedsRefresh = flowRidePoseNeedsRefresh || poseInputsChanged
         flowRideRuntimeActive = active
         flowRideRuntimeHeld = motionHeld
         flowRideRuntimeRoute = route
-        flowRideRuntimeCapillaryFocus = capillaryFieldFocused && route == .frontal
+        flowRideRuntimeCapillaryFocus = runtimeCapillaryFocus
         flowRideGatewayTransitionProgress = gatewayTransitionProgress
         flowRideRuntimeProofPhase = proofPhase
-        flowRideRoot.isEnabled = active
+        if flowRideRoot.isEnabled != active {
+            flowRideRoot.isEnabled = active
+        }
         guard active else {
             flowRideWasActive = false
             flowRideElapsed = 0
             flowRideCapillaryFocusMix = 0
+            flowRidePoseNeedsRefresh = false
             return
         }
 
         if !flowRideWasActive {
             flowRideWasActive = true
             flowRideElapsed = 0
+            flowRidePoseNeedsRefresh = true
+        }
+        if shouldRefreshCurrentBandOpacities {
+            applyFlowRideCurrentBandOpacities()
         }
         if let proofPhase {
             // A twelve-second canonical cycle gives Simulator evidence stable,
@@ -6304,11 +6288,17 @@ final class RBCJourneyScene {
             flowRideElapsed = proofPhase * 12
         }
         if flowRideRuntimeHeld {
-            flowRideCapillaryFocusMix = flowRideRuntimeCapillaryFocus ? 1 : 0
+            let heldFocusMix: Float = flowRideRuntimeCapillaryFocus ? 1 : 0
+            if flowRideCapillaryFocusMix != heldFocusMix {
+                flowRideCapillaryFocusMix = heldFocusMix
+                flowRidePoseNeedsRefresh = true
+            }
         }
         // SceneEvents advances elapsed state first; this cached full-scene
         // update then applies the pose exactly once for every subsystem.
+        guard flowRidePoseNeedsRefresh else { return }
         applyFlowRidePose()
+        flowRidePoseNeedsRefresh = false
     }
 
     private func advanceFlowRideFrame(deltaTime: Float) {
@@ -6318,6 +6308,7 @@ final class RBCJourneyScene {
         // redundant component writes while preserving its exact visible pose.
         guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }
         flowRideElapsed += min(max(deltaTime, 0), 0.10)
+        flowRidePoseNeedsRefresh = true
         let focusTarget: Float = flowRideRuntimeCapillaryFocus ? 1 : 0
         let focusStep = min(max(deltaTime, 0), 0.10) * 0.82
         if flowRideCapillaryFocusMix < focusTarget {
@@ -6344,7 +6335,7 @@ final class RBCJourneyScene {
             item.entity.scale = [radialPulse, 1, radialPulse]
         }
 
-        for item in flowRideCurrentBands {
+        for (index, item) in flowRideCurrentBands.enumerated() {
             let routeWeight: Float = switch (flowRideRuntimeRoute, item.route) {
             case (_, .overview): 1.0
             case (.overview, _): 0.82
@@ -6353,42 +6344,23 @@ final class RBCJourneyScene {
             }
             let breathing = flowRideRuntimeHeld
                 ? 1
-                : 0.86 + sin(flowRideElapsed * 1.12 + item.phase * .pi * 2) * 0.14
+                : 0.82 + sin(flowRideElapsed * 1.08 + item.phase * .pi * 2) * 0.18
             let routeScale = 0.70 + routeWeight * 0.30
             let pulseScale = routeScale * (0.92 + breathing * 0.08)
             item.entity.scale = SIMD3<Float>(repeating: pulseScale)
-        }
-
-        for item in flowRideCurrentFronts {
-            let progress = (item.phase + flowRideElapsed * item.speed)
+            let pulseTravel = flowRidePulseProofPhase ?? flowRideElapsed * 0.34
+            let travel = (pulseTravel + item.phase)
                 .truncatingRemainder(dividingBy: 1)
-            let point = interpolatedPoint(on: item.path, progress: progress)
-            let ahead = interpolatedPoint(on: item.path, progress: min(progress + 0.012, 1))
-            let behind = interpolatedPoint(on: item.path, progress: max(progress - 0.012, 0))
-            let tangentCandidate = ahead - behind
-            guard simd_length_squared(tangentCandidate) > 0.000_001 else { continue }
-            let tangent = simd_normalize(tangentCandidate)
-            var right = simd_cross(SIMD3<Float>(0, 1, 0), tangent)
-            right = simd_length_squared(right) < 0.000_1
-                ? SIMD3<Float>(1, 0, 0)
-                : simd_normalize(right)
-            let up = simd_normalize(simd_cross(tangent, right))
-            let laneDrift = flowRideRuntimeHeld
-                ? 0
-                : sin(flowRideElapsed * 0.78 + item.phase * 13) * 0.020
-            item.entity.position = point
-                + right * item.radialOffset.x
-                + up * (item.radialOffset.y + laneDrift)
-            item.entity.orientation = simd_quatf(from: SIMD3<Float>(0, 1, 0), to: tangent)
-            let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
-            let pulse = flowRideRuntimeHeld
-                ? 1
-                : 0.92 + sin(flowRideElapsed * 2.7 + item.phase * 8) * 0.08
-            // A non-selected branch remains present as network context, but
-            // its moving fronts shrink to a quiet directional trace. This is
-            // transform-only contrast, avoiding per-frame component writes.
-            let selectedScale: Float = selected ? 1 : 0.18
-            item.entity.scale = SIMD3<Float>(repeating: pulse * selectedScale)
+            let pulseOffset = -travel
+            if flowRideCurrentBandLastPulseOffsets[index] != pulseOffset,
+               var model = item.entity.model,
+               !model.materials.isEmpty,
+               var material = model.materials[0] as? PhysicallyBasedMaterial {
+                material.textureCoordinateTransform.offset.x = pulseOffset
+                model.materials[0] = material
+                item.entity.model = model
+                flowRideCurrentBandLastPulseOffsets[index] = pulseOffset
+            }
         }
 
         for item in flowRideJourneyCells {
@@ -6422,7 +6394,8 @@ final class RBCJourneyScene {
             )
             item.entity.orientation = routeOrientation * tumble
             let deformation = sin(flowRideElapsed * 1.7 + item.phase * 11)
-            let selected = flowRideRuntimeRoute == .overview || flowRideRuntimeRoute == item.route
+            let selected = flowRideRuntimeRoute == .overview
+                || item.route == .overview || flowRideRuntimeRoute == item.route
             let routeScale: Float = selected ? 1 : 0.78
             item.entity.scale = item.baseScale * routeScale * SIMD3<Float>(
                 1 + deformation * 0.10,
@@ -6588,6 +6561,20 @@ final class RBCJourneyScene {
                 + (composedRoutePosition - gatewayLocus) * eased
             let emergenceScale = environmentPulse * (0.055 + eased * 0.945)
             flowRideRoot.scale = SIMD3<Float>(repeating: emergenceScale)
+        }
+    }
+
+    private func applyFlowRideCurrentBandOpacities() {
+        for item in flowRideCurrentBands {
+            let routeWeight: Float = switch (flowRideRuntimeRoute, item.route) {
+            case (_, .overview): 1.0
+            case (.overview, _): 0.82
+            case let (selected, route) where selected == route: 1.0
+            default: 0.04
+            }
+            item.entity.components.set(OpacityComponent(
+                opacity: item.baseOpacity * routeWeight
+            ))
         }
     }
 
@@ -7011,6 +6998,115 @@ final class RBCJourneyScene {
         material.emissiveColor = .init(color: color.withAlphaComponent(1))
         material.emissiveIntensity = intensity
         material.roughness = 0.38
+        return material
+    }
+
+    /// One tiny generated texture is reused by every current volume. Advecting
+    /// its UV offset makes luminance move downstream across a continuous mesh,
+    /// instead of moving or spawning card-like geometry. The two soft peaks are
+    /// a legibility treatment, not a measured velocity or pressure waveform.
+    private func makeBloodPulseTexture() async -> TextureResource? {
+        let width = 256
+        let height = 16
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+
+        func wrappedPulse(_ coordinate: Float, center: Float, width: Float) -> Float {
+            let rawDistance = abs(coordinate - center)
+            let wrappedDistance = min(rawDistance, 1 - rawDistance)
+            let normalized = max(0, 1 - wrappedDistance / width)
+            return normalized * normalized * (3 - 2 * normalized)
+        }
+
+        for y in 0..<height {
+            let vertical = Float(y) / Float(max(height - 1, 1))
+            let cylindricalHighlight = 0.78 + (1 - abs(vertical * 2 - 1)) * 0.22
+            for x in 0..<width {
+                let u = Float(x) / Float(width)
+                let primary = wrappedPulse(u, center: 0.18, width: 0.14)
+                let secondary = wrappedPulse(u, center: 0.68, width: 0.10) * 0.66
+                // Preserve a dim continuous body while giving the two broad
+                // highlights enough contrast to read as downstream travel.
+                // Alpha stays opaque; only blood-red luminance is advected.
+                let energy = min(1, (0.035 + primary * 0.965 + secondary) * cylindricalHighlight)
+                let luminance = UInt8((energy * 255).rounded())
+                let offset = (y * width + x) * 4
+                // White luminance map: material tint supplies blood color. The
+                // alpha remains opaque because texture-driven PBR opacity
+                // invalidated the Simulator immersive scene during proof.
+                pixels[offset] = luminance
+                pixels[offset + 1] = luminance
+                pixels[offset + 2] = luminance
+                pixels[offset + 3] = 255
+            }
+        }
+
+        guard let provider = CGDataProvider(data: Data(pixels) as CFData),
+              let image = CGImage(
+                  width: width,
+                  height: height,
+                  bitsPerComponent: 8,
+                  bitsPerPixel: 32,
+                  bytesPerRow: width * 4,
+                  space: CGColorSpaceCreateDeviceRGB(),
+                  bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+                  provider: provider,
+                  decode: nil,
+                  shouldInterpolate: true,
+                  intent: .defaultIntent
+              ) else {
+            return nil
+        }
+
+        return try? await TextureResource(
+            image: image,
+            withName: "rbc-flow-soft-pulse",
+            options: .init(
+                semantic: .color,
+                mipmapsMode: .allocateAndGenerateAll
+            )
+        )
+    }
+
+    private func advectingBloodCurrentMaterial(
+        color: UIColor,
+        opacity: Float,
+        emissiveIntensity: Float,
+        pulseTexture: TextureResource?,
+        initialPhase: Float
+    ) -> PhysicallyBasedMaterial {
+        var material = PhysicallyBasedMaterial()
+        var textureParameter: PhysicallyBasedMaterial.Texture?
+        if let pulseTexture {
+            var sampler = PhysicallyBasedMaterial.Texture.Sampler()
+            sampler.modify { descriptor in
+                descriptor.sAddressMode = .repeat
+                descriptor.tAddressMode = .repeat
+                descriptor.minFilter = .linear
+                descriptor.magFilter = .linear
+                descriptor.mipFilter = .linear
+            }
+            textureParameter = .init(pulseTexture, sampler: sampler)
+        }
+        material.baseColor = .init(
+            tint: color.withAlphaComponent(CGFloat(opacity)),
+            texture: textureParameter
+        )
+        material.emissiveColor = .init(
+            color: color,
+            texture: textureParameter
+        )
+        material.emissiveIntensity = emissiveIntensity
+        material.roughness = .init(floatLiteral: 0.38)
+        material.metallic = .init(floatLiteral: 0)
+        material.blending = .transparent(opacity: .init(floatLiteral: opacity))
+        material.faceCulling = .back
+        material.readsDepth = true
+        material.writesDepth = false
+        material.textureCoordinateTransform = .init(
+            offset: [-initialPhase, 0],
+            scale: [1, 1],
+            rotation: 0
+        )
         return material
     }
 

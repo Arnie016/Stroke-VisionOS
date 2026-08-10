@@ -69,9 +69,10 @@ not specialist review and does not make the app clinical software.
   red cells; cell shape, deformation, and interactions materially affect flow,
   particularly in microvessels. Realistic multi-cell simulation is a distinct
   computational problem.
-- Representation limit: offset current strands, arrow fronts, wakes, cell density,
-  deformation, and the small difference among animation lanes are qualitative
-  choreography for room-scale readability. They are not plasma, measured
+- Representation limit: rounded current volumes, traveling surface-luminance
+  pulses, fixed route chevrons, cell density, deformation, and the small
+  difference among animation lanes are qualitative choreography for room-scale
+  readability. They are not plasma, measured
   velocity, a wall-shear gradient, hematocrit, collision dynamics, turbulence,
   non-Newtonian rheology, or CFD. The enlarged cerebral artery must not borrow
   microvessel-specific effects as literal anatomy.

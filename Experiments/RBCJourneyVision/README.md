@@ -280,13 +280,17 @@ authored reference, but its wall, opaque volume, yellow arrows, and streamlines
 are hidden in this composition because Simulator review showed them as a sealed
 model and oversized streaks.
 
-The current is now legible in three layers. Ten low-opacity offset round
-strands make a continuous plasma-like volume without sealing the lumen or
-introducing a flat card. Eighteen compact
-tangent-aligned fronts add an arrowhead, tail, and fading wake so downstream
-direction is readable from a still or in motion. Forty-two clones of an
-authored biconcave cell translate, tumble, deform mildly, and divide between the
-two branches and across the lumen rather than along one bead-like centerline.
+The current is now legible in three layers. Ten low-opacity round current
+volumes cross the lumen at varied offsets. A single tiny procedural PBR texture
+is shared across them; moving its UV offset carries two soft luminance pulses
+downstream without spawning cards or a row of beads. Ten fixed chevrons mark
+the shared source-to-fork route and both branch continuations. The moving
+surface light carries motion while the chevrons answer only “which way,” so
+direction remains readable without duplicate red/amber markers crowding the
+common stem. Forty-two clones of an authored biconcave cell
+translate, tumble, deform mildly, and occupy one shared stem population before
+dividing into two branch populations across the lumen rather than along one
+bead-like centerline.
 The neighboring intravascular cue is warm amber rather than teal; teal remains
 outside the vessel as destination navigation only.
 
@@ -326,7 +330,8 @@ The active atlas marker also owns a small 3D label stem: **FORK**, **FRONTAL
 LOBE**, or **CORTEX**. It is a spatial annotation anchored to registered
 geometry, not a second information window.
 
-The strands, wake spacing, cell count, and small lane-speed differences are
+The current volumes, surface-pulse spacing, cell count, and small lane-speed
+differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear
 estimate, hematocrit distribution, pressure field, or CFD result. This boundary
 is especially important because real blood is a cell suspension and realistic
@@ -618,7 +623,16 @@ route states. Add `--proof-flow-phase-18` or
 the exact held-flow and **Resume journey** state. The optional voice-ready state is
 `--proof-flow-ride --proof-family-guide`.
 
-The promoted V23 Simulator evidence is
+For a geometry-matched surface-motion check, keep one lesson phase fixed and
+vary only `--proof-flow-pulse-18` / `--proof-flow-pulse-68`. Those flags move
+the shared current texture without moving the wearer, route, cells, or lesson.
+
+The current advecting-current Simulator evidence is
+[`Proof/INHABIT_THE_FLOW_V25_ADVECTING_CURRENT_RECEIPT.md`](Proof/INHABIT_THE_FLOW_V25_ADVECTING_CURRENT_RECEIPT.md).
+It records the matched pulse phases, six-second live motion clip, rejected
+geometry ledger, and separate XCAT/medical proof gates.
+
+The earlier V23 Simulator evidence is
 [`Proof/INHABIT_THE_FLOW_V23_LAYERED_CURRENT_RECEIPT.md`](Proof/INHABIT_THE_FLOW_V23_LAYERED_CURRENT_RECEIPT.md).
 It records two deterministic phases, a live 7.69-second motion proof, the two
 rejected composition attempts, and the separate XCAT/medical proof gates.

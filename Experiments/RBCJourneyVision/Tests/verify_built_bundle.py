@@ -41,6 +41,13 @@ checks = {
     "display_name": info.get("CFBundleDisplayName") == "Inside the Flow",
     "marketing_version": info.get("CFBundleShortVersionString") == "0.1.0",
     "build_version": info.get("CFBundleVersion") == "1",
+    "entry_url_scheme": info.get("CFBundleURLTypes") == [
+        {
+            "CFBundleTypeRole": "Viewer",
+            "CFBundleURLName": "com.arnav.RBCJourneyVision",
+            "CFBundleURLSchemes": ["rbcjourney"],
+        }
+    ],
     "compiled_asset_catalog": (bundle / "Assets.car").is_file(),
     "flow_audio": (bundle / "FlowBed.wav").is_file(),
     "provenance_manifest": (bundle / "portal-anchor-manifest.json").is_file(),

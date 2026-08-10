@@ -69,9 +69,11 @@ video cannot.
   deterministic progress flags, concise exact-caption copy, and the no-camera
   boundary. Do not introduce another threshold asset or floating control.
 - Arterial ride: fixed wearer, native inward-facing fork, provenance-tracked
-  PBR arterial-wall microtexture, ten low-opacity offset 3D current strands,
-  18 compact tangent-aligned fronts with fading wakes, and 42 authored
-  biconcave cells distributed across the lumen with bounded qualitative lane
+  PBR arterial-wall microtexture, ten rounded current volumes sharing one
+  procedurally generated downstream-moving surface pulse, ten fixed route
+  chevrons across the shared stem and two branch continuations, zero moving
+  front geometry, and 42 authored biconcave cells distributed as one shared
+  population before two branch populations with bounded qualitative lane
   variation. The default lesson is an automatic six-beat source → division →
   frontal branch → arteriole → capillary journey. During playback expose only
   Pause/Resume; defer manual route controls until the completed learner chooses

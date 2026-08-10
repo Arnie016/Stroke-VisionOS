@@ -222,6 +222,10 @@ struct RBCJourneyImmersiveView: View {
         .onChange(of: model.isPaused) { _, paused in
             familyNarrator.setPaused(paused)
         }
+        .onOpenURL { url in
+            guard RBCJourneyDeepLink.isEntry(url) else { return }
+            model.startEntryPrelude()
+        }
         .onDisappear {
             handGestures.stop()
             familyNarrator.stop()

@@ -20,6 +20,7 @@ required_files = [
     ROOT / "Sources/RBCPortalGestureController.swift",
     ROOT / "Tests/verify_built_bundle.py",
     ROOT / "Tests/verify_app_icon_layers.swift",
+    ROOT / "Resources/RBCJourneyVision-Info.plist",
     ROOT / "Docs/existing-app-inventory.json",
     ROOT / "Docs/medical-content-canon.md",
     ROOT / "Resources/Provenance/portal-anchor-manifest.json",
@@ -34,6 +35,8 @@ for path in required_files:
 
 project = (ROOT / "project.yml").read_text()
 pbx_project = (ROOT / "RBCJourneyVision.xcodeproj/project.pbxproj").read_text()
+info_plist_source = (ROOT / "Resources/RBCJourneyVision-Info.plist").read_text()
+built_bundle_verifier = (ROOT / "Tests/verify_built_bundle.py").read_text()
 app = (ROOT / "Sources/RBCJourneyVisionApp.swift").read_text()
 model = (ROOT / "Sources/RBCJourneyModel.swift").read_text()
 scene = (ROOT / "Sources/RBCJourneyScene.swift").read_text()
@@ -106,6 +109,10 @@ guided_flow_task = immersive[
     immersive.index("        .task(id: model.guidedFlowTourSequenceKey)"):
     immersive.index("        .task(id: model.familyNarrationSequenceKey)")
 ]
+flow_current_band_pose = scene[
+    scene.index("        for item in flowRideCurrentBands {"):
+    scene.index("        for item in flowRideJourneyCells {")
+]
 family_forbidden_clinician_terms = [
     "SCA", "AICA", "PICA", "M1", "lenticulostriate", "anterior choroidal",
     "posterior perforator", "calcarine", "parieto-occipital", "lingual",
@@ -146,11 +153,12 @@ checks = {
     "intentional_app_identity": all(token in project + pbx_project for token in [
         "Resources/Assets.xcassets", "ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon",
         "MARKETING_VERSION: 0.1.0", "CURRENT_PROJECT_VERSION: 1",
+        "INFOPLIST_FILE", "RBCJourneyVision-Info.plist",
     ]) and all((ROOT / path).exists() for path in [
         "Resources/Assets.xcassets/AppIcon.solidimagestack/Back.solidimagestacklayer/Content.imageset/icon.png",
         "Resources/Assets.xcassets/AppIcon.solidimagestack/Middle.solidimagestacklayer/Content.imageset/icon.png",
         "Resources/Assets.xcassets/AppIcon.solidimagestack/Front.solidimagestacklayer/Content.imageset/icon.png",
-    ]),
+    ]) and pbx_project.count("ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;") == 2,
     "decoded_layered_app_icon": (
         icon_verifier.returncode == 0
         and "RBC_APP_ICON_LAYERS=PASS|layers=3" in icon_verifier.stdout
@@ -161,6 +169,27 @@ checks = {
         and declared_resource_model_names == required_bundle_model_names
         and pbx_resource_model_names == required_bundle_model_names
         and declared_source_only_model_names == source_library_only_model_names
+    ),
+    "stroke_care_entry_deep_link": (
+        all(token in project + info_plist_source for token in [
+            "CFBundleURLTypes", "CFBundleURLSchemes", "rbcjourney",
+            "$(MARKETING_VERSION)", "$(CURRENT_PROJECT_VERSION)",
+        ])
+        and all(token in app for token in [
+            "static let scheme = \"rbcjourney\"", "static let entryHost = \"enter\"",
+            "url.scheme?.lowercased() == scheme", "url.host?.lowercased() == entryHost",
+        ])
+        and all(token in trailhead for token in [
+            ".onOpenURL", "RBCJourneyDeepLink.isEntry", "openEntryDeepLink()",
+            "model.startEntryPrelude()", "await openJourney(starting: .entryPrelude)",
+            "!model.proofAutoLaunchConsumed", "model.proofAutoLaunchConsumed = true",
+        ])
+        and all(token in immersive for token in [
+            ".onOpenURL", "RBCJourneyDeepLink.isEntry", "model.startEntryPrelude()",
+        ])
+        and all(token in built_bundle_verifier for token in [
+            '"entry_url_scheme"', '"CFBundleURLTypes"', '"CFBundleURLSchemes": ["rbcjourney"]',
+        ])
     ),
     "full_immersion": ".immersionStyle(selection: $immersionStyle, in: .full)" in app,
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
@@ -193,8 +222,10 @@ checks = {
     ),
     "single_realitykit_frame_driver": all(token in scene for token in [
         "SceneEvents.Update", "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
-        "retainedAuthoredFlowRideCellCount",
-    ]) and "TimelineView" not in immersive and "flowRideCells" not in scene,
+        "retainedAuthoredFlowRideCellCount", "flowRidePoseNeedsRefresh = true",
+        "guard flowRidePoseNeedsRefresh else { return }", "flowRidePoseNeedsRefresh = false",
+    ]) and scene.count("scene.subscribe(to: SceneEvents.Update.self)") == 1
+        and "TimelineView" not in immersive and "flowRideCells" not in scene,
     "startup_transitions_outlive_warmup": all(token in scene for token in [
         "private var frameWarmupRemaining: Float = 0.20",
         "self.advanceRegionTransferFrame(deltaTime: deltaTime)",
@@ -406,13 +437,20 @@ checks = {
     ]),
     "layered_directional_blood_current": all(token in scene + model + immersive + medical_canon + readme for token in [
         "--proof-flow-phase-", "flowRideProofPhase", "flowRideRuntimeProofPhase",
-        "buildFlowCurrentChoreography", "offsetFlowStrandPath", "bloodCurrentMaterial",
-        "continuous-layered-blood-current-not-cfd-strand-", "flow_strands=",
-        "tangent-aligned-blood-current-front-not-velocity-field-",
-        "blood-current-direction-arrowhead", "blood-current-direction-fading-wake",
+        "buildFlowCurrentChoreography", "offsetFlowStrandPath", "makeBloodPulseTexture",
+        "advectingBloodCurrentMaterial", "textureCoordinateTransform.offset.x = pulseOffset",
+        "--proof-flow-pulse-", "flowRidePulseProofPhase",
+        "rounded-blood-current-with-traveling-surface-pulse-not-cfd-",
+        "rounded_current_volumes=", "surface_pulse=", "static_route_chevrons=10",
+        "moving_front_geometry=0", "addRideRoutePath", "-direction-chevron-",
+        "baseOpacity", "applyFlowRideCurrentBandOpacities",
+        "opacity: item.baseOpacity * routeWeight",
+        "flowRideCurrentBandLastPulseOffsets",
+        "if flowRideCurrentBandLastPulseOffsets[index] != pulseOffset",
         "Forty-two clones", "for index in 0..<42", "warm amber", "teal remains",
         "velocity profile", "hematocrit", "multi-cell simulation",
-    ]),
+    ]) and "OpacityComponent" not in flow_current_band_pose
+        and "item.entity.components.set(OpacityComponent(opacity: selected ? 1 : 0.08))" not in scene,
     "opt_in_family_realtime_guide": all(token in model + immersive + hud + narrator + realtime_proxy + realtime_runner for token in [
         "--proof-family-guide", "Optional voice", "familyNarrationEnabled",
         "gpt-realtime-2.1", "RBC_REALTIME_PROXY_URL", "marin",
@@ -601,9 +639,10 @@ checks = {
     ]) and "oxygen concentration measurement" not in scene + model
         and "ripple.components.set(OpacityComponent(opacity: 0))" not in scene,
     "route_front_selection_contrast": all(token in scene for token in [
-        "let selectedScale: Float = selected ? 1 : 0.18",
-        "transform-only contrast, avoiding per-frame component writes",
-    ]),
+        "applyFlowRideCurrentBandOpacities", "opacity: item.baseOpacity * routeWeight",
+        "let routeScale = 0.70 + routeWeight * 0.30", "default: 0.04",
+        "|| item.route == .overview || flowRideRuntimeRoute == item.route",
+    ]) and "flowRideCurrentFronts" not in scene,
     "flow_ride_brain_locator": all(token in scene + model + hud + immersive for token in [
         "RBCFlowRideMiniMapHUD", "HStack(alignment: .bottom, spacing: 18)",
         "BRAIN ATLAS", "ANTERIOR VIEW", "YOU ARE HERE", "Frontal lobe · capillary field",
