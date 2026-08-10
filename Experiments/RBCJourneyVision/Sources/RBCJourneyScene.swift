@@ -6216,16 +6216,26 @@ final class RBCJourneyScene {
                 .truncatingRemainder(dividingBy: 1)
             let point = interpolatedPoint(on: item.path, progress: progress)
             let ahead = interpolatedPoint(on: item.path, progress: min(progress + 0.012, 1))
+            let behind = interpolatedPoint(on: item.path, progress: max(progress - 0.012, 0))
+            let tangentCandidate = ahead - behind
+            guard simd_length_squared(tangentCandidate) > 0.000_001 else { continue }
+            let tangent = simd_normalize(tangentCandidate)
+            // Keep each cell's lane in the local lumen cross-section. Adding
+            // the offset in world X/Y made cells slide out of curved branches;
+            // the tangent frame makes the authored RBCs travel with the vessel.
+            var right = simd_cross(SIMD3<Float>(0, 1, 0), tangent)
+            right = simd_length_squared(right) < 0.000_1
+                ? SIMD3<Float>(1, 0, 0)
+                : simd_normalize(right)
+            let up = simd_normalize(simd_cross(tangent, right))
             let drift = sin(flowRideElapsed * 1.3 + item.phase * 17) * 0.018
-            item.entity.position = point + SIMD3<Float>(
-                item.radialOffset.x,
-                item.radialOffset.y + drift,
-                0
+            item.entity.position = point
+                + right * item.radialOffset.x
+                + up * (item.radialOffset.y + drift)
+            let routeOrientation = simd_quatf(
+                from: SIMD3<Float>(0, 0, -1),
+                to: tangent
             )
-            let tangent = ahead - point
-            let routeOrientation = simd_length_squared(tangent) > 0.000_001
-                ? simd_quatf(from: SIMD3<Float>(0, 0, -1), to: simd_normalize(tangent))
-                : simd_quatf(angle: 0, axis: [0, 1, 0])
             let tumble = simd_quatf(
                 angle: flowRideElapsed * 1.22 + item.phase * .pi * 2,
                 axis: simd_normalize(SIMD3<Float>(0.82, 0.28, 0.50))
