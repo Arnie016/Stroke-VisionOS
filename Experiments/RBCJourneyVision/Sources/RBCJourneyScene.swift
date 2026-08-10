@@ -33,6 +33,7 @@ final class RBCJourneyScene {
     private let hudRoot = Entity()
     private let flowRideSpatialAtlasRoot = Entity()
     private let flowRideSpatialAtlasModelRoot = Entity()
+    private let flowRideSpatialAtlasRouteRoot = Entity()
     private let observationRoot = Entity()
     private let corticalVaultRoot = Entity()
     private let identityEchoRoot = Entity()
@@ -294,6 +295,7 @@ final class RBCJourneyScene {
         hudRoot.name = "world-anchored-journey-hud"
         flowRideSpatialAtlasRoot.name = "registered-three-dimensional-brain-route-locator"
         flowRideSpatialAtlasModelRoot.name = "miniature-registered-cortex-and-cerebral-arteries"
+        flowRideSpatialAtlasRouteRoot.name = "geometry-derived-atlas-route-trace"
         observationRoot.name = "stable-observation-field"
         corticalVaultRoot.name = "inside-cortical-vault"
         identityEchoRoot.name = "artistic-identity-echo-field-not-clinical"
@@ -329,6 +331,7 @@ final class RBCJourneyScene {
         root.addChild(hudRoot)
         hudRoot.addChild(flowRideSpatialAtlasRoot)
         flowRideSpatialAtlasRoot.addChild(flowRideSpatialAtlasModelRoot)
+        flowRideSpatialAtlasModelRoot.addChild(flowRideSpatialAtlasRouteRoot)
         worldRoot.addChild(observationRoot)
         worldRoot.addChild(corticalVaultRoot)
         worldRoot.addChild(identityEchoRoot)
@@ -1179,14 +1182,31 @@ final class RBCJourneyScene {
             ("capillary", "Cerebral_Cortex_R", UIColor(red: 0.98, green: 0.38, blue: 0.30, alpha: 1)),
         ]
         var geometryDerivedCount = 0
+        var routePoints: [SIMD3<Float>] = []
         for source in sources {
             guard let target = flowRideSpatialAtlasModelRoot.findEntity(named: source.entityName) else { continue }
             let locator = makeFlowRideSpatialAtlasLocator(key: source.key, color: source.color)
-            locator.position = target.visualBounds(relativeTo: flowRideSpatialAtlasModelRoot).center
+            let locatorPosition = target.visualBounds(relativeTo: flowRideSpatialAtlasModelRoot).center
+            locator.position = locatorPosition
             locator.isEnabled = false
             flowRideSpatialAtlasModelRoot.addChild(locator)
             flowRideSpatialAtlasLocators[source.key] = locator
+            routePoints.append(locatorPosition)
             geometryDerivedCount += 1
+        }
+
+        // A single thin trace makes the map read as a journey rather than a
+        // collection of unrelated pins. It is derived from the same named
+        // entities as the locators and is intentionally qualitative—not a
+        // patient vessel, CFD streamline, or measured perfusion route.
+        if routePoints.count > 1 {
+            addTubePath(
+                routePoints,
+                to: flowRideSpatialAtlasRouteRoot,
+                radius: 0.0022,
+                material: flowRideAtlasRouteMaterial(),
+                name: "geometry-derived-atlas-route-trace"
+            )
         }
 
         flowRideSpatialAtlasRoot.isEnabled = false
@@ -1201,14 +1221,20 @@ final class RBCJourneyScene {
         core.name = "spatial-atlas-locator-core"
         locator.addChild(core)
 
-        let beadMesh = MeshResource.generateSphere(radius: 0.0018)
-        for index in 0..<18 {
-            let angle = Float(index) / 18 * 2 * .pi
-            let bead = ModelEntity(mesh: beadMesh, materials: [material])
-            bead.name = "spatial-atlas-locator-ring-bead-\(index)"
-            bead.position = [cos(angle) * 0.038, sin(angle) * 0.038, 0]
-            locator.addChild(bead)
+        // Replace a bead-like ring with one continuous, quiet outline so the
+        // marker reads as a selected region, not a second set of blood cells.
+        var ringPoints: [SIMD3<Float>] = []
+        for index in 0...24 {
+            let angle = Float(index) / 24 * 2 * .pi
+            ringPoints.append([cos(angle) * 0.038, sin(angle) * 0.038, 0])
         }
+        addTubePath(
+            ringPoints,
+            to: locator,
+            radius: 0.00125,
+            material: material,
+            name: "spatial-atlas-selected-region-outline"
+        )
         return locator
     }
 
@@ -6786,6 +6812,13 @@ final class RBCJourneyScene {
         glowMaterial(
             color: UIColor(red: 1.00, green: 0.50, blue: 0.16, alpha: 0.36),
             intensity: 0.82
+        )
+    }
+
+    private func flowRideAtlasRouteMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.72, blue: 0.28, alpha: 0.62),
+            intensity: 1.05
         )
     }
 

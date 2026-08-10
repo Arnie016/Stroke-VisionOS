@@ -303,6 +303,10 @@ registered cortex and cerebral-artery teaching assets as the surrounding scene.
 The fork and example right-M1 markers are derived from named USD entities. The
 capillary marker is explicitly a representative cortical proxy because the
 scene is neither patient-registered nor a validated vessel-territory map.
+One quiet continuous trace now connects those three named points, so the map
+reads as the route overview while the active outline identifies the red-cell
+lesson position. It remains a qualitative teaching path—not a patient vessel,
+CFD streamline, or measured perfusion route.
 
 The strands, wake spacing, cell count, and small lane-speed differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear
