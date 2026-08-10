@@ -39,8 +39,7 @@ private final class StrokeStagePlacement: ObservableObject {
         // the authored frame; physical XCAT builds still sample one tracked
         // device anchor and then leave the stage fixed in the room.
         transform = nil
-        return
-#endif
+#else
         placementTask?.cancel()
         placementTask = Task { [weak self] in
             guard let self, WorldTrackingProvider.isSupported else { return }
@@ -61,6 +60,7 @@ private final class StrokeStagePlacement: ObservableObject {
                 // Simulator/build proof must not be reported as device placement.
             }
         }
+#endif
     }
 
     func stop() {

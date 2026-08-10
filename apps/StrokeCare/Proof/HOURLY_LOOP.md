@@ -1032,3 +1032,22 @@
   comfort.
 - Next safe action: when XCAT is awake, unlocked, and its developer tunnel is
   available, rerun `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-10 17:55 SGT — separate Simulator and device placement paths
+
+- Target: keep deterministic Simulator launches free of unreachable physical
+  tracking work while preserving the authored fallback composition.
+- Bounded action: made the stage-placement compile-time branch mutually
+  exclusive, so Simulator builds set the authored transform only and physical
+  builds retain the one-shot tracked-device placement path.
+- Evidence: `python3 Tests/verify_contract.py`, `git diff --check`, and the
+  narrow visionOS Simulator Debug build passed without the prior unreachable
+  placement-code warning. The guarded XCAT pass stopped at the exact
+  `unavailable` device gate and saved
+  `Proof/xcat/20260810-175317/BLOCKED.md`.
+- Verdict: `IMPROVED` — Simulator and physical placement behavior now compile
+  as explicit, non-overlapping paths.
+- Blocker: XCAT was unavailable, so this pass produced no install, launch,
+  wearer, spatial-audio, registration, or clinical evidence.
+- Next safe action: when XCAT is awake and unlocked, rerun
+  `Scripts/deploy_xcat.zsh` once.
