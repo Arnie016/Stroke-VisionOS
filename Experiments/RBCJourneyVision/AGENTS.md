@@ -69,12 +69,18 @@ video cannot.
   deterministic progress flags, concise exact-caption copy, and the no-camera
   boundary. Do not introduce another threshold asset or floating control.
 - Arterial ride: fixed wearer, native inward-facing fork, provenance-tracked
-  PBR arterial-wall microtexture, eight low-opacity offset 3D current strands,
-  14 compact tangent-aligned fronts with fading wakes, and 28 authored
-  biconcave cells with bounded qualitative lane variation. The blood cues stay
-  crimson/coral/amber; teal is destination navigation only. Preserve explicit
-  branch selection, deterministic flow phases, Pause, Leave, and Exit. This is
-  direction choreography, never a velocity profile, hematocrit model, or CFD.
+  PBR arterial-wall microtexture, ten low-opacity offset 3D current strands,
+  18 compact tangent-aligned fronts with fading wakes, and 42 authored
+  biconcave cells distributed across the lumen with bounded qualitative lane
+  variation. The default lesson is an automatic six-beat source → division →
+  frontal branch → arteriole → capillary journey. During playback expose only
+  Pause/Resume; defer manual route controls until the completed learner chooses
+  Explore. Keep scene, caption, optional exact-copy voice, and a stationary
+  anterior-view 3D locator on one phase source of truth. Fork/right-M1 markers
+  derive from named USD geometry; label the cortical capillary marker as a
+  representative proxy, never patient registration. The blood cues stay
+  crimson/coral/amber; teal is destination navigation only. This is direction
+  choreography, never a velocity profile, hematocrit model, or CFD.
 - Frontal destination: constellation outline around an authored artery →
   penetrating arteriole → 34-node capillary-field scale transition with sparse
   tangent-aligned arrow fronts. The wearer may pinch the field or use one
@@ -82,8 +88,8 @@ video cannot.
   to the artery. Six faint tissue-facing rings illustrate exchange while red
   cells and arrows remain intravascular. It is an orientation/exchange lesson,
   not measured flow, diffusion, oxygen concentration, or patient anatomy.
-- Family guide: optional three-beat orientation → passage → arrival captions;
-  voice may read only the exact visible copy through a loopback proxy. The same
+- Family guide: the guided arterial journey always presents reviewed captions;
+  an optional voice may read only that exact visible copy through a loopback proxy. The same
   opt-in companion can read a selected region's visible title and explanation.
   It is off by default and never a clinician default. Reject returned audio if
   its transcript word sequence differs from the reviewed copy. Entering the

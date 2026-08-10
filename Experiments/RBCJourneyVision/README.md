@@ -280,18 +280,51 @@ authored reference, but its wall, opaque volume, yellow arrows, and streamlines
 are hidden in this composition because Simulator review showed them as a sealed
 model and oversized streaks.
 
-The current is now legible in three layers. Eight low-opacity offset round
+The current is now legible in three layers. Ten low-opacity offset round
 strands make a continuous plasma-like volume without sealing the lumen or
-introducing a flat card. Fourteen compact
+introducing a flat card. Eighteen compact
 tangent-aligned fronts add an arrowhead, tail, and fading wake so downstream
-direction is readable from a still or in motion. Twenty-eight clones of an
+direction is readable from a still or in motion. Forty-two clones of an
 authored biconcave cell translate, tumble, deform mildly, and divide between the
-two branches. The neighboring intravascular cue is warm amber rather than teal;
-teal remains outside the vessel as destination navigation only. **Both paths**
-keeps the fork legible. **Frontal route** and **Neighbor route** are explicit,
-user-triggered spatial transfers: RealityKit recomposes the chosen branch around
-the fixed wearer and suppresses the unselected path. There is no app camera or
-forced locomotion.
+two branches and across the lumen rather than along one bead-like centerline.
+The neighboring intravascular cue is warm amber rather than teal; teal remains
+outside the vessel as destination navigation only.
+
+The surrounding cortical fold scaffold is deliberately lower-emission and
+cooler than the blood fronts. It remains a living inside-brain atmosphere, but
+does not wash the arterial route into a red fog wall.
+
+The default lesson is now an automatic six-beat journey: source → division →
+frontal turn → frontal branch → narrowing arteriole → cortical capillary field.
+Scene composition, exact caption, optional exact-copy voice, and locator update
+from the same phase. During playback the only action is **Pause journey** or
+**Resume journey**. Branch controls are revealed only after the guided tour is
+complete and the learner explicitly chooses **Explore**. RealityKit recomposes
+the world around a fixed wearer; there is no app camera or forced locomotion.
+
+At the capillary destination the frontal orientation outline remains present at
+reduced emphasis instead of disappearing behind the enlarged microvascular
+field. The locator names this as **Frontal lobe · capillary field**, preserving
+the region identity while the scale changes.
+
+The locator is a stationary anterior-view 3D atlas built from the same bundled
+registered cortex and cerebral-artery teaching assets as the surrounding scene.
+The fork and example right-M1 markers are derived from named USD entities. The
+capillary marker is explicitly a representative cortical proxy because the
+scene is neither patient-registered nor a validated vessel-territory map.
+One quiet continuous trace now connects those three named points, so the map
+reads as the route overview while the active outline identifies the red-cell
+lesson position. It remains a qualitative teaching path—not a patient vessel,
+CFD streamline, or measured perfusion route.
+Three low-density arrow fronts travel that trace while the journey is playing;
+Pause freezes them with the rest of the scene. This is the atlas-scale direction
+cue, distinct from the higher-density intraluminal fronts around the wearer.
+The atlas legend also carries a compact three-stage breadcrumb—**FORK →
+FRONTAL → CORTEX**—driven by the same guided phase as the surrounding scene, so
+the family can read both the current region and the next anatomical scale.
+The active atlas marker also owns a small 3D label stem: **FORK**, **FRONTAL
+LOBE**, or **CORTEX**. It is a spatial annotation anchored to registered
+geometry, not a second information window.
 
 The strands, wake spacing, cell count, and small lane-speed differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear
@@ -567,12 +600,12 @@ Use `--proof-region-transition-7
 hold the bounded illustrative obstruction state. The entry ritual uses
 `--proof-prelude-0` through `--proof-prelude-3` for
 Threshold, Anatomy, Problem, and Invitation.
-Use `--proof-flow-ride` for the opt-in arterial branch state; combine it with
+Use `--proof-flow-ride` for the guided arterial journey; combine it with
 `--proof-flow-route-frontal` or `--proof-flow-route-neighbor` for deterministic
-user-selected transfers. Add `--proof-flow-phase-18` or
+route states. Add `--proof-flow-phase-18` or
 `--proof-flow-phase-68` to hold two reproducible points in the same canonical
 12-second current cycle. Combine any ride state with `--proof-paused` to render
-the exact held-flow and **Resume ride** state. The optional guide state is
+the exact held-flow and **Resume journey** state. The optional voice-ready state is
 `--proof-flow-ride --proof-family-guide`.
 
 The promoted V23 Simulator evidence is
@@ -589,6 +622,11 @@ The MCA-to-lumen handoff uses
 compositions. Add `--proof-comfort-still` to inspect the held Reduce Motion
 composition. These flags prove Simulator composition, not physical comfort or
 pinch success.
+
+The guided six-beat atlas pass is documented in
+[`Proof/INHABIT_THE_FLOW_V24_GUIDED_ATLAS_RECEIPT.md`](Proof/INHABIT_THE_FLOW_V24_GUIDED_ATLAS_RECEIPT.md).
+It is the current reference for autoplay, Pause/Resume-only playback, the
+registered 3D locator, and the explicit cortical-proxy boundary.
 
 ## Fluid R&D boundary
 

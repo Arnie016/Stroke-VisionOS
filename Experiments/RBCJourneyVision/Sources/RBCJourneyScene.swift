@@ -36,6 +36,10 @@ final class RBCJourneyScene {
     private let registeredContent = Entity()
     private let portalRoot = Entity()
     private let hudRoot = Entity()
+    private let flowRideSpatialAtlasRoot = Entity()
+    private let flowRideSpatialAtlasModelRoot = Entity()
+    private let flowRideSpatialAtlasRouteRoot = Entity()
+    private let flowRideSpatialAtlasLabelRoot = Entity()
     private let observationRoot = Entity()
     private let corticalVaultRoot = Entity()
     private let identityEchoRoot = Entity()
@@ -60,6 +64,7 @@ final class RBCJourneyScene {
     private let flowRideDirectionFieldRoot = Entity()
     private let flowRideInteriorShellRoot = Entity()
     private let flowRideForkFieldRoot = Entity()
+    private let flowRideCorticalContextRoot = Entity()
     private let flowRideFrontalDestinationRoot = Entity()
     private let flowRideFrontalOutlineRoot = Entity()
     private let flowRideFrontalArterioleRoot = Entity()
@@ -265,10 +270,18 @@ final class RBCJourneyScene {
     private var flowRideRuntimeHeld = false
     private var flowRideGatewayTransitionProgress: Float?
     private var flowRideRuntimeProofPhase: Float?
+    private weak var flowRideCorticalScaffold: Entity?
+    private var flowRideSpatialAtlasLocators: [String: Entity] = [:]
+    private var flowRideSpatialAtlasRoutePoints: [SIMD3<Float>] = []
+    private var flowRideSpatialAtlasRouteFronts: [Entity] = []
+    private var flowRideSpatialAtlasLabels: [String: Entity] = [:]
     private var frameUpdateSubscription: (any Cancellable)?
     private var latestFrameUpdate: ((TimeInterval) -> Void)?
     private var frameAdvanceScheduled = false
-    private var frameWarmupRemaining: Float = 2.6
+    // Keep the USDZ sharing guard shorter than either authored transition.
+    // Transfer clocks still advance during this interval, so fast entry never
+    // completes behind an unchanging first frame.
+    private var frameWarmupRemaining: Float = 0.20
     private var isReplayingFrameUpdate = false
 
     private var portals: [Int: Entity] = [:]
@@ -291,6 +304,10 @@ final class RBCJourneyScene {
         registeredContent.name = "registered-living-brain-system"
         portalRoot.name = "multi-vessel-portal-system"
         hudRoot.name = "world-anchored-journey-hud"
+        flowRideSpatialAtlasRoot.name = "registered-three-dimensional-brain-route-locator"
+        flowRideSpatialAtlasModelRoot.name = "miniature-registered-cortex-and-cerebral-arteries"
+        flowRideSpatialAtlasRouteRoot.name = "geometry-derived-atlas-route-trace"
+        flowRideSpatialAtlasLabelRoot.name = "geometry-derived-atlas-region-labels"
         observationRoot.name = "stable-observation-field"
         corticalVaultRoot.name = "inside-cortical-vault"
         identityEchoRoot.name = "artistic-identity-echo-field-not-clinical"
@@ -315,6 +332,7 @@ final class RBCJourneyScene {
         flowRideDirectionFieldRoot.name = "continuous-intraluminal-direction-field-not-cfd"
         flowRideInteriorShellRoot.name = "native-inward-facing-arterial-corridor"
         flowRideForkFieldRoot.name = "user-selected-branching-flow-field-not-cfd"
+        flowRideCorticalContextRoot.name = "surrounding-inside-brain-cortical-fold-scaffold-not-segmentation"
         flowRideFrontalDestinationRoot.name = "frontal-route-constellation-outline-not-segmentation"
         flowRideFrontalOutlineRoot.name = "frontal-route-orientation-outline"
         flowRideFrontalArterioleRoot.name = "frontal-route-macro-arteriole-context"
@@ -323,6 +341,10 @@ final class RBCJourneyScene {
 
         root.addChild(worldRoot)
         root.addChild(hudRoot)
+        hudRoot.addChild(flowRideSpatialAtlasRoot)
+        flowRideSpatialAtlasRoot.addChild(flowRideSpatialAtlasModelRoot)
+        flowRideSpatialAtlasModelRoot.addChild(flowRideSpatialAtlasRouteRoot)
+        flowRideSpatialAtlasModelRoot.addChild(flowRideSpatialAtlasLabelRoot)
         worldRoot.addChild(observationRoot)
         worldRoot.addChild(corticalVaultRoot)
         worldRoot.addChild(identityEchoRoot)
@@ -331,6 +353,7 @@ final class RBCJourneyScene {
         causalStoryRoot.addChild(downstreamTerritoryRoot)
         worldRoot.addChild(regionInteriorRoot)
         regionInteriorRoot.addChild(flowRideRoot)
+        flowRideRoot.addChild(flowRideCorticalContextRoot)
         flowRideRoot.addChild(flowRideInteriorShellRoot)
         flowRideRoot.addChild(flowRideForkFieldRoot)
         flowRideRoot.addChild(flowRideFrontalDestinationRoot)
@@ -345,6 +368,7 @@ final class RBCJourneyScene {
         buildObservationField()
         buildIdentityEchoField()
         await buildRegisteredAnatomy()
+        buildFlowRideSpatialAtlas()
         await buildPortals()
         buildExtendedRegionInteriors()
         buildWillisNetworkInterior()
@@ -370,16 +394,20 @@ final class RBCJourneyScene {
                 guard let self else { return }
                 defer { self.frameAdvanceScheduled = false }
 
+                // These two transitions have bounded task lifetimes (1.45 s
+                // and 1.65 s), so their clocks must begin on the first scene
+                // update rather than after the resource-sharing warm-up.
+                self.advanceRegionTransferFrame(deltaTime: deltaTime)
+                self.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)
+
                 if self.frameWarmupRemaining > 0 {
                     // Let RealityKit finish sharing freshly loaded USDZ
-                    // resources before the first live component mutation.
-                    // The initial visible pose is primed before insertion.
+                    // resources before the full scene replay. At 0.20 s this
+                    // guard cannot outlive either visible transfer.
                     self.frameWarmupRemaining -= min(max(deltaTime, 0), 0.10)
                     return
                 }
 
-                self.advanceRegionTransferFrame(deltaTime: deltaTime)
-                self.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)
                 self.advanceWillisNetworkFrame(deltaTime: deltaTime)
                 self.advanceCorticalMicroarchitectureFrame(deltaTime: deltaTime)
                 self.advanceCerebellumFrame(deltaTime: deltaTime)
@@ -589,6 +617,13 @@ final class RBCJourneyScene {
             time: t,
             motionHeld: motionHeld
         )
+        updateFlowRideSpatialAtlas(
+            active: lumenRideActive,
+            route: flowRideRoute,
+            capillaryFieldFocused: capillaryFieldFocused,
+            time: t,
+            motionHeld: motionHeld
+        )
         if let infoAttachment {
             let target: SIMD3<Float> = if gatewayTransitionActive {
                 [0, 1.76, -0.70]
@@ -609,9 +644,23 @@ final class RBCJourneyScene {
         let blockageFocused = station == .meetTheBlockage || station == .seeTheTerritory
         let frontalCortexOpacity: Float = regionVisualization == .xray ? 0.045 : 0.10
         let frontalArteryOpacity: Float = regionVisualization == .locate ? 0.34 : 0.66
-        cortexLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.28 : (frontalRegionActive ? frontalCortexOpacity : (transferActive ? 0.10 : (blockageFocused ? 0.16 : 0.20)))))
-        deepLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.025 : (frontalRegionActive ? 0.14 : (transferActive ? 0.10 : (blockageFocused ? 0.18 : 0.22)))))
-        ventricleLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.025 : (transferActive ? 0.12 : (blockageFocused ? 0.20 : 0.26))))
+        let corticalLivingPulse: Float = motionHeld ? 0 : sin(t * 0.21) * 0.035
+        let cortexOpacity: Float = if preludeActive {
+            0.28
+        } else if lumenRideActive {
+            0.30 + corticalLivingPulse
+        } else if frontalRegionActive {
+            frontalCortexOpacity
+        } else if transferActive {
+            0.10
+        } else if blockageFocused {
+            0.16
+        } else {
+            0.20
+        }
+        cortexLayer?.components.set(OpacityComponent(opacity: cortexOpacity))
+        deepLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.025 : (lumenRideActive ? 0.17 : (frontalRegionActive ? 0.14 : (transferActive ? 0.10 : (blockageFocused ? 0.18 : 0.22))))))
+        ventricleLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.025 : (lumenRideActive ? 0.13 : (transferActive ? 0.12 : (blockageFocused ? 0.20 : 0.26)))))
         arteryLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.018 : (frontalRegionActive ? frontalArteryOpacity : (transferActive ? 0.10 : 0.30))))
         cranialVascularLayer?.components.set(OpacityComponent(opacity: preludeActive ? 0.018 : (frontalRegionActive ? 0.24 : (transferActive ? 0.16 : (blockageFocused ? 0.34 : 0.42)))))
         let circleOpacity: Float = switch exhibitBeat {
@@ -1155,6 +1204,242 @@ final class RBCJourneyScene {
         corticalVaultRoot.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
     }
 
+    /// A compact 3D locator built from the same registered teaching assets as
+    /// the surrounding scene. Named source entities determine each beacon;
+    /// no hand-authored screen coordinate is presented as anatomical truth.
+    private func buildFlowRideSpatialAtlas() {
+        guard flowRideSpatialAtlasModelRoot.children.isEmpty,
+              let cortexLayer,
+              let arteryLayer
+        else { return }
+
+        let cortex = cortexLayer.clone(recursive: true)
+        cortex.name = "atlas-registered-cortical-fold-mesh"
+        applyMaterialRecursively(flowRideAtlasCortexMaterial(), to: cortex)
+        cortex.components.set(OpacityComponent(opacity: 0.98))
+        flowRideSpatialAtlasModelRoot.addChild(cortex)
+
+        let arteries = arteryLayer.clone(recursive: true)
+        arteries.name = "atlas-registered-cerebral-artery-mesh"
+        applyMaterialRecursively(flowRideAtlasArteryMaterial(), to: arteries)
+        arteries.components.set(OpacityComponent(opacity: 1.0))
+        flowRideSpatialAtlasModelRoot.addChild(arteries)
+
+        if let circleFlowLayer {
+            let circle = circleFlowLayer.clone(recursive: true)
+            circle.name = "atlas-registered-circle-of-willis-route-mesh"
+            applyMaterialRecursively(flowRideAtlasCircleMaterial(), to: circle)
+            circle.components.set(OpacityComponent(opacity: 1.0))
+            flowRideSpatialAtlasModelRoot.addChild(circle)
+        }
+
+        if let clotLayer {
+            let namedLocus = clotLayer.clone(recursive: true)
+            namedLocus.name = "atlas-named-right-m1-teaching-locus-source"
+            namedLocus.components.set(OpacityComponent(opacity: 0.01))
+            flowRideSpatialAtlasModelRoot.addChild(namedLocus)
+        }
+
+        // Fit the complete cortex-plus-artery assembly. Normalizing from the
+        // cortex alone can crop vessels whose registered bounds extend beyond
+        // the cortical surface.
+        normalize(flowRideSpatialAtlasModelRoot, targetExtent: 0.66)
+        // Keep the locator above the compact legend rather than behind it.
+        // A fixed anterior view makes the marker useful as a map; only the
+        // marker pulses. Rotating the whole atlas would obscure orientation.
+        // Keep the compact atlas in the wearer's forward upper-left field,
+        // close enough for the 3D region label to read without becoming a
+        // second room-scale brain.
+        flowRideSpatialAtlasRoot.position = [-0.34, 1.78, -0.62]
+        flowRideSpatialAtlasRoot.scale = [1.10, 1.10, 1.10]
+        flowRideSpatialAtlasRoot.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+
+        let sources: [(key: String, entityName: String, color: UIColor)] = [
+            ("fork", "Flow_Route_Anterior_Communicating", UIColor(red: 1.00, green: 0.53, blue: 0.18, alpha: 1)),
+            ("frontal", "Right_M1_Large_Vessel_Occlusion", UIColor(red: 1.00, green: 0.20, blue: 0.27, alpha: 1)),
+            ("capillary", "Cerebral_Cortex_R", UIColor(red: 0.98, green: 0.38, blue: 0.30, alpha: 1)),
+        ]
+        var geometryDerivedCount = 0
+        var routePoints: [SIMD3<Float>] = []
+        for source in sources {
+            guard let target = flowRideSpatialAtlasModelRoot.findEntity(named: source.entityName) else { continue }
+            let locator = makeFlowRideSpatialAtlasLocator(key: source.key, color: source.color)
+            let locatorPosition = target.visualBounds(relativeTo: flowRideSpatialAtlasModelRoot).center
+            locator.position = locatorPosition
+            locator.isEnabled = false
+            flowRideSpatialAtlasModelRoot.addChild(locator)
+            flowRideSpatialAtlasLocators[source.key] = locator
+            routePoints.append(locatorPosition)
+            geometryDerivedCount += 1
+        }
+
+        // A single thin trace makes the map read as a journey rather than a
+        // collection of unrelated pins. It is derived from the same named
+        // entities as the locators and is intentionally qualitative—not a
+        // patient vessel, CFD streamline, or measured perfusion route.
+        if routePoints.count > 1 {
+            flowRideSpatialAtlasRoutePoints = routePoints
+            addTubePath(
+                routePoints,
+                to: flowRideSpatialAtlasRouteRoot,
+                // The route trace must survive the scale change from the
+                // inhabited lumen to this compact orientation atlas.
+                radius: 0.0032,
+                material: flowRideAtlasRouteMaterial(),
+                name: "geometry-derived-atlas-route-trace"
+            )
+
+            let frontMaterial = flowRideAtlasRouteFrontMaterial()
+            // A head and a short wake read as a directional current, not as
+            // another locator bead. Both are rotated from the route tangent
+            // below, so the arrow remains meaningful at every branch.
+            let headMesh = MeshResource.generateCone(height: 0.032, radius: 0.0082)
+            let tailMesh = MeshResource.generateCylinder(height: 0.038, radius: 0.0022)
+            for index in 0..<3 {
+                let front = Entity()
+                front.name = "geometry-derived-atlas-route-front-\(index)"
+                let head = ModelEntity(mesh: headMesh, materials: [frontMaterial])
+                head.name = "atlas-route-direction-arrowhead"
+                head.position.y = 0.017
+                let tail = ModelEntity(mesh: tailMesh, materials: [frontMaterial])
+                tail.name = "atlas-route-direction-tail"
+                tail.position.y = -0.017
+                front.addChild(head)
+                front.addChild(tail)
+                flowRideSpatialAtlasRouteRoot.addChild(front)
+                flowRideSpatialAtlasRouteFronts.append(front)
+            }
+        }
+
+        let labelDefinitions: [(key: String, text: String, color: UIColor)] = [
+            ("fork", "FORK", UIColor(red: 1.00, green: 0.67, blue: 0.30, alpha: 0.96)),
+            ("frontal", "FRONTAL LOBE", UIColor(red: 1.00, green: 0.30, blue: 0.34, alpha: 0.98)),
+            ("capillary", "CORTEX", UIColor(red: 0.98, green: 0.48, blue: 0.38, alpha: 0.98)),
+        ]
+        for definition in labelDefinitions {
+            guard let locator = flowRideSpatialAtlasLocators[definition.key] else { continue }
+            let labelAnchor = makeFlowRideSpatialAtlasLabel(
+                text: definition.text,
+                color: definition.color
+            )
+            labelAnchor.name = "geometry-derived-atlas-label-anchor-\(definition.key)"
+            labelAnchor.position = locator.position
+            labelAnchor.isEnabled = false
+            flowRideSpatialAtlasLabelRoot.addChild(labelAnchor)
+            flowRideSpatialAtlasLabels[definition.key] = labelAnchor
+        }
+
+        flowRideSpatialAtlasRoot.isEnabled = false
+        print("RBC_SPATIAL_ATLAS=READY registered_geometry=true geometry_derived_locators=\(geometryDerivedCount) patient_registration=false capillary_proxy=true")
+    }
+
+    private func makeFlowRideSpatialAtlasLocator(key: String, color: UIColor) -> Entity {
+        let locator = Entity()
+        locator.name = "geometry-derived-spatial-atlas-locator-\(key)"
+        let material = glowMaterial(color: color, intensity: 3.4)
+        let core = ModelEntity(mesh: .generateSphere(radius: 0.015), materials: [material])
+        core.name = "spatial-atlas-locator-core"
+        locator.addChild(core)
+
+        // Replace a bead-like ring with one continuous, quiet outline so the
+        // marker reads as a selected region, not a second set of blood cells.
+        var ringPoints: [SIMD3<Float>] = []
+        for index in 0...24 {
+            let angle = Float(index) / 24 * 2 * .pi
+            ringPoints.append([cos(angle) * 0.038, sin(angle) * 0.038, 0])
+        }
+        addTubePath(
+            ringPoints,
+            to: locator,
+            radius: 0.00125,
+            material: material,
+            name: "spatial-atlas-selected-region-outline"
+        )
+        return locator
+    }
+
+    private func makeFlowRideSpatialAtlasLabel(text: String, color: UIColor) -> Entity {
+        let anchor = Entity()
+        let material = glowMaterial(color: color, intensity: 2.0)
+        let label = ModelEntity(
+            mesh: .generateText(
+                text,
+                extrusionDepth: 0.0008,
+                font: .systemFont(ofSize: 0.11),
+                containerFrame: .zero,
+                alignment: .left,
+                lineBreakMode: .byClipping
+            ),
+            materials: [material]
+        )
+        label.name = "atlas-region-label-\(text.lowercased().replacingOccurrences(of: " ", with: "-"))"
+        label.position = [0.052, 0.038, 0]
+        label.scale = [1.15, 1.15, 1.15]
+        label.components.set(BillboardComponent())
+        anchor.addChild(label)
+
+        let stemMaterial = glowMaterial(color: color, intensity: 0.9)
+        addTubePath(
+            [[0, 0, 0], [0.046, 0.026, 0]],
+            to: anchor,
+            radius: 0.0007,
+            material: stemMaterial,
+            name: "atlas-region-label-stem"
+        )
+        return anchor
+    }
+
+    private func updateFlowRideSpatialAtlas(
+        active: Bool,
+        route: RBCFlowRideRoute,
+        capillaryFieldFocused: Bool,
+        time: Float,
+        motionHeld: Bool
+    ) {
+        flowRideSpatialAtlasRoot.isEnabled = active
+        guard active else { return }
+
+        let activeKey = capillaryFieldFocused
+            ? "capillary"
+            : (route == .frontal ? "frontal" : "fork")
+        for (key, locator) in flowRideSpatialAtlasLocators {
+            locator.isEnabled = key == activeKey
+            if key == activeKey {
+                let pulse: Float = motionHeld ? 1 : 1 + sin(time * 2.2) * 0.12
+                locator.scale = [pulse, pulse, pulse]
+            }
+        }
+        for (key, label) in flowRideSpatialAtlasLabels {
+            label.isEnabled = key == activeKey
+            if let locator = flowRideSpatialAtlasLocators[key], key == activeKey {
+                label.position = locator.position
+            }
+        }
+
+        // Three restrained fronts travel the same geometry-derived path as the
+        // route trace. They establish direction at atlas scale while the
+        // active locator establishes the wearer's current teaching position.
+        if !flowRideSpatialAtlasRoutePoints.isEmpty {
+            for (index, front) in flowRideSpatialAtlasRouteFronts.enumerated() {
+                let base = Float(index) / Float(flowRideSpatialAtlasRouteFronts.count)
+                let progress = motionHeld
+                    ? base
+                    : (base + time * 0.075).truncatingRemainder(dividingBy: 1)
+                let sample = sampleAtlasPolyline(
+                    flowRideSpatialAtlasRoutePoints,
+                    progress: progress
+                )
+                front.position = sample.point
+                front.orientation = simd_quatf(from: [0, 1, 0], to: sample.tangent)
+                let pulse: Float = motionHeld ? 1 : 1 + sin(time * 2.4 + Float(index)) * 0.10
+                front.scale = [pulse, pulse, pulse]
+            }
+        }
+
+        // The atlas is an orientation instrument, not ambient decoration.
+        flowRideSpatialAtlasModelRoot.orientation = simd_quatf(angle: -0.20, axis: [0, 1, 0])
+    }
+
     private func updatePreludeComposition(
         chapter: RBCEntryPreludeChapter?,
         reducedMotion: Bool
@@ -1541,6 +1826,7 @@ final class RBCJourneyScene {
                     cellPrototype: authoredCellPrototype,
                     authoredWallMaterial: authoredWallMaterial
                 )
+                buildFlowRideCorticalContext()
                 flowRideRoot.isEnabled = false
                 print("RBC_FLOW_RIDE=READY authored_cells=\(retainedAuthoredFlowRideCellCount) journey_cells=\(flowRideJourneyCells.count) ribbons=\(flowRideRibbonPaths.count) fork_routes=2 inward_corridor=true")
             }
@@ -4927,6 +5213,27 @@ final class RBCJourneyScene {
         }
     }
 
+    /// Reuses the registered cortical mesh as a large, double-sided atlas
+    /// around the arterial lesson. This is not a second brain floating in the
+    /// room: the clone is scaled beyond the wearer so its folds become the
+    /// surrounding environment. It remains a generic teaching scaffold, not
+    /// patient registration or a segmented sulcal atlas.
+    private func buildFlowRideCorticalContext() {
+        guard flowRideCorticalScaffold == nil, let cortexLayer else { return }
+
+        let scaffold = cortexLayer.clone(recursive: true)
+        scaffold.name = "room-scale-inside-out-registered-cortical-fold-environment"
+        normalize(scaffold, targetExtent: 7.8)
+        scaffold.position = [0.10, 1.34, -2.28]
+        scaffold.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+        applyMaterialRecursively(flowRideCorticalScaffoldMaterial(), to: scaffold)
+        scaffold.components.set(OpacityComponent(opacity: 0.58))
+        flowRideCorticalContextRoot.addChild(scaffold)
+        flowRideCorticalScaffold = scaffold
+
+        print("RBC_FLOW_CORTEX=READY source=registered_cortical_asset inside_out=true folds=authored slow_living_motion=true not_neuroplasticity=true")
+    }
+
     private func buildInhabitedArterialCorridor(
         cellPrototype: Entity?,
         authoredWallMaterial: PhysicallyBasedMaterial?
@@ -4956,13 +5263,13 @@ final class RBCJourneyScene {
         let intimaMaterial = vesselInteriorMaterial(
             tint: UIColor(red: 0.50, green: 0.030, blue: 0.052, alpha: 1),
             emissive: UIColor(red: 0.28, green: 0.010, blue: 0.024, alpha: 1),
-            opacity: 0.50,
+            opacity: 0.36,
             roughness: 0.47
         )
         let mediaMaterial = vesselInteriorMaterial(
             tint: UIColor(red: 0.26, green: 0.018, blue: 0.034, alpha: 1),
             emissive: UIColor(red: 0.16, green: 0.006, blue: 0.018, alpha: 1),
-            opacity: 0.25,
+            opacity: 0.14,
             roughness: 0.72
         )
 
@@ -5079,25 +5386,29 @@ final class RBCJourneyScene {
         )
 
         if let cellPrototype {
-            for index in 0..<28 {
+            for index in 0..<42 {
                 let route: RBCFlowRideRoute = index.isMultiple(of: 2) ? .frontal : .neighboring
                 let path = route == .frontal ? frontalJourneyPath : neighboringJourneyPath
                 let container = Entity()
-                container.name = "authored-biconcave-journey-cell-\(index)-route-\(route.rawValue)"
+                container.name = "full-lumen-distributed-authored-biconcave-cell-\(index)-route-\(route.rawValue)"
                 let visual = cellPrototype.clone(recursive: true)
                 visual.isEnabled = true
-                normalize(visual, targetExtent: 0.050 + Float(index % 3) * 0.004)
+                normalize(visual, targetExtent: 0.044 + Float(index % 4) * 0.003)
                 replaceMaterials(in: visual, with: bloodCellMaterial())
                 container.addChild(visual)
                 let angle = Float(index) * 2.399_963
-                let radialOffset = SIMD2<Float>(cos(angle), sin(angle)) * (0.11 + Float(index % 4) * 0.026)
+                let radialOccupancyRadius = 0.20 + Float(index % 7) * 0.090
+                let radialOffset = SIMD2<Float>(
+                    cos(angle) * radialOccupancyRadius,
+                    sin(angle) * radialOccupancyRadius * 0.24
+                )
                 flowRideInteriorShellRoot.addChild(container)
                 flowRideJourneyCells.append((
                     container,
                     path,
                     container.scale,
                     radialOffset,
-                    Float(index) / 28,
+                    Float(index) / 42,
                     0.037 + Float(index % 5) * 0.0028,
                     route
                 ))
@@ -5289,43 +5600,45 @@ final class RBCJourneyScene {
         frontalPath: [SIMD3<Float>],
         neighboringPath: [SIMD3<Float>]
     ) {
-        let bandSpecs: [(
+        let strandSpecs: [(
             path: [SIMD3<Float>],
             route: RBCFlowRideRoute,
             color: UIColor,
-            halfWidth: Float,
+            strandRadius: Float,
+            radialOffset: Float,
             opacity: Float,
             phase: Float
         )] = [
-            (mainPath, .overview, UIColor(red: 0.82, green: 0.030, blue: 0.045, alpha: 1), 0.082, 0.23, 0.00),
-            (mainPath, .overview, UIColor(red: 1.00, green: 0.18, blue: 0.11, alpha: 1), 0.050, 0.19, 0.47),
-            (Array(frontalPath.dropFirst(mainPath.count - 1)), .frontal, UIColor(red: 1.00, green: 0.13, blue: 0.17, alpha: 1), 0.066, 0.24, 0.18),
-            (Array(neighboringPath.dropFirst(mainPath.count - 1)), .neighboring, UIColor(red: 1.00, green: 0.38, blue: 0.09, alpha: 1), 0.062, 0.23, 0.68),
+            (mainPath, .overview, UIColor(red: 0.82, green: 0.030, blue: 0.045, alpha: 1), 0.018, 0.20, 0.24, 0.00),
+            (mainPath, .overview, UIColor(red: 1.00, green: 0.18, blue: 0.11, alpha: 1), 0.014, 0.40, 0.20, 0.33),
+            (mainPath, .overview, UIColor(red: 0.92, green: 0.055, blue: 0.075, alpha: 1), 0.011, 0.62, 0.17, 0.67),
+            (Array(frontalPath.dropFirst(mainPath.count - 1)), .frontal, UIColor(red: 1.00, green: 0.13, blue: 0.17, alpha: 1), 0.014, 0.30, 0.24, 0.18),
+            (Array(neighboringPath.dropFirst(mainPath.count - 1)), .neighboring, UIColor(red: 1.00, green: 0.38, blue: 0.09, alpha: 1), 0.013, 0.30, 0.23, 0.68),
         ]
 
-        for (bandIndex, spec) in bandSpecs.enumerated() where spec.path.count > 1 {
+        for (strandIndex, spec) in strandSpecs.enumerated() where spec.path.count > 1 {
             for crossIndex in 0..<2 {
                 let radialAngle = Float(crossIndex) * .pi / 2 + spec.phase * 0.72
                 let strandPath = offsetFlowStrandPath(
                     spec.path,
                     radialAngle: radialAngle,
-                    offset: spec.halfWidth * (crossIndex == 0 ? 0.74 : 0.48)
+                    offset: spec.radialOffset * (crossIndex == 0 ? 1 : 0.78)
                 )
                 guard let mesh = try? makeInwardFacingTubeMesh(
                     path: strandPath,
-                    startRadius: spec.halfWidth * (crossIndex == 0 ? 0.18 : 0.13),
-                    endRadius: spec.halfWidth * (crossIndex == 0 ? 0.18 : 0.13),
+                    startRadius: spec.strandRadius * (crossIndex == 0 ? 1 : 0.78),
+                    endRadius: spec.strandRadius * (crossIndex == 0 ? 1 : 0.78),
                     radialSegments: 10,
-                    name: "layered-blood-current-strand-\(bandIndex)-cross-\(crossIndex)",
+                    name: "full-lumen-blood-current-strand-\(strandIndex)-cross-\(crossIndex)",
                     inwardFacing: false
                 ) else { continue }
                 let material = bloodCurrentMaterial(
                     color: spec.color,
                     opacity: spec.opacity,
-                    emissiveIntensity: crossIndex == 0 ? 0.62 : 0.40
+                    emissiveIntensity: crossIndex == 0 ? 0.96 : 0.72
                 )
                 let band = ModelEntity(mesh: mesh, materials: [material])
-                band.name = "continuous-layered-blood-current-not-cfd-strand-\(bandIndex)-cross-\(crossIndex)"
+                band.name = "continuous-layered-blood-current-not-cfd-strand-\(strandIndex)-cross-\(crossIndex)"
                 band.components.set(OpacityComponent(opacity: spec.opacity))
                 flowRideForkFieldRoot.addChild(band)
                 flowRideCurrentBands.append((
@@ -5345,8 +5658,8 @@ final class RBCJourneyScene {
             color: UIColor,
             count: Int
         )] = [
-            (.frontal, frontalPath, UIColor(red: 1.00, green: 0.18, blue: 0.17, alpha: 1), 7),
-            (.neighboring, neighboringPath, UIColor(red: 1.00, green: 0.49, blue: 0.13, alpha: 1), 7),
+            (.frontal, frontalPath, UIColor(red: 1.00, green: 0.18, blue: 0.17, alpha: 1), 9),
+            (.neighboring, neighboringPath, UIColor(red: 1.00, green: 0.49, blue: 0.13, alpha: 1), 9),
         ]
 
         for spec in routeSpecs {
@@ -5357,8 +5670,8 @@ final class RBCJourneyScene {
             )
             let wakeMaterial = bloodCurrentMaterial(
                 color: spec.color,
-                opacity: 0.13,
-                emissiveIntensity: 0.28
+                opacity: 0.085,
+                emissiveIntensity: 0.18
             )
             for frontIndex in 0..<spec.count {
                 let front = Entity()
@@ -5379,11 +5692,14 @@ final class RBCJourneyScene {
 
                 let angle = Float(frontIndex) * 2.399_963
                     + (spec.route == .neighboring ? 0.72 : 0)
-                let radius = 0.18 + Float(frontIndex % 3) * 0.070
+                let radius = 0.26 + Float(frontIndex % 3) * 0.18
                 flowRideCurrentFronts.append((
                     front,
                     spec.path,
-                    SIMD2<Float>(cos(angle), sin(angle)) * radius,
+                    SIMD2<Float>(
+                        cos(angle) * radius,
+                        sin(angle) * radius * 0.24
+                    ),
                     (Float(frontIndex) / Float(spec.count)
                         + (spec.route == .neighboring ? 0.10 : 0))
                         .truncatingRemainder(dividingBy: 1),
@@ -5392,7 +5708,7 @@ final class RBCJourneyScene {
                 ))
             }
         }
-        print("RBC_LAYERED_CURRENT=READY flow_strands=\(flowRideCurrentBands.count) tangent_fronts=\(flowRideCurrentFronts.count) qualitative_only=true")
+        print("RBC_LAYERED_CURRENT=READY flow_strands=\(flowRideCurrentBands.count) tangent_fronts=\(flowRideCurrentFronts.count) full_lumen=true qualitative_only=true")
     }
 
     private func offsetFlowStrandPath(
@@ -5414,7 +5730,7 @@ final class RBCJourneyScene {
             let breathingOffset = offset * (0.86 + sin(progress * .pi * 4.2 + radialAngle) * 0.14)
             return path[index]
                 + right * cos(radialAngle) * breathingOffset
-                + up * sin(radialAngle) * breathingOffset
+                + up * sin(radialAngle) * breathingOffset * 0.24
         }
     }
 
@@ -5651,7 +5967,6 @@ final class RBCJourneyScene {
                 material: exchangeRippleMaterial,
                 name: "capillary-to-tissue-exchange-wave"
             )
-            ripple.components.set(OpacityComponent(opacity: 0))
             flowRideCapillaryWebRoot.addChild(ripple)
             flowRideCapillaryExchangeRipples.append((
                 ripple,
@@ -5935,7 +6250,10 @@ final class RBCJourneyScene {
             let pulse = flowRideRuntimeHeld
                 ? 1
                 : 0.92 + sin(flowRideElapsed * 2.7 + item.phase * 8) * 0.08
-            let selectedScale: Float = selected ? 1 : 0.72
+            // A non-selected branch remains present as network context, but
+            // its moving fronts shrink to a quiet directional trace. This is
+            // transform-only contrast, avoiding per-frame component writes.
+            let selectedScale: Float = selected ? 1 : 0.18
             item.entity.scale = SIMD3<Float>(repeating: pulse * selectedScale)
         }
 
@@ -5944,16 +6262,26 @@ final class RBCJourneyScene {
                 .truncatingRemainder(dividingBy: 1)
             let point = interpolatedPoint(on: item.path, progress: progress)
             let ahead = interpolatedPoint(on: item.path, progress: min(progress + 0.012, 1))
+            let behind = interpolatedPoint(on: item.path, progress: max(progress - 0.012, 0))
+            let tangentCandidate = ahead - behind
+            guard simd_length_squared(tangentCandidate) > 0.000_001 else { continue }
+            let tangent = simd_normalize(tangentCandidate)
+            // Keep each cell's lane in the local lumen cross-section. Adding
+            // the offset in world X/Y made cells slide out of curved branches;
+            // the tangent frame makes the authored RBCs travel with the vessel.
+            var right = simd_cross(SIMD3<Float>(0, 1, 0), tangent)
+            right = simd_length_squared(right) < 0.000_1
+                ? SIMD3<Float>(1, 0, 0)
+                : simd_normalize(right)
+            let up = simd_normalize(simd_cross(tangent, right))
             let drift = sin(flowRideElapsed * 1.3 + item.phase * 17) * 0.018
-            item.entity.position = point + SIMD3<Float>(
-                item.radialOffset.x,
-                item.radialOffset.y + drift,
-                0
+            item.entity.position = point
+                + right * item.radialOffset.x
+                + up * (item.radialOffset.y + drift)
+            let routeOrientation = simd_quatf(
+                from: SIMD3<Float>(0, 0, -1),
+                to: tangent
             )
-            let tangent = ahead - point
-            let routeOrientation = simd_length_squared(tangent) > 0.000_001
-                ? simd_quatf(from: SIMD3<Float>(0, 0, -1), to: simd_normalize(tangent))
-                : simd_quatf(angle: 0, axis: [0, 1, 0])
             let tumble = simd_quatf(
                 angle: flowRideElapsed * 1.22 + item.phase * .pi * 2,
                 axis: simd_normalize(SIMD3<Float>(0.82, 0.28, 0.50))
@@ -6045,6 +6373,9 @@ final class RBCJourneyScene {
             focusMix
         )
         flowRideFrontalDestinationRoot.orientation = destinationTilt
+        // Preserve the named frontal boundary as the capillary destination
+        // comes forward. Scale-only contrast avoids per-frame RealityKit
+        // component writes while retaining the authored outline and arteriole.
         let macroContextScale = 1 - focusMix * 0.24
         flowRideFrontalOutlineRoot.scale = SIMD3<Float>(repeating: macroContextScale)
         flowRideFrontalArterioleRoot.scale = SIMD3<Float>(repeating: macroContextScale)
@@ -6084,6 +6415,28 @@ final class RBCJourneyScene {
         flowRideInteriorShellRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
         flowRideForkFieldRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
         flowRideDirectionFieldRoot.scale = SIMD3<Float>(repeating: corridorContextScale)
+
+        // The registered cortical folds remain a readable environment around
+        // the vessel. Their slow, sub-degree drift and gentle scale pulse
+        // suggest living tissue without presenting second-to-second motion as
+        // neuroplastic change. Pause and Reduce Motion hold the same clock.
+        let corticalPulse: Float = flowRideRuntimeHeld
+            ? 1
+            : 1 + sin(flowRideElapsed * 0.18) * 0.006
+        let corticalYaw: Float = flowRideRuntimeHeld
+            ? 0
+            : sin(flowRideElapsed * 0.11) * 0.014
+        let corticalPitch: Float = flowRideRuntimeHeld
+            ? 0
+            : cos(flowRideElapsed * 0.08) * 0.007
+        let corticalContextScale = corticalPulse * (1 - focusMix * 0.12)
+        flowRideCorticalContextRoot.scale = [
+            corticalContextScale,
+            corticalContextScale,
+            corticalContextScale
+        ]
+        flowRideCorticalContextRoot.orientation = simd_quatf(angle: corticalYaw, axis: [0, 1, 0])
+            * simd_quatf(angle: corticalPitch, axis: [1, 0, 0])
 
         // The local clock stops while held, so the vessel, ribbons, and cells
         // retain their exact pose instead of snapping to a generic still pose.
@@ -6150,6 +6503,31 @@ final class RBCJourneyScene {
         target.components.set(CollisionComponent(shapes: [.generateSphere(radius: collisionRadius)]))
         target.components.set(HoverEffectComponent())
         return target
+    }
+
+    private func sampleAtlasPolyline(
+        _ points: [SIMD3<Float>],
+        progress: Float
+    ) -> (point: SIMD3<Float>, tangent: SIMD3<Float>) {
+        guard points.count > 1 else {
+            return (points.first ?? .zero, SIMD3<Float>(0, 1, 0))
+        }
+        let lengths = zip(points.dropFirst(), points).map { simd_length($0.0 - $0.1) }
+        let total = max(lengths.reduce(0, +), 0.0001)
+        var distance = min(max(progress, 0), 0.9999) * total
+        for index in lengths.indices {
+            let length = max(lengths[index], 0.0001)
+            if distance <= length {
+                let from = points[index]
+                let to = points[index + 1]
+                let tangent = simd_normalize(to - from)
+                return (from + (to - from) * (distance / length), tangent)
+            }
+            distance -= length
+        }
+        let from = points[points.count - 2]
+        let to = points[points.count - 1]
+        return (to, simd_normalize(to - from))
     }
 
     private func addTubePath(
@@ -6500,11 +6878,17 @@ final class RBCJourneyScene {
 
     private func bloodCellMaterial() -> RealityKit.Material {
         var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: UIColor(red: 0.48, green: 0.010, blue: 0.020, alpha: 1))
-        material.emissiveColor = .init(color: UIColor(red: 0.15, green: 0.001, blue: 0.004, alpha: 1))
-        material.emissiveIntensity = 0.075
-        material.roughness = 0.46
+        // Keep the imported biconcave silhouette, but give it enough warm
+        // reflected light to read inside the dark lumen. This is a teaching
+        // accent—not a claim about measured oxygenation or blood chemistry.
+        material.baseColor = .init(tint: UIColor(red: 0.72, green: 0.028, blue: 0.050, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.22, green: 0.004, blue: 0.010, alpha: 1))
+        material.emissiveIntensity = 0.18
+        material.roughness = 0.52
         material.metallic = .init(floatLiteral: 0)
+        material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
         return material
     }
 
@@ -6550,10 +6934,69 @@ final class RBCJourneyScene {
     ) -> PhysicallyBasedMaterial {
         var material = source
         material.faceCulling = .none
-        material.blending = .transparent(opacity: .init(floatLiteral: 0.30))
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.18))
         material.readsDepth = true
         material.writesDepth = false
         return material
+    }
+
+    private func flowRideCorticalScaffoldMaterial() -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        // The folds are a living backdrop, not a red fog wall. Lowering their
+        // emission keeps the authored tissue readable while directional blood
+        // fronts remain the high-signal layer in the wearer's view.
+        material.baseColor = .init(tint: UIColor(red: 0.19, green: 0.045, blue: 0.095, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.18, green: 0.025, blue: 0.070, alpha: 1))
+        material.emissiveIntensity = 0.24
+        material.roughness = 0.72
+        material.metallic = .init(floatLiteral: 0)
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.18))
+        material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
+        return material
+    }
+
+    private func flowRideAtlasCortexMaterial() -> RealityKit.Material {
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(tint: UIColor(red: 0.48, green: 0.23, blue: 0.29, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.34, green: 0.06, blue: 0.13, alpha: 1))
+        material.emissiveIntensity = 0.34
+        material.roughness = 0.82
+        material.metallic = .init(floatLiteral: 0)
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.60))
+        material.faceCulling = .none
+        material.readsDepth = true
+        material.writesDepth = false
+        return material
+    }
+
+    private func flowRideAtlasArteryMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.12, blue: 0.18, alpha: 0.98),
+            intensity: 2.70
+        )
+    }
+
+    private func flowRideAtlasCircleMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.50, blue: 0.16, alpha: 0.36),
+            intensity: 0.82
+        )
+    }
+
+    private func flowRideAtlasRouteMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.72, blue: 0.28, alpha: 0.62),
+            intensity: 1.05
+        )
+    }
+
+    private func flowRideAtlasRouteFrontMaterial() -> RealityKit.Material {
+        glowMaterial(
+            color: UIColor(red: 1.00, green: 0.86, blue: 0.46, alpha: 0.94),
+            intensity: 2.15
+        )
     }
 
     private func replaceMaterials(in entity: Entity, with material: RealityKit.Material) {

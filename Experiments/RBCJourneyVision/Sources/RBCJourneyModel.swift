@@ -618,43 +618,43 @@ enum RBCFlowRideRoute: String, CaseIterable, Identifiable {
         switch (self, moment) {
         case (.overview, .orientation):
             RBCFamilyNarrationCue(
-                title: "The fork comes into view",
-                caption: "You are inside a teaching model of a cerebral artery. Broad currents, arrow fronts, and red cells all move downstream."
+                title: "You are inside a cerebral artery",
+                caption: "The three-dimensional brain atlas marks this teaching fork. Around you, layered currents, arrow fronts, and red cells move downstream while cortical folds remain visible beyond the vessel."
             )
         case (.overview, .passage):
             RBCFamilyNarrationCue(
                 title: "Two paths share one source",
-                caption: "Red cells divide between the branches. The layered motion makes direction visible; it does not measure speed, pressure, or your anatomy."
+                caption: "Follow the moving fronts away from the source. Red cells divide between the branches; this choreography shows direction, not measured speed, pressure, or your anatomy."
             )
         case (.overview, .arrival):
             RBCFamilyNarrationCue(
-                title: "Choose where to look next",
-                caption: "Follow the coral path toward a frontal-region guide, or the teal path to compare a neighboring route."
+                title: "The journey turns toward frontal cortex",
+                caption: "The guided journey turns into the coral frontal route next. The atlas marker moves with it, while the amber branch remains visible as neighboring context."
             )
         case (.frontal, .orientation):
             RBCFamilyNarrationCue(
-                title: "Turn with the frontal branch",
-                caption: "Coral light marks the selected route. The vessel shifts around you so your body can remain comfortably still."
+                title: "The locator enters the frontal branch",
+                caption: "Coral light marks the selected route and the atlas names your position. The vessel and cortical environment shift around you so your body can remain still."
             )
         case (.frontal, .passage):
             RBCFamilyNarrationCue(
-                title: "Flow carries oxygen forward",
-                caption: "Red blood cells pass through the lumen, the open space inside the vessel, toward smaller downstream branches."
+                title: "The route narrows toward cortex",
+                caption: "Red cells pass through the lumen, the open space inside the vessel, toward smaller arteries and arterioles. The moving fronts keep downstream direction visible."
             )
         case (.frontal, .arrival):
             RBCFamilyNarrationCue(
                 title: "A network meets the cortex",
-                caption: "Red cells stay inside this capillary bed while oxygen passes toward nearby tissue. The soft rings show that exchange conceptually, not real scale or measured flow."
+                caption: "At the capillary field, the atlas marks a new teaching scale. Red cells stay inside the vessels while soft rings show exchange with nearby tissue conceptually, not at real scale or measured flow."
             )
         case (.neighboring, .orientation):
             RBCFamilyNarrationCue(
-                title: "Turn toward the neighboring route",
-                caption: "Warm amber light marks a second route through the same branching network. The surrounding corridor moves; you do not."
+                title: "The locator enters a neighboring branch",
+                caption: "Warm amber light marks a second route through the same network. The map updates while the corridor and surrounding folds move around your still body."
             )
         case (.neighboring, .passage):
             RBCFamilyNarrationCue(
                 title: "One network, many routes",
-                caption: "Cerebral arteries branch again and again as they distribute blood toward different territories of the brain."
+                caption: "Cerebral arteries branch repeatedly as they distribute blood toward different territories. The moving cells make the shared source and divided paths visible."
             )
         case (.neighboring, .arrival):
             RBCFamilyNarrationCue(
@@ -691,6 +691,26 @@ enum RBCFamilyNarrationMoment: Int, CaseIterable, Identifiable, Sendable {
         case .passage: "FOLLOW"
         case .arrival: "CONNECT"
         }
+    }
+}
+
+/// One authored route through the arterial lesson. The wearer never has to
+/// infer which button advances the story: scene, locator, caption, and optional
+/// voice all derive from this single phase.
+enum RBCGuidedFlowTourPhase: Int, CaseIterable, Identifiable, Sendable {
+    case source
+    case division
+    case chooseFrontal
+    case enterFrontal
+    case narrowTowardCortex
+    case capillaryArrival
+    case complete
+
+    var id: Int { rawValue }
+
+    var progressNumber: String {
+        let bounded = min(rawValue + 1, 6)
+        return String(format: "%02d / 06", bounded)
     }
 }
 
@@ -789,6 +809,9 @@ final class RBCJourneyModel {
     var familyNarrationMoment: RBCFamilyNarrationMoment = .orientation
     var familyNarrationRun = 0
     var familyNarrationReplayRun = 0
+    var guidedFlowTourPhase: RBCGuidedFlowTourPhase = .source
+    var isGuidedFlowTourActive = false
+    var guidedFlowTourRun = 0
     let familyNarrationProofLocked: Bool
     var showTeachingPoints = true
     var systemReduceMotion = false
@@ -936,7 +959,7 @@ final class RBCJourneyModel {
         }
         isFrontalClotScenarioActive = arguments.contains("--proof-frontal-clot")
         isFlowRideActive = flowRideProofRequested
-        flowRideRoute = if arguments.contains("--proof-flow-route-frontal")
+        let initialFlowRideRoute: RBCFlowRideRoute = if arguments.contains("--proof-flow-route-frontal")
             || capillaryFocusProofRequested {
             .frontal
         } else if arguments.contains("--proof-flow-route-neighbor") {
@@ -944,17 +967,31 @@ final class RBCJourneyModel {
         } else {
             .overview
         }
+        flowRideRoute = initialFlowRideRoute
         isCapillaryFieldFocused = capillaryFocusProofRequested
         anteriorPassagePhase = anteriorPassageProofPhase
         isAnteriorGatewayTransitionActive = anteriorGatewayTransitionProofRequested
         anteriorGatewayTransitionProofProgress = requestedAnteriorGatewayTransitionProgress
         flowRideProofPhase = requestedFlowRideProofPhase
         posteriorVoyagePhase = posteriorVoyageProofPhase
-        familyNarrationEnabled = familyGuideProofRequested || regionFamilyCompanionProofRequested
+        familyNarrationEnabled = flowRideProofRequested || familyGuideProofRequested || regionFamilyCompanionProofRequested
         familyNarrationConfigured = familyGuideProofRequested || regionFamilyCompanionProofRequested
-        familyNarrationMoment = familyGuideBeatIndex
+        let initialFamilyNarrationMoment = familyGuideBeatIndex
             .flatMap(RBCFamilyNarrationMoment.init(rawValue:))
             ?? .orientation
+        familyNarrationMoment = initialFamilyNarrationMoment
+        isGuidedFlowTourActive = flowRideProofRequested
+        guidedFlowTourPhase = if capillaryFocusProofRequested {
+            .capillaryArrival
+        } else if initialFlowRideRoute == .frontal {
+            initialFamilyNarrationMoment == .passage ? .narrowTowardCortex : .enterFrontal
+        } else {
+            switch initialFamilyNarrationMoment {
+            case .orientation: .source
+            case .passage: .division
+            case .arrival: .chooseFrontal
+            }
+        }
         familyNarrationProofLocked = familyGuideBeatArgument != nil
         var initialOpenPortals = Set(0..<min(max(portalCount, 0), 3))
         if let initialTransfer, RBCVesselPortal(rawValue: initialTransfer) != nil {
@@ -1431,6 +1468,20 @@ final class RBCJourneyModel {
         "FAMILY GUIDE  ·  \(familyNarrationMoment.guidanceVerb)  ·  \(familyNarrationMoment.number) / 03"
     }
 
+    var guidedFlowTourProgressLabel: String {
+        guidedFlowTourPhase == .complete
+            ? "GUIDED JOURNEY  ·  COMPLETE"
+            : "GUIDED JOURNEY  ·  \(guidedFlowTourPhase.progressNumber)"
+    }
+
+    var guidedFlowTourSequenceKey: String {
+        "\(isFlowRideActive)-\(isGuidedFlowTourActive)-\(guidedFlowTourRun)"
+    }
+
+    var isGuidedFlowTourPlaying: Bool {
+        isFlowRideActive && isGuidedFlowTourActive && guidedFlowTourPhase != .complete
+    }
+
     var familyNarrationAdvanceTitle: String {
         if flowRideRoute == .frontal,
            familyNarrationMoment == .passage,
@@ -1447,6 +1498,7 @@ final class RBCJourneyModel {
     }
 
     func selectFlowRideRoute(_ route: RBCFlowRideRoute) {
+        guard !isGuidedFlowTourActive else { return }
         guard flowRideRoute != route else { return }
         flowRideRoute = route
         isCapillaryFieldFocused = false
@@ -1478,11 +1530,67 @@ final class RBCJourneyModel {
     }
 
     func toggleCapillaryFieldFocus() {
+        guard !isGuidedFlowTourActive else { return }
         guard isFlowRideActive, flowRideRoute == .frontal else { return }
         isCapillaryFieldFocused.toggle()
         if isCapillaryFieldFocused {
             setFamilyNarrationMoment(.arrival)
         }
+    }
+
+    func advanceGuidedFlowTour() {
+        guard isGuidedFlowTourPlaying,
+              let next = RBCGuidedFlowTourPhase(rawValue: guidedFlowTourPhase.rawValue + 1)
+        else { return }
+        applyGuidedFlowTourPhase(next)
+    }
+
+    func restartGuidedFlowTour() {
+        guard isFlowRideActive else { return }
+        isGuidedFlowTourActive = true
+        familyNarrationEnabled = true
+        guidedFlowTourRun += 1
+        applyGuidedFlowTourPhase(.source)
+        isPaused = false
+    }
+
+    func enterFreeFlowExploration() {
+        guard isFlowRideActive else { return }
+        isGuidedFlowTourActive = false
+        familyNarrationEnabled = false
+        isPaused = false
+    }
+
+    private func applyGuidedFlowTourPhase(_ phase: RBCGuidedFlowTourPhase) {
+        guidedFlowTourPhase = phase
+        switch phase {
+        case .source:
+            flowRideRoute = .overview
+            isCapillaryFieldFocused = false
+            familyNarrationMoment = .orientation
+        case .division:
+            flowRideRoute = .overview
+            isCapillaryFieldFocused = false
+            familyNarrationMoment = .passage
+        case .chooseFrontal:
+            flowRideRoute = .overview
+            isCapillaryFieldFocused = false
+            familyNarrationMoment = .arrival
+        case .enterFrontal:
+            flowRideRoute = .frontal
+            isCapillaryFieldFocused = false
+            familyNarrationMoment = .orientation
+        case .narrowTowardCortex:
+            flowRideRoute = .frontal
+            isCapillaryFieldFocused = false
+            familyNarrationMoment = .passage
+        case .capillaryArrival, .complete:
+            flowRideRoute = .frontal
+            isCapillaryFieldFocused = true
+            familyNarrationMoment = .arrival
+        }
+        isPaused = false
+        print("RBC_GUIDED_FLOW_TOUR=PHASE phase=\(phase.rawValue) progress=\(phase.progressNumber) route=\(flowRideRoute.id) capillary=\(isCapillaryFieldFocused)")
     }
 
     var progress: Double {
@@ -1821,6 +1929,10 @@ final class RBCJourneyModel {
         posteriorVoyagePhase = nil
         flowRideRoute = .overview
         isCapillaryFieldFocused = false
+        isGuidedFlowTourActive = true
+        guidedFlowTourPhase = .source
+        guidedFlowTourRun += 1
+        familyNarrationEnabled = true
         familyNarrationMoment = .orientation
         familyNarrationRun += 1
         isPaused = false
@@ -1840,6 +1952,8 @@ final class RBCJourneyModel {
         isAnteriorGatewayTransitionActive = false
         posteriorVoyagePhase = nil
         isCapillaryFieldFocused = false
+        isGuidedFlowTourActive = false
+        guidedFlowTourPhase = .source
         familyNarrationEnabled = false
         familyNarrationMoment = .orientation
         familyNarrationRun += 1

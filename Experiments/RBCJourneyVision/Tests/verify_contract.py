@@ -147,6 +147,13 @@ checks = {
         "SceneEvents.Update", "guard !flowRideRuntimeHeld, flowRideRuntimeProofPhase == nil else { return }",
         "retainedAuthoredFlowRideCellCount",
     ]) and "TimelineView" not in immersive and "flowRideCells" not in scene,
+    "startup_transitions_outlive_warmup": all(token in scene for token in [
+        "private var frameWarmupRemaining: Float = 0.20",
+        "self.advanceRegionTransferFrame(deltaTime: deltaTime)",
+        "self.advanceAnteriorGatewayTransitionFrame(deltaTime: deltaTime)",
+        "if self.frameWarmupRemaining > 0",
+    ]) and scene.index("self.advanceRegionTransferFrame(deltaTime: deltaTime)")
+        < scene.index("if self.frameWarmupRemaining > 0"),
     "truthful_portal_feedback": all(token in model + gestures for token in [
         "func openNextPortal() -> Bool", "if model.openNextPortal()",
         "all three portals already open",
@@ -301,7 +308,8 @@ checks = {
     "frontal_region_directional_flow": all(token in model + scene + hud for token in [
         "case frontalLobe", "frontal-region-orientation-outline-not-segmentation",
         "frontal-lobe-directional-blood-flow-field", "frontal-flow-direction-arrow",
-        "generateCone", "CLINICIAN DETAIL  ·",
+        "generateCone", "CLINICIAN DETAIL  ·", "INSIDE  ·", "macroContextScale",
+        "Frontal lobe · capillary field",
     ]),
     "brain_observatory_views": all(token in model + scene + hud for token in [
         "enum RBCRegionVisualizationMode", "case locate", "case xray", "case flow",
@@ -318,7 +326,7 @@ checks = {
     ]),
     "inhabit_the_flow_ride": all(token in model + scene + hud + immersive for token in [
         "--proof-flow-ride", "inside-arterial-lumen-flow-ride", "startFlowRide",
-        "stopFlowRide", "Enter this branch", "Pause ride", "flowRideActive",
+        "stopFlowRide", "Enter this branch", "Pause journey", "flowRideActive",
         "Combined_Blood_RBC_", "Combined_Blood_Arrow_",
     ]),
     "continuous_deforming_flow_field": all(token in scene + immersive for token in [
@@ -334,11 +342,11 @@ checks = {
         "continuous-layered-blood-current-not-cfd-strand-", "flow_strands=",
         "tangent-aligned-blood-current-front-not-velocity-field-",
         "blood-current-direction-arrowhead", "blood-current-direction-fading-wake",
-        "Twenty-eight clones", "for index in 0..<28", "warm amber", "Teal remains destination navigation only",
+        "Forty-two clones", "for index in 0..<42", "warm amber", "teal remains",
         "velocity profile", "hematocrit", "multi-cell simulation",
     ]),
     "opt_in_family_realtime_guide": all(token in model + immersive + hud + narrator + realtime_proxy + realtime_runner for token in [
-        "--proof-family-guide", "Family guide", "familyNarrationEnabled",
+        "--proof-family-guide", "Optional voice", "familyNarrationEnabled",
         "gpt-realtime-2.1", "RBC_REALTIME_PROXY_URL", "marin",
         "X-RBC-Narration-Model", "X-RBC-Narration-Copy-SHA256",
         "X-RBC-Narration-Transcript-SHA256", "canonicalNarrationSHA256",
@@ -386,11 +394,11 @@ checks = {
     ]),
     "paced_family_voyage_guide": all(token in model + hud + immersive for token in [
         "enum RBCFamilyNarrationMoment", "case orientation", "case passage", "case arrival",
-        "familyNarration(for moment:", "The fork comes into view",
-        "Flow carries oxygen forward", "Anatomy can vary",
+        "familyNarration(for moment:", "You are inside a cerebral artery",
+        "The route narrows toward cortex", "Anatomy can vary",
         "familyNarrationSequenceKey", "selectFlowRideRoute", "familyNarrationProofLocked",
         "--proof-family-guide-beat-", "minimumDwellSeconds",
-        "Captions work now; connect the local guide for voice.",
+        "Caption-led; optional voice is not connected.",
     ]) and "|| (model.proofMode && model.familyNarrationEnabled)" not in immersive,
     "parent_paced_family_scaffold": all(token in model + hud + immersive + narrator for token in [
         "NOTICE", "FOLLOW", "CONNECT", "minimumDwellSeconds",
@@ -398,7 +406,16 @@ checks = {
         "familyNarrationAdvanceTitle", "Enter field", "automaticMoments",
         "familyNarrator.isBusy", "requestTask != nil || player != nil",
         "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
-    ]) and "model.flowRideRoute == .frontal && !model.familyNarrationEnabled" in hud,
+    ]),
+    "automatic_guided_vascular_journey": all(token in model + hud + immersive + narrator for token in [
+        "enum RBCGuidedFlowTourPhase", "case source", "case division", "case chooseFrontal",
+        "case enterFrontal", "case narrowTowardCortex", "case capillaryArrival", "case complete",
+        "guidedFlowTourSequenceKey", "isGuidedFlowTourPlaying", "advanceGuidedFlowTour",
+        "restartGuidedFlowTour", "applyGuidedFlowTourPhase", "while model.isGuidedFlowTourPlaying",
+        "Pause journey", "Resume journey", "Journey complete", "minimumDwellSeconds",
+        "familyNarrator.state == .loading", "familyNarrator.state == .speaking",
+        "AVAudioPlayerDelegate", "audioPlayerDidFinishPlaying",
+    ]),
     "cortical_microarchitecture_room": all(token in model + scene + hud + medical_canon for token in [
         "case corticalMicroarchitecture", "Cortical microarchitecture", "Cortical layers",
         "cortical-microarchitecture-constellation-outline-not-segmentation",
@@ -496,24 +513,54 @@ checks = {
         "familyNarrationText", "activeBrainstemTitle", "activeBrainstemSubtitle",
         "arterial walls remain red", "spatial storytelling device, not anatomical",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
-    "user_triggered_capillary_focus": all(token in model + scene + hud + immersive for token in [
+    "guided_capillary_focus": all(token in model + scene + hud + immersive for token in [
         "--proof-capillary-focus", "isCapillaryFieldFocused",
-        "toggleCapillaryFieldFocus", "Enter capillary field", "Return to artery",
+        "toggleCapillaryFieldFocus", "case .capillaryArrival, .complete",
         "frontal-capillary-field-focus-target", "isCapillaryFocusTarget",
         "flowRideCapillaryFocusMix", "flowRideFrontalOutlineRoot",
         "flowRideFrontalArterioleRoot", "flowRideCapillaryWebRoot",
         "The network expands around you while your body stays still.",
-        "setFamilyNarrationMoment(.arrival)",
+        "familyNarrationMoment = .arrival",
     ]) and "PerspectiveCameraComponent" not in model + scene + hud + immersive,
     "capillary_flow_to_exchange_story": all(token in scene + model + medical_canon for token in [
         "capillary-flow-front-arrowhead", "capillary-flow-front-tail",
         "flowRideCapillaryExchangeRipples", "exchange_ripples=6",
         "frontal-capillary-exchange-ripple-not-diffusion-measurement-",
         "capillary-to-tissue-exchange-wave", "The red cell and arrow fronts remain intravascular",
-        "Red cells stay inside this capillary bed while oxygen passes toward nearby tissue.",
-        "The soft rings show that exchange conceptually",
+        "Red cells stay inside the vessels while soft rings show exchange with nearby tissue conceptually",
+        "not at real scale or measured flow",
         "oxygen moves from blood toward tissue by diffusion",
-    ]) and "oxygen concentration measurement" not in scene + model,
+    ]) and "oxygen concentration measurement" not in scene + model
+        and "ripple.components.set(OpacityComponent(opacity: 0))" not in scene,
+    "route_front_selection_contrast": all(token in scene for token in [
+        "let selectedScale: Float = selected ? 1 : 0.18",
+        "transform-only contrast, avoiding per-frame component writes",
+    ]),
+    "flow_ride_brain_locator": all(token in scene + model + hud + immersive for token in [
+        "RBCFlowRideMiniMapHUD", "HStack(alignment: .bottom, spacing: 18)",
+        "BRAIN ATLAS", "ANTERIOR VIEW", "YOU ARE HERE", "Frontal lobe · capillary field",
+        "registered-three-dimensional-brain-route-locator", "miniature-registered-cortex-and-cerebral-arteries",
+        "geometry-derived-spatial-atlas-locator-", "Flow_Route_Anterior_Communicating",
+        "Right_M1_Large_Vessel_Occlusion", "Cerebral_Cortex_R", "patient_registration=false",
+        "capillary_proxy=true", "The atlas is an orientation instrument",
+        "geometry-derived-atlas-route-trace", "geometry-derived-atlas-route-front-",
+        "flowRideSpatialAtlasRouteFronts", "sampleAtlasPolyline",
+        "activeJourneyStage", "FORK", "FRONTAL", "CORTEX",
+        "geometry-derived-atlas-region-labels", "generateText",
+        "geometry-derived-atlas-label-anchor-", "atlas-region-label-stem",
+    ]) and "Canvas {" not in hud,
+    "living_inside_brain_cortical_context": all(token in scene for token in [
+        "surrounding-inside-brain-cortical-fold-scaffold-not-segmentation",
+        "room-scale-inside-out-registered-cortical-fold-environment",
+        "flowRideCorticalScaffoldMaterial", "slow_living_motion=true",
+        "not_neuroplasticity=true", "Pause and Reduce Motion hold the same clock",
+    ]),
+    "map_aware_optional_realtime_voiceover": all(token in model + narrator + realtime_proxy for token in [
+        "The three-dimensional brain atlas marks this teaching fork",
+        "The atlas marker moves with it",
+        "The locator enters the frontal branch",
+        "gpt-realtime-2.1", "speakExactCaption", "realtime_transcript_mismatch",
+    ]),
 }
 
 failed = [name for name, passed in checks.items() if not passed]
