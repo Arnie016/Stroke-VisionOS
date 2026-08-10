@@ -158,9 +158,33 @@ struct RBCJourneyImmersiveView: View {
             else { return }
             model.completePendingRegionTransfer()
         }
+        .task(id: model.guidedFlowTourSequenceKey) {
+            guard model.isGuidedFlowTourPlaying,
+                  !model.familyNarrationProofLocked
+            else { return }
+
+            while model.isGuidedFlowTourPlaying {
+                let heldPhase = model.guidedFlowTourPhase
+                var remainingSeconds = model.familyNarrationCue.minimumDwellSeconds
+                while remainingSeconds > 0
+                    || familyNarrator.state == .loading
+                    || familyNarrator.state == .speaking {
+                    try? await Task.sleep(for: .milliseconds(250))
+                    guard !Task.isCancelled,
+                          model.isGuidedFlowTourPlaying,
+                          model.guidedFlowTourPhase == heldPhase
+                    else { return }
+                    if !model.isPaused {
+                        remainingSeconds -= 0.25
+                    }
+                }
+                model.advanceGuidedFlowTour()
+            }
+        }
         .task(id: model.familyNarrationSequenceKey) {
             guard model.isFlowRideActive,
                   model.familyNarrationEnabled,
+                  !model.isGuidedFlowTourActive,
                   !model.familyNarrationProofLocked
             else { return }
 

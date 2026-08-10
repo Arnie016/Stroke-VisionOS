@@ -266,14 +266,22 @@ struct RBCRegionInfoHUD: View {
             let occipitalActive = region == .occipitalLobe
             let brainstemActive = region == .brainstem
             let regionCompanionActive = !flowRideActive && model.familyNarrationEnabled
-            VStack(alignment: .leading, spacing: 9) {
-                Text(flowRideActive && model.familyNarrationEnabled
+            HStack(alignment: .bottom, spacing: 18) {
+                if flowRideActive {
+                    RBCFlowRideMiniMapHUD()
+                        .environment(model)
+                }
+
+                VStack(alignment: .leading, spacing: 9) {
+                Text(flowRideActive && model.isGuidedFlowTourActive
+                    ? model.guidedFlowTourProgressLabel
+                    : (flowRideActive && model.familyNarrationEnabled
                     ? model.familyNarrationProgressLabel
                     : (flowRideActive
                         ? "RIDE  ·  ARTERIAL LUMEN"
                         : (regionCompanionActive
                             ? "FAMILY COMPANION  ·  \(region.shortTitle.uppercased())"
-                            : "INSIDE  ·  \(region.shortTitle.uppercased())")))
+                            : "INSIDE  ·  \(region.shortTitle.uppercased())"))))
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .tracking(1.3)
                     .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
@@ -512,34 +520,48 @@ struct RBCRegionInfoHUD: View {
 
                 if region == .arterialLumen {
                     VStack(alignment: .leading, spacing: 7) {
-                        HStack(spacing: 7) {
-                            if model.isFlowRideActive {
-                                Button(model.isPaused ? "Resume ride" : "Pause ride", systemImage: model.isPaused ? "play.fill" : "pause.fill") {
-                                    model.isPaused.toggle()
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .tint(model.isPaused ? .orange : Color(red: 0.23, green: 0.67, blue: 0.60))
+                        if model.isGuidedFlowTourActive {
+                            HStack(spacing: 7) {
+                                if model.guidedFlowTourPhase == .complete {
+                                    Label("Journey complete", systemImage: "checkmark.circle.fill")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(Color(red: 0.48, green: 0.93, blue: 0.78))
+                                } else {
+                                    Button(
+                                        model.isPaused ? "Resume journey" : "Pause journey",
+                                        systemImage: model.isPaused ? "play.fill" : "pause.fill"
+                                    ) {
+                                        model.isPaused.toggle()
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(model.isPaused ? .orange : Color(red: 0.23, green: 0.67, blue: 0.60))
 
-                                Button("Leave branch", systemImage: "arrow.uturn.backward") {
-                                    model.stopFlowRide()
+                                    Text(model.familyNarrationConfigured
+                                        ? "Optional voice follows this exact caption."
+                                        : "Caption-led; optional voice is not connected.")
+                                        .font(.caption2)
+                                        .foregroundStyle(.white.opacity(0.62))
                                 }
-                                .buttonStyle(.bordered)
-
-                                Button("Exit", systemImage: "xmark") {
-                                    Task { await dismissImmersiveSpace() }
-                                }
-                                .buttonStyle(.bordered)
-                            } else {
-                                Button("Ride with flow", systemImage: "arrow.forward.circle.fill") {
-                                    model.startFlowRide()
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .tint(Color(red: 0.23, green: 0.67, blue: 0.60))
                             }
-                        }
-                        .buttonBorderShape(.capsule)
+                            .buttonBorderShape(.capsule)
 
-                        if model.isFlowRideActive {
+                            if model.guidedFlowTourPhase == .complete {
+                                HStack(spacing: 8) {
+                                    Button("Replay journey", systemImage: "arrow.counterclockwise") {
+                                        model.restartGuidedFlowTour()
+                                    }
+
+                                    Button("Explore", systemImage: "hand.point.up.left.fill") {
+                                        model.enterFreeFlowExploration()
+                                    }
+
+                                    Button("Exit", systemImage: "xmark") {
+                                        Task { await dismissImmersiveSpace() }
+                                    }
+                                }
+                                .buttonBorderShape(.capsule)
+                            }
+                        } else if model.isFlowRideActive {
                             HStack(spacing: 7) {
                                 ForEach(RBCFlowRideRoute.allCases) { route in
                                     let selected = model.flowRideRoute == route
@@ -548,98 +570,26 @@ struct RBCRegionInfoHUD: View {
                                     }
                                     .font(.caption.weight(.semibold))
                                     .buttonStyle(.bordered)
-                                    .tint(selected
-                                        ? (route == .frontal
-                                            ? Color(red: 0.92, green: 0.20, blue: 0.28)
-                                            : Color(red: 0.23, green: 0.67, blue: 0.60))
-                                        : .white.opacity(0.30))
-                                    .accessibilityLabel("Show \(route.shortTitle.lowercased()) inside the arterial fork")
+                                    .tint(selected ? Color(red: 0.92, green: 0.20, blue: 0.28) : .white.opacity(0.30))
+                                }
+
+                                Button("Replay guide", systemImage: "play.circle.fill") {
+                                    model.restartGuidedFlowTour()
+                                }
+                                .buttonStyle(.borderedProminent)
+
+                                Button("Leave", systemImage: "arrow.uturn.backward") {
+                                    model.stopFlowRide()
                                 }
                             }
                             .buttonBorderShape(.capsule)
-
-                            if model.flowRideRoute == .frontal && !model.familyNarrationEnabled {
-                                Button(
-                                    model.isCapillaryFieldFocused ? "Return to artery" : "Enter capillary field",
-                                    systemImage: model.isCapillaryFieldFocused
-                                        ? "arrow.down.right.and.arrow.up.left"
-                                        : "circle.hexagongrid.fill"
-                                ) {
-                                    model.toggleCapillaryFieldFocus()
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .tint(model.isCapillaryFieldFocused
-                                    ? Color(red: 0.72, green: 0.17, blue: 0.28)
-                                    : Color(red: 0.90, green: 0.34, blue: 0.30))
-                                .accessibilityLabel(model.isCapillaryFieldFocused
-                                    ? "Return from the illustrative capillary field to the artery"
-                                    : "Expand the illustrative capillary field around you")
+                        } else {
+                            Button("Start guided journey", systemImage: "play.fill") {
+                                model.startFlowRide()
                             }
-
-                            HStack(spacing: 8) {
-                                Button(
-                                    model.familyNarrationEnabled ? "End guide" : "Family guide",
-                                    systemImage: model.familyNarrationEnabled ? "waveform.slash" : "waveform"
-                                ) {
-                                    model.toggleFamilyNarration()
-                                }
-                                .buttonStyle(.bordered)
-                                .tint(model.familyNarrationEnabled ? Color.indigo : nil)
-                                .accessibilityLabel(model.familyNarrationEnabled
-                                    ? "Turn off the optional family narration"
-                                    : "Start the optional three-part family guide")
-
-                                Text(model.familyNarrationConfigured
-                                    ? "Voice follows the matching caption."
-                                    : "Captions work now; connect the local guide for voice.")
-                                    .font(.caption2)
-                                    .foregroundStyle(.white.opacity(0.62))
-
-                                if model.familyNarrationEnabled {
-                                    HStack(spacing: 4) {
-                                        ForEach(RBCFamilyNarrationMoment.allCases) { moment in
-                                            Capsule()
-                                                .fill(moment.rawValue <= model.familyNarrationMoment.rawValue
-                                                    ? Color.indigo
-                                                    : Color.white.opacity(0.16))
-                                                .frame(width: 13, height: 3)
-                                        }
-                                    }
-                                    .accessibilityLabel(model.familyNarrationProgressLabel)
-                                }
-                            }
-
-                            if model.familyNarrationEnabled {
-                                HStack(spacing: 8) {
-                                    Spacer(minLength: 0)
-
-                                    Button("Hear again", systemImage: "arrow.counterclockwise") {
-                                        model.replayFamilyNarration()
-                                    }
-                                    .font(.caption.weight(.semibold))
-                                    .buttonStyle(.bordered)
-                                    .disabled(!model.familyNarrationConfigured)
-                                    .accessibilityLabel("Hear the current family explanation again")
-
-                                    if model.familyNarrationMoment != .arrival {
-                                        Button(
-                                            model.familyNarrationAdvanceTitle,
-                                            systemImage: model.familyNarrationAdvanceTitle == "Enter field"
-                                                ? "circle.hexagongrid.fill"
-                                                : "arrow.right"
-                                        ) {
-                                            model.advanceFamilyNarration()
-                                        }
-                                        .font(.caption.weight(.semibold))
-                                        .buttonStyle(.borderedProminent)
-                                        .tint(Color.indigo)
-                                        .disabled(model.familyNarrationProofLocked)
-                                        .accessibilityLabel(model.familyNarrationAdvanceTitle == "Enter field"
-                                            ? "Enter the capillary field and hear why this arrival matters"
-                                            : "Move to the next family explanation")
-                                    }
-                                }
-                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(Color(red: 0.23, green: 0.67, blue: 0.60))
+                            .buttonBorderShape(.capsule)
                         }
                     }
                 }
@@ -688,11 +638,12 @@ struct RBCRegionInfoHUD: View {
                     }
                     .buttonBorderShape(.capsule)
                 }
+                }
+                .padding(14)
+                .frame(width: 540, alignment: .leading)
+                .shadow(color: .black.opacity(0.82), radius: 12, y: 3)
+                .accessibilityElement(children: .contain)
             }
-            .padding(14)
-            .frame(width: 540, alignment: .leading)
-            .shadow(color: .black.opacity(0.82), radius: 12, y: 3)
-            .accessibilityElement(children: .contain)
         }
     }
 }
@@ -848,6 +799,104 @@ struct RBCRegionPortalReelHUD: View {
         .padding(12)
         .frame(width: 610)
         .glassBackgroundEffect(in: .rect(cornerRadius: 22))
+    }
+}
+
+/// A compact game-like locator for the arterial ride. It is deliberately
+/// non-interactive: route choice remains in the primary lesson, while this
+/// lower-corner legend answers “where am I?” beside the registered 3D atlas.
+/// The capillary endpoint remains a cortical teaching proxy and must not be
+/// read as patient registration, vessel territory, or live gaze.
+struct RBCFlowRideMiniMapHUD: View {
+    @Environment(RBCJourneyModel.self) private var model
+
+    private var locationTitle: String {
+        if model.isCapillaryFieldFocused { return "Frontal capillary field" }
+        return switch model.flowRideRoute {
+        case .overview: "Cerebral artery fork"
+        case .frontal: "Frontal branch"
+        case .neighboring: "Neighboring branch"
+        }
+    }
+
+    private var locationColor: Color {
+        switch model.flowRideRoute {
+        case .overview, .frontal: Color(red: 0.98, green: 0.24, blue: 0.28)
+        case .neighboring: Color(red: 1.00, green: 0.55, blue: 0.18)
+        }
+    }
+
+    private var routeDetail: String {
+        if model.isCapillaryFieldFocused {
+            return "Representative frontal cortical surface"
+        }
+        return switch model.flowRideRoute {
+        case .overview: "Circle of Willis → cerebral branch fork"
+        case .frontal: "Named right-M1 teaching locus → frontal route"
+        case .neighboring: "Cerebral fork → neighboring teaching route"
+        }
+    }
+
+    private var locatorMethod: String {
+        model.isCapillaryFieldFocused ? "CORTICAL PROXY" : "GEOMETRY-DERIVED"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 7) {
+                Image(systemName: "brain.head.profile.fill")
+                    .foregroundStyle(.white.opacity(0.54))
+                Text("BRAIN ATLAS")
+                    .font(.caption2.monospaced().weight(.bold))
+                    .tracking(1.4)
+                Spacer()
+                Text("ANTERIOR VIEW")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.white.opacity(0.38))
+            }
+
+            Text(locationTitle)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Text(routeDetail)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.68))
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 6) {
+                Image(systemName: model.isCapillaryFieldFocused ? "scope" : "viewfinder")
+                Text(locatorMethod)
+                    .font(.caption2.monospaced().weight(.bold))
+                    .tracking(0.8)
+            }
+            .foregroundStyle(locationColor)
+
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(locationColor)
+                    .frame(width: 7, height: 7)
+                    .shadow(color: locationColor.opacity(0.72), radius: 5)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("YOU ARE HERE")
+                        .font(.caption2.monospaced().weight(.bold))
+                        .tracking(1.0)
+                        .foregroundStyle(.white.opacity(0.48))
+                    Text(locationTitle)
+                        .font(.caption.weight(.semibold))
+                }
+                Spacer()
+                Text("MARKER ABOVE")
+                    .font(.caption2.monospaced().weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.42))
+            }
+        }
+        .padding(13)
+        .frame(width: 260)
+        .background(.black.opacity(0.16), in: .rect(cornerRadius: 20))
+        .glassBackgroundEffect(in: .rect(cornerRadius: 20))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Three dimensional brain teaching atlas, anterior view. You are inside the \(locationTitle.lowercased()).")
     }
 }
 
