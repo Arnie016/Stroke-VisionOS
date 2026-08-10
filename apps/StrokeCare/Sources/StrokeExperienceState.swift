@@ -333,6 +333,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 @MainActor
 final class StrokeExperienceState: ObservableObject {
     let teachingCase = TeachingStrokeCase.case78
+    private var proofRouteHasRun = false
 
     @Published var procedureStep: StrokeProcedureStep = .chooseCase
     @Published var audienceLens: StrokeAudienceLens = .family
@@ -380,6 +381,12 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var planPreviewProgress: Double = 0
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
+
+    func consumeProofRouteLaunch() -> Bool {
+        guard !proofRouteHasRun else { return false }
+        proofRouteHasRun = true
+        return true
+    }
 
     func selectTeachingCase() {
         spatialCaseDocked = true
@@ -1059,6 +1066,16 @@ final class StrokeExperienceState: ObservableObject {
         pointField = .regions
         selectedPointEntityName = "clinician-region-point-field-point-0"
         selectedPointLabel = "Example affected area"
+    }
+
+    /// Combines the registered flow lesson with the separated-layer state so
+    /// the two flow USDZ hierarchies can be checked against their artery parent
+    /// without relying on camera-driven UI automation.
+    func prepareFlowLayerStudyProof() {
+        prepareLayerStudyProof()
+        pointField = .procedure
+        selectedPointEntityName = "clinician-procedure-point-field-point-2"
+        selectedPointLabel = "Example blockage"
     }
 
     func prepareProcedureFieldProof() {

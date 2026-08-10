@@ -11,9 +11,12 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 - No newer asset delta exists between this feature branch and `origin/main` at
   the time of the fetch. The current main-only delta concerns XCAT acceptance
   files, not anatomy or tool assets.
-- Stroke Care deliberately bundles an eight-asset runtime shortlist today. A
-  catalog file existing in Git is not proof that it is registered, clinically
-  suitable, performant, or visible in the app.
+- Stroke Care deliberately bundles **ten story assets plus two clinician-only
+  concept tools** today. The story count includes the same-frame static and
+  animated qualitative flow cues. The drill and forceps remain generic,
+  presenter-only concepts pending specialist review. A catalog file existing
+  in Git is not proof that it is registered, clinically suitable, performant,
+  or visible in the app.
 
 ## Runtime candidates
 

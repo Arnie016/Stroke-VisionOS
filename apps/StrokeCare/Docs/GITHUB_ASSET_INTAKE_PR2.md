@@ -4,16 +4,19 @@ Reviewed: 2026-08-08 17:21 SGT
 Pull request: `Arnie016/Stroke-VisionOS#2`  
 Base: `origin/main` at `9f8af3e`  
 Reviewed head: `9453176e4ccbe87ba7c23f143becc0c67d1caefa`  
-State: open draft. Eight exact files were copied into the local Stroke Care
-prototype from the reviewed commit; the PR was not merged or modified.
+State: open draft. Eight exact story files were originally copied into the
+local Stroke Care prototype from the reviewed commit; the live runtime now adds
+two registered qualitative-flow story assets and two presenter-only concept
+tools. This historical intake did not merge or modify the PR.
 
 ## Decision
 
 The asset contribution is technically substantial and much better organized
 after the addition of `MASTER.md`. The 65-file source catalog remains intact in
-its own repository. Stroke Care now bundles only the eight-file shortlist below
-and loads the registered-v2 subset at runtime; this is a local integration test,
-not a public-distribution, clinical, or device-performance clearance.
+its own repository. The table below records the original eight-story intake;
+the live project now declares ten story assets plus two clinician-only concept
+tools. This is technical integration—not public-distribution, clinical, or
+device-performance clearance.
 
 The current pull request contains 65 manifest-backed USDZ packages (36 v2 and
 29 prototype-v1), totalling 180,427,924 bytes. A Git-object hash scan found no
@@ -144,7 +147,9 @@ clinician-training module.
   derivatives require the recorded ShareAlike notices. Mixed assemblies inherit
   both relevant obligations.
 - The PR reports 65/65 strict USD-checker passes and 36/36 RealityKit load
-  passes. This intake independently rechecked only the eight shortlisted files.
+  passes. This historical intake independently rechecked only the original
+  eight shortlisted story files; the live contract inventories all 12 currently
+  declared USDZ resources.
 - GitHub currently shows only the GitGuardian check as successful; it does not
   show a visionOS build, device profile, or automated clinical-content gate.
 - Technical validation is not clinical validity. Specialist, patient-language,

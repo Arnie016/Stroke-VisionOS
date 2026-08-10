@@ -100,7 +100,9 @@ implemented, but this visual pass is not the final design.
 
 - Five amber points form a sparse cause-and-effect reference field: approach,
   branching, example blockage, changed downstream flow, and affected territory.
-- Six low-motion chevrons share the droplet/vessel centreline and show direction.
+- The complete same-frame authored overlay supplies route lines and directional
+  chevrons while the baked marker loop shows movement. Pause and Reduce Motion
+  freeze movement without dropping route detail.
 - Switching field changes the meaning of the points; it does not add a second
   simultaneous layer of labels.
 - Only the selected point expands. The field explains why the story changes;
@@ -180,7 +182,7 @@ actions. It does not see surgical tools, evidence drafting, or procedure
 precision controls.
 
 **Presenter** receives the secondary rail only after the case is docked. Its
-compact menus change act, layer presentation, and point-field flavor. The rail
+direct gaze-sized controls change act, layer presentation, and point-field flavor. The rail
 is not the product's primary surface; the anatomy remains the centre of action.
 
 ## Implementation map

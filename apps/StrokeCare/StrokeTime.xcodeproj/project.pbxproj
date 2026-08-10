@@ -24,6 +24,8 @@
 		7F98B5090691342A2B4E810F /* StrokeImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */; };
 		858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */; };
 		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
+		A11111111111111111111111 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B11111111111111111111111 /* cerebral_bloodflow_animation_v2.usdz */; };
+		A22222222222222222222222 /* circle_of_willis_flow_overlay_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = B22222222222222222222222 /* circle_of_willis_flow_overlay_v2.usdz */; };
 		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
@@ -49,6 +51,8 @@
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
 		B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeModelBoardView.swift; sourceTree = "<group>"; };
+		B11111111111111111111111 /* cerebral_bloodflow_animation_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_animation_v2.usdz; sourceTree = "<group>"; };
+		B22222222222222222222222 /* circle_of_willis_flow_overlay_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = circle_of_willis_flow_overlay_v2.usdz; sourceTree = "<group>"; };
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
@@ -130,6 +134,8 @@
 			children = (
 				8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */,
 				7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */,
+				B11111111111111111111111 /* cerebral_bloodflow_animation_v2.usdz */,
+				B22222222222222222222222 /* circle_of_willis_flow_overlay_v2.usdz */,
 				4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */,
 				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
 				CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */,
@@ -203,6 +209,8 @@
 				F35080EB0A3184483D874359 /* PressureBed.wav in Resources */,
 				4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */,
 				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
+				A11111111111111111111111 /* cerebral_bloodflow_animation_v2.usdz in Resources */,
+				A22222222222222222222222 /* circle_of_willis_flow_overlay_v2.usdz in Resources */,
 				12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */,
 				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
 				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
