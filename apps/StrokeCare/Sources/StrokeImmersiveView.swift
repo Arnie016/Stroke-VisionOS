@@ -425,7 +425,7 @@ struct StrokeImmersiveView: View {
                         // procedural bust placeholder. The dossier and its
                         // connected facts are the spatial case representation
                         // until a reviewed fictional-person asset exists.
-                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = false
+                        caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview
                         StrokeSceneFactory.updateSpatialCaseIntake(
                             root: caseRoom,
                             experience: experience

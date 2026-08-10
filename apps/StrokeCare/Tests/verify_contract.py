@@ -809,8 +809,8 @@ require(
     "XCAT deployment bypasses the complete showcase journey",
 )
 require(
-    "caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = false" in immersive,
-    "the unreviewed procedural case bust is still visible",
+    "caseRoom.findEntity(named: StrokeSceneFactory.spatialCaseFigureName)?.isEnabled = inReview" in immersive,
+    "the fictional case figure is not scoped to patient-file review",
 )
 require(
     "setAnatomyViewpoint(.lateralA, reduceMotion: true)" in state
