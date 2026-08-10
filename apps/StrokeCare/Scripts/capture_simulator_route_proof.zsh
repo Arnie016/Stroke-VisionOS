@@ -19,7 +19,7 @@ readonly settle_seconds="${PROOF_SETTLE_SECONDS:-8}"
 case "${proof_route}" in
     --proof-case-unfold|--proof-spatial-intake|--proof-spatial-docked-case|\
     --proof-pressure|--proof-clinician-pressure|--proof-family-question|\
-    --proof-procedure-field|--proof-layer-study|--proof-view-anterior|\
+    --proof-procedure-field|--proof-layer-study|--proof-flow-layer-study|--proof-flow-exit|--proof-view-anterior|\
     --proof-view-lateral-a|--proof-view-lateral-b|--proof-view-superior|\
     --proof-evidence-window|--proof-evidence|--proof-clinician-toolkit|\
     --proof-care-purpose|--proof-exit-reset) ;;

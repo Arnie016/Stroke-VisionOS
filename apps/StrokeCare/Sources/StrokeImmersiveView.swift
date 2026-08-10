@@ -357,14 +357,16 @@ struct StrokeImmersiveView: View {
 
                     let now = timeline.date.timeIntervalSinceReferenceDate
                     let anatomyVisible = experience.spatialPhase == .explanation
-                    if anatomyVisible {
-                        StrokeSceneFactory.update(
-                            root: root,
-                            experience: experience,
-                            time: now,
-                            reduceMotion: reduceMotion
-                        )
-                    }
+                    // Always give the scene factory the phase transition. Its
+                    // first action outside explanation is to disable the two
+                    // flow layers and pause the authored controller before it
+                    // skips the hidden anatomy work.
+                    StrokeSceneFactory.update(
+                        root: root,
+                        experience: experience,
+                        time: now,
+                        reduceMotion: reduceMotion
+                    )
 
                     // Ported from the proven Heart Field interaction engine:
                     // state-owned orbit/zoom, smoothed presentation, entity-

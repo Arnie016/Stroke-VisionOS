@@ -79,7 +79,8 @@ require(
 require(
     "TimelineView(.periodic" in immersive
     and "sceneRefreshInterval" in immersive
-    and "if anatomyVisible" in immersive,
+    and "guard experience.spatialPhase == .explanation else" in scene
+    and "suspendImportedBloodflow(in: root)" in scene,
     "static phases still drive hidden anatomy at display rate",
 )
 require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "PressureBed" in immersive, "entity-anchored spatial audio is missing")
@@ -144,6 +145,8 @@ require("Clinician upper evidence plane" in deck_canon and "never receives raw g
 require("--proof-evidence" in launch and "prepareEvidenceProof" in state and "opensEvidence: true" in launch, "deterministic evidence-space proof route is missing")
 require("--proof-evidence-window" in launch and "openEvidenceProofWindow" in launch, "isolated evidence-window proof route is missing")
 require("--proof-layer-study" in launch and "prepareLayerStudyProof" in state, "deterministic anatomy layer-study proof route is missing")
+require("--proof-flow-layer-study" in launch and "prepareFlowLayerStudyProof" in state, "deterministic registered-flow layer-study proof route is missing")
+require("--proof-flow-exit" in launch and "experience.returnCaseToLibrary()" in launch, "deterministic active-flow exit proof route is missing")
 require("--proof-procedure-field" in launch and "prepareProcedureFieldProof" in state, "deterministic procedure-point proof route is missing")
 require("--proof-transparent-layer" in launch and "prepareTransparentLayerProof" in state, "deterministic transparent-anatomy proof route is missing")
 require(all(route in launch for route in ("--proof-environment-surroundings", "--proof-environment-warm", "--proof-environment-focus")), "deterministic environment proof routes are missing")
@@ -164,9 +167,68 @@ require(all(token in scene for token in (
     "startAuthoredBloodflowAnimations",
     "updateAuthoredBloodflowPlayback",
     "experience.requestedPause || reduceMotion",
-    "qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow",
+    "setEnabledIfChanged(showsAuthoredBloodflow, on: qualitativeFlowOverlayLayer)",
     "registeredArrows.isEnabled = false",
 )), "registered qualitative droplets/chevrons are absent or the detached-arrow quarantine regressed")
+scene_update = scene.split("static func update(", 1)[1].split(
+    "private static func updatePointFields", 1
+)[0]
+require(
+    "guard experience.spatialPhase == .explanation else" in scene_update
+    and "suspendImportedBloodflow(in: root)" in scene_update
+    and scene_update.index("suspendImportedBloodflow(in: root)")
+        < scene_update.index("updateBrainReveal"),
+    "leaving explanation can skip the flow-controller shutdown before hidden anatomy work",
+)
+immersive_update = immersive.split("let anatomyVisible = experience.spatialPhase == .explanation", 1)[1].split(
+    "// Ported from the proven Heart Field interaction engine", 1
+)[0]
+require(
+    "StrokeSceneFactory.update(" in immersive_update
+    and "if anatomyVisible" not in immersive_update,
+    "RealityView does not deliver the non-anatomy phase transition to the flow shutdown",
+)
+require(
+    "private static func suspendImportedBloodflow" in scene
+    and "setEnabledIfChanged(false, on: qualitativeFlowOverlayLayer)" in scene
+    and "isVisible: false" in scene
+    and "isPaused: true" in scene,
+    "hidden blood-flow layers or their authored playback controller remain active",
+)
+require(
+    "STROKE_FLOW_PLAYBACK=SUSPENDED overlay=false phase=non-anatomy" in scene,
+    "active-flow exit lacks a bounded debug receipt for controller suspension",
+)
+require(
+    "let arterySeparationTarget = SIMD3<Float>" in scene
+    and "approach(arteriesLayer, arterySeparationTarget)" in scene
+    and "approach(blockageLayer, arterySeparationTarget)" in scene
+    and "approach(authoredBloodflowLayer, arterySeparationTarget)" in scene
+    and "approach(qualitativeFlowOverlayLayer, arterySeparationTarget)" in scene,
+    "registered blood-flow detail can detach from the arteries during Study apart",
+)
+imported_update = scene.split("private static func updateImportedAnatomy", 1)[1].split(
+    "private static func suspendImportedBloodflow", 1
+)[0]
+require(
+    "setSemanticLayerOpacity(cortexOpacity, on: cortexLayer)" in imported_update
+    and "cortexOpacity = Float(experience.cortexOpacity)" in imported_update
+    and "let separation: Float = presentation == .exploded ? 1 : 0" in imported_update
+    and "setSemanticLayerOpacity(presentation == .assembled ? 0.90 : 1, on: arteriesLayer)" in imported_update
+    and "setSemanticLayerOpacity(1, on: blockageLayer)" in imported_update
+    and "setSemanticLayerOpacity(presentation == .exploded ? 0.20 : 0.14, on: duraLayer)" in imported_update
+    and "setSemanticLayerOpacity(" in imported_update
+    and ".components.set(OpacityComponent" not in imported_update,
+    "imported semantic layers still replace HierarchicalFade every frame",
+)
+require(
+    "initialSemanticLayerOpacity" in scene
+    and "case importedFlowOverlayName:" in scene
+    and "abs(currentOpacity - targetOpacity) <= 0.000_001" in scene
+    and "simd_length_squared(delta) <= 0.000_000_01" in imported_update
+    and "setEnabledIfChanged" in imported_update,
+    "imported hierarchy updates are not state-change-driven or fail to settle",
+)
 authored_flow_loader = scene.split("private static func startAuthoredBloodflowAnimations", 1)[1].split(
     "private static func updateAuthoredBloodflowPlayback", 1
 )[0]
@@ -230,6 +292,8 @@ proof_routes = (
     "--proof-family-question",
     "--proof-procedure-field",
     "--proof-layer-study",
+    "--proof-flow-layer-study",
+    "--proof-flow-exit",
     "--proof-view-anterior",
     "--proof-evidence-window",
     "--proof-clinician-toolkit",
@@ -241,6 +305,24 @@ require(
     and "VNRecognizeTextRequest" in proof_route_image
     and "PROOF_ROUTE_IMAGE=FAIL" in proof_route_image,
     "route proof does not reject blank or wrong-screen captures for the required UI states",
+)
+require(
+    all(token in proof_route_image for token in (
+        '"--proof-case-unfold": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]]',
+        '"--proof-spatial-docked-case": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]]',
+        '"--proof-layer-study": [["APART"]',
+        '"--proof-view-anterior": [["FRONT"]',
+        '"--proof-view-lateral-a": [["SIDE A"]',
+        '"--proof-view-lateral-b": [["SIDE B"]',
+        '"--proof-view-superior": [["TOP"]',
+    ))
+    and "let regions = [" in proof_route_image
+    and "cgImage.cropping(to: region)" in proof_route_image
+    and '[["FRONT", "VIEW"]' not in proof_route_image
+    and '[["SIDE A", "VIEW"]' not in proof_route_image
+    and '[["SIDE B", "VIEW"]' not in proof_route_image
+    and '[["TOP", "VIEW"]' not in proof_route_image,
+    "proof OCR can accept generic or stale labels instead of the exact rendered route state",
 )
 require("65 manifest-backed USDZ" in asset_triage and "cerebral_bloodflow_animation_v2" in asset_triage, "expanded asset catalog is not triaged for runtime use")
 bundled_usdz_paths = re.findall(r"^\s+- path: (.+\.usdz)\s*$", project_yml, re.MULTILINE)

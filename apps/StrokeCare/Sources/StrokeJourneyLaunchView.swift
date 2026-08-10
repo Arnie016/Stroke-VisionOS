@@ -469,6 +469,20 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-layer-study") {
             experience.prepareLayerStudyProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-flow-layer-study") {
+            experience.prepareFlowLayerStudyProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-flow-exit") {
+            experience.prepareProcedureFieldProof()
+            Task {
+                await openProofSpace()
+                // Allow registered flow to become visibly active, then take
+                // the normal Cases transition into the non-anatomy library.
+                // The scene factory must receive this phase change and suspend
+                // the authored controller before its hidden-anatomy guard.
+                try? await Task.sleep(for: .seconds(6))
+                experience.returnCaseToLibrary()
+            }
         } else if CommandLine.arguments.contains("--proof-procedure-field") {
             experience.prepareProcedureFieldProof()
             Task { await openProofSpace() }

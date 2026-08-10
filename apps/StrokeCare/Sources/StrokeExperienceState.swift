@@ -1061,6 +1061,16 @@ final class StrokeExperienceState: ObservableObject {
         selectedPointLabel = "Example affected area"
     }
 
+    /// Combines the registered flow lesson with the separated-layer state so
+    /// the two flow USDZ hierarchies can be checked against their artery parent
+    /// without relying on camera-driven UI automation.
+    func prepareFlowLayerStudyProof() {
+        prepareLayerStudyProof()
+        pointField = .procedure
+        selectedPointEntityName = "clinician-procedure-point-field-point-2"
+        selectedPointLabel = "Example blockage"
+    }
+
     func prepareProcedureFieldProof() {
         prepareClinicianProof(step: .inspectOcclusion)
         anatomyPresentation = .transparent

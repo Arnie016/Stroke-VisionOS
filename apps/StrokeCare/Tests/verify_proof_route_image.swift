@@ -17,9 +17,9 @@ let imageURL = URL(fileURLWithPath: CommandLine.arguments[1])
 let route = CommandLine.arguments[2]
 
 let requiredText: [String: [[String]]] = [
-    "--proof-case-unfold": [["CASE 78", "CASE REVIEW"], ["BEGIN", "ENTER"]],
+    "--proof-case-unfold": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]],
     "--proof-spatial-intake": [["PATIENT FILES"], ["PLACE CASE", "CASE 78"]],
-    "--proof-spatial-docked-case": [["CASE 78", "CASE REVIEW"], ["BEGIN", "ENTER"]],
+    "--proof-spatial-docked-case": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]],
     "--proof-pressure": [["PRESSURE"], ["TEACHING", "FAMILY"]],
     "--proof-clinician-pressure": [["PRESSURE"], ["PRESENTER", "TEACHING"]],
     "--proof-family-question": [["PRESSURE", "CLARIFY"], ["FAMILY", "POINT"]],
@@ -28,11 +28,16 @@ let requiredText: [String: [[String]]] = [
     // here; the contract separately requires the visible qualitative/not-CFD
     // text and the captured image remains subject to human visual inspection.
     "--proof-procedure-field": [["PRESENTER"], ["PRESSURE"], ["CLEAR", "FLOW"]],
-    "--proof-layer-study": [["STUDY", "LAYERS"], ["PRESENTER", "TEACHING"]],
-    "--proof-view-anterior": [["FRONT", "VIEW"], ["PRESENTER", "TEACHING"]],
-    "--proof-view-lateral-a": [["SIDE A", "VIEW"], ["PRESENTER", "TEACHING"]],
-    "--proof-view-lateral-b": [["SIDE B", "VIEW"], ["PRESENTER", "TEACHING"]],
-    "--proof-view-superior": [["TOP", "VIEW"], ["PRESENTER", "TEACHING"]],
+    "--proof-layer-study": [["APART"], ["PRESENTER", "TEACHING"]],
+    "--proof-flow-layer-study": [["APART"], ["FLOW"], ["PRESENTER", "TEACHING"]],
+    "--proof-flow-exit": [["PATIENT FILES"], ["PLACE CASE", "FILE 78"]],
+    // Each viewpoint proof requires its unique rendered control label. The
+    // generic accessibility fallback "View" must never make the wrong named
+    // viewpoint pass.
+    "--proof-view-anterior": [["FRONT"], ["PRESENTER", "TEACHING"]],
+    "--proof-view-lateral-a": [["SIDE A"], ["PRESENTER", "TEACHING"]],
+    "--proof-view-lateral-b": [["SIDE B"], ["PRESENTER", "TEACHING"]],
+    "--proof-view-superior": [["TOP"], ["PRESENTER", "TEACHING"]],
     "--proof-evidence-window": [["CLINICAL EVIDENCE"], ["SEARCH", "SOURCES"]],
     "--proof-evidence": [["CLINICAL EVIDENCE"], ["SEARCH", "SOURCES"]],
     "--proof-clinician-toolkit": [["TOOLS", "FOCUS"], ["PRESENTER", "TEACHING"]],
@@ -55,15 +60,39 @@ guard let cgImage = image.cgImage(forProposedRect: &proposedRect, context: nil, 
     exit(65)
 }
 
-let request = VNRecognizeTextRequest()
-request.recognitionLevel = .accurate
-request.usesLanguageCorrection = true
-try VNImageRequestHandler(cgImage: cgImage).perform([request])
+// Spatial controls occupy a small part of a 4K Simulator frame. Keep the
+// untouched full-frame pass, then repeat OCR on half-frame tiles so a compact
+// selected label such as "Top" is not discarded as globally tiny text. This
+// does not synthesize or infer words: every accepted token still has to be
+// recognized from pixels in the captured image.
+let width = cgImage.width
+let height = cgImage.height
+let regions = [
+    CGRect(x: 0, y: 0, width: width, height: height),
+    CGRect(x: 0, y: 0, width: width / 2, height: height),
+    CGRect(x: width / 2, y: 0, width: width - width / 2, height: height),
+    CGRect(x: 0, y: 0, width: width, height: height / 2),
+    CGRect(x: 0, y: height / 2, width: width, height: height - height / 2),
+]
 
-let recognized = (request.results ?? [])
-    .compactMap { $0.topCandidates(1).first?.string }
-    .joined(separator: " ")
-    .uppercased()
+var recognizedLines: [String] = []
+do {
+    for region in regions {
+        guard let croppedImage = cgImage.cropping(to: region) else { continue }
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.usesLanguageCorrection = true
+        try VNImageRequestHandler(cgImage: croppedImage).perform([request])
+        recognizedLines.append(contentsOf: (request.results ?? []).compactMap {
+            $0.topCandidates(1).first?.string
+        })
+    }
+} catch {
+    fputs("PROOF_ROUTE_IMAGE=FAIL ocr-error=\(error.localizedDescription)\n", stderr)
+    exit(69)
+}
+
+let recognized = recognizedLines.joined(separator: " ").uppercased()
 
 let missing = groups.filter { alternatives in
     !alternatives.contains { recognized.contains($0) }
