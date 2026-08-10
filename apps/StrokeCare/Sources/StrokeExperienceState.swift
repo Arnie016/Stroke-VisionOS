@@ -406,8 +406,14 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func beginXrayWindowClose() {
-        guard xrayWindowLifecycle != .closed else { return }
-        xrayWindowLifecycle = .closing
+        switch xrayWindowLifecycle {
+        case .requested:
+            xrayWindowLifecycle = .closed
+        case .presented:
+            xrayWindowLifecycle = .closing
+        case .closed, .closing:
+            break
+        }
     }
 
     func markXrayWindowClosed() {
