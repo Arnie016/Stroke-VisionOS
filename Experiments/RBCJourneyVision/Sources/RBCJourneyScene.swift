@@ -34,6 +34,7 @@ final class RBCJourneyScene {
     private let flowRideSpatialAtlasRoot = Entity()
     private let flowRideSpatialAtlasModelRoot = Entity()
     private let flowRideSpatialAtlasRouteRoot = Entity()
+    private let flowRideSpatialAtlasLabelRoot = Entity()
     private let observationRoot = Entity()
     private let corticalVaultRoot = Entity()
     private let identityEchoRoot = Entity()
@@ -271,6 +272,7 @@ final class RBCJourneyScene {
     private var flowRideSpatialAtlasLocators: [String: Entity] = [:]
     private var flowRideSpatialAtlasRoutePoints: [SIMD3<Float>] = []
     private var flowRideSpatialAtlasRouteFronts: [Entity] = []
+    private var flowRideSpatialAtlasLabels: [String: Entity] = [:]
     private var frameUpdateSubscription: (any Cancellable)?
 
     private var portals: [Int: Entity] = [:]
@@ -298,6 +300,7 @@ final class RBCJourneyScene {
         flowRideSpatialAtlasRoot.name = "registered-three-dimensional-brain-route-locator"
         flowRideSpatialAtlasModelRoot.name = "miniature-registered-cortex-and-cerebral-arteries"
         flowRideSpatialAtlasRouteRoot.name = "geometry-derived-atlas-route-trace"
+        flowRideSpatialAtlasLabelRoot.name = "geometry-derived-atlas-region-labels"
         observationRoot.name = "stable-observation-field"
         corticalVaultRoot.name = "inside-cortical-vault"
         identityEchoRoot.name = "artistic-identity-echo-field-not-clinical"
@@ -334,6 +337,7 @@ final class RBCJourneyScene {
         hudRoot.addChild(flowRideSpatialAtlasRoot)
         flowRideSpatialAtlasRoot.addChild(flowRideSpatialAtlasModelRoot)
         flowRideSpatialAtlasModelRoot.addChild(flowRideSpatialAtlasRouteRoot)
+        flowRideSpatialAtlasModelRoot.addChild(flowRideSpatialAtlasLabelRoot)
         worldRoot.addChild(observationRoot)
         worldRoot.addChild(corticalVaultRoot)
         worldRoot.addChild(identityEchoRoot)
@@ -1175,7 +1179,11 @@ final class RBCJourneyScene {
         // Keep the locator above the compact legend rather than behind it.
         // A fixed anterior view makes the marker useful as a map; only the
         // marker pulses. Rotating the whole atlas would obscure orientation.
-        flowRideSpatialAtlasRoot.position = [-0.70, 1.98, -1.24]
+        // Keep the compact atlas in the wearer's forward upper-left field,
+        // close enough for the 3D region label to read without becoming a
+        // second room-scale brain.
+        flowRideSpatialAtlasRoot.position = [-0.52, 1.68, -1.00]
+        flowRideSpatialAtlasRoot.scale = [1.16, 1.16, 1.16]
         flowRideSpatialAtlasRoot.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
 
         let sources: [(key: String, entityName: String, color: UIColor)] = [
@@ -1230,6 +1238,24 @@ final class RBCJourneyScene {
             }
         }
 
+        let labelDefinitions: [(key: String, text: String, color: UIColor)] = [
+            ("fork", "FORK", UIColor(red: 1.00, green: 0.67, blue: 0.30, alpha: 0.96)),
+            ("frontal", "FRONTAL LOBE", UIColor(red: 1.00, green: 0.30, blue: 0.34, alpha: 0.98)),
+            ("capillary", "CORTEX", UIColor(red: 0.98, green: 0.48, blue: 0.38, alpha: 0.98)),
+        ]
+        for definition in labelDefinitions {
+            guard let locator = flowRideSpatialAtlasLocators[definition.key] else { continue }
+            let labelAnchor = makeFlowRideSpatialAtlasLabel(
+                text: definition.text,
+                color: definition.color
+            )
+            labelAnchor.name = "geometry-derived-atlas-label-anchor-\(definition.key)"
+            labelAnchor.position = locator.position
+            labelAnchor.isEnabled = false
+            flowRideSpatialAtlasLabelRoot.addChild(labelAnchor)
+            flowRideSpatialAtlasLabels[definition.key] = labelAnchor
+        }
+
         flowRideSpatialAtlasRoot.isEnabled = false
         print("RBC_SPATIAL_ATLAS=READY registered_geometry=true geometry_derived_locators=\(geometryDerivedCount) patient_registration=false capillary_proxy=true")
     }
@@ -1259,6 +1285,36 @@ final class RBCJourneyScene {
         return locator
     }
 
+    private func makeFlowRideSpatialAtlasLabel(text: String, color: UIColor) -> Entity {
+        let anchor = Entity()
+        let material = glowMaterial(color: color, intensity: 2.0)
+        let label = ModelEntity(
+            mesh: .generateText(
+                text,
+                extrusionDepth: 0.0008,
+                font: .systemFont(ofSize: 0.075),
+                containerFrame: .zero,
+                alignment: .left,
+                lineBreakMode: .byClipping
+            ),
+            materials: [material]
+        )
+        label.name = "atlas-region-label-\(text.lowercased().replacingOccurrences(of: " ", with: "-"))"
+        label.position = [0.052, 0.038, 0]
+        label.components.set(BillboardComponent())
+        anchor.addChild(label)
+
+        let stemMaterial = glowMaterial(color: color, intensity: 0.9)
+        addTubePath(
+            [[0, 0, 0], [0.046, 0.026, 0]],
+            to: anchor,
+            radius: 0.0007,
+            material: stemMaterial,
+            name: "atlas-region-label-stem"
+        )
+        return anchor
+    }
+
     private func updateFlowRideSpatialAtlas(
         active: Bool,
         route: RBCFlowRideRoute,
@@ -1277,6 +1333,12 @@ final class RBCJourneyScene {
             if key == activeKey {
                 let pulse: Float = motionHeld ? 1 : 1 + sin(time * 2.2) * 0.12
                 locator.scale = [pulse, pulse, pulse]
+            }
+        }
+        for (key, label) in flowRideSpatialAtlasLabels {
+            label.isEnabled = key == activeKey
+            if let locator = flowRideSpatialAtlasLocators[key], key == activeKey {
+                label.position = locator.position
             }
         }
 

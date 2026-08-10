@@ -318,6 +318,9 @@ cue, distinct from the higher-density intraluminal fronts around the wearer.
 The atlas legend also carries a compact three-stage breadcrumb—**FORK →
 FRONTAL → CORTEX**—driven by the same guided phase as the surrounding scene, so
 the family can read both the current region and the next anatomical scale.
+The active atlas marker also owns a small 3D label stem: **FORK**, **FRONTAL
+LOBE**, or **CORTEX**. It is a spatial annotation anchored to registered
+geometry, not a second information window.
 
 The strands, wake spacing, cell count, and small lane-speed differences are
 designed for room-scale legibility. They are not a velocity profile, wall-shear

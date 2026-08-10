@@ -408,6 +408,8 @@ checks = {
         "geometry-derived-atlas-route-trace", "geometry-derived-atlas-route-front-",
         "flowRideSpatialAtlasRouteFronts", "sampleAtlasPolyline",
         "activeJourneyStage", "FORK", "FRONTAL", "CORTEX",
+        "geometry-derived-atlas-region-labels", "generateText",
+        "geometry-derived-atlas-label-anchor-", "atlas-region-label-stem",
     ]) and "Canvas {" not in hud,
     "living_inside_brain_cortical_context": all(token in scene for token in [
         "surrounding-inside-brain-cortical-fold-scaffold-not-segmentation",
