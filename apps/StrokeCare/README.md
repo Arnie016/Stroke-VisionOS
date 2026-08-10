@@ -131,6 +131,14 @@ SIMCTL_CHILD_STROKE_REALTIME_PROXY_URL=http://127.0.0.1:8791/narrate \
 ... com.arnav.StrokeTime --proof-xray-window
 ```
 
+The shared teaching X-ray uses the full registered generic brain, arteries,
+blockage, and reviewed layer hierarchy from the spatial lesson. It preserves
+the authored asset detail and shared teaching state at a bounded 30 Hz cadence
+while visible, and pauses the cadence with the experience. The surface remains
+persistently labelled as a synthetic teaching image—not a patient scan—and
+does not promote the quarantined cross-frame skull, edema, flap, or patch as a
+precise overlay.
+
 Simulator builds and screenshots do not prove XCAT performance, physical
 comfort, clinical accuracy, or clinician acceptance.
 

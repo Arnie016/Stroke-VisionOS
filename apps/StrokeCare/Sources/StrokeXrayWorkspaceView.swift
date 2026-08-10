@@ -1,9 +1,10 @@
+import RealityKit
 import SwiftUI
 
-/// A shared schematic radiograph for the current teaching state. This is a
-/// communication surface, not a patient scan, diagnostic image, or clinical
-/// measurement. Both audience roles open this same window and therefore see
-/// the same act, layer presentation, opacity, lesson field, and selected point.
+/// A shared, realistic generic-anatomy teaching image for the current state.
+/// It renders the same reviewed registered-v2 assets as the spatial lesson; it
+/// is not a patient scan, diagnostic image, or clinical measurement. Both
+/// audience roles open this one synchronized surface.
 struct StrokeXrayWorkspaceView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissWindow) private var dismissWindow
@@ -24,7 +25,7 @@ struct StrokeXrayWorkspaceView: View {
                 header
 
                 HStack(alignment: .top, spacing: 18) {
-                    StrokeTeachingRadiograph()
+                    StrokeTeachingImagingPlate()
                         .environmentObject(experience)
                         .frame(width: 540, height: 392)
 
@@ -52,14 +53,14 @@ struct StrokeXrayWorkspaceView: View {
                 Text("SHARED TEACHING X-RAY")
                     .font(.headline.weight(.bold))
                     .tracking(1.2)
-                Text("Schematic teaching radiograph · not a patient scan")
+                Text("Realistic generic anatomy · synthetic teaching image · not a patient scan")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
-            Label("SYNCHRONIZED", systemImage: "arrow.triangle.2.circlepath")
+            Label("SYNCHRONIZED · SYNTHETIC", systemImage: "arrow.triangle.2.circlepath")
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(.cyan)
                 .padding(.horizontal, 10)
@@ -106,7 +107,7 @@ struct StrokeXrayWorkspaceView: View {
 
             Spacer(minLength: 0)
 
-            Label("Educational schematic only", systemImage: "checkmark.shield")
+            Label("Synthetic · review pending", systemImage: "checkmark.shield")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
             Text("It does not display uploaded imaging, infer a diagnosis, or represent this fictional case as a real radiograph.")
@@ -144,108 +145,120 @@ struct StrokeXrayWorkspaceView: View {
     }
 }
 
-private struct StrokeTeachingRadiograph: View {
+private struct StrokeTeachingImagingPlate: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
+    @State private var orbitYaw: Float = -0.10
+    @State private var orbitPitch: Float = 0.03
+    @State private var modelScale: Float = 1.02
+    @State private var previousDrag: CGSize = .zero
+    @State private var previousMagnification = 1.0
+
     var body: some View {
-        GeometryReader { geometry in
-            let size = geometry.size
-            let plate = CGRect(x: 22, y: 22, width: size.width - 44, height: size.height - 44)
-            let selectedPoint = selectedPointPosition(in: plate)
-
+        TimelineView(.animation(
+            minimumInterval: 1.0 / 30.0,
+            paused: experience.requestedPause
+        )) { timeline in
             ZStack {
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.black.opacity(0.64))
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.018, green: 0.042, blue: 0.054),
+                        Color.black.opacity(0.88)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
 
-                Path { path in
-                    path.addRoundedRect(in: plate, cornerSize: CGSize(width: 20, height: 20))
-                }
-                .stroke(Color.cyan.opacity(0.16), lineWidth: 1)
+                RealityView { content in
+                    // Full mode is intentional: compact mode is procedural.
+                    // The shared image loads the registered generic brain,
+                    // arteries, clot, and reviewed layer hierarchy without
+                    // reducing mesh or semantic detail.
+                    let root = await StrokeSceneFactory.makeScene(compact: false)
+                    root.position = [0, -0.025, 0.08]
+                    content.add(root)
+                } update: { content in
+                    guard let root = content.entities.first(where: {
+                        $0.name == StrokeSceneFactory.rootName
+                    }) else { return }
 
-                skullPath(in: plate)
-                    .stroke(
-                        Color.white.opacity(0.62),
-                        style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round)
+                    StrokeSceneFactory.update(
+                        root: root,
+                        experience: experience,
+                        time: timeline.date.timeIntervalSinceReferenceDate
                     )
-                    .shadow(color: .cyan.opacity(0.32), radius: 10)
-
-                brainPath(in: plate)
-                    .fill(Color.cyan.opacity(brainOpacity))
-                    .overlay {
-                        brainPath(in: plate)
-                            .stroke(Color.cyan.opacity(0.44), lineWidth: 1.5)
-                    }
-
-                midlinePath(in: plate)
-                    .stroke(Color.white.opacity(0.24), style: StrokeStyle(lineWidth: 1.4, dash: [6, 7]))
-
-                vesselPath(in: plate)
-                    .stroke(
-                        Color.orange.opacity(experience.pointField == .procedure ? 0.92 : 0.48),
-                        style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round)
-                    )
-                    .shadow(color: .orange.opacity(0.36), radius: 7)
-
-                affectedTerritory(in: plate)
-                    .fill(affectedTint.opacity(affectedOpacity))
-                    .blur(radius: experience.procedureStep == .chooseCase ? 2 : 7)
-
-                Circle()
-                    .fill(Color.orange)
-                    .frame(width: 15, height: 15)
-                    .overlay(Circle().stroke(Color.white.opacity(0.84), lineWidth: 2))
-                    .shadow(color: .orange.opacity(0.8), radius: 9)
-                    .position(x: plate.midX + plate.width * 0.11, y: plate.midY - plate.height * 0.04)
-
-                if experience.lessonPointsVisible, experience.selectedPointLabel != nil {
-                    Circle()
-                        .stroke(Color.mint, lineWidth: 3)
-                        .frame(width: 28, height: 28)
-                        .shadow(color: .mint.opacity(0.72), radius: 8)
-                        .position(selectedPoint)
+                    root.scale = SIMD3(repeating: modelScale)
+                    root.orientation = simd_quatf(angle: orbitYaw, axis: [0, 1, 0])
+                        * simd_quatf(angle: orbitPitch, axis: [1, 0, 0])
                 }
+                .gesture(
+                    DragGesture(minimumDistance: 3)
+                        .onChanged { value in
+                            let translation = value.translation
+                            let delta = CGSize(
+                                width: translation.width - previousDrag.width,
+                                height: translation.height - previousDrag.height
+                            )
+                            previousDrag = translation
+                            orbitYaw += Float(delta.width) * 0.006
+                            orbitPitch = min(
+                                max(orbitPitch + Float(delta.height) * 0.005, -0.48),
+                                0.48
+                            )
+                        }
+                        .onEnded { _ in previousDrag = .zero }
+                )
+                .simultaneousGesture(
+                    MagnifyGesture()
+                        .onChanged { value in
+                            let ratio = value.magnification / previousMagnification
+                            modelScale = min(max(modelScale * Float(ratio), 0.76), 1.28)
+                            previousMagnification = value.magnification
+                        }
+                        .onEnded { _ in previousMagnification = 1 }
+                )
 
-                VStack {
-                    HStack {
-                        Text("AP")
-                        Spacer()
-                        Text("SCHEMATIC")
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Label("ASSET-DERIVED GENERIC VIEW", systemImage: "view.3d")
+                            .font(.caption2.weight(.bold))
+                            .tracking(0.9)
+                            .foregroundStyle(.cyan)
+                        Text("Drag to orient · pinch to scale")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                     }
+                    .padding(13)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 13))
+
                     Spacer()
-                    HStack {
-                        Text("L")
-                        Spacer()
-                        Text("R")
+
+                    HStack(spacing: 7) {
+                        Circle()
+                            .fill(affectedTint)
+                            .frame(width: 8, height: 8)
+                        Text(radiographCaption)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.78))
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial, in: Capsule())
                 }
-                .font(.caption2.monospaced().weight(.bold))
-                .foregroundStyle(Color.white.opacity(0.42))
-                .padding(36)
-            }
-            .overlay(alignment: .bottomLeading) {
-                HStack(spacing: 7) {
-                    Circle()
-                        .fill(affectedTint)
-                        .frame(width: 8, height: 8)
-                    Text(radiographCaption)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.78))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(.ultraThinMaterial, in: Capsule())
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 .padding(14)
+                .allowsHitTesting(false)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .overlay {
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(Color.cyan.opacity(0.18), lineWidth: 1)
+                    .allowsHitTesting(false)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Schematic teaching radiograph synchronized to \(experience.journeyTitle), \(experience.anatomyPresentation.rawValue), and \(experience.pointField.rawValue)")
-        }
-    }
-
-    private var brainOpacity: Double {
-        switch experience.anatomyPresentation {
-        case .assembled: 0.12
-        case .transparent: max(0.06, experience.cortexOpacity * 0.34)
-        case .exploded: max(0.10, experience.cortexOpacity * 0.45)
+            .accessibilityLabel(
+                "Synthetic generic anatomy teaching image synchronized to \(experience.journeyTitle), \(experience.anatomyPresentation.rawValue), and \(experience.pointField.rawValue); not a patient scan"
+            )
         }
     }
 
@@ -257,120 +270,11 @@ private struct StrokeTeachingRadiograph: View {
         }
     }
 
-    private var affectedOpacity: Double {
-        switch experience.procedureStep {
-        case .chooseCase: 0.14
-        case .inspectOcclusion: 0.34
-        case .discussCare: 0.22
-        }
-    }
-
     private var radiographCaption: String {
         switch experience.procedureStep {
-        case .chooseCase: "Orient to the whole generic model"
-        case .inspectOcclusion: "Separate blockage, affected area, and swelling"
-        case .discussCare: "Making room does not restore injured tissue"
+        case .chooseCase: "Orient to the full registered generic model"
+        case .inspectOcclusion: "Blockage and affected-tissue cues are qualitative"
+        case .discussCare: "Making space does not restore injured tissue"
         }
-    }
-
-    private func skullPath(in rect: CGRect) -> Path {
-        Path { path in
-            path.move(to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.08))
-            path.addCurve(
-                to: CGPoint(x: rect.minX + rect.width * 0.16, y: rect.midY),
-                control1: CGPoint(x: rect.minX + rect.width * 0.24, y: rect.minY + rect.height * 0.04),
-                control2: CGPoint(x: rect.minX + rect.width * 0.13, y: rect.minY + rect.height * 0.28)
-            )
-            path.addCurve(
-                to: CGPoint(x: rect.midX, y: rect.maxY - rect.height * 0.08),
-                control1: CGPoint(x: rect.minX + rect.width * 0.13, y: rect.maxY - rect.height * 0.26),
-                control2: CGPoint(x: rect.minX + rect.width * 0.28, y: rect.maxY - rect.height * 0.03)
-            )
-            path.addCurve(
-                to: CGPoint(x: rect.maxX - rect.width * 0.16, y: rect.midY),
-                control1: CGPoint(x: rect.maxX - rect.width * 0.28, y: rect.maxY - rect.height * 0.03),
-                control2: CGPoint(x: rect.maxX - rect.width * 0.13, y: rect.maxY - rect.height * 0.26)
-            )
-            path.addCurve(
-                to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.08),
-                control1: CGPoint(x: rect.maxX - rect.width * 0.13, y: rect.minY + rect.height * 0.28),
-                control2: CGPoint(x: rect.maxX - rect.width * 0.24, y: rect.minY + rect.height * 0.04)
-            )
-        }
-    }
-
-    private func brainPath(in rect: CGRect) -> Path {
-        let inset = rect.insetBy(dx: rect.width * 0.19, dy: rect.height * 0.13)
-        return Path(ellipseIn: inset)
-    }
-
-    private func midlinePath(in rect: CGRect) -> Path {
-        Path { path in
-            path.move(to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.17))
-            path.addCurve(
-                to: CGPoint(x: rect.midX, y: rect.maxY - rect.height * 0.16),
-                control1: CGPoint(x: rect.midX - 10, y: rect.midY - 34),
-                control2: CGPoint(x: rect.midX + 10, y: rect.midY + 34)
-            )
-        }
-    }
-
-    private func vesselPath(in rect: CGRect) -> Path {
-        Path { path in
-            let origin = CGPoint(x: rect.midX, y: rect.maxY - rect.height * 0.20)
-            path.move(to: origin)
-            path.addCurve(
-                to: CGPoint(x: rect.midX + rect.width * 0.11, y: rect.midY - rect.height * 0.04),
-                control1: CGPoint(x: rect.midX - rect.width * 0.03, y: rect.midY + rect.height * 0.24),
-                control2: CGPoint(x: rect.midX + rect.width * 0.03, y: rect.midY + rect.height * 0.05)
-            )
-            path.addCurve(
-                to: CGPoint(x: rect.maxX - rect.width * 0.24, y: rect.minY + rect.height * 0.29),
-                control1: CGPoint(x: rect.midX + rect.width * 0.20, y: rect.midY - rect.height * 0.11),
-                control2: CGPoint(x: rect.maxX - rect.width * 0.28, y: rect.minY + rect.height * 0.36)
-            )
-            path.move(to: CGPoint(x: rect.midX + rect.width * 0.08, y: rect.midY + rect.height * 0.01))
-            path.addCurve(
-                to: CGPoint(x: rect.minX + rect.width * 0.28, y: rect.minY + rect.height * 0.34),
-                control1: CGPoint(x: rect.midX - rect.width * 0.05, y: rect.midY - rect.height * 0.12),
-                control2: CGPoint(x: rect.minX + rect.width * 0.34, y: rect.minY + rect.height * 0.40)
-            )
-        }
-    }
-
-    private func affectedTerritory(in rect: CGRect) -> Path {
-        let territory = CGRect(
-            x: rect.midX + rect.width * 0.02,
-            y: rect.minY + rect.height * 0.20,
-            width: rect.width * 0.29,
-            height: rect.height * 0.43
-        )
-        return Path(ellipseIn: territory)
-    }
-
-    private func selectedPointPosition(in rect: CGRect) -> CGPoint {
-        guard let name = experience.selectedPointEntityName,
-              let suffix = name.split(separator: "-").last,
-              let index = Int(suffix)
-        else {
-            return CGPoint(x: rect.midX, y: rect.midY)
-        }
-
-        let positions: [CGPoint] = experience.pointField == .regions
-            ? [
-                CGPoint(x: rect.midX + rect.width * 0.17, y: rect.midY - rect.height * 0.12),
-                CGPoint(x: rect.midX - rect.width * 0.13, y: rect.midY - rect.height * 0.06),
-                CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.24),
-                CGPoint(x: rect.midX - rect.width * 0.19, y: rect.midY + rect.height * 0.12)
-            ]
-            : [
-                CGPoint(x: rect.midX - rect.width * 0.03, y: rect.maxY - rect.height * 0.24),
-                CGPoint(x: rect.midX + rect.width * 0.05, y: rect.midY + rect.height * 0.05),
-                CGPoint(x: rect.midX + rect.width * 0.11, y: rect.midY - rect.height * 0.04),
-                CGPoint(x: rect.midX + rect.width * 0.22, y: rect.midY - rect.height * 0.15),
-                CGPoint(x: rect.midX + rect.width * 0.19, y: rect.minY + rect.height * 0.27)
-            ]
-
-        return positions.indices.contains(index) ? positions[index] : CGPoint(x: rect.midX, y: rect.midY)
     }
 }
