@@ -132,6 +132,19 @@ struct RBCJourneyTrailheadView: View {
                 await openJourney()
             }
         }
+        .onOpenURL { url in
+            guard RBCJourneyDeepLink.isEntry(url) else { return }
+            Task { await openEntryDeepLink() }
+        }
+    }
+
+    @MainActor
+    private func openEntryDeepLink() async {
+        if model.isPresented {
+            model.startEntryPrelude()
+            return
+        }
+        await openJourney(starting: .entryPrelude)
     }
 
     @MainActor

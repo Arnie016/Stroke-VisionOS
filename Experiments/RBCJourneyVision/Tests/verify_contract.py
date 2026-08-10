@@ -58,6 +58,10 @@ required_resource_names = [
 
 checks = {
     "standalone_bundle": "com.arnav.RBCJourneyVision" in project,
+    "stroke_care_entry_deep_link": all(token in project + app + (ROOT / "Sources/RBCJourneyTrailheadView.swift").read_text() for token in [
+        "CFBundleURLTypes", "rbcjourney", "entryHost = \"enter\"",
+        ".onOpenURL", "RBCJourneyDeepLink.isEntry", "model.startEntryPrelude()",
+    ]),
     "full_immersion": ".immersionStyle(selection: $immersionStyle, in: .full)" in app,
     "seven_station_cases": model.count("case ") >= 7 and "case microcirculation" in model,
     "manual_station_navigation": all(token in model for token in ["func select", "func back", "func advance", "func restart"]),

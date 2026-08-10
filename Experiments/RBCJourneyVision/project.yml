@@ -16,6 +16,17 @@ targets:
   RBCJourneyVision:
     type: application
     platform: visionOS
+    info:
+      path: Resources/RBCJourneyVision-Info.plist
+      properties:
+        CFBundleDisplayName: Inside the Flow
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Viewer
+            CFBundleURLName: com.arnav.RBCJourneyVision
+            CFBundleURLSchemes:
+              - rbcjourney
+        NSHandsTrackingUsageDescription: Open and close educational vessel portals with deliberate two-hand gestures.
+        UIApplicationSupportsIndirectInputEvents: true
     sources:
       - path: Sources
       - path: Resources/Models/brain_anatomy_realistic_v2.usdz
@@ -56,11 +67,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.arnav.RBCJourneyVision
         PRODUCT_NAME: RBCJourneyVision
-        GENERATE_INFOPLIST_FILE: true
-        INFOPLIST_KEY_CFBundleDisplayName: Inside the Flow
-        INFOPLIST_KEY_NSHandsTrackingUsageDescription: Open and close educational vessel portals with deliberate two-hand gestures.
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: true
-        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
         ASSETCATALOG_COMPILER_APPICON_NAME: ""
         TARGETED_DEVICE_FAMILY: 7
 

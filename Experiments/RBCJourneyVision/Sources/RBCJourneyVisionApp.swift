@@ -1,5 +1,14 @@
 import SwiftUI
 
+enum RBCJourneyDeepLink {
+    static let scheme = "rbcjourney"
+    static let entryHost = "enter"
+
+    static func isEntry(_ url: URL) -> Bool {
+        url.scheme?.lowercased() == scheme && url.host?.lowercased() == entryHost
+    }
+}
+
 @main
 struct RBCJourneyVisionApp: App {
     @State private var model = RBCJourneyModel()
