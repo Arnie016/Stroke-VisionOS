@@ -1148,7 +1148,7 @@ final class RBCJourneyScene {
         let cortex = cortexLayer.clone(recursive: true)
         cortex.name = "atlas-registered-cortical-fold-mesh"
         applyMaterialRecursively(flowRideAtlasCortexMaterial(), to: cortex)
-        cortex.components.set(OpacityComponent(opacity: 0.92))
+        cortex.components.set(OpacityComponent(opacity: 0.98))
         flowRideSpatialAtlasModelRoot.addChild(cortex)
 
         let arteries = arteryLayer.clone(recursive: true)
@@ -1182,8 +1182,8 @@ final class RBCJourneyScene {
         // Keep the compact atlas in the wearer's forward upper-left field,
         // close enough for the 3D region label to read without becoming a
         // second room-scale brain.
-        flowRideSpatialAtlasRoot.position = [-0.52, 1.68, -1.00]
-        flowRideSpatialAtlasRoot.scale = [1.16, 1.16, 1.16]
+        flowRideSpatialAtlasRoot.position = [-0.34, 1.78, -0.62]
+        flowRideSpatialAtlasRoot.scale = [1.10, 1.10, 1.10]
         flowRideSpatialAtlasRoot.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
 
         let sources: [(key: String, entityName: String, color: UIColor)] = [
@@ -1292,7 +1292,7 @@ final class RBCJourneyScene {
             mesh: .generateText(
                 text,
                 extrusionDepth: 0.0008,
-                font: .systemFont(ofSize: 0.075),
+                font: .systemFont(ofSize: 0.11),
                 containerFrame: .zero,
                 alignment: .left,
                 lineBreakMode: .byClipping
@@ -1301,6 +1301,7 @@ final class RBCJourneyScene {
         )
         label.name = "atlas-region-label-\(text.lowercased().replacingOccurrences(of: " ", with: "-"))"
         label.position = [0.052, 0.038, 0]
+        label.scale = [1.15, 1.15, 1.15]
         label.components.set(BillboardComponent())
         anchor.addChild(label)
 
@@ -6926,12 +6927,12 @@ final class RBCJourneyScene {
 
     private func flowRideAtlasCortexMaterial() -> RealityKit.Material {
         var material = PhysicallyBasedMaterial()
-        material.baseColor = .init(tint: UIColor(red: 0.55, green: 0.30, blue: 0.34, alpha: 1))
-        material.emissiveColor = .init(color: UIColor(red: 0.30, green: 0.08, blue: 0.12, alpha: 1))
-        material.emissiveIntensity = 0.22
+        material.baseColor = .init(tint: UIColor(red: 0.48, green: 0.23, blue: 0.29, alpha: 1))
+        material.emissiveColor = .init(color: UIColor(red: 0.34, green: 0.06, blue: 0.13, alpha: 1))
+        material.emissiveIntensity = 0.34
         material.roughness = 0.82
         material.metallic = .init(floatLiteral: 0)
-        material.blending = .transparent(opacity: .init(floatLiteral: 0.48))
+        material.blending = .transparent(opacity: .init(floatLiteral: 0.60))
         material.faceCulling = .none
         material.readsDepth = true
         material.writesDepth = false
@@ -6940,8 +6941,8 @@ final class RBCJourneyScene {
 
     private func flowRideAtlasArteryMaterial() -> RealityKit.Material {
         glowMaterial(
-            color: UIColor(red: 0.94, green: 0.08, blue: 0.13, alpha: 0.92),
-            intensity: 1.62
+            color: UIColor(red: 1.00, green: 0.12, blue: 0.18, alpha: 0.98),
+            intensity: 2.70
         )
     }
 
