@@ -147,6 +147,20 @@ require("--proof-evidence-window" in launch and "openEvidenceProofWindow" in lau
 require("--proof-layer-study" in launch and "prepareLayerStudyProof" in state, "deterministic anatomy layer-study proof route is missing")
 require("--proof-flow-layer-study" in launch and "prepareFlowLayerStudyProof" in state, "deterministic registered-flow layer-study proof route is missing")
 require("--proof-flow-exit" in launch and "experience.returnCaseToLibrary()" in launch, "deterministic active-flow exit proof route is missing")
+flow_exit_route = launch.split('CommandLine.arguments.contains("--proof-flow-exit")', 1)[1].split(
+    'CommandLine.arguments.contains("--proof-procedure-field")', 1
+)[0]
+flow_exit_delay_match = re.search(r"Task\.sleep\(for: \.seconds\((\d+)\)\)", flow_exit_route)
+flow_exit_settle_match = re.search(
+    r"PROOF_FLOW_EXIT_SETTLE_SECONDS:-([0-9]+)",
+    simulator_proof,
+)
+require(
+    flow_exit_delay_match is not None
+    and flow_exit_settle_match is not None
+    and int(flow_exit_settle_match.group(1)) >= int(flow_exit_delay_match.group(1)) + 5,
+    "flow-exit proof capture can race the delayed non-anatomy transition",
+)
 require("--proof-procedure-field" in launch and "prepareProcedureFieldProof" in state, "deterministic procedure-point proof route is missing")
 require("--proof-transparent-layer" in launch and "prepareTransparentLayerProof" in state, "deterministic transparent-anatomy proof route is missing")
 require(all(route in launch for route in ("--proof-environment-surroundings", "--proof-environment-warm", "--proof-environment-focus")), "deterministic environment proof routes are missing")
@@ -283,7 +297,14 @@ require(".hand(.left, location: .palm)" in immersive and ".hand(.right, location
 require("experience.audienceLens == .clinician" in immersive and "enabled && experience.clinicianToolKitVisible" in immersive, "clinician tools may leak into the family lens")
 require("makeClinicianHeldTools" in scene and "suction_and_forceps" in scene and "cranial_drill_generic" in scene, "clinician concept tools are not bundled into the held-tool rig")
 require("No selection mutates anatomy or simulates a cut" in scene, "clinician tool safety boundary is missing")
-require("proofRouteHasRun" in launch and "guard !proofRouteHasRun" in launch, "proof routing can open duplicate companion windows")
+require(
+    "@State private var proofRouteHasRun" not in launch
+    and "@StateObject private var experience = StrokeExperienceState()" in app
+    and "private var proofRouteHasRun = false" in state
+    and "func consumeProofRouteLaunch() -> Bool" in state
+    and "guard experience.consumeProofRouteLaunch() else { return }" in launch,
+    "proof routing is guarded per view instead of once per shared app process",
+)
 proof_routes = (
     "--proof-case-unfold",
     "--proof-spatial-intake",
@@ -310,6 +331,7 @@ require(
     all(token in proof_route_image for token in (
         '"--proof-case-unfold": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]]',
         '"--proof-spatial-docked-case": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]]',
+        '["QUESTION HERE", "FAMILY POINTED TO THIS AREA"]',
         '"--proof-layer-study": [["APART"]',
         '"--proof-view-anterior": [["FRONT"]',
         '"--proof-view-lateral-a": [["SIDE A"]',

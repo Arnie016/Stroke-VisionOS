@@ -333,6 +333,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 @MainActor
 final class StrokeExperienceState: ObservableObject {
     let teachingCase = TeachingStrokeCase.case78
+    private var proofRouteHasRun = false
 
     @Published var procedureStep: StrokeProcedureStep = .chooseCase
     @Published var audienceLens: StrokeAudienceLens = .family
@@ -380,6 +381,12 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var planPreviewProgress: Double = 0
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
+
+    func consumeProofRouteLaunch() -> Bool {
+        guard !proofRouteHasRun else { return false }
+        proofRouteHasRun = true
+        return true
+    }
 
     func selectTeachingCase() {
         spatialCaseDocked = true

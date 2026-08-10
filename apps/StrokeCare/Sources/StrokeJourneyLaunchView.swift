@@ -70,7 +70,6 @@ struct StrokeJourneyLaunchView: View {
     @State private var casePlaced = false
     @State private var caseRevealProgress = 0.0
     @State private var fileDrag = CGSize.zero
-    @State private var proofRouteHasRun = false
     @State private var introBeat = 0
     @StateObject private var prelude = StrokePreludeAudio()
 
@@ -451,8 +450,7 @@ struct StrokeJourneyLaunchView: View {
     }
 
     private func routeProofIfNeeded() {
-        guard !proofRouteHasRun else { return }
-        proofRouteHasRun = true
+        guard experience.consumeProofRouteLaunch() else { return }
         if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
             // The named proof follows the current immersive case-review state,

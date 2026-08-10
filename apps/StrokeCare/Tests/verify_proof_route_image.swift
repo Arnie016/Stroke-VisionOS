@@ -22,7 +22,11 @@ let requiredText: [String: [[String]]] = [
     "--proof-spatial-docked-case": [["CASE 78"], ["FICTIONAL"], ["BEGIN PRESENTER VIEW"]],
     "--proof-pressure": [["PRESSURE"], ["TEACHING", "FAMILY"]],
     "--proof-clinician-pressure": [["PRESSURE"], ["PRESENTER", "TEACHING"]],
-    "--proof-family-question": [["PRESSURE", "CLARIFY"], ["FAMILY", "POINT"]],
+    "--proof-family-question": [
+        ["QUESTION HERE", "FAMILY POINTED TO THIS AREA"],
+        ["PRESSURE", "CLARIFY"],
+        ["FAMILY", "POINT"],
+    ],
     // The compact upper-left rail can be visually legible while full-frame OCR
     // misses its smallest safety line. Require the large route/control labels
     // here; the contract separately requires the visible qualitative/not-CFD

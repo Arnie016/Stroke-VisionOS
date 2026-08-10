@@ -14,7 +14,11 @@ readonly output_path="$4"
 readonly bundle_id="com.arnav.StrokeTime"
 readonly script_dir="${0:A:h}"
 readonly app_root="${script_dir:h}"
-readonly settle_seconds="${PROOF_SETTLE_SECONDS:-8}"
+if [[ "${proof_route}" == "--proof-flow-exit" ]]; then
+    readonly settle_seconds="${PROOF_FLOW_EXIT_SETTLE_SECONDS:-14}"
+else
+    readonly settle_seconds="${PROOF_SETTLE_SECONDS:-8}"
+fi
 
 case "${proof_route}" in
     --proof-case-unfold|--proof-spatial-intake|--proof-spatial-docked-case|\
