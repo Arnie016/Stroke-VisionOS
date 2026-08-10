@@ -989,3 +989,25 @@
   profile in this checkout.
 - Next safe action: with XCAT awake and worn, open Stroke Care manually and
   verify role → case → Access point → timeline → 3.2× `Enter brain` once.
+
+## 2026-08-10 13:41 SGT — stabilize points, vessel close-up, and hand tools
+
+- Target: make every visible teaching point independently selectable and keep
+  the clinician cuff/tools correctly oriented during the live demo.
+- Bounded action: separated animated lesson orbs from fixed non-overlapping
+  collision parents, widened the anatomy-proxy nearest-point fallback, added a
+  registered-assembly vessel/clot close-up on selection, bill-boarded the hand
+  cuff, and corrected the held-tool forward axis.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  commit `c651201` was pushed to PR #22; signed XCAT build `0.6 (29)` built,
+  codesign-verified, installed, and was subsequently listed as PID 1161.
+  Machine receipt: `Proof/xcat/20260810-134012/RECEIPT.md`.
+- Verdict: `IMPROVED` — point hit geometry no longer pulses into neighbouring
+  targets, selecting Flow/Blockage moves the complete registered assembly into
+  a close-up, and the hand-attached interface has an explicit wearer-facing
+  orientation.
+- Blocker: machine evidence cannot prove actual gaze-and-pinch acquisition,
+  tool direction, visual clarity, audio perception, comfort, registration, or
+  clinical validity on the wearer.
+- Next safe action: while wearing XCAT, pinch each visible point once, then open
+  Tools and confirm one held instrument points toward the central anatomy.
