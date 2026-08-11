@@ -21,6 +21,26 @@ The selected-point hero direction is also captured in
 starts with attached points rather than a permanent label cloud, and a single
 selection reveals one local explanation plus the relevant teaching image.
 
+## Gallery
+
+**One story, from fictional case intake to a shared anatomy conversation.**
+The six-frame image above is the visual-direction hero; the gallery below is
+made from actual visionOS Simulator captures of the current experience.
+
+| Fictional case intake | One selected point, one teaching reference |
+| --- | --- |
+| ![Fictional case intake in the spatial room](Proof/77-current-spatial-intake-simulator.png) | ![A selected anatomy point opens one teaching reference](Proof/92-selected-point-single-reference-build26-simulator.png) |
+| Choose a fictional case before the anatomy scene opens. | A quiet anatomy-attached point opens one local explanation and one secondary reference. |
+
+| Presenter checkpoints | Protective-covering teaching moment |
+| --- | --- |
+| ![Six revisitable presenter checkpoints](Proof/73-clinician-six-beat-timeline-simulator.png) | ![Non-graphic protective-covering teaching composition](Proof/89-clinician-protective-covering-build23-simulator.png) |
+| The presenter can revisit context, access, protective covering, purpose, checks, and closure. | A reversible, generic explanation of the protective covering—not an operative simulator or a patient-specific procedure. |
+
+The clinician-only six-checkpoint sequence is designed to explain a possible
+craniotomy conversation without showing cutting, drilling, a patient-specific
+access route, a procedural result, or a promise of outcome.
+
 ## Latest verified Simulator composition
 
 Build `0.6 (26)` gives a selected anatomy point one clear teaching lane. The
