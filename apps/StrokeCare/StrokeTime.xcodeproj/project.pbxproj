@@ -41,6 +41,7 @@
 		D73EA98CE7A85F6C358913E4 /* cranial_bone_access_closure_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 753516AA5DB20D25E5D7DC28 /* cranial_bone_access_closure_registered_conceptual_v1.usdz */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
+		DF877245DD47CB22F5DA9F5A /* StrokeTeachingImagingWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BD204EF309B42B35A4951E3 /* StrokeTeachingImagingWorkspaceView.swift */; };
 		E27697BF4448281573658419 /* circle_of_willis_flow_overlay_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */; };
 		F35080EB0A3184483D874359 /* PressureBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = AD36F9CDA16675FE73F438E6 /* PressureBed.wav */; };
 		F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */; };
@@ -69,6 +70,7 @@
 		8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
 		8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = suction_and_forceps.usdz; sourceTree = "<group>"; };
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
+		9BD204EF309B42B35A4951E3 /* StrokeTeachingImagingWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTeachingImagingWorkspaceView.swift; sourceTree = "<group>"; };
 		A3391ECF7C246FCD230C1805 /* dural_access_closure_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_access_closure_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
 		B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientHistoryTimelineView.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */,
 				B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */,
 				5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */,
+				9BD204EF309B42B35A4951E3 /* StrokeTeachingImagingWorkspaceView.swift */,
 				65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */,
 			);
 			path = Sources;
@@ -289,6 +292,7 @@
 				F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */,
 				B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */,
 				0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */,
+				DF877245DD47CB22F5DA9F5A /* StrokeTeachingImagingWorkspaceView.swift in Sources */,
 				37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1078,3 +1078,12 @@
 - Verdict: `IMPROVED` — a fresh journey no longer intentionally carries the app-owned evidence window forward.
 - Blocker: the Simulator currently shows a separate system confirmation left by the prior `Inside the Flow` handoff; it blocks the visual role-threshold capture but is not Stroke Care's Clinical evidence window. XCAT was unavailable, so there is no physical-device validation.
 - Next safe action: dismiss the system confirmation, then validate the normal Family/Doctor entry and fresh evidence-return cycle on an unlocked XCAT.
+
+## 2026-08-11 21:11 SGT — add a movable generic 2D imaging reference
+
+- Target: give the clinician a spatially placeable 2D imaging companion without presenting an unreviewed patient scan or calling stroke imaging an X-ray.
+- Bounded action: added a clinician-only `Open 2D reference` handoff from the selected-point teaching lens to a standard resizable visionOS window with generic vascular-map and cross-section schematics.
+- Evidence: `python3 Tests/verify_contract.py` passed; `xcodegen generate` completed; the narrow visionOS Simulator Debug build completed; the updated app installed and launched with `--proof-imaging-window`.
+- Verdict: `IMPROVED` — the existing right-side 3D reference now has a separate movable 2D teaching companion, explicitly labelled generic and not a patient scan.
+- Blocker: the Simulator still showed a pending system `Open in Inside the Flow?` confirmation above the proof window, so this pass cannot claim a clean visual capture or wearer placement interaction.
+- Next safe action: dismiss that system confirmation, reopen the 2D teaching reference from a selected clinician point, and visually check the card can be placed and read in the room.

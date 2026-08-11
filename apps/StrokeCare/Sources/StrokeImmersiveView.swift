@@ -1646,6 +1646,7 @@ private struct SpatialRoleControls: View {
 /// the explicit generic/non-scan boundary without another image panel.
 private struct StrokeTeachingImagingDrawer: View {
     @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -1671,6 +1672,15 @@ private struct StrokeTeachingImagingDrawer: View {
                     .font(.caption2.monospaced().weight(.semibold))
                     .tracking(0.35)
                     .foregroundStyle(.orange.opacity(0.76))
+            }
+
+            if experience.audienceLens == .clinician {
+                Button("Open 2D reference", systemImage: "rectangle.on.rectangle") {
+                    openWindow(id: StrokeSpace.imaging)
+                }
+                .buttonStyle(.bordered)
+                .tint(referenceTint)
+                .accessibilityHint("Opens a moveable generic teaching schematic, not a patient image")
             }
         }
         .padding(.horizontal, 12)

@@ -102,6 +102,17 @@ require(all(token in catalog for token in (
     "virtualBindingCount = 450",
     "runtimeGeometryIncluded = false",
 )), "audited 150-source / 450-binding visual-detail snapshot is incomplete")
+require(all(token in app for token in (
+    'WindowGroup(id: StrokeSpace.imaging)',
+    'StrokeTeachingImagingWorkspaceView()',
+    'static let imaging = "stroke-teaching-imaging"',
+    'CommandLine.arguments.contains("--proof-imaging-window")',
+)), "moveable generic teaching-imaging window is incomplete")
+require(all(token in immersive for token in (
+    'Button("Open 2D reference", systemImage: "rectangle.on.rectangle")',
+    'openWindow(id: StrokeSpace.imaging)',
+    'not a patient image',
+)), "clinician imaging handoff is incomplete")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
 require(len(declared_usdz_paths) == 22 and len(set(declared_usdz_paths)) == 22 and "asset_manifest" not in project_yml, "runtime asset slice must remain exactly twenty-two unique explicit USDZ resources")
 require(
