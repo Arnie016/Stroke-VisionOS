@@ -146,6 +146,7 @@ require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixe
 require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 'case focusField')), "three-state spatial environment contract is missing")
 require("How will you use this?" in launch and "Patient / family" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
+require(".disabled(true)" not in launch and "Open the calm, generic anatomy exhibit" in launch, "the patient/family route is still locked behind the retired live-demo gate")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
 require(
@@ -361,6 +362,7 @@ blender_builder = (ROOT / "Scripts" / "build_blender_layer_study.py").read_text(
 blender_manifest = (ROOT / "TechnicalArt" / "Generated" / "StrokeLayerStudy.manifest.json").read_text()
 require("StrokeEvidenceWorkspaceView()" in app and "StrokeSpace.evidence" in app, "upper evidence window is missing")
 require("Clinical evidence" in evidence and "Search sources" in evidence and "Pin in space" in evidence and "Compose draft" in evidence, "citation search, pin, and compose workflow is incomplete")
+require("Back to explanation" in evidence and "dismissWindow(id: StrokeSpace.evidence)" in evidence, "evidence space lacks a clear, reliable return action")
 require("SOURCE-BOUND TEACHING DRAFT" in evidence and "not approved clinical copy" in evidence, "generated evidence copy lacks its draft boundary")
 require("fullCitation" in state and "stableURL" in state and "limitation" in state, "evidence sources lack immutable citation context")
 require("Clinician upper evidence plane" in deck_canon and "never receives raw gaze" in deck_canon, "RealityKit deck learnings are not mapped to Stroke Care")

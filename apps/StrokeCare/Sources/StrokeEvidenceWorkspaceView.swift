@@ -42,13 +42,12 @@ struct StrokeEvidenceWorkspaceView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button {
+                Button("Back to explanation", systemImage: "xmark") {
                     dismissWindow(id: StrokeSpace.evidence)
-                } label: {
-                    Image(systemName: "xmark")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
                 .accessibilityLabel("Close evidence space")
+                .accessibilityHint("Returns to the spatial explanation without changing the selected source")
             }
 
             TextField("Search sources", text: $query)
