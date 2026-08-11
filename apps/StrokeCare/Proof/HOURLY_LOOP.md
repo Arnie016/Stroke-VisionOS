@@ -1159,3 +1159,12 @@
 - Verdict: `IMPROVED` — the family route now supports a spatial, user-paced three-beat explanation without adding a permanent label cloud to the anatomy.
 - Blocker: this is Simulator rendering only; XCAT is unavailable, and physical pinch-drag legibility plus clinical review remain unproven.
 - Next safe action: validate one complete Atlas chapter on an unlocked physical Vision Pro before adding further anatomy content.
+
+## 2026-08-12 03:22 SGT — verify the Family point-to-spatial-reference path
+
+- Target: ensure that the patient/family route—not only the clinician route—can reveal one selected anatomy point with a spatial teaching reference and clear question controls.
+- Bounded action: added a deterministic Family selected-point route that selects one generic affected-area cue during the existing Pressure act and exposes the existing world-locked vessel teaching object.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-032143/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-selected-point.png` visibly shows one selected local cue, the left Family question/clarity surface, and the right `BLOCKED VESSEL · TEACHING VIEW` object with its generic-anatomy boundary.
+- Verdict: `IMPROVED` — the Family explainer now has a repeatable, screenshot-inspected receipt for the intended one-point → one-spatial-reference interaction.
+- Blocker: Simulator composition does not prove physical gaze-and-pinch targetability, room-scale legibility, or clinical adequacy; XCAT remains unavailable.
+- Next safe action: validate the Family selected-point interaction on an unlocked physical Vision Pro before increasing the reference catalogue.

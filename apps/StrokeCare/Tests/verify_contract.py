@@ -711,6 +711,7 @@ require(all(token in immersive for token in (
     "generic teaching anatomy, not a patient scan",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
+require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require(all(token in state for token in (
     "configurePresenterPointField(",
     "case .confirmContext:",

@@ -2247,6 +2247,21 @@ final class StrokeExperienceState: ObservableObject {
         )
     }
 
+    /// Family-specific receipt for the same point -> spatial teaching object
+    /// relationship. This deliberately avoids clinician rails and makes no
+    /// claim that the point or the vessel map is a patient image.
+    func prepareFamilyTeachingReferenceProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        pointField = .regions
+        lessonPointsVisible = true
+        selectPoint(
+            entityName: "clinician-region-point-field-point-0",
+            label: "Example affected area"
+        )
+    }
+
     func prepareScholarSkullProof() {
         // Orient is the quietest of the three existing acts: no clot-focus or
         // care-purpose cue competes with this reversible technical inspection.
