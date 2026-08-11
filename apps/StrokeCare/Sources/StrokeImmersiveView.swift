@@ -202,6 +202,33 @@ private enum SpatialVisualField {
     static let tertiaryScale: Float = 0.92
 }
 
+/// Imported USDZ anatomy can arrive noticeably after the immersive room.
+/// This boundary is intentionally descriptive rather than a fake progress
+/// meter, so an empty room never masquerades as a frozen family experience.
+private struct StrokeSceneReadinessOverlay: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+                .controlSize(.large)
+                .tint(.orange)
+            Text("Preparing the 3D teaching model")
+                .font(.headline.weight(.semibold))
+            Text("The brain, vessel paths, and discovery points will appear together.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 26)
+        .padding(.vertical, 22)
+        .frame(width: 360)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24))
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(.white.opacity(0.16)))
+        .shadow(color: .black.opacity(0.32), radius: 18, y: 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Preparing the 3D teaching model. The brain, vessel paths, and discovery points will appear together.")
+    }
+}
+
 struct StrokeImmersiveView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Binding var immersionStyle: ImmersionStyle
@@ -212,6 +239,8 @@ struct StrokeImmersiveView: View {
     @State private var pressureController: AudioPlaybackController?
     @State private var previousDragTranslation = CGSize.zero
     @State private var previousMagnification = 1.0
+    @State private var isSceneReady = false
+    @State private var detailedSceneLoadTask: Task<Void, Never>?
     @StateObject private var narrator = StrokeNarrationEngine()
     @StateObject private var stagePlacement = StrokeStagePlacement()
 
@@ -257,12 +286,30 @@ struct StrokeImmersiveView: View {
                     }
                     content.add(stageRoot)
 
-                    let root = await StrokeSceneFactory.makeScene()
+                    // A compact, local procedural assembly gets the immersive
+                    // room on-screen immediately. The audited USDZ anatomy is
+                    // then loaded off the initial presentation path and swaps
+                    // in as one complete root, rather than leaving a bare room
+                    // while twenty-two resources are decoded.
+                    let root = await StrokeSceneFactory.makeScene(compact: true)
                     stageRoot.addChild(root)
                     experience.updateAvailableAnatomyFocuses(
                         StrokeSceneFactory.availableAnatomyFocuses(in: root)
                     )
                     await installSpatialAudio(on: root)
+
+                    detailedSceneLoadTask?.cancel()
+                    detailedSceneLoadTask = Task { @MainActor in
+                        let detailedRoot = await StrokeSceneFactory.makeScene()
+                        guard !Task.isCancelled else { return }
+                        root.removeFromParent()
+                        stageRoot.addChild(detailedRoot)
+                        experience.updateAvailableAnatomyFocuses(
+                            StrokeSceneFactory.availableAnatomyFocuses(in: detailedRoot)
+                        )
+                        await installSpatialAudio(on: detailedRoot)
+                        isSceneReady = true
+                    }
 
                     let caseRoom = StrokeSceneFactory.makeSpatialCaseIntake()
                     stageRoot.addChild(caseRoom)
@@ -358,6 +405,7 @@ struct StrokeImmersiveView: View {
                             stageRoot.addChild(attachment)
                         }
                     }
+
                 } update: { content, attachments in
                     guard
                         let stageRoot = content.entities.first(where: { $0.name == stageRootName }),
@@ -743,6 +791,7 @@ struct StrokeImmersiveView: View {
                 )
             .onChange(of: experience.soundEnabled) { _, _ in updateAudioMix() }
             .onAppear {
+                isSceneReady = false
                 stagePlacement.start()
                 synchronizeImmersionStyle()
                 synchronizeNarration()
@@ -764,12 +813,22 @@ struct StrokeImmersiveView: View {
                 synchronizeNarration()
             }
             .onDisappear {
+                isSceneReady = false
+                detailedSceneLoadTask?.cancel()
+                detailedSceneLoadTask = nil
                 stagePlacement.stop()
                 narrator.stop()
                 flowController?.stop()
                 pressureController?.stop()
                 StrokeSceneFactory.stopAuthoredBloodflowAnimations()
                 experience.isImmersivePresented = false
+            }
+            .overlay {
+                if !isSceneReady {
+                    StrokeSceneReadinessOverlay()
+                        .transition(.opacity)
+                        .allowsHitTesting(false)
+                }
             }
         }
     }

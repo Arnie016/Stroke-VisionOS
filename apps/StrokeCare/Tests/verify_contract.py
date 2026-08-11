@@ -682,6 +682,15 @@ require(all(token in state for token in (
     "beat == .explainClosure",
 )), "presenter beat navigation bypasses permission continuity or reversible closure")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
+require(all(token in immersive for token in (
+    "StrokeSceneReadinessOverlay",
+    "Preparing the 3D teaching model",
+    "brain, vessel paths, and discovery points will appear together",
+    "@State private var isSceneReady = false",
+    "StrokeSceneFactory.makeScene(compact: true)",
+    "let detailedRoot = await StrokeSceneFactory.makeScene()",
+    "isSceneReady = true",
+)), "immersive launch lacks an honest anatomy-readiness boundary")
 require(all(token in state for token in (
     "enum StrokeFamilyBrainAtlasChapter",
     "familyBrainAtlasVisible",

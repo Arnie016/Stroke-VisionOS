@@ -1141,3 +1141,12 @@
 - Verdict: `IMPROVED` — family learning now has a progressive, spatially placed anatomy guide rather than only static questions or a flat vessel reference.
 - Blocker: the ten chapters are orientation content; only the current reviewed whole-brain and blood-flow layers are locally shown. Exact deep-structure landmark anchoring, patient comprehension, and physical-device pinch-drag comfort need separate review.
 - Next safe action: validate the Family Atlas interaction and its inside-brain handoff on a physical Vision Pro before adding another anatomy subsystem.
+
+## 2026-08-12 03:00 SGT — stage the immersive anatomy before heavy assets
+
+- Target: prevent a blank-looking immersive room while the detailed brain assets decode.
+- Bounded action: presented the compact local anatomy immediately, then swapped it for the complete imported anatomy root after it finished loading.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-024606/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` captures at `/tmp/strokecare-readiness-split-4s.png` and `/tmp/strokecare-readiness-split-50s.png` show immediate fallback anatomy followed by the detailed brain-and-artery assembly.
+- Verdict: `IMPROVED` — the experience no longer begins as an empty immersive room during the large-asset handoff.
+- Blocker: XCAT was unavailable, and Simulator captures do not prove physical-device load timing, wearer comfort, or gesture quality.
+- Next safe action: validate the staged anatomy handoff on an unlocked physical Vision Pro before changing another interaction.
