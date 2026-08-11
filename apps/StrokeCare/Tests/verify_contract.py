@@ -715,9 +715,12 @@ require(all(token in immersive for token in (
     ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))",
     "SHOW BRANCHING FLOW IN 3D",
     "revealFamilyBrainAtlasModelCue()",
+    "static let secondaryCaseDrawer: SIMD3<Float> = [0.50, 1.50, -0.74]",
+    "drawer.scale = [0.68, 0.68, 0.68]",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
 require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArterialAtlasFlowProof" in launch, "deterministic family arterial-flow Atlas proof route is missing")
+require("suggestedStagePosition: SIMD3<Float> = [0.50, 1.62, -0.86]" in scene, "the secondary 3D teaching reference must remain separated from the hero anatomy")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require(all(token in state for token in (
     "configurePresenterPointField(",

@@ -1195,3 +1195,12 @@
 - Verdict: `IMPROVED` — the vessel chapter now has an explicit user-selected spatial flow reveal rather than a flat map or permanent label cloud.
 - Blocker: this is qualitative, generic teaching anatomy only; Simulator proof does not establish physical gaze-and-pinch targeting, motion legibility, or clinical adequacy, and XCAT remains unavailable.
 - Next safe action: validate the selected Family arterial-flow interaction on an unlocked Vision Pro before adding more physiology references.
+
+## 2026-08-12 05:31 SGT — separate the 3D vessel reference from the hero anatomy
+
+- Target: make the selected arterial teaching reference read as a second spatial object rather than a flattened overlay competing with the central brain.
+- Bounded action: moved the world-locked registered vessel miniature into the right secondary field and shifted/enlarged its associated readable disclosure without changing the generic-teaching, one-selected-point contract.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-045046/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh isolated-DerivedData Simulator bundle launched `--proof-family-arterial-atlas-flow` as process `68477`; inspected capture `/tmp/strokecare-secondary-reference-balanced.png` visibly shows the complete right-side 3D vessel object and its readable reference capsule, separate from the dominant centre brain.
+- Verdict: `IMPROVED` — the Family arterial lesson now uses primary/secondary spatial depth instead of visually stacking its reference on the anatomy.
+- Blocker: Simulator framing does not prove headset depth perception, peripheral legibility, room placement, or physical gaze-and-pinch; XCAT remains unavailable.
+- Next safe action: validate this primary/secondary composition on an unlocked Vision Pro before adding another teaching reference.

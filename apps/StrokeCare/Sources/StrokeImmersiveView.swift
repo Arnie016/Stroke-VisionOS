@@ -193,7 +193,7 @@ private enum SpatialVisualField {
     static let eyePlaneHeight: Float = 1.62
     static let primaryAnatomy: SIMD3<Float> = [0.00, 1.62, -1.16]
     static let primaryVesselFocus: SIMD3<Float> = [0.00, 1.61, -0.76]
-    static let secondaryCaseDrawer: SIMD3<Float> = [0.35, 1.56, -0.82]
+    static let secondaryCaseDrawer: SIMD3<Float> = [0.50, 1.50, -0.74]
     static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
 
     static let primaryScale: Float = 2.12
@@ -926,7 +926,7 @@ struct StrokeImmersiveView: View {
 
         if let drawer = attachments.entity(for: teachingImagingDrawerID) {
             drawer.position = SpatialVisualField.secondaryCaseDrawer
-            drawer.scale = [0.64, 0.64, 0.64]
+            drawer.scale = [0.68, 0.68, 0.68]
             drawer.isEnabled = visible && experience.teachingImagingDrawerVisible
             drawer.components.set(BillboardComponent())
         }

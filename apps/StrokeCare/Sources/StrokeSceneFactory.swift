@@ -2991,7 +2991,10 @@ enum TeachingImagingMiniatureFactory {
     /// initially attached to the anatomy scene for deterministic loading; the
     /// parent may reparent it to the world-locked stage at this position so it
     /// does not inherit the hero's orbit gesture.
-    static let suggestedStagePosition: SIMD3<Float> = [0.35, 1.72, -0.90]
+    // Keep the secondary 3D vessel/object reference outside the hero brain's
+    // foveal volume. It stays world-locked on the right so the wearer reads a
+    // second spatial object, rather than a flattened overlay on the anatomy.
+    static let suggestedStagePosition: SIMD3<Float> = [0.50, 1.62, -0.86]
     static let suggestedStageScale: Float = 0.90
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
