@@ -14,7 +14,9 @@ struct StrokeTimeApp: App {
             if CommandLine.arguments.contains("--proof-evidence-window") {
                 StrokeEvidenceWorkspaceView()
                     .environmentObject(experience)
-            } else if CommandLine.arguments.contains("--proof-imaging-window") {
+            } else if CommandLine.arguments.contains("--proof-imaging-window")
+                        || CommandLine.arguments.contains("--proof-imaging-ct")
+                        || CommandLine.arguments.contains("--proof-imaging-mri") {
                 StrokeTeachingImagingWorkspaceView()
                     .environmentObject(experience)
                     .onAppear { experience.prepareTeachingImagingProof() }

@@ -16,7 +16,17 @@ struct StrokeTeachingImagingWorkspaceView: View {
 
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissWindow) private var dismissWindow
-    @State private var reference: Reference = .vesselMap
+    @State private var reference: Reference
+
+    init() {
+        if CommandLine.arguments.contains("--proof-imaging-mri") {
+            _reference = State(initialValue: .mriGuide)
+        } else if CommandLine.arguments.contains("--proof-imaging-ct") {
+            _reference = State(initialValue: .ctGuide)
+        } else {
+            _reference = State(initialValue: .vesselMap)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {

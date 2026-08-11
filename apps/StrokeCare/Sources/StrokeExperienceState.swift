@@ -1079,14 +1079,10 @@ final class StrokeExperienceState: ObservableObject {
                   let label = selectedPointLabel else { return nil }
             return (entityName, label)
         }()
-        let isAccessBeat = beat.rawValue >= StrokePresenterTeachingBeat.discussAccess.rawValue
-
         if beat.procedureStep == .discussCare, !careViewPermissionGranted {
             pendingPresenterTeachingBeat = beat
             present(step: .discussCare, reduceMotion: reduceMotion)
-            if isAccessBeat {
-                activatePresenterAccessStory(preserving: preservedAccessSelection)
-            }
+            configurePresenterPointField(for: beat, preserving: preservedAccessSelection)
             return
         }
 
@@ -1094,15 +1090,34 @@ final class StrokeExperienceState: ObservableObject {
         present(step: beat.procedureStep, reduceMotion: reduceMotion)
         guard procedureStep == beat.procedureStep else { return }
         presenterTeachingBeat = beat
-        if isAccessBeat {
-            activatePresenterAccessStory(preserving: preservedAccessSelection)
-        }
+        configurePresenterPointField(for: beat, preserving: preservedAccessSelection)
         if beat == .explainClosure {
             cancelLayerReveal()
             withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.55)) {
                 anatomyPresentation = .assembled
                 brainRevealProgress = 0.28
             }
+        }
+    }
+
+    /// Each presenter checkpoint owns its own discovery state. In particular,
+    /// the single generic access invitation appears only at Access; it never
+    /// persists as a misleading skull dot through the covering, purpose,
+    /// checks, or closure discussions.
+    private func configurePresenterPointField(
+        for beat: StrokePresenterTeachingBeat,
+        preserving selection: (entityName: String, label: String)?
+    ) {
+        switch beat {
+        case .confirmContext:
+            pointField = .regions
+            lessonPointsVisible = true
+            clearPointSelection()
+        case .discussAccess:
+            activatePresenterAccessStory(preserving: selection)
+        case .protectiveCovering, .explainPurpose, .teamChecks, .explainClosure:
+            lessonPointsVisible = false
+            clearPointSelection()
         }
     }
 

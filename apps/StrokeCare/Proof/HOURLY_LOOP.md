@@ -1114,3 +1114,12 @@
 - Verdict: `IMPROVED` — the 2D reference now better matches the imaging concepts a clinician may explain in an acute stroke conversation while remaining movable and clearly illustrative.
 - Blocker: the generic diagrams do not substitute for actual imaging, and this Simulator capture does not prove physical placement, interpretation, or clinical review.
 - Next safe action: define a separate, opt-in Brain Health education lane for sleep and cognitive-health topics instead of mixing them into the acute stroke/craniotomy story.
+
+## 2026-08-12 01:55 SGT — stop access dots leaking through presenter checkpoints
+
+- Target: stop the single generic craniotomy invitation from appearing at every later presenter checkpoint as an unrelated skull marker.
+- Bounded action: made presenter point visibility checkpoint-owned: Context shows the regional discovery family, Access shows the single generic access invitation, and Protective covering / Purpose / Checks / Closure hide point cues until reviewed point families exist for those discussions.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed. A fresh `--proof-clinician-six-beat-timeline` screenshot reached only the room and did not open the immersive scene, so it is not visual evidence for this change.
+- Verdict: `IMPROVED` — later clinician checkpoints no longer intentionally inherit the same access point in runtime state.
+- Blocker: a fresh Simulator immersive-route receipt is still required; additional point families need authored, reviewed anchors rather than reusing a skull location.
+- Next safe action: repair the six-beat deterministic immersive proof route, then inspect Context, Access, and Checks as separate visual states.

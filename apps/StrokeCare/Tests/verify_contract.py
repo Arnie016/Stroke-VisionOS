@@ -107,6 +107,8 @@ require(all(token in app for token in (
     'StrokeTeachingImagingWorkspaceView()',
     'static let imaging = "stroke-teaching-imaging"',
     'CommandLine.arguments.contains("--proof-imaging-window")',
+    'CommandLine.arguments.contains("--proof-imaging-ct")',
+    'CommandLine.arguments.contains("--proof-imaging-mri")',
     '.onAppear { experience.prepareTeachingImagingProof() }',
 )), "moveable generic teaching-imaging window is incomplete")
 imaging_workspace = (ROOT / "Sources/StrokeTeachingImagingWorkspaceView.swift").read_text()
@@ -116,6 +118,8 @@ require(all(token in imaging_workspace for token in (
     '"Illustrative CT/MRI/CTA teaching view · not a patient scan or result',
     'ILLUSTRATIVE CT-STYLE CROSS-SECTION',
     'ILLUSTRATIVE MRI-STYLE SOFT-TISSUE VIEW',
+    'CommandLine.arguments.contains("--proof-imaging-ct")',
+    'CommandLine.arguments.contains("--proof-imaging-mri")',
 )), "moveable imaging reference must distinguish generic CT/MRI/CTA teaching views from patient imaging")
 require(all(token in immersive for token in (
     'Button("Open 2D reference", systemImage: "rectangle.on.rectangle")',
@@ -678,6 +682,13 @@ require(all(token in state for token in (
     "beat == .explainClosure",
 )), "presenter beat navigation bypasses permission continuity or reversible closure")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
+require(all(token in state for token in (
+    "configurePresenterPointField(",
+    "case .confirmContext:",
+    "case .discussAccess:",
+    "case .protectiveCovering, .explainPurpose, .teamChecks, .explainClosure:",
+    "lessonPointsVisible = false",
+)), "presenter checkpoints do not own their point-field visibility")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
 require("focusLight.isEnabled = experience.environmentMode != .surroundings" in immersive and "high-density cortex reads like flat clay" in immersive, "warm anatomy field is missing its sculpting key light")
 require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not a patient scan", "Registered-v2 teaching asset · review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
