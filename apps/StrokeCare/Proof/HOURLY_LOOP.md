@@ -1150,3 +1150,12 @@
 - Verdict: `IMPROVED` — the experience no longer begins as an empty immersive room during the large-asset handoff.
 - Blocker: XCAT was unavailable, and Simulator captures do not prove physical-device load timing, wearer comfort, or gesture quality.
 - Next safe action: validate the staged anatomy handoff on an unlocked physical Vision Pro before changing another interaction.
+
+## 2026-08-12 03:10 SGT — make the Family Brain Atlas progressively explorable
+
+- Target: let a patient/family member move through each general brain concept at a comfortable pace instead of receiving a single dense text block.
+- Bounded action: expanded each Atlas chapter into three pinch-through beats — spatial location, plain-language purpose, and a clinician-conversation prompt — while keeping pinch-drag for moving between the ten concepts and retaining the generic-teaching/not-a-patient-scan boundary.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-031011/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-three-beat.png` visibly shows `Arterial routes`, `WHAT IT HELPS WITH · 2 / 3`, the enlarged left card, and the central 3D brain/artery assembly.
+- Verdict: `IMPROVED` — the family route now supports a spatial, user-paced three-beat explanation without adding a permanent label cloud to the anatomy.
+- Blocker: this is Simulator rendering only; XCAT is unavailable, and physical pinch-drag legibility plus clinical review remain unproven.
+- Next safe action: validate one complete Atlas chapter on an unlocked physical Vision Pro before adding further anatomy content.

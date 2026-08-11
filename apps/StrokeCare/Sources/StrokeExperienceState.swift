@@ -122,6 +122,8 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
     case hippocampus
     case brainstemAndCerebellum
 
+    static let detailCount = 3
+
     var id: Int { rawValue }
     var ordinal: Int { rawValue + 1 }
 
@@ -163,6 +165,14 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
         case .brainstemAndCerebellum:
             "The brainstem links brain and spinal cord; the cerebellum supports balance and coordination."
         }
+    }
+
+    var discoveryPrompt: String {
+        "Look for the quiet cue beside the generic 3D model. It gives spatial context without labelling a patient scan."
+    }
+
+    var conversationPrompt: String {
+        "If this matters to your conversation, ask the clinician how this general structure relates to the explanation you are sharing."
     }
 
     var modelCue: String {
@@ -576,6 +586,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var selectedFamilyQuestion: String?
     @Published var familyBrainAtlasVisible = false
     @Published private(set) var familyBrainAtlasChapter: StrokeFamilyBrainAtlasChapter = .cortex
+    @Published private(set) var familyBrainAtlasDetailIndex = 0
     @Published private(set) var selectedPresenterKeyPointIndex: Int?
     @Published private(set) var presenterTeachingBeat: StrokePresenterTeachingBeat = .confirmContext
     @Published var questionPlacementArmed = false
@@ -681,6 +692,7 @@ final class StrokeExperienceState: ObservableObject {
     func selectFamilyBrainAtlasChapter(_ chapter: StrokeFamilyBrainAtlasChapter) {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
         familyBrainAtlasChapter = chapter
+        familyBrainAtlasDetailIndex = 0
         selectLessonFamily(chapter.pointField)
     }
 
@@ -690,6 +702,14 @@ final class StrokeExperienceState: ObservableObject {
         guard let current = chapters.firstIndex(of: familyBrainAtlasChapter) else { return }
         let next = (current + offset % chapters.count + chapters.count) % chapters.count
         selectFamilyBrainAtlasChapter(chapters[next])
+    }
+
+    /// Each Atlas chapter has three short, wearer-controlled beats. This makes
+    /// the card an explorable explanation rather than a permanent label wall.
+    func advanceFamilyBrainAtlasDetail(by offset: Int) {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        let count = StrokeFamilyBrainAtlasChapter.detailCount
+        familyBrainAtlasDetailIndex = (familyBrainAtlasDetailIndex + offset % count + count) % count
     }
 
     /// Reveals one registered subsystem at a time without adding a modal or
@@ -927,6 +947,7 @@ final class StrokeExperienceState: ObservableObject {
         teachingImagingDrawerVisible = false
         familyBrainAtlasVisible = false
         familyBrainAtlasChapter = .cortex
+        familyBrainAtlasDetailIndex = 0
         withAnimation(.easeInOut(duration: 0.72)) {
             brainRevealProgress = 0.18
             vesselFocusProgress = 0
@@ -2030,6 +2051,7 @@ final class StrokeExperienceState: ObservableObject {
         selectedFamilyQuestion = nil
         familyBrainAtlasVisible = false
         familyBrainAtlasChapter = .cortex
+        familyBrainAtlasDetailIndex = 0
         selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         pointField = .regions
@@ -2125,6 +2147,7 @@ final class StrokeExperienceState: ObservableObject {
         spatialZoom = 1.22
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.arterialRoutes)
+        advanceFamilyBrainAtlasDetail(by: 1)
     }
 
     func prepareClinicianPressureStoryProof() {

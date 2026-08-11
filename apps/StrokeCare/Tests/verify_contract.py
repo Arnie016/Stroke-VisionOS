@@ -695,8 +695,10 @@ require(all(token in state for token in (
     "enum StrokeFamilyBrainAtlasChapter",
     "familyBrainAtlasVisible",
     "familyBrainAtlasChapter",
+    "familyBrainAtlasDetailIndex",
     "toggleFamilyBrainAtlas()",
     "advanceFamilyBrainAtlasChapter(by",
+    "advanceFamilyBrainAtlasDetail(by",
     "selectLessonFamily(chapter.pointField)",
     "prepareFamilyBrainAtlasProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
@@ -704,6 +706,8 @@ require(all(token in immersive for token in (
     'familyBrainAtlasID = "spatial-family-brain-atlas"',
     "SpatialFamilyBrainAtlas()",
     "Pinch-drag left or right to explore",
+    "Pinch this card for the next short explanation",
+    "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")

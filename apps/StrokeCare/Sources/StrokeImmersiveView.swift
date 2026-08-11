@@ -674,7 +674,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: familyBrainAtlasID) {
                         SpatialFamilyBrainAtlas()
                             .environmentObject(experience)
-                            .frame(width: 460)
+                            .frame(width: 540)
                     }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
@@ -909,7 +909,7 @@ struct StrokeImmersiveView: View {
         }
 
         if let atlas = attachments.entity(for: familyBrainAtlasID) {
-            atlas.position = [-0.62, 1.62, -0.92]
+            atlas.position = [-0.66, 1.62, -0.92]
             atlas.scale = [0.88, 0.88, 0.88]
             atlas.isEnabled = visible && isFamily && experience.familyBrainAtlasVisible
             atlas.components.set(BillboardComponent())
@@ -2376,6 +2376,22 @@ private struct SpatialFamilyBrainAtlas: View {
         experience.familyBrainAtlasChapter
     }
 
+    private var detailTitle: String {
+        switch experience.familyBrainAtlasDetailIndex {
+        case 0: "FIND IT IN SPACE"
+        case 1: "WHAT IT HELPS WITH"
+        default: "TAKE THE NEXT QUESTION"
+        }
+    }
+
+    private var detailText: String {
+        switch experience.familyBrainAtlasDetailIndex {
+        case 0: chapter.discoveryPrompt
+        case 1: chapter.explanation
+        default: chapter.conversationPrompt
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 13) {
             HStack(alignment: .firstTextBaseline) {
@@ -2394,15 +2410,31 @@ private struct SpatialFamilyBrainAtlas: View {
                     experience.advanceFamilyBrainAtlasChapter(by: -1)
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(chapter.title)
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
-                    Text(chapter.explanation)
-                        .font(.callout.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.82))
-                        .fixedSize(horizontal: false, vertical: true)
+                Button {
+                    experience.advanceFamilyBrainAtlasDetail(by: 1)
+                } label: {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(chapter.title)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(.white)
+                        Text("\(detailTitle) · \(experience.familyBrainAtlasDetailIndex + 1) / \(StrokeFamilyBrainAtlasChapter.detailCount)")
+                            .font(.caption2.weight(.black))
+                            .tracking(0.8)
+                            .foregroundStyle(.orange.opacity(0.90))
+                        Text(detailText)
+                            .font(.callout.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.82))
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Pinch this card for the next short explanation")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.48))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .buttonStyle(.plain)
+                .hoverEffect(.highlight)
+                .accessibilityLabel("\(chapter.title), insight \(experience.familyBrainAtlasDetailIndex + 1) of \(StrokeFamilyBrainAtlasChapter.detailCount). \(detailText)")
+                .accessibilityHint("Pinch for the next explanation")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .offset(x: horizontalDrag * 0.12)
 
@@ -2433,7 +2465,7 @@ private struct SpatialFamilyBrainAtlas: View {
             .accessibilityLabel("Show (chapter.title) context on the 3D teaching model")
             .accessibilityHint("Changes only the generic discovery points; it does not identify anatomy in a patient scan")
 
-            Text("Pinch-drag left or right to explore · generic teaching anatomy, not a patient scan")
+            Text("Pinch-drag left or right to explore · pinch the card for three short explanations · generic teaching anatomy, not a patient scan")
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.52))
         }
