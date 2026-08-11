@@ -1036,6 +1036,10 @@ final class StrokeExperienceState: ObservableObject {
     func setFamilyClarityCheck(_ value: Double) {
         familyClarityCheck = min(max(value, 0), 2)
         familyClarityWasSet = true
+        if let selectedFamilyQuestion,
+           !familyQuestionSuggestions.contains(selectedFamilyQuestion) {
+            self.selectedFamilyQuestion = nil
+        }
         if familyClarityCheck < 0.5 {
             requestClarification()
         }
@@ -1236,6 +1240,38 @@ final class StrokeExperienceState: ObservableObject {
             [familyTimelineQuestion, "Can we pause at the blockage?", "What remains uncertain?"]
         case .discussCare:
             [familyTimelineQuestion, "What is the goal?", "What can this not change?"]
+        }
+    }
+
+    /// A selected family question opens one bounded clarification card in the
+    /// shared scene. These sentences are authored teaching language, never a
+    /// generated diagnosis, treatment recommendation, or patient-specific
+    /// prediction.
+    var selectedFamilyQuestionAnswer: String? {
+        guard let question = selectedFamilyQuestion else { return nil }
+        let lowercasedQuestion = question.lowercased()
+
+        switch procedureStep {
+        case .chooseCase:
+            if lowercasedQuestion.contains("teaching model") || lowercasedQuestion.contains("know for sure") {
+                return "This is generic teaching anatomy. It helps explain the conversation; it is not a personal scan or a conclusion about one person."
+            }
+            return "We can begin with the whole brain, then use one quiet point to show the area being discussed."
+
+        case .inspectOcclusion:
+            if lowercasedQuestion.contains("pressure") || lowercasedQuestion.contains("space") {
+                return "The skull is a fixed space. This teaching view keeps blocked flow, affected tissue, and pressure as separate ideas."
+            }
+            if lowercasedQuestion.contains("uncertain") {
+                return "This exhibit can explain terms and questions. It does not decide an individual diagnosis or what will happen next."
+            }
+            return "The highlighted vessel is a teaching cue for interrupted flow. We can pause here and compare it with the surrounding brain."
+
+        case .discussCare:
+            if lowercasedQuestion.contains("not change") || lowercasedQuestion.contains("uncertain") {
+                return "The purpose shown is making more room when pressure is a concern. It is not a promise of recovery or a prediction of outcome."
+            }
+            return "This is a non-graphic explanation of why a team may discuss creating more room and what they continue to monitor."
         }
     }
 
@@ -2172,10 +2208,10 @@ final class StrokeExperienceState: ObservableObject {
     func prepareFamilyClarityProof() {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
+        setFamilyClarityCheck(1)
         if familyQuestionSuggestions.indices.contains(1) {
             selectFamilyQuestion(familyQuestionSuggestions[1])
         }
-        setFamilyClarityCheck(1)
     }
 
     func preparePresenterPlainLanguageProof() {

@@ -2310,6 +2310,25 @@ private struct SpatialRoleMicroCues: View {
                     .accessibilityValue(isSelected ? "Selected; lesson paused" : "Not selected")
                 }
 
+                if let answer = experience.selectedFamilyQuestionAnswer {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("A CLEARER WAY TO SAY IT", systemImage: "text.bubble.fill")
+                            .font(.caption2.weight(.black))
+                            .tracking(0.75)
+                            .foregroundStyle(accent)
+                        Text(answer)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.84))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(10)
+                    .background(accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(accent.opacity(0.22)))
+                    .transition(.opacity)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Plain-language answer: \(answer)")
+                }
+
                 Divider().overlay(Color.white.opacity(0.12))
 
                 HStack {

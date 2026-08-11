@@ -149,6 +149,8 @@ require("beginPatientExploration" in state and "if lens == .family" in launch, "
 require(".disabled(true)" not in launch and "Open the calm, generic anatomy exhibit" in launch, "the patient/family route is still locked behind the retired live-demo gate")
 require("audienceLens == .family, familyClarityWasSet" in state and "Let’s slow down." in state and "Pause, ask a question" in state, "family self-reported clarity does not adapt the visible teaching copy")
 require("experience.audienceLens == .family ? 360 : 300" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 336" in immersive, "family question rail is not given the larger readable spatial footprint")
+require("var selectedFamilyQuestionAnswer: String?" in state and "never a\n    /// generated diagnosis" in state and "not a personal scan or a conclusion" in state, "family question selection does not produce a bounded, authored clarification")
+require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive and "A CLEARER WAY TO SAY IT" in immersive and "Plain-language answer:" in immersive, "family rail does not surface the selected question's plain-language answer")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
 require(
