@@ -107,6 +107,7 @@ require(all(token in app for token in (
     'StrokeTeachingImagingWorkspaceView()',
     'static let imaging = "stroke-teaching-imaging"',
     'CommandLine.arguments.contains("--proof-imaging-window")',
+    '.onAppear { experience.prepareTeachingImagingProof() }',
 )), "moveable generic teaching-imaging window is incomplete")
 require(all(token in immersive for token in (
     'Button("Open 2D reference", systemImage: "rectangle.on.rectangle")',

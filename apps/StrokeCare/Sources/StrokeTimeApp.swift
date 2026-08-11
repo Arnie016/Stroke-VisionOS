@@ -17,6 +17,7 @@ struct StrokeTimeApp: App {
             } else if CommandLine.arguments.contains("--proof-imaging-window") {
                 StrokeTeachingImagingWorkspaceView()
                     .environmentObject(experience)
+                    .onAppear { experience.prepareTeachingImagingProof() }
             } else {
                 StrokeJourneyLaunchView()
                     .environmentObject(experience)

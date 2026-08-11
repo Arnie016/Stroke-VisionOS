@@ -1096,3 +1096,12 @@
 - Verdict: `IMPROVED` — the moveable generic imaging reference is now visually proven in the current Simulator build.
 - Blocker: this proves Simulator rendering only; it does not prove a clinician can pinch the selected-point handoff, reposition the window comfortably, or interpret the schematic correctly on physical XCAT.
 - Next safe action: on an unlocked XCAT, select a clinician anatomy point, open Imaging, move the 2D reference, and record the interaction separately from clinical review.
+
+## 2026-08-11 21:39 SGT — bind imaging proof to a selected anatomy point
+
+- Target: make the deterministic 2D imaging proof prove the same authored-point provenance used by the clinician experience.
+- Bounded action: made `--proof-imaging-window` prepare the existing selected-point teaching state before rendering the 2D reference.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed; the fresh current-build capture `/tmp/strokecare-imaging-selected-point.png` visibly reads `Linked from: Example affected area` alongside the vessel-map and generic/non-patient boundary.
+- Verdict: `IMPROVED` — the proof now establishes point-to-reference provenance rather than showing an unlinked standalone card.
+- Blocker: this remains a deterministic Simulator state; it does not prove physical gaze-and-pinch selection, room placement, or clinical adequacy.
+- Next safe action: validate the live clinician point -> Imaging action on unlocked XCAT, then capture it as a separate physical interaction receipt.
