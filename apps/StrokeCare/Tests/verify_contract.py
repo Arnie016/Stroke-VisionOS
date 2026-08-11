@@ -366,7 +366,7 @@ blender_builder = (ROOT / "Scripts" / "build_blender_layer_study.py").read_text(
 blender_manifest = (ROOT / "TechnicalArt" / "Generated" / "StrokeLayerStudy.manifest.json").read_text()
 require("StrokeEvidenceWorkspaceView()" in app and "StrokeSpace.evidence" in app, "upper evidence window is missing")
 require("Clinical evidence" in evidence and "Search sources" in evidence and "Pin in space" in evidence and "Compose draft" in evidence, "citation search, pin, and compose workflow is incomplete")
-require("Back to explanation" in evidence and "dismissWindow(id: StrokeSpace.evidence)" in evidence, "evidence space lacks a clear, reliable return action")
+require("Return to anatomy" in evidence and "returnToExplanation()" in evidence and "dismissWindow(id: StrokeSpace.evidence)" in evidence, "evidence space lacks redundant, reliable return actions")
 require("SOURCE-BOUND TEACHING DRAFT" in evidence and "not approved clinical copy" in evidence, "generated evidence copy lacks its draft boundary")
 require("fullCitation" in state and "stableURL" in state and "limitation" in state, "evidence sources lack immutable citation context")
 require("Clinician upper evidence plane" in deck_canon and "never receives raw gaze" in deck_canon, "RealityKit deck learnings are not mapped to Stroke Care")

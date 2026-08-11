@@ -42,10 +42,11 @@ struct StrokeEvidenceWorkspaceView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Back to explanation", systemImage: "xmark") {
-                    dismissWindow(id: StrokeSpace.evidence)
+                Button("Return", systemImage: "arrow.uturn.backward") {
+                    returnToExplanation()
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
+                .tint(.cyan)
                 .accessibilityLabel("Close evidence space")
                 .accessibilityHint("Returns to the spatial explanation without changing the selected source")
             }
@@ -95,6 +96,14 @@ struct StrokeEvidenceWorkspaceView: View {
             Label("Draft catalog · clinical review pending", systemImage: "exclamationmark.shield")
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(.orange)
+
+            Button("Return to anatomy", systemImage: "arrow.uturn.backward") {
+                returnToExplanation()
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.cyan)
+            .frame(maxWidth: .infinity)
+            .accessibilityHint("Closes this source space and returns to the spatial explanation")
         }
         .padding(18)
     }
@@ -131,6 +140,13 @@ struct StrokeEvidenceWorkspaceView: View {
                 }
 
                 Spacer()
+
+                Button("Return to anatomy", systemImage: "arrow.uturn.backward") {
+                    returnToExplanation()
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                .accessibilityHint("Closes this source space and returns to the spatial explanation")
             }
 
             HStack(alignment: .top, spacing: 12) {
@@ -211,5 +227,12 @@ struct StrokeEvidenceWorkspaceView: View {
         .padding(12)
         .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
         .background(tint.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func returnToExplanation() {
+        // The selected source and pins remain available when the presenter
+        // reopens evidence; only the temporary draft presentation is cleared.
+        experience.sourceBoundDraftVisible = false
+        dismissWindow(id: StrokeSpace.evidence)
     }
 }
