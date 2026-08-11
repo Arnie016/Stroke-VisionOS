@@ -1087,3 +1087,12 @@
 - Verdict: `IMPROVED` — the existing right-side 3D reference now has a separate movable 2D teaching companion, explicitly labelled generic and not a patient scan.
 - Blocker: the Simulator still showed a pending system `Open in Inside the Flow?` confirmation above the proof window, so this pass cannot claim a clean visual capture or wearer placement interaction.
 - Next safe action: dismiss that system confirmation, reopen the 2D teaching reference from a selected clinician point, and visually check the card can be placed and read in the room.
+
+## 2026-08-11 21:35 SGT — verify the current imaging window in Simulator
+
+- Target: replace the blocked imaging-window visual observation with a clean current-build capture.
+- Bounded action: restarted the visionOS Simulator, discovered that the first reinstall used stale Stroke Care 0.4 (build 4) from a second DerivedData product, then uninstalled it and installed the verified 0.6 (build 29) product before relaunching `--proof-imaging-window`.
+- Evidence: current built `Info.plist` reports build `29`; `xcrun simctl launch` returned PID `28104`; fresh `/tmp/strokecare-imaging-window-current.png` visibly shows the `2D TEACHING REFERENCE` vessel-map window, its Scan-plane control, generic/non-patient boundary, and Close control with no stale handoff alert.
+- Verdict: `IMPROVED` — the moveable generic imaging reference is now visually proven in the current Simulator build.
+- Blocker: this proves Simulator rendering only; it does not prove a clinician can pinch the selected-point handoff, reposition the window comfortably, or interpret the schematic correctly on physical XCAT.
+- Next safe action: on an unlocked XCAT, select a clinician anatomy point, open Imaging, move the 2D reference, and record the interaction separately from clinical review.
