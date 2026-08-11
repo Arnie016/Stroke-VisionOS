@@ -2389,8 +2389,8 @@ private struct SpatialRoleMicroCues: View {
         .padding(.vertical, 12)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
-        .frame(width: 300)
-        .frame(minHeight: experience.audienceLens == .clinician ? 300 : nil, alignment: .topLeading)
+        .frame(width: experience.audienceLens == .family ? 360 : 300)
+        .frame(minHeight: experience.audienceLens == .clinician ? 300 : 336, alignment: .topLeading)
         .accessibilityElement(children: .contain)
     }
 

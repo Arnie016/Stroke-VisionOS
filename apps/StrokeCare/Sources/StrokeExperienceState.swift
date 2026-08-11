@@ -1416,7 +1416,32 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     var journeyCaption: String {
-        switch procedureStep {
+        // Family presentation adapts only after an explicit, reversible
+        // self-report. It never infers emotion, comprehension, or health from
+        // a face, voice, physiology, or patient record.
+        if audienceLens == .family, familyClarityWasSet {
+            if familyClarityCheck < 0.5 {
+                return switch procedureStep {
+                case .chooseCase:
+                    "Let’s start with the whole brain. This teaching model shows a blocked blood vessel on one side."
+                case .inspectOcclusion:
+                    "Let’s slow down. The blockage, the affected tissue, and swelling are three different things."
+                case .discussCare:
+                    "This view explains making more room. It does not show the brain being repaired."
+                }
+            }
+            if familyClarityCheck < 1.5 {
+                return switch procedureStep {
+                case .chooseCase:
+                    "This teaching model shows a stroke-related blockage on one side of the brain."
+                case .inspectOcclusion:
+                    "The blockage can reduce blood flow, while swelling can build inside the fixed skull."
+                case .discussCare:
+                    "The purpose shown is creating more room for swelling, not undoing existing injury."
+                }
+            }
+        }
+        return switch procedureStep {
         case .chooseCase:
             "This model shows one severe stroke affecting one side of the brain."
         case .inspectOcclusion:
@@ -1427,7 +1452,15 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     var journeyIntent: String {
-        switch procedureStep {
+        if audienceLens == .family, familyClarityWasSet {
+            if familyClarityCheck < 0.5 {
+                return "Pause, ask a question, or return to the whole brain at any time."
+            }
+            if familyClarityCheck < 1.5 {
+                return "One change at a time: location, blockage, then pressure."
+            }
+        }
+        return switch procedureStep {
         case .chooseCase: "One model. One shared starting point."
         case .inspectOcclusion: "Separate blocked flow, injury, and swelling."
         case .discussCare: "Make room, not repair."

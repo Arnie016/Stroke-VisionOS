@@ -147,6 +147,8 @@ require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 
 require("How will you use this?" in launch and "Patient / family" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
 require(".disabled(true)" not in launch and "Open the calm, generic anatomy exhibit" in launch, "the patient/family route is still locked behind the retired live-demo gate")
+require("audienceLens == .family, familyClarityWasSet" in state and "Let’s slow down." in state and "Pause, ask a question" in state, "family self-reported clarity does not adapt the visible teaching copy")
+require("experience.audienceLens == .family ? 360 : 300" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 336" in immersive, "family question rail is not given the larger readable spatial footprint")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
 require(
