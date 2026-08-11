@@ -1,13 +1,15 @@
 import SwiftUI
 
 /// A moveable, deliberately generic 2D companion to the right-side 3D
-/// reference. It is a teaching schematic, not a patient CT, CTA, MRI, or
-/// X-ray image. Standard visionOS window placement lets the clinician put it
-/// wherever it best supports the conversation.
+/// reference. It offers visual language for the CT/MRI/CTA images that may be
+/// discussed in a stroke conversation; it is never a patient image or result.
+/// Standard visionOS window placement lets the clinician put it wherever it
+/// best supports the conversation.
 struct StrokeTeachingImagingWorkspaceView: View {
     enum Reference: String, CaseIterable, Identifiable {
         case vesselMap = "Vessel map"
-        case scanPlane = "Scan plane"
+        case ctGuide = "CT guide"
+        case mriGuide = "MRI guide"
 
         var id: String { rawValue }
     }
@@ -24,7 +26,7 @@ struct StrokeTeachingImagingWorkspaceView: View {
                         .font(.caption.weight(.black))
                         .tracking(1.05)
                         .foregroundStyle(.cyan)
-                    Text(reference == .vesselMap ? "Vessel map" : "Cross-section")
+                    Text(reference.title)
                         .font(.title3.weight(.bold))
                 }
                 Spacer()
@@ -49,7 +51,7 @@ struct StrokeTeachingImagingWorkspaceView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(pointCaption)
                     .font(.callout.weight(.semibold))
-                Text("Generic teaching schematic · not a patient scan · does not diagnose or recommend care")
+                Text("Illustrative CT/MRI/CTA teaching view · not a patient scan or result · does not diagnose or recommend care")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -65,8 +67,10 @@ struct StrokeTeachingImagingWorkspaceView: View {
         switch reference {
         case .vesselMap:
             VesselMapSchematic()
-        case .scanPlane:
-            ScanPlaneSchematic()
+        case .ctGuide:
+            CTTeachingSchematic()
+        case .mriGuide:
+            MRITeachingSchematic()
         }
     }
 
@@ -75,6 +79,16 @@ struct StrokeTeachingImagingWorkspaceView: View {
             return "Linked from: \(label)"
         }
         return "Select an anatomy point to link this reference."
+    }
+}
+
+private extension StrokeTeachingImagingWorkspaceView.Reference {
+    var title: String {
+        switch self {
+        case .vesselMap: "Vessel map"
+        case .ctGuide: "CT: a cross-section guide"
+        case .mriGuide: "MRI: a soft-tissue guide"
+        }
     }
 }
 
@@ -112,13 +126,13 @@ private struct VesselMapSchematic: View {
     }
 }
 
-private struct ScanPlaneSchematic: View {
+private struct CTTeachingSchematic: View {
     var body: some View {
         Canvas { context, size in
             let center = CGPoint(x: size.width * 0.48, y: size.height * 0.50)
-            for (index, inset) in [0.0, 17.0, 35.0].enumerated() {
+            for (index, inset) in [0.0, 17.0, 35.0, 51.0].enumerated() {
                 let rect = CGRect(x: center.x - 104 + inset, y: center.y - 104 + inset, width: 208 - inset * 2, height: 208 - inset * 2)
-                context.fill(Path(ellipseIn: rect), with: .color(index == 0 ? .white.opacity(0.18) : .indigo.opacity(0.16)))
+                context.fill(Path(ellipseIn: rect), with: .color(index == 0 ? .white.opacity(0.26) : .indigo.opacity(0.16)))
                 context.stroke(Path(ellipseIn: rect), with: .color(.white.opacity(0.20)), lineWidth: 1)
             }
             let focus = CGRect(x: center.x + 22, y: center.y - 38, width: 52, height: 52)
@@ -126,10 +140,40 @@ private struct ScanPlaneSchematic: View {
             context.stroke(Path(ellipseIn: focus), with: .color(.orange.opacity(0.92)), lineWidth: 2)
         }
         .overlay(alignment: .bottomTrailing) {
-            Text("CROSS-SECTION SCHEMATIC")
+            Text("ILLUSTRATIVE CT-STYLE CROSS-SECTION")
+            .font(.caption2.monospaced().weight(.bold))
+            .tracking(0.7)
+            .foregroundStyle(.white.opacity(0.72))
+            .padding(14)
+        }
+    }
+}
+
+private struct MRITeachingSchematic: View {
+    var body: some View {
+        Canvas { context, size in
+            let center = CGPoint(x: size.width * 0.48, y: size.height * 0.50)
+            let outer = CGRect(x: center.x - 112, y: center.y - 96, width: 224, height: 192)
+            context.fill(Path(ellipseIn: outer), with: .color(.indigo.opacity(0.34)))
+            context.stroke(Path(ellipseIn: outer), with: .color(.cyan.opacity(0.52)), lineWidth: 2)
+
+            let hemispheres = [
+                CGRect(x: center.x - 86, y: center.y - 70, width: 74, height: 140),
+                CGRect(x: center.x + 12, y: center.y - 70, width: 74, height: 140)
+            ]
+            for hemisphere in hemispheres {
+                context.fill(Path(ellipseIn: hemisphere), with: .color(.purple.opacity(0.28)))
+                context.stroke(Path(ellipseIn: hemisphere), with: .color(.white.opacity(0.30)), lineWidth: 1)
+            }
+            let focus = CGRect(x: center.x + 14, y: center.y - 34, width: 48, height: 48)
+            context.fill(Path(ellipseIn: focus), with: .color(.orange.opacity(0.64)))
+            context.stroke(Path(ellipseIn: focus.insetBy(dx: -7, dy: -7)), with: .color(.orange.opacity(0.30)), lineWidth: 2)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            Text("ILLUSTRATIVE MRI-STYLE SOFT-TISSUE VIEW")
                 .font(.caption2.monospaced().weight(.bold))
                 .tracking(0.7)
-                .foregroundStyle(.white.opacity(0.72))
+                .foregroundStyle(.cyan.opacity(0.80))
                 .padding(14)
         }
     }

@@ -109,6 +109,14 @@ require(all(token in app for token in (
     'CommandLine.arguments.contains("--proof-imaging-window")',
     '.onAppear { experience.prepareTeachingImagingProof() }',
 )), "moveable generic teaching-imaging window is incomplete")
+imaging_workspace = (ROOT / "Sources/StrokeTeachingImagingWorkspaceView.swift").read_text()
+require(all(token in imaging_workspace for token in (
+    'case ctGuide = "CT guide"',
+    'case mriGuide = "MRI guide"',
+    '"Illustrative CT/MRI/CTA teaching view · not a patient scan or result',
+    'ILLUSTRATIVE CT-STYLE CROSS-SECTION',
+    'ILLUSTRATIVE MRI-STYLE SOFT-TISSUE VIEW',
+)), "moveable imaging reference must distinguish generic CT/MRI/CTA teaching views from patient imaging")
 require(all(token in immersive for token in (
     'Button("Open 2D reference", systemImage: "rectangle.on.rectangle")',
     'openWindow(id: StrokeSpace.imaging)',

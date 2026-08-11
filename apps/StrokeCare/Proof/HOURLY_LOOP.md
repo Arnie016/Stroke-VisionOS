@@ -1105,3 +1105,12 @@
 - Verdict: `IMPROVED` — the proof now establishes point-to-reference provenance rather than showing an unlinked standalone card.
 - Blocker: this remains a deterministic Simulator state; it does not prove physical gaze-and-pinch selection, room placement, or clinical adequacy.
 - Next safe action: validate the live clinician point -> Imaging action on unlocked XCAT, then capture it as a separate physical interaction receipt.
+
+## 2026-08-11 21:46 SGT — distinguish stroke-imaging teaching references
+
+- Target: make the movable 2D imaging companion use the image language relevant to a stroke explanation without misrepresenting a generic diagram as an X-ray or patient result.
+- Bounded action: expanded the reference picker from Vessel map / Scan plane to Vessel map / CT guide / MRI guide, with distinct generic CT-style and MRI-style schematics and an explicit non-patient/non-diagnostic boundary.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed; fresh `/tmp/strokecare-ct-mri-reference.png` visibly shows the selected-point-linked window and its Vessel map, CT guide, and MRI guide controls.
+- Verdict: `IMPROVED` — the 2D reference now better matches the imaging concepts a clinician may explain in an acute stroke conversation while remaining movable and clearly illustrative.
+- Blocker: the generic diagrams do not substitute for actual imaging, and this Simulator capture does not prove physical placement, interpretation, or clinical review.
+- Next safe action: define a separate, opt-in Brain Health education lane for sleep and cognitive-health topics instead of mixing them into the acute stroke/craniotomy story.
