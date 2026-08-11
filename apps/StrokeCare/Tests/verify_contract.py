@@ -896,9 +896,14 @@ require(
 require(
     "experience.isInteriorPortalAvailable" in immersive
     and 'URL(string: "rbcjourney://enter")' in immersive
-    and '"Enter brain"' in immersive,
+    and '"ENTER THE BRAIN"' in immersive,
     "room-scale magnification does not expose the separate inside-brain handoff",
 )
+require(all(token in immersive for token in (
+    'Text("ENTER THE BRAIN")',
+    'Text("Guided vessel journey")',
+    'background(accent.gradient, in: Capsule())',
+)), "room-scale magnification lacks a prominent inside-brain handoff control")
 require(
     "--proof-interior-handoff" in launch
     and "prepareInteriorHandoffProof" in state

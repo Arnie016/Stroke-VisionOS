@@ -1168,3 +1168,12 @@
 - Verdict: `IMPROVED` — the Family explainer now has a repeatable, screenshot-inspected receipt for the intended one-point → one-spatial-reference interaction.
 - Blocker: Simulator composition does not prove physical gaze-and-pinch targetability, room-scale legibility, or clinical adequacy; XCAT remains unavailable.
 - Next safe action: validate the Family selected-point interaction on an unlocked physical Vision Pro before increasing the reference catalogue.
+
+## 2026-08-12 04:05 SGT — make the inside-brain handoff discoverable at room scale
+
+- Target: make the separate guided blood-vessel journey discoverable once a Family wearer has magnified the generic brain model to the explicit interior threshold.
+- Bounded action: replaced the tiny generic hand-control bubble with a clearly labelled orange `ENTER THE BRAIN · Guided vessel journey` control that appears only at room-scale magnification and keeps the separate-app handoff explicit.
+- Evidence: `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-interior-handoff` capture at `/tmp/strokecare-interior-handoff-prominent.png` visibly shows the enlarged orange hand-adjacent entry control alongside the room-scale brain. `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-040523/BLOCKED.md`.
+- Verdict: `IMPROVED` — the next experience is now visually discoverable rather than buried as an unlabeled small control.
+- Blocker: the paired internal journey must be installed and launched on physical hardware; this Simulator capture does not prove cross-app launch, wearer targeting, comfort, or comprehension.
+- Next safe action: install the paired interior app on an unlocked Vision Pro and record a user-selected handoff receipt.

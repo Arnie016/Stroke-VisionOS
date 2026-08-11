@@ -1600,15 +1600,29 @@ private struct SpatialRoleControls: View {
     }
 
     private func brainInteriorButton(accent: Color) -> some View {
-        bubbleButton(
-            "Enter brain",
-            systemImage: "arrow.down.right.and.arrow.up.left",
-            accent: accent,
-            selected: true
-        ) {
+        Button {
             guard let url = URL(string: "rbcjourney://enter") else { return }
             openURL(url)
         }
+        label: {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.down.right.and.arrow.up.left")
+                    .font(.headline.weight(.bold))
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("ENTER THE BRAIN")
+                        .font(.caption.weight(.black))
+                        .tracking(0.55)
+                    Text("Guided vessel journey")
+                        .font(.caption2.weight(.medium))
+                }
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 13)
+            .padding(.vertical, 10)
+            .background(accent.gradient, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .contentShape(Capsule())
         .accessibilityLabel("Enter the inside-the-brain journey")
         .accessibilityHint("Opens the separate guided blood-vessel experience after room-scale magnification")
     }
