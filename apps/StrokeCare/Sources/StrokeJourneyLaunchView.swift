@@ -570,6 +570,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-clarity") {
             experience.prepareFamilyClarityProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-brain-atlas") {
+            experience.prepareFamilyBrainAtlasProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-presenter-plain-language") {
             experience.preparePresenterPlainLanguageProof()
             Task { await openProofSpace() }

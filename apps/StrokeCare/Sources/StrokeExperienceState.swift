@@ -106,6 +106,85 @@ struct StrokeLessonPoint: Identifiable, Equatable {
     var id: Int { index }
 }
 
+/// A family-controlled discovery sequence. These are general orientation
+/// concepts, not point-local diagnoses or a labelled patient scan. The current
+/// room-scale teaching model remains the spatial hero; the atlas tells the
+/// wearer which *reviewed* model view can give useful context next.
+enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
+    case cortex
+    case frontalLobe
+    case parietalLobe
+    case temporalLobe
+    case occipitalLobe
+    case arterialRoutes
+    case corpusCallosum
+    case thalamus
+    case hippocampus
+    case brainstemAndCerebellum
+
+    var id: Int { rawValue }
+    var ordinal: Int { rawValue + 1 }
+
+    var title: String {
+        switch self {
+        case .cortex: "Cerebral cortex"
+        case .frontalLobe: "Frontal lobe"
+        case .parietalLobe: "Parietal lobe"
+        case .temporalLobe: "Temporal lobe"
+        case .occipitalLobe: "Occipital lobe"
+        case .arterialRoutes: "Arterial routes"
+        case .corpusCallosum: "Corpus callosum"
+        case .thalamus: "Thalamus"
+        case .hippocampus: "Hippocampus"
+        case .brainstemAndCerebellum: "Brainstem + cerebellum"
+        }
+    }
+
+    var explanation: String {
+        switch self {
+        case .cortex:
+            "The folded outer layer supports many thinking, sensing, language, and movement functions."
+        case .frontalLobe:
+            "The front of the brain helps with planning, decision-making, and voluntary movement."
+        case .parietalLobe:
+            "This area helps combine touch, body, and spatial information."
+        case .temporalLobe:
+            "This side region helps process sound and contributes to memory and language."
+        case .occipitalLobe:
+            "This rear region processes visual information."
+        case .arterialRoutes:
+            "Arteries carry blood toward the brain through branching routes. The motion here is qualitative, not a measurement."
+        case .corpusCallosum:
+            "A broad bridge of nerve fibres connects the brain’s left and right sides."
+        case .thalamus:
+            "A deep relay region helps route many sensory signals through the brain."
+        case .hippocampus:
+            "A deep structure important for forming new memories."
+        case .brainstemAndCerebellum:
+            "The brainstem links brain and spinal cord; the cerebellum supports balance and coordination."
+        }
+    }
+
+    var modelCue: String {
+        switch self {
+        case .arterialRoutes:
+            "MODEL CUE · BLOOD-FLOW POINTS"
+        case .cortex, .frontalLobe, .parietalLobe, .temporalLobe, .occipitalLobe:
+            "MODEL CUE · OUTER BRAIN + REGIONS"
+        case .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+            "NEXT · MAGNIFY FOR THE SEPARATE INSIDE-BRAIN JOURNEY"
+        }
+    }
+
+    var pointField: StrokePointField {
+        self == .arterialRoutes ? .procedure : .regions
+    }
+
+    var systemImage: String {
+        self == .arterialRoutes ? "point.3.connected.trianglepath.dotted" : "brain.head.profile"
+    }
+}
+
 enum StrokeAnatomyPresentation: String, CaseIterable, Identifiable {
     case assembled = "Layers"
     case transparent = "See through"
@@ -495,6 +574,8 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var familyClarityCheck: Double = 1
     @Published private(set) var familyClarityWasSet = false
     @Published private(set) var selectedFamilyQuestion: String?
+    @Published var familyBrainAtlasVisible = false
+    @Published private(set) var familyBrainAtlasChapter: StrokeFamilyBrainAtlasChapter = .cortex
     @Published private(set) var selectedPresenterKeyPointIndex: Int?
     @Published private(set) var presenterTeachingBeat: StrokePresenterTeachingBeat = .confirmContext
     @Published var questionPlacementArmed = false
@@ -587,6 +668,28 @@ final class StrokeExperienceState: ObservableObject {
            !visibleCatalogRecords.contains(where: { $0.id == selectedCatalogAssetID }) {
             self.selectedCatalogAssetID = nil
         }
+    }
+
+    /// The atlas is explicitly opened by a family member; it does not infer an
+    /// information need, anxiety level, or diagnosis. Selecting a chapter
+    /// simply turns on the closest reviewed discovery-point family.
+    func toggleFamilyBrainAtlas() {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        familyBrainAtlasVisible.toggle()
+    }
+
+    func selectFamilyBrainAtlasChapter(_ chapter: StrokeFamilyBrainAtlasChapter) {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        familyBrainAtlasChapter = chapter
+        selectLessonFamily(chapter.pointField)
+    }
+
+    func advanceFamilyBrainAtlasChapter(by offset: Int) {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        let chapters = StrokeFamilyBrainAtlasChapter.allCases
+        guard let current = chapters.firstIndex(of: familyBrainAtlasChapter) else { return }
+        let next = (current + offset % chapters.count + chapters.count) % chapters.count
+        selectFamilyBrainAtlasChapter(chapters[next])
     }
 
     /// Reveals one registered subsystem at a time without adding a modal or
@@ -822,6 +925,8 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
         requestedPause = false
         teachingImagingDrawerVisible = false
+        familyBrainAtlasVisible = false
+        familyBrainAtlasChapter = .cortex
         withAnimation(.easeInOut(duration: 0.72)) {
             brainRevealProgress = 0.18
             vesselFocusProgress = 0
@@ -1923,6 +2028,8 @@ final class StrokeExperienceState: ObservableObject {
         familyClarityCheck = 1
         familyClarityWasSet = false
         selectedFamilyQuestion = nil
+        familyBrainAtlasVisible = false
+        familyBrainAtlasChapter = .cortex
         selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         pointField = .regions
@@ -2009,6 +2116,15 @@ final class StrokeExperienceState: ObservableObject {
         lessonPointsVisible = true
         spatialZoom = 1.24
         clearPointSelection()
+    }
+
+    func prepareFamilyBrainAtlasProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        spatialZoom = 1.22
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.arterialRoutes)
     }
 
     func prepareClinicianPressureStoryProof() {

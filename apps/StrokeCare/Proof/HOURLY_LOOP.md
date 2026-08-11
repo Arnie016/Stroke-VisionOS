@@ -1123,3 +1123,21 @@
 - Verdict: `IMPROVED` — later clinician checkpoints no longer intentionally inherit the same access point in runtime state.
 - Blocker: a fresh Simulator immersive-route receipt is still required; additional point families need authored, reviewed anchors rather than reusing a skull location.
 - Next safe action: repair the six-beat deterministic immersive proof route, then inspect Context, Access, and Checks as separate visual states.
+
+## 2026-08-12 02:06 SGT — verify delayed six-beat immersive composition
+
+- Target: determine whether the current six-beat presenter route is actually empty in Simulator before using its screenshot as product evidence.
+- Bounded action: restarted the verified `0.6 (29)` Simulator app with `--proof-clinician-six-beat-timeline`, then compared an 8-second screenshot with a later settled capture.
+- Evidence: the 8-second capture showed only the room; the fresh 53-second capture at `/tmp/strokecare-six-beat-53s.png` visibly shows the registered brain and arteries, presenter checklist, timeline, and peripheral controls. The running process remained `StrokeTime` PID `83246`.
+- Verdict: `IMPROVED` — the scene is present after its large asset load; the prior empty room was an early-capture artefact, not proof that the six-beat state renders no anatomy.
+- Blocker: this exposes an unacceptable proof/loading latency and remains Simulator composition evidence only, not physical-device responsiveness, targetability, or clinical review.
+- Next safe action: add an explicit scene-readiness receipt/visual loading boundary before treating any timed immersive screenshot as a valid regression proof.
+
+## 2026-08-12 02:44 SGT — add a spatial Family Brain Atlas
+
+- Target: give the patient/family route a larger, self-paced neuroanatomy guide without turning the central brain into a permanent label cloud or presenting generic anatomy as a patient scan.
+- Bounded action: added an opt-in room-anchored ten-chapter Brain Atlas with pinch-drag navigation; each chapter changes only the closest reviewed discovery-point family on the existing 3D brain and explicitly routes deep concepts to the separate inside-brain handoff after magnification.
+- Evidence: `python3 Tests/verify_contract.py` passed; `xcodegen generate` plus the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-brain-atlas.png` visibly shows the large left Atlas (Arterial routes, 6/10), central 3D brain/arteries, quiet flow points, and family controls.
+- Verdict: `IMPROVED` — family learning now has a progressive, spatially placed anatomy guide rather than only static questions or a flat vessel reference.
+- Blocker: the ten chapters are orientation content; only the current reviewed whole-brain and blood-flow layers are locally shown. Exact deep-structure landmark anchoring, patient comprehension, and physical-device pinch-drag comfort need separate review.
+- Next safe action: validate the Family Atlas interaction and its inside-brain handoff on a physical Vision Pro before adding another anatomy subsystem.

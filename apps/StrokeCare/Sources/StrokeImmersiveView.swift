@@ -234,6 +234,7 @@ struct StrokeImmersiveView: View {
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let viewpointControlID = "spatial-viewpoint-control"
     private let roleMicroCuesID = "spatial-role-micro-cues"
+    private let familyBrainAtlasID = "spatial-family-brain-atlas"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
     private let scholarReferenceRailID = "spatial-scholar-reference-rail"
     private let familyControlsID = "spatial-family-controls"
@@ -347,7 +348,7 @@ struct StrokeImmersiveView: View {
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
                         caseHistoryTimelineID,
-                        teachingTimelineID, viewpointControlID, roleMicroCuesID, teachingImagingDrawerID,
+                        teachingTimelineID, viewpointControlID, roleMicroCuesID, familyBrainAtlasID, teachingImagingDrawerID,
                         scholarReferenceRailID,
                         familyControlsID, presenterControlsID
                     ] {
@@ -622,6 +623,11 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                             .frame(width: 360)
                     }
+                    Attachment(id: familyBrainAtlasID) {
+                        SpatialFamilyBrainAtlas()
+                            .environmentObject(experience)
+                            .frame(width: 460)
+                    }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
                             .environmentObject(experience)
@@ -839,8 +845,15 @@ struct StrokeImmersiveView: View {
             guard let attachment = attachments.entity(for: id) else { continue }
             attachment.position = position
             attachment.scale = [scale, scale, scale]
-            attachment.isEnabled = visible
+            attachment.isEnabled = visible && !(id == roleMicroCuesID && isFamily && experience.familyBrainAtlasVisible)
             attachment.components.set(BillboardComponent())
+        }
+
+        if let atlas = attachments.entity(for: familyBrainAtlasID) {
+            atlas.position = [-0.62, 1.62, -0.92]
+            atlas.scale = [0.88, 0.88, 0.88]
+            atlas.isEnabled = visible && isFamily && experience.familyBrainAtlasVisible
+            atlas.components.set(BillboardComponent())
         }
 
         if let viewpoint = attachments.entity(for: viewpointControlID) {
@@ -1276,6 +1289,17 @@ private struct SpatialRoleControls: View {
                     experience.setNarrationEnabled(!experience.narrationEnabled)
                 }
                 .accessibilityLabel(experience.narrationEnabled ? "Turn off family narrator" : "Turn on family narrator")
+
+                bubbleButton(
+                    experience.familyBrainAtlasVisible ? "Atlas off" : "Atlas",
+                    systemImage: "book.closed.fill",
+                    accent: .orange,
+                    selected: experience.familyBrainAtlasVisible
+                ) {
+                    experience.toggleFamilyBrainAtlas()
+                }
+                .accessibilityLabel(experience.familyBrainAtlasVisible ? "Close Brain Atlas" : "Open Brain Atlas")
+                .accessibilityHint("Opens a ten-part, family-paced guide beside the 3D brain")
 
                 bubbleButton(
                     experience.closingReflectionVisible ? "Cases" : "Next",
@@ -2281,6 +2305,116 @@ private struct SpatialViewpointDot: View {
 /// in the mirrored view; the presenter sees that declared clarity plus exactly
 /// three teaching beats. A second headset or shared spatial session is not
 /// implied by this surface.
+/// A deliberately optional, room-anchored atlas for the family route. It
+/// advances through one idea at a time and changes the existing discovery
+/// points rather than placing a permanent cloud of labels around the brain.
+private struct SpatialFamilyBrainAtlas: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @GestureState private var horizontalDrag: CGFloat = 0
+
+    private var chapter: StrokeFamilyBrainAtlasChapter {
+        experience.familyBrainAtlasChapter
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 13) {
+            HStack(alignment: .firstTextBaseline) {
+                Label("BRAIN ATLAS", systemImage: "brain.head.profile")
+                    .font(.caption2.weight(.black))
+                    .tracking(1.15)
+                    .foregroundStyle(.orange)
+                Spacer()
+                Text("\(chapter.ordinal) / \(StrokeFamilyBrainAtlasChapter.allCases.count)")
+                    .font(.caption.monospacedDigit().weight(.bold))
+                    .foregroundStyle(.white.opacity(0.58))
+            }
+
+            HStack(alignment: .center, spacing: 12) {
+                atlasStepButton(symbol: "chevron.left", label: "Previous") {
+                    experience.advanceFamilyBrainAtlasChapter(by: -1)
+                }
+
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(chapter.title)
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                    Text(chapter.explanation)
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.82))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(x: horizontalDrag * 0.12)
+
+                atlasStepButton(symbol: "chevron.right", label: "Next") {
+                    experience.advanceFamilyBrainAtlasChapter(by: 1)
+                }
+            }
+
+            Button {
+                experience.selectFamilyBrainAtlasChapter(chapter)
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: chapter.systemImage)
+                    Text(chapter.modelCue)
+                        .font(.caption2.weight(.black))
+                        .tracking(0.55)
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.right")
+                }
+                .foregroundStyle(.orange.opacity(0.95))
+                .padding(.horizontal, 11)
+                .padding(.vertical, 10)
+                .background(.orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.orange.opacity(0.26)))
+            }
+            .buttonStyle(.plain)
+            .hoverEffect(.highlight)
+            .accessibilityLabel("Show (chapter.title) context on the 3D teaching model")
+            .accessibilityHint("Changes only the generic discovery points; it does not identify anatomy in a patient scan")
+
+            Text("Pinch-drag left or right to explore · generic teaching anatomy, not a patient scan")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.52))
+        }
+        .padding(18)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 22))
+        .overlay(RoundedRectangle(cornerRadius: 22).stroke(.orange.opacity(0.22)))
+        .shadow(color: .black.opacity(0.32), radius: 14, y: 6)
+        .contentShape(RoundedRectangle(cornerRadius: 22))
+        .gesture(
+            DragGesture(minimumDistance: 20)
+                .updating($horizontalDrag) { value, state, _ in
+                    state = value.translation.width
+                }
+                .onEnded { value in
+                    guard abs(value.translation.width) > 42 else { return }
+                    experience.advanceFamilyBrainAtlasChapter(by: value.translation.width < 0 ? 1 : -1)
+                }
+        )
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.22), value: chapter)
+        .accessibilityElement(children: .contain)
+    }
+
+    private func atlasStepButton(
+        symbol: String,
+        label: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.headline.weight(.bold))
+                .frame(width: 44, height: 56)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.14)))
+        }
+        .buttonStyle(.plain)
+        .hoverEffect(.highlight)
+        .accessibilityLabel(label + " Brain Atlas chapter")
+    }
+}
+
 private struct SpatialRoleMicroCues: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

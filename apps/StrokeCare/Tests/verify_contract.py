@@ -683,6 +683,22 @@ require(all(token in state for token in (
 )), "presenter beat navigation bypasses permission continuity or reversible closure")
 require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
 require(all(token in state for token in (
+    "enum StrokeFamilyBrainAtlasChapter",
+    "familyBrainAtlasVisible",
+    "familyBrainAtlasChapter",
+    "toggleFamilyBrainAtlas()",
+    "advanceFamilyBrainAtlasChapter(by",
+    "selectLessonFamily(chapter.pointField)",
+    "prepareFamilyBrainAtlasProof",
+)), "family Brain Atlas does not keep a user-selected, generic-model handoff")
+require(all(token in immersive for token in (
+    'familyBrainAtlasID = "spatial-family-brain-atlas"',
+    "SpatialFamilyBrainAtlas()",
+    "Pinch-drag left or right to explore",
+    "generic teaching anatomy, not a patient scan",
+)), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
+require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
+require(all(token in state for token in (
     "configurePresenterPointField(",
     "case .confirmContext:",
     "case .discussAccess:",
