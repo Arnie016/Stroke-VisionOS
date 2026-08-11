@@ -2134,6 +2134,24 @@ final class StrokeExperienceState: ObservableObject {
         selectedPointLabel = "Example blockage"
     }
 
+    /// Deterministic family-scale receipt for the explicit handoff into the
+    /// separately installed Inside the Flow experience. This is a teaching
+    /// viewpoint at room scale, never a claim that a person has entered an
+    /// individual patient's brain or vessel.
+    func prepareInteriorHandoffProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.16
+        pointField = .procedure
+        lessonPointsVisible = true
+        regionPortalActive = true
+        spatialZoom = 3.2
+        selectedPointEntityName = "\(StrokePointField.procedure.entityPrefix)2"
+        selectedPointLabel = "Illustrative blockage focus"
+    }
+
     func prepareClinicianToolKitProof() {
         prepareClinicianProof(step: .inspectOcclusion)
         clinicianToolKitVisible = true

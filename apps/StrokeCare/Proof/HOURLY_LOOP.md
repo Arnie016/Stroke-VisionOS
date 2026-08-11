@@ -1051,3 +1051,12 @@
   wearer, spatial-audio, registration, or clinical evidence.
 - Next safe action: when XCAT is awake and unlocked, rerun
   `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-11 18:50 SGT — prove the room-scale Inside the Flow handoff
+
+- Target: make the existing `Enter brain` control testable from a large family teaching view without implying entry into a patient's anatomy.
+- Bounded action: added `--proof-interior-handoff`, which establishes the family lens, a generic blockage focus, and the existing room-scale threshold before exposing the separate Inside the Flow link.
+- Evidence: `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator build completed; `xcrun simctl openurl ... rbcjourney://enter` reached the system confirmation for the installed `Inside the Flow` app.
+- Verdict: `IMPROVED` — the cross-experience handoff now has an explicit deterministic source route and the Simulator resolved its registered destination.
+- Blocker: the Simulator still retained a prior Clinical evidence window over the requested Stroke Care proof scene, and the confirmation does not prove a wearer pinched `Enter brain` or completed the cross-app launch.
+- Next safe action: on an unlocked headset, open the magnified family scene, pinch `Enter brain`, approve the system handoff, and capture the four-beat Inside the Flow entry view.

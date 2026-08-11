@@ -834,6 +834,12 @@ require(
     and '"Enter brain"' in immersive,
     "room-scale magnification does not expose the separate inside-brain handoff",
 )
+require(
+    "--proof-interior-handoff" in launch
+    and "prepareInteriorHandoffProof" in state
+    and "spatialZoom = 3.2" in state,
+    "the visible Inside the Flow handoff lacks a deterministic room-scale proof route",
+)
 require(all(token in scene for token in (
     'openCranialReviewRootName = "registered-open-cranial-review-root"',
     'importedAccessScalpName = "scalp_access_closure_registered_conceptual_v1"',
