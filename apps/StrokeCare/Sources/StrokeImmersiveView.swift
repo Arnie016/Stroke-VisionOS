@@ -2078,7 +2078,10 @@ private struct SpatialTeachingTimeline: View {
                     }
                     .buttonStyle(.plain)
                     .hoverEffect(.highlight)
-                    .frame(minWidth: 64, minHeight: 64)
+                    // Six timeline targets must remain easy to acquire in
+                    // spatial use; the visible disc stays compact inside a
+                    // 76-point gaze-and-pinch target.
+                    .frame(minWidth: 76, minHeight: 76)
                     .contentShape(Rectangle())
                     .onHover { isHovering in
                         hoveredBeat = isHovering ? beat : nil
@@ -2174,7 +2177,7 @@ private struct SpatialPresenterTeachingBeatNode: View {
                 .background(isEmphasized ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isEmphasized ? Color.black : Color.white.opacity(0.62))
         }
-        .frame(width: 64, height: 64)
+        .frame(width: 76, height: 76)
         .contentShape(Rectangle())
     }
 }
