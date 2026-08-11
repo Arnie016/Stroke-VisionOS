@@ -27,19 +27,45 @@ selection reveals one local explanation plus the relevant teaching image.
 The six-frame image above is the visual-direction hero; the gallery below is
 made from actual visionOS Simulator captures of the current experience.
 
+### Start with the conversation
+
 | Fictional case intake | One selected point, one teaching reference |
 | --- | --- |
 | ![Fictional case intake in the spatial room](Proof/77-current-spatial-intake-simulator.png) | ![A selected anatomy point opens one teaching reference](Proof/92-selected-point-single-reference-build26-simulator.png) |
 | Choose a fictional case before the anatomy scene opens. | A quiet anatomy-attached point opens one local explanation and one secondary reference. |
+
+### Inspect anatomy, flow, and depth
+
+| Point-cloud anatomy and timeline | Qualitative blood-flow reference |
+| --- | --- |
+| ![Readable point cloud and revisitable timeline](Proof/59-main-point-cloud-readable-timeline-simulator.png) | ![Qualitative blood-flow lesson](Proof/35-blood-flow-lesson-0.6-simulator.png) |
+| The top timeline remains revisitable while points stay quiet until selected. | A generic vessel reference explains flow without presenting CFD or a patient scan. |
+
+| Internal layers | Registered vessel focus |
+| --- | --- |
+| ![Clinician internal layer study](Proof/65-layer-study-internal-anatomy-simulator.png) | ![Registered flow overlay](Proof/75-registered-flow-overlay-simulator.png) |
+| Deep structures are a clinician teaching layer, not a diagnostic result. | Arterial context stays tied to the registered teaching assembly. |
+
+### Six-step craniotomy teaching conversation
 
 | Presenter checkpoints | Protective-covering teaching moment |
 | --- | --- |
 | ![Six revisitable presenter checkpoints](Proof/73-clinician-six-beat-timeline-simulator.png) | ![Non-graphic protective-covering teaching composition](Proof/89-clinician-protective-covering-build23-simulator.png) |
 | The presenter can revisit context, access, protective covering, purpose, checks, and closure. | A reversible, generic explanation of the protective covering—not an operative simulator or a patient-specific procedure. |
 
+| Make-space purpose | Scholar skull review |
+| --- | --- |
+| ![Family make-space teaching cue](Proof/81-family-make-space-purpose-simulator.png) | ![Clinician scholar skull registration review](Proof/55-scholar-skull-registration-review-simulator.png) |
+| The family view illustrates why space may be discussed, without showing graphic intervention or claiming tissue recovery. | A clinician-only isolated skull inspection is explicitly separated from the normal brain story and marked review-pending. |
+
 The clinician-only six-checkpoint sequence is designed to explain a possible
 craniotomy conversation without showing cutting, drilling, a patient-specific
 access route, a procedural result, or a promise of outcome.
+
+Every image in this gallery is either marked as a **visual-direction target**
+or as a **Simulator composition receipt**. Simulator captures do not establish
+physical-device targetability, wearer comprehension, registration accuracy, or
+clinical validity.
 
 ## Latest verified Simulator composition
 

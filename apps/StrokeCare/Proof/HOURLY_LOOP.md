@@ -1060,3 +1060,12 @@
 - Verdict: `IMPROVED` — the cross-experience handoff now has an explicit deterministic source route and the Simulator resolved its registered destination.
 - Blocker: the Simulator still retained a prior Clinical evidence window over the requested Stroke Care proof scene, and the confirmation does not prove a wearer pinched `Enter brain` or completed the cross-app launch.
 - Next safe action: on an unlocked headset, open the magnified family scene, pinch `Enter brain`, approve the system handoff, and capture the four-beat Inside the Flow entry view.
+
+## 2026-08-11 19:04 SGT — publish a visual README gallery
+
+- Target: make the GitHub repository communicate the complete Stroke Care teaching story at a glance.
+- Bounded action: expanded the README gallery with tracked Simulator captures for case intake, point discovery, timeline, flow, internal layers, craniotomy teaching checkpoints, purpose, and the distinct Scholar skull-review state.
+- Evidence: `git diff --check` passed and every README `Proof/*.png` gallery reference resolves to a tracked repository file.
+- Verdict: `IMPROVED` — the public repository now has a curated visual narrative rather than only an isolated hero image.
+- Blocker: these are Simulator and visual-direction images; they do not prove wearer interaction, physical-device legibility, registration accuracy, or clinical validity.
+- Next safe action: add one fresh, verified physical-device capture only after a wearer validates the corresponding interaction.
