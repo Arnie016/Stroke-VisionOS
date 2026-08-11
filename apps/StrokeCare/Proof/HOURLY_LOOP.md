@@ -1069,3 +1069,12 @@
 - Verdict: `IMPROVED` — the public repository now has a curated visual narrative rather than only an isolated hero image.
 - Blocker: these are Simulator and visual-direction images; they do not prove wearer interaction, physical-device legibility, registration accuracy, or clinical validity.
 - Next safe action: add one fresh, verified physical-device capture only after a wearer validates the corresponding interaction.
+
+## 2026-08-11 19:19 SGT — guarantee a fresh role-entry surface
+
+- Target: prevent an earlier Clinical evidence window from obscuring a new Family/Doctor journey.
+- Bounded action: dismiss the evidence window before both role-threshold entry and the placed-case story entry, with a static contract guard for both paths.
+- Evidence: XCAT guarded deploy stopped at `Proof/xcat/20260811-191054/BLOCKED.md` before build/install (`unavailable`, tunnel unavailable, DDI false); `python3 Tests/verify_contract.py` passed and the narrow visionOS Simulator build completed.
+- Verdict: `IMPROVED` — a fresh journey no longer intentionally carries the app-owned evidence window forward.
+- Blocker: the Simulator currently shows a separate system confirmation left by the prior `Inside the Flow` handoff; it blocks the visual role-threshold capture but is not Stroke Care's Clinical evidence window. XCAT was unavailable, so there is no physical-device validation.
+- Next safe action: dismiss the system confirmation, then validate the normal Family/Doctor entry and fresh evidence-return cycle on an unlocked XCAT.

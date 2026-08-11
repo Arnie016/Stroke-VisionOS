@@ -176,6 +176,9 @@ struct StrokeJourneyLaunchView: View {
         guard !isOpening else { return }
         isOpening = true
         prelude.stop()
+        // An evidence space can outlive the immersive scene. A fresh role
+        // choice must always begin at the intended Family/Doctor threshold.
+        dismissWindow(id: StrokeSpace.evidence)
         experience.reset()
         experience.audienceLens = lens
         if lens == .family {
@@ -447,6 +450,8 @@ struct StrokeJourneyLaunchView: View {
     private func enterStory(as lens: StrokeAudienceLens) async {
         guard !isOpening, casePlaced else { return }
         isOpening = true
+        // Do not carry a previously opened evidence surface into a new story.
+        dismissWindow(id: StrokeSpace.evidence)
         experience.reset()
         experience.audienceLens = lens
         if !reduceMotion {
