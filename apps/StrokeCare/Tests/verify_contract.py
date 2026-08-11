@@ -601,7 +601,9 @@ require(all(token in immersive for token in (
     "@State private var hoveredBeat",
     "let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat",
     "let showsContext = labelsVisible || hoveredBeat != nil",
-    "Text(\"\\(displayedBeat.title) · \\(displayedBeat.summary)\")",
+    "STEP \\(displayedBeat.number) OF 6",
+    "isHovered: hoveredBeat == beat",
+    ".frame(height: beat == experience.presenterTeachingBeat ? 10 : 7)",
     "Color(red: 0.86, green: 0.31, blue: 0.34)",
 )), "doctor presenter timeline does not expose six stable direct checkpoints with context above")
 require("(teachingTimelineID, [0, 1.13, -0.86]" in immersive, "teaching timeline is not staged in the central-lower demo field")
@@ -744,6 +746,9 @@ require(all(token in immersive for token in (
     "experience.selectCareDiscussion(.medicineReview)",
     "experience.selectEvidence(guideline)",
     "openWindow(id: StrokeSpace.evidence)",
+    "StrokeScholarReferenceArc",
+    ".frame(width: 310)",
+    "case .interventions, .medications: 20",
 )), "Scholar rail lacks large targets, point-gated imaging, or truthful authored actions")
 require(all(token in state for token in (
     "enum StrokeAnatomyFocus",

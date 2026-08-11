@@ -630,7 +630,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: scholarReferenceRailID) {
                         StrokeScholarReferenceRail()
                             .environmentObject(experience)
-                            .frame(width: 250)
+                            .frame(width: 310)
                     }
                     Attachment(id: familyControlsID) {
                         SpatialRoleControls(role: .family)
@@ -858,8 +858,8 @@ struct StrokeImmersiveView: View {
         }
 
         if let scholarRail = attachments.entity(for: scholarReferenceRailID) {
-            scholarRail.position = [0.70, 1.76, -0.94]
-            scholarRail.scale = [0.86, 0.86, 0.86]
+            scholarRail.position = [0.72, 1.76, -0.94]
+            scholarRail.scale = [0.88, 0.88, 0.88]
             scholarRail.isEnabled = visible &&
                 experience.audienceLens == .clinician &&
                 experience.detailLevel == .scholar
@@ -1710,96 +1710,104 @@ private struct StrokeScholarReferenceRail: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("SCHOLAR REFERENCES")
-                .font(.caption2.weight(.black))
-                .tracking(1.0)
-                .foregroundStyle(.mint)
+        ZStack(alignment: .leading) {
+            StrokeScholarReferenceArc()
+                .stroke(Color.mint.opacity(0.20), style: StrokeStyle(lineWidth: 1.2, dash: [3, 5]))
+                .padding(.leading, 18)
+                .padding(.vertical, 42)
 
-            ForEach(StrokeScholarReferenceLane.allCases) { lane in
-                if isActionable(lane) {
-                    Button {
-                        select(lane)
-                    } label: {
-                        row(
-                            for: lane,
-                            isSelected: isSelected(lane),
-                            isEnabled: true,
-                            unavailableStatus: nil
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .hoverEffect(.highlight)
-                    .frame(minHeight: 60)
-                    .contentShape(RoundedRectangle(cornerRadius: 14))
-                    .padding(.leading, lane.arcInset)
-                    .accessibilityLabel(lane.title)
-                    .accessibilityValue(isSelected(lane) ? "Selected" : "Available")
-                } else {
-                    row(
-                        for: lane,
-                        isSelected: false,
-                        isEnabled: false,
-                        unavailableStatus: unavailableStatus(for: lane)
-                    )
-                        .frame(minHeight: 60)
-                        .padding(.leading, lane.arcInset)
-                        .opacity(0.62)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(unavailableLabel(for: lane))
-                }
-            }
-
-            if !experience.teachingImagingDrawerVisible {
-                Divider()
-                    .overlay(Color.white.opacity(0.10))
-
-                Text("ANATOMY FOCUS")
+            VStack(alignment: .leading, spacing: 8) {
+                Text("SCHOLAR REFERENCES")
                     .font(.caption2.weight(.black))
-                    .tracking(0.8)
-                    .foregroundStyle(.white.opacity(0.58))
+                    .tracking(1.0)
+                    .foregroundStyle(.mint)
 
-                HStack(spacing: 6) {
-                    ForEach(StrokeAnatomyFocus.allCases) { focus in
-                        let isAvailable = experience.isAnatomyFocusAvailable(focus)
+                ForEach(StrokeScholarReferenceLane.allCases) { lane in
+                    if isActionable(lane) {
                         Button {
-                            experience.selectAnatomyFocus(focus)
+                            select(lane)
                         } label: {
-                            Text(focus.rawValue)
-                                .font(.caption2.weight(.bold))
-                                .lineLimit(1)
-                                .frame(maxWidth: .infinity, minHeight: 48)
-                                .foregroundStyle(
-                                    experience.anatomyFocus == focus ? Color.black.opacity(0.82) : .white
-                                )
-                                .background(
-                                    experience.anatomyFocus == focus ? Color.mint : Color.white.opacity(0.07),
-                                    in: Capsule()
-                                )
+                            row(
+                                for: lane,
+                                isSelected: isSelected(lane),
+                                isEnabled: true,
+                                unavailableStatus: nil
+                            )
                         }
                         .buttonStyle(.plain)
                         .hoverEffect(.highlight)
-                        .contentShape(Capsule())
-                        .opacity(isAvailable ? 1 : 0.46)
-                        .accessibilityLabel("Anatomy focus, \(focus.rawValue)")
-                        .accessibilityValue(
-                            experience.anatomyFocus == focus
-                                ? "Selected"
-                                : (isAvailable ? "Available" : "Unavailable in this build")
+                        .frame(minHeight: 60)
+                        .contentShape(RoundedRectangle(cornerRadius: 14))
+                        .padding(.leading, lane.arcInset)
+                        .accessibilityLabel(lane.title)
+                        .accessibilityValue(isSelected(lane) ? "Selected" : "Available")
+                    } else {
+                        row(
+                            for: lane,
+                            isSelected: false,
+                            isEnabled: false,
+                            unavailableStatus: unavailableStatus(for: lane)
                         )
+                            .frame(minHeight: 60)
+                            .padding(.leading, lane.arcInset)
+                            .opacity(0.62)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(unavailableLabel(for: lane))
                     }
                 }
 
-                Text(experience.anatomyFocusStatus)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.62))
-                    .fixedSize(horizontal: false, vertical: true)
+                if !experience.teachingImagingDrawerVisible {
+                    Divider()
+                        .overlay(Color.white.opacity(0.10))
+
+                    Text("ANATOMY FOCUS")
+                        .font(.caption2.weight(.black))
+                        .tracking(0.8)
+                        .foregroundStyle(.white.opacity(0.58))
+
+                    HStack(spacing: 6) {
+                        ForEach(StrokeAnatomyFocus.allCases) { focus in
+                            let isAvailable = experience.isAnatomyFocusAvailable(focus)
+                            Button {
+                                experience.selectAnatomyFocus(focus)
+                            } label: {
+                                Text(focus.rawValue)
+                                    .font(.caption2.weight(.bold))
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, minHeight: 48)
+                                    .foregroundStyle(
+                                        experience.anatomyFocus == focus ? Color.black.opacity(0.82) : .white
+                                    )
+                                    .background(
+                                        experience.anatomyFocus == focus ? Color.mint : Color.white.opacity(0.07),
+                                        in: Capsule()
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                            .hoverEffect(.highlight)
+                            .contentShape(Capsule())
+                            .opacity(isAvailable ? 1 : 0.46)
+                            .accessibilityLabel("Anatomy focus, \(focus.rawValue)")
+                            .accessibilityValue(
+                                experience.anatomyFocus == focus
+                                    ? "Selected"
+                                    : (isAvailable ? "Available" : "Unavailable in this build")
+                            )
+                        }
+                    }
+
+                    Text(experience.anatomyFocusStatus)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.62))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 11)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
+        .frame(width: 310)
         .accessibilityElement(children: .contain)
     }
 
@@ -1923,8 +1931,8 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
     var arcInset: CGFloat {
         switch self {
         case .anatomy, .guidelines: 0
-        case .imaging, .outcomes: 7
-        case .interventions, .medications: 12
+        case .imaging, .outcomes: 10
+        case .interventions, .medications: 20
         }
     }
 
@@ -1937,6 +1945,23 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
         case .outcomes: "chart.line.uptrend.xyaxis"
         case .guidelines: "text.book.closed"
         }
+    }
+}
+
+/// A non-interactive peripheral guide for the Scholar lanes. It reinforces a
+/// ring-like reference index while all actual targets remain generous rows.
+private struct StrokeScholarReferenceArc: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let start = CGPoint(x: rect.minX + 6, y: rect.minY + 18)
+        let end = CGPoint(x: rect.minX + 6, y: rect.maxY - 18)
+        path.move(to: start)
+        path.addCurve(
+            to: end,
+            control1: CGPoint(x: rect.maxX * 0.78, y: rect.height * 0.26),
+            control2: CGPoint(x: rect.maxX * 0.78, y: rect.height * 0.74)
+        )
+        return path
     }
 }
 
@@ -2028,8 +2053,8 @@ private struct SpatialTeachingTimeline: View {
             let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat
             let showsContext = labelsVisible || hoveredBeat != nil
 
-            Text("\(displayedBeat.title) · \(displayedBeat.summary)")
-                .font(.caption.weight(.semibold))
+            Text("STEP \(displayedBeat.number) OF 6 · \(displayedBeat.title) — \(displayedBeat.summary)")
+                .font(.callout.weight(.semibold))
                 .foregroundStyle(Color.white.opacity(0.72))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, minHeight: 18)
@@ -2047,6 +2072,7 @@ private struct SpatialTeachingTimeline: View {
                         SpatialPresenterTeachingBeatNode(
                             beat: beat,
                             isActive: isActive,
+                            isHovered: hoveredBeat == beat,
                             tint: tint(for: beat)
                         )
                     }
@@ -2065,8 +2091,8 @@ private struct SpatialTeachingTimeline: View {
             HStack(spacing: 3) {
                 ForEach(StrokePresenterTeachingBeat.allCases) { beat in
                     Capsule()
-                        .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.96 : 0.50))
-                        .frame(height: beat == experience.presenterTeachingBeat ? 6 : 4)
+                        .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.98 : 0.64))
+                        .frame(height: beat == experience.presenterTeachingBeat ? 10 : 7)
                 }
             }
         }
@@ -2125,26 +2151,28 @@ private struct SpatialTeachingTimeline: View {
 private struct SpatialPresenterTeachingBeatNode: View {
     let beat: StrokePresenterTeachingBeat
     let isActive: Bool
+    let isHovered: Bool
     let tint: Color
 
     var body: some View {
+        let isEmphasized = isActive || isHovered
         ZStack {
             Circle()
-                .fill(isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)))
+                .fill(isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(isHovered ? 0.10 : 0.025)))
                 .frame(width: 48, height: 48)
 
             Circle()
                 .stroke(
-                    isActive ? tint.opacity(0.78) : Color.white.opacity(0.10),
-                    lineWidth: isActive ? 1.6 : 1
+                    isEmphasized ? tint.opacity(0.78) : Color.white.opacity(0.10),
+                    lineWidth: isEmphasized ? 1.6 : 1
                 )
                 .frame(width: 48, height: 48)
 
             Text(String(beat.number))
                 .font(.caption.monospacedDigit().weight(.black))
                 .frame(width: 34, height: 34)
-                .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
-                .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.62))
+                .background(isEmphasized ? tint : Color.white.opacity(0.08), in: Circle())
+                .foregroundStyle(isEmphasized ? Color.black : Color.white.opacity(0.62))
         }
         .frame(width: 64, height: 64)
         .contentShape(Rectangle())
