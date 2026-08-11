@@ -700,6 +700,8 @@ require(all(token in state for token in (
     "advanceFamilyBrainAtlasChapter(by",
     "advanceFamilyBrainAtlasDetail(by",
     "selectLessonFamily(chapter.pointField)",
+    "revealFamilyBrainAtlasModelCue()",
+    "prepareFamilyArterialAtlasFlowProof",
     "prepareFamilyBrainAtlasProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
 require(all(token in immersive for token in (
@@ -711,8 +713,11 @@ require(all(token in immersive for token in (
     "generic teaching anatomy, not a patient scan",
     ".frame(width: 640)",
     ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))",
+    "SHOW BRANCHING FLOW IN 3D",
+    "revealFamilyBrainAtlasModelCue()",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
+require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArterialAtlasFlowProof" in launch, "deterministic family arterial-flow Atlas proof route is missing")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require(all(token in state for token in (
     "configurePresenterPointField(",

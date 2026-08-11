@@ -696,6 +696,22 @@ final class StrokeExperienceState: ObservableObject {
         selectLessonFamily(chapter.pointField)
     }
 
+    /// The arterial Atlas chapter has one deliberate spatial reveal. It starts
+    /// with the same quiet discovery field as every other chapter, then a
+    /// second pinch can select a generic branching cue to show qualitative
+    /// motion and one local reference. This is not a vessel map or a patient
+    /// measurement.
+    func revealFamilyBrainAtlasModelCue() {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        let chapter = familyBrainAtlasChapter
+        selectFamilyBrainAtlasChapter(chapter)
+        guard chapter == .arterialRoutes,
+              let branchingCue = StrokePointField.procedure.lessonPoints.first(where: { $0.index == 1 }) else {
+            return
+        }
+        selectLessonPoint(branchingCue)
+    }
+
     func advanceFamilyBrainAtlasChapter(by offset: Int) {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
         let chapters = StrokeFamilyBrainAtlasChapter.allCases
@@ -2148,6 +2164,18 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.arterialRoutes)
         advanceFamilyBrainAtlasDetail(by: 1)
+    }
+
+    /// Deterministic proof that the arterial Atlas can lead to one
+    /// anatomy-attached 3D qualitative-flow reference without exposing a
+    /// permanent label cloud or a patient-specific vessel map.
+    func prepareFamilyArterialAtlasFlowProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.arterialRoutes)
+        revealFamilyBrainAtlasModelCue()
     }
 
     func prepareClinicianPressureStoryProof() {

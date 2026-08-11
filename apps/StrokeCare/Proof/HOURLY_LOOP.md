@@ -1186,3 +1186,12 @@
 - Verdict: `IMPROVED` — the family member can now read and pinch through the ten-part Atlas without a flat full-screen vessel map or a permanent annotation cloud around the anatomy.
 - Blocker: this is generic educational anatomy only. Clinical review is needed before adding more specific physiology claims, and XCAT remains unavailable for real-world legibility and pinch-drag verification.
 - Next safe action: validate the corrected Family Atlas on an unlocked Vision Pro before adding another family teaching subsystem.
+
+## 2026-08-12 04:48 SGT — connect the arterial Atlas chapter to one 3D flow reference
+
+- Target: keep the Family arterial lesson spatial instead of leaving its vessel cue as a text-led point-family switch.
+- Bounded action: changed the Arterial routes Atlas action to `SHOW BRANCHING FLOW IN 3D`; one deliberate pinch now selects the generic branching-flow point, moves the registered teaching assembly into its existing close-up state, and reveals exactly one local qualitative vessel reference.
+- Evidence: `Scripts/deploy_xcat.zsh` had already recorded XCAT unavailable in `Proof/xcat/20260812-041010/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh isolated-DerivedData Simulator bundle launched `--proof-family-arterial-atlas-flow` as process `44214`; inspected capture `/tmp/strokecare-family-arterial-atlas-flow.png` visibly shows the `Arterial routes` Atlas, `SHOW BRANCHING FLOW IN 3D`, one `ARTERIES BRANCH` local cue, and the `VESSEL STORY` reference alongside the 3D brain and arteries.
+- Verdict: `IMPROVED` — the vessel chapter now has an explicit user-selected spatial flow reveal rather than a flat map or permanent label cloud.
+- Blocker: this is qualitative, generic teaching anatomy only; Simulator proof does not establish physical gaze-and-pinch targeting, motion legibility, or clinical adequacy, and XCAT remains unavailable.
+- Next safe action: validate the selected Family arterial-flow interaction on an unlocked Vision Pro before adding more physiology references.

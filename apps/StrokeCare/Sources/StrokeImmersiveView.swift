@@ -2460,11 +2460,11 @@ private struct SpatialFamilyBrainAtlas: View {
             }
 
             Button {
-                experience.selectFamilyBrainAtlasChapter(chapter)
+                experience.revealFamilyBrainAtlasModelCue()
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: chapter.systemImage)
-                    Text(chapter.modelCue)
+                    Text(chapter == .arterialRoutes ? "SHOW BRANCHING FLOW IN 3D" : chapter.modelCue)
                         .font(.caption2.weight(.black))
                         .tracking(0.55)
                     Spacer(minLength: 0)
@@ -2478,8 +2478,8 @@ private struct SpatialFamilyBrainAtlas: View {
             }
             .buttonStyle(.plain)
             .hoverEffect(.highlight)
-            .accessibilityLabel("Show (chapter.title) context on the 3D teaching model")
-            .accessibilityHint("Changes only the generic discovery points; it does not identify anatomy in a patient scan")
+            .accessibilityLabel(chapter == .arterialRoutes ? "Show qualitative branching flow on the 3D teaching model" : "Show \(chapter.title) context on the 3D teaching model")
+            .accessibilityHint(chapter == .arterialRoutes ? "Selects one generic vessel cue and opens one local teaching reference. It is not a patient scan or measurement" : "Changes only the generic discovery points; it does not identify anatomy in a patient scan")
 
             Text("Pinch-drag left or right to explore · pinch the card for three short explanations · generic teaching anatomy, not a patient scan")
                 .font(.caption2.weight(.semibold))
