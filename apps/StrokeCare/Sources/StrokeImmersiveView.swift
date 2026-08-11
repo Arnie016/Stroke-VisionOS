@@ -674,7 +674,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: familyBrainAtlasID) {
                         SpatialFamilyBrainAtlas()
                             .environmentObject(experience)
-                            .frame(width: 540)
+                            .frame(width: 640)
                     }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
@@ -909,8 +909,10 @@ struct StrokeImmersiveView: View {
         }
 
         if let atlas = attachments.entity(for: familyBrainAtlasID) {
-            atlas.position = [-0.66, 1.62, -0.92]
-            atlas.scale = [0.88, 0.88, 0.88]
+            // The widened card remains peripheral but must not clip beyond
+            // the room's left display edge at the default three-quarter view.
+            atlas.position = [-0.46, 1.62, -0.92]
+            atlas.scale = [0.90, 0.90, 0.90]
             atlas.isEnabled = visible && isFamily && experience.familyBrainAtlasVisible
             atlas.components.set(BillboardComponent())
         }
@@ -2484,9 +2486,9 @@ private struct SpatialFamilyBrainAtlas: View {
                 .foregroundStyle(.white.opacity(0.52))
         }
         .padding(18)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 22))
-        .overlay(RoundedRectangle(cornerRadius: 22).stroke(.orange.opacity(0.22)))
-        .shadow(color: .black.opacity(0.32), radius: 14, y: 6)
+        .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))
+        .overlay(RoundedRectangle(cornerRadius: 22).stroke(.orange.opacity(0.42)))
+        .shadow(color: .black.opacity(0.52), radius: 18, y: 8)
         .contentShape(RoundedRectangle(cornerRadius: 22))
         .gesture(
             DragGesture(minimumDistance: 20)
@@ -2510,7 +2512,7 @@ private struct SpatialFamilyBrainAtlas: View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.headline.weight(.bold))
-                .frame(width: 44, height: 56)
+                .frame(width: 56, height: 64)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
                 .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.14)))
         }

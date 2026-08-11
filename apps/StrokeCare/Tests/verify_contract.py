@@ -709,6 +709,8 @@ require(all(token in immersive for token in (
     "Pinch this card for the next short explanation",
     "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
+    ".frame(width: 640)",
+    ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")

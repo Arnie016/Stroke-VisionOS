@@ -1177,3 +1177,12 @@
 - Verdict: `IMPROVED` — the next experience is now visually discoverable rather than buried as an unlabeled small control.
 - Blocker: the paired internal journey must be installed and launched on physical hardware; this Simulator capture does not prove cross-app launch, wearer targeting, comfort, or comprehension.
 - Next safe action: install the paired interior app on an unlocked Vision Pro and record a user-selected handoff receipt.
+
+## 2026-08-12 04:22 SGT — enlarge the Family Brain Atlas without flattening the anatomy story
+
+- Target: make the Family learning surface legible in the spatial room while retaining the 3D brain and vessels as the primary teaching object.
+- Bounded action: widened the ten-chapter, pinch-drag Brain Atlas by about 20%, increased its chapter target size, and replaced the faint material card with a black-translucent high-contrast surface; corrected its room placement after the first wider capture clipped at the display edge.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-041010/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-brain-atlas-contrast-final.png` visibly shows a complete, readable left Atlas (`Arterial routes`, `2 / 3`) alongside the unoccluded 3D brain and arteries.
+- Verdict: `IMPROVED` — the family member can now read and pinch through the ten-part Atlas without a flat full-screen vessel map or a permanent annotation cloud around the anatomy.
+- Blocker: this is generic educational anatomy only. Clinical review is needed before adding more specific physiology claims, and XCAT remains unavailable for real-world legibility and pinch-drag verification.
+- Next safe action: validate the corrected Family Atlas on an unlocked Vision Pro before adding another family teaching subsystem.
