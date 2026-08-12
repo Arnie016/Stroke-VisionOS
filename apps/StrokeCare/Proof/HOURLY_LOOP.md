@@ -1303,3 +1303,12 @@
 - Verdict: `IMPROVED` — the family explanation has better environmental contrast while the live 3D model remains dominant.
 - Blocker: Simulator does not prove headset legibility, physical pinch-drag reach, room lighting performance, or family comprehension; XCAT remains unavailable.
 - Next safe action: test the Atlas in a bright physical room with a non-clinician wearer on an unlocked Vision Pro before changing its content density or adding unreviewed topics.
+
+## 2026-08-12 22:04 SGT — make the Family Atlas explanation target explicit
+
+- Target: make the family Atlas’s three short explanations easy to discover and pinch without adding a new panel or reducing the central 3D model to a diagram.
+- Bounded action: turned the existing central chapter card into a bordered `150`-point minimum pinch target with a visible `PINCH FOR THE NEXT SHORT EXPLANATION` affordance; chapter arrows, pinch-drag chapter navigation, and the separate `REVEAL IN 3D` action remain distinct.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-220014/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-pinch-target-20260812-2204.png` was inspected and visibly shows the enlarged central pinch target, one-chapter Atlas, central brain/arteries, and qualitative flow cues.
+- Verdict: `IMPROVED` — the wearer now has one unambiguous target for progressing the explanation while spatial discovery remains a deliberate separate action.
+- Blocker: Simulator does not establish physical gaze-and-pinch reliability, reach, stereo legibility, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate the card’s target size and swipe-versus-pinch distinction with a non-clinician wearer on an unlocked Vision Pro before adding further Atlas interactions.
