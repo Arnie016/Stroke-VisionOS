@@ -485,6 +485,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-interior-handoff") {
             experience.prepareInteriorHandoffProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-surface-cue") {
+            experience.prepareFamilyAtlasSurfaceCueProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-transparent-layer") {
             experience.prepareTransparentLayerProof()
             Task { await openProofSpace() }

@@ -1213,3 +1213,12 @@
 - Verdict: `IMPROVED` — the six checkpoints now have materially larger direct gaze-and-pinch affordances without turning the explanation into a text-heavy panel.
 - Blocker: Simulator capture does not prove physical gaze-and-pinch acquisition, wearer legibility, or clinical adequacy; XCAT remains unavailable.
 - Next safe action: validate all six timeline targets on an unlocked Vision Pro before introducing additional clinician controls.
+
+## 2026-08-12 16:53 SGT — connect Family Atlas chapters to visible 3D cues
+
+- Target: ensure the ten-part Family Brain Atlas teaches through the central spatial anatomy rather than behaving like a flat vessel map or a generic point-family switch.
+- Bounded action: mapped each reviewed outer-brain Atlas chapter to one deliberate lifted regional cue, kept Arterial routes on its qualitative 3D flow cue, and made deep chapters surface the explicit magnify-to-inside-brain handoff instead of implying unreviewed internal landmark registration.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-104942/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow isolated-DerivedData visionOS Simulator build produced `StrokeTime.app`; fresh deterministic `--proof-family-atlas-surface-cue` capture at `/tmp/strokecare-family-atlas-surface-cue.png` was inspected and visibly shows the `Frontal lobe` Atlas chapter, one tethered `FRONTAL LOBE · GENERIC ATLAS CUE`, the central 3D brain and arteries, and no permanent label cloud.
+- Verdict: `IMPROVED` — a Family chapter now produces a clear 3D anatomy-attached reveal, while the inside-brain transition remains an honest separate-experience handoff.
+- Blocker: Simulator composition does not prove physical gaze-and-pinch acquisition, room-scale depth, the paired-app launch, or clinical adequacy; XCAT was unavailable.
+- Next safe action: validate one Family Atlas surface cue and one magnify-to-inside-brain handoff on an unlocked Vision Pro before adding another anatomy subsystem.

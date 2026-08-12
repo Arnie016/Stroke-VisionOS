@@ -179,10 +179,34 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
         switch self {
         case .arterialRoutes:
             "MODEL CUE · BLOOD-FLOW POINTS"
-        case .cortex, .frontalLobe, .parietalLobe, .temporalLobe, .occipitalLobe:
-            "MODEL CUE · OUTER BRAIN + REGIONS"
+        case .cortex:
+            "HIGHLIGHT CORTEX IN 3D"
+        case .frontalLobe:
+            "HIGHLIGHT FRONT CONTEXT IN 3D"
+        case .parietalLobe:
+            "HIGHLIGHT SENSORY CONTEXT IN 3D"
+        case .temporalLobe:
+            "HIGHLIGHT SIDE CONTEXT IN 3D"
+        case .occipitalLobe:
+            "HIGHLIGHT REAR CONTEXT IN 3D"
         case .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
-            "NEXT · MAGNIFY FOR THE SEPARATE INSIDE-BRAIN JOURNEY"
+            "OPEN INSIDE-BRAIN JOURNEY"
+        }
+    }
+
+    /// Only surface concepts use the reviewed, lifted regional points in the
+    /// shared family model. Deeper structures intentionally hand off to the
+    /// separately installed inside-brain experience rather than mapping a
+    /// generic surface marker onto unreviewed internal anatomy.
+    var spatialCuePointIndex: Int? {
+        switch self {
+        case .cortex: 2
+        case .frontalLobe: 0
+        case .parietalLobe: 1
+        case .temporalLobe: 2
+        case .occipitalLobe: 3
+        case .arterialRoutes, .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+            nil
         }
     }
 
@@ -696,20 +720,35 @@ final class StrokeExperienceState: ObservableObject {
         selectLessonFamily(chapter.pointField)
     }
 
-    /// The arterial Atlas chapter has one deliberate spatial reveal. It starts
-    /// with the same quiet discovery field as every other chapter, then a
-    /// second pinch can select a generic branching cue to show qualitative
-    /// motion and one local reference. This is not a vessel map or a patient
-    /// measurement.
+    /// Every atlas chapter has one deliberate spatial reveal. Surface chapters
+    /// select one real lifted regional cue; arterial routes select the existing
+    /// qualitative-flow cue; deep chapters only prepare the explicit separate
+    /// inside-brain handoff. None of these are patient-specific labels,
+    /// measurements, or hidden diagnostic claims.
     func revealFamilyBrainAtlasModelCue() {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
         let chapter = familyBrainAtlasChapter
         selectFamilyBrainAtlasChapter(chapter)
-        guard chapter == .arterialRoutes,
-              let branchingCue = StrokePointField.procedure.lessonPoints.first(where: { $0.index == 1 }) else {
+        if chapter == .arterialRoutes,
+           let branchingCue = StrokePointField.procedure.lessonPoints.first(where: { $0.index == 1 }) {
+            selectLessonPoint(branchingCue)
             return
         }
-        selectLessonPoint(branchingCue)
+        if let index = chapter.spatialCuePointIndex {
+            selectPoint(
+                entityName: "\(StrokePointField.regions.entityPrefix)\(index)",
+                label: "\(chapter.title) · generic atlas cue"
+            )
+            return
+        }
+        // This is a user-selected room-scale magnification cue. The final
+        // cross-app handoff still requires the paired experience to be
+        // installed; Stroke Care never claims to have entered a patient's
+        // anatomy itself.
+        withAnimation(.easeInOut(duration: 0.52)) {
+            spatialZoom = max(spatialZoom, 3.2)
+            anatomyViewpoint = .free
+        }
     }
 
     func advanceFamilyBrainAtlasChapter(by offset: Int) {
@@ -2175,6 +2214,21 @@ final class StrokeExperienceState: ObservableObject {
         environmentMode = .surroundings
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.arterialRoutes)
+        revealFamilyBrainAtlasModelCue()
+    }
+
+    /// Deterministic receipt for the Atlas's 3D surface-context handoff. It
+    /// starts on the frontal chapter because the selected point has a visible
+    /// tether to the outer teaching model rather than implying a deep or
+    /// patient-specific landmark.
+    func prepareFamilyAtlasSurfaceCueProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        spatialZoom = 1.22
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.frontalLobe)
+        advanceFamilyBrainAtlasDetail(by: 1)
         revealFamilyBrainAtlasModelCue()
     }
 

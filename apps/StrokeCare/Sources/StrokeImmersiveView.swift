@@ -2464,7 +2464,7 @@ private struct SpatialFamilyBrainAtlas: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: chapter.systemImage)
-                    Text(chapter == .arterialRoutes ? "SHOW BRANCHING FLOW IN 3D" : chapter.modelCue)
+                    Text(chapter.modelCue)
                         .font(.caption2.weight(.black))
                         .tracking(0.55)
                     Spacer(minLength: 0)
@@ -2478,8 +2478,8 @@ private struct SpatialFamilyBrainAtlas: View {
             }
             .buttonStyle(.plain)
             .hoverEffect(.highlight)
-            .accessibilityLabel(chapter == .arterialRoutes ? "Show qualitative branching flow on the 3D teaching model" : "Show \(chapter.title) context on the 3D teaching model")
-            .accessibilityHint(chapter == .arterialRoutes ? "Selects one generic vessel cue and opens one local teaching reference. It is not a patient scan or measurement" : "Changes only the generic discovery points; it does not identify anatomy in a patient scan")
+            .accessibilityLabel(atlasCueAccessibilityLabel)
+            .accessibilityHint(atlasCueAccessibilityHint)
 
             Text("Pinch-drag left or right to explore · pinch the card for three short explanations · generic teaching anatomy, not a patient scan")
                 .font(.caption2.weight(.semibold))
@@ -2502,6 +2502,26 @@ private struct SpatialFamilyBrainAtlas: View {
         )
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.22), value: chapter)
         .accessibilityElement(children: .contain)
+    }
+
+    private var atlasCueAccessibilityLabel: String {
+        if chapter == .arterialRoutes {
+            return "Show qualitative branching flow on the 3D teaching model"
+        }
+        if chapter.spatialCuePointIndex != nil {
+            return "Show \(chapter.title) context on the 3D teaching model"
+        }
+        return "Open the separate inside-brain journey"
+    }
+
+    private var atlasCueAccessibilityHint: String {
+        if chapter == .arterialRoutes {
+            return "Selects one generic vessel cue and opens one local teaching reference. It is not a patient scan or measurement"
+        }
+        if chapter.spatialCuePointIndex != nil {
+            return "Selects one lifted generic anatomy cue. It does not identify anatomy in a patient scan"
+        }
+        return "Makes the room-scale inside-brain handoff available. The paired guided journey must be installed separately"
     }
 
     private func atlasStepButton(
