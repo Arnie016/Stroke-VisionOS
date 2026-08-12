@@ -1330,3 +1330,12 @@
 - Verdict: `IMPROVED` — the browsing explanation is more legible without replacing the anatomy with a flat vessel map.
 - Blocker: Simulator cannot establish headset text legibility, physical pinch-drag reliability, reach, family comprehension, or clinical correctness; XCAT is unavailable.
 - Next safe action: validate the widened Atlas with a non-clinician wearer on an unlocked Vision Pro before adding any new medical topics or disclosures.
+
+## 2026-08-12 22:40 SGT — separate the selected-point callout from anatomy detail
+
+- Target: preserve a selected point’s local spatial explanation without allowing its wording to overlap the central 3D brain.
+- Bounded action: moved the point-owned callout outward from `[0.034, 0.026, 0.016]` to `[0.064, 0.052, 0.032]` relative to its selected point and added a compact dark callout backing; the explanation remains parented to the selected point field and the registered vessel reference remains world-locked in the secondary right field.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-222921/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-selected-point-callout-20260812-2240.png` was inspected and visibly shows the `EXAMPLE AFFECTED AREA` callout clearing the brain silhouette, with its generic/non-measured boundary and one separate vessel teaching reference.
+- Verdict: `IMPROVED` — selected-point content is now a readable spatial callout rather than text competing with the anatomy surface.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targetability, stereo depth, wearer legibility, or clinical correctness; XCAT is unavailable.
+- Next safe action: test the point-to-callout and point-to-reference relationship on an unlocked Vision Pro before adding more reference types.

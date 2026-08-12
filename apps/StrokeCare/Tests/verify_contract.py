@@ -310,7 +310,7 @@ require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "Pre
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
 require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive, "free-standing annotation tether is missing")
-require("let selectedPoint = experience.selectedPointEntityName.flatMap" in immersive and "selectedPoint.position + [0.034, 0.026, 0.016]" in immersive, "selected point explanation is no longer anatomy-attached")
+require("let selectedPoint = experience.selectedPointEntityName.flatMap" in immersive and "selectedPoint.position + [0.064, 0.052, 0.032]" in immersive, "selected point explanation is no longer anatomy-attached")
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior", "case inferior")), "named registered model-frame viewpoints are missing")
@@ -819,7 +819,7 @@ require(all(token in immersive for token in (
     'case "Flow beyond the blockage changes":',
     '"Fewer cues continue beyond the example blockage; no perfusion value is inferred."',
 )), "selected flow points can inherit unrelated checkpoint copy or quantitative physiology claims")
-require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selected.position + [0.038, 0.020, 0.012]" in immersive, "selected-point disclosure is still a permanent label rail or is not depth-attached")
+require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selectedPoint.position + [0.064, 0.052, 0.032]" in immersive and ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))" in immersive, "selected-point disclosure is still a permanent label rail, overlaps anatomy, or is not depth-attached")
 require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
 require(all(token in immersive for token in (
     '"BLOCKED VESSEL · TEACHING VIEW"',

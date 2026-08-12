@@ -534,7 +534,12 @@ struct StrokeImmersiveView: View {
                             annotationParent.addChild(annotation)
                         }
                         if let selectedPoint {
-                            annotation.position = selectedPoint.position + [0.034, 0.026, 0.016]
+                            // The selected-point callout deliberately clears
+                            // the anatomy silhouette before billboarding to
+                            // the wearer. It remains parented to the point
+                            // field, but reads as a compact spatial callout
+                            // rather than overlapping detail on the brain.
+                            annotation.position = selectedPoint.position + [0.064, 0.052, 0.032]
                         } else {
                             annotationParent?.position = annotationPosition
                             annotation.position = .zero
@@ -2938,7 +2943,9 @@ private struct StrokeIntentionAnnotation: View {
             }
         }
         .padding(.vertical, 8)
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 9)
+        .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(annotationTint.opacity(0.26)))
         .shadow(color: .black.opacity(0.72), radius: 8, y: 2)
         .accessibilityElement(children: .combine)
     }
