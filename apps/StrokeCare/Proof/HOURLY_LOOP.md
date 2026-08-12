@@ -1258,3 +1258,12 @@
 - Verdict: `IMPROVED` — the family explanation is more legible and self-guiding without becoming a full-screen 2D vessel map.
 - Blocker: Simulator evidence cannot establish headset legibility, physical pinch-drag reach, or family comprehension; XCAT remains unavailable.
 - Next safe action: validate this enlarged Atlas on an unlocked Vision Pro with one non-clinician wearer before increasing its content density.
+
+## 2026-08-12 17:46 SGT — make the Family Atlas 3D handoff explicit
+
+- Target: make it clear that an Atlas chapter can reveal one real, anatomy-attached teaching cue rather than only changing text in a peripheral card.
+- Bounded action: changed the Atlas action from a passive cue label to an explicit `REVEAL IN 3D` control; after a deliberate reveal it changes to `3D CUE ACTIVE · LOOK FOR ONE LIT MARKER`, with a distinct confirmation colour and no permanent label cloud.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-174042/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-arterial-atlas-flow` capture at `/tmp/strokecare-family-atlas-cue-active-20260812-1745.png` was inspected and visibly shows the active 3D cue confirmation, one anatomy-attached `ARTERIES BRANCH` explanation, and one contextual teaching reference.
+- Verdict: `IMPROVED` — the Atlas now makes its spatial reveal and current selection legible without presenting a patient-specific vessel map or overwhelming the central model.
+- Blocker: Simulator evidence does not establish physical gaze-and-pinch reach, stereo depth, or comprehension; XCAT remains unavailable.
+- Next safe action: validate one Atlas reveal-to-marker interaction with a non-clinician wearer on an unlocked Vision Pro before adding any new chapters or references.

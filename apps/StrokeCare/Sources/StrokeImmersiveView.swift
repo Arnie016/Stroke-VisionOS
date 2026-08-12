@@ -2423,6 +2423,14 @@ private struct SpatialFamilyBrainAtlas: View {
         }
     }
 
+    /// A cue is only considered active after the wearer has deliberately
+    /// revealed one existing anatomy-attached point. This keeps the Atlas
+    /// connected to the spatial model instead of turning every chapter into a
+    /// permanent screen-side explanation.
+    private var isModelCueActive: Bool {
+        experience.selectedPointEntityName != nil
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 13) {
             HStack(alignment: .firstTextBaseline) {
@@ -2489,25 +2497,25 @@ private struct SpatialFamilyBrainAtlas: View {
                 experience.revealFamilyBrainAtlasModelCue()
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: chapter.systemImage)
-                    Text(chapter.modelCue)
+                    Image(systemName: isModelCueActive ? "checkmark.circle.fill" : chapter.systemImage)
+                    Text(isModelCueActive ? "3D CUE ACTIVE · LOOK FOR ONE LIT MARKER" : "REVEAL IN 3D · \(chapter.modelCue)")
                         .font(.caption2.weight(.black))
                         .tracking(0.55)
                     Spacer(minLength: 0)
-                    Image(systemName: "arrow.right")
+                    Image(systemName: isModelCueActive ? "viewfinder" : "arrow.right")
                 }
-                .foregroundStyle(.orange.opacity(0.95))
+                .foregroundStyle(isModelCueActive ? .mint.opacity(0.95) : .orange.opacity(0.95))
                 .padding(.horizontal, 11)
                 .padding(.vertical, 10)
-                .background(.orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.orange.opacity(0.26)))
+                .background((isModelCueActive ? Color.mint : Color.orange).opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke((isModelCueActive ? Color.mint : Color.orange).opacity(0.26)))
             }
             .buttonStyle(.plain)
             .hoverEffect(.highlight)
             .accessibilityLabel(atlasCueAccessibilityLabel)
             .accessibilityHint(atlasCueAccessibilityHint)
 
-            Text("Pinch-drag left or right to explore · pinch the card for three short explanations · generic teaching anatomy, not a patient scan")
+            Text("Pinch-drag left or right for the next structure · reveal one 3D marker at a time · generic teaching anatomy, not a patient scan")
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.52))
         }

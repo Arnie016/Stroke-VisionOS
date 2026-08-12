@@ -715,8 +715,11 @@ require("Atlas surface cues are self-contained 3D orientation moments" in state 
 require(all(token in immersive for token in (
     'familyBrainAtlasID = "spatial-family-brain-atlas"',
     "SpatialFamilyBrainAtlas()",
-    "Pinch-drag left or right to explore",
+    "Pinch-drag left or right for the next structure",
     "Pinch this card for the next short explanation",
+    "REVEAL IN 3D",
+    "3D CUE ACTIVE · LOOK FOR ONE LIT MARKER",
+    "isModelCueActive",
     "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
     ".frame(width: 640)",
