@@ -683,7 +683,7 @@ require(all(token in state for token in (
     "selectPresenterTeachingBeat(requestedBeat",
     "beat == .explainClosure",
 )), "presenter beat navigation bypasses permission continuity or reversible closure")
-require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing")
+require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and ".frame(width: 430)" in immersive and "isFamily ? 0.86 : 0.82" in immersive and "familyQuestionSuggestions" in immersive and "presenterTimelineKeyPoints" in immersive, "role-aware left peripheral micro-cues are missing or too small for the family conversation")
 require(all(token in immersive for token in (
     "StrokeSceneReadinessOverlay",
     "Preparing the 3D teaching model",

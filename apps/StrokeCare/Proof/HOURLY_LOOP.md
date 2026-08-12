@@ -1348,3 +1348,12 @@
 - Verdict: `IMPROVED` — the reference reads as a deliberate secondary spatial object while the central brain remains dominant.
 - Blocker: Simulator does not prove headset depth, physical reach, point targeting, wearer legibility, or clinical correctness; XCAT is unavailable.
 - Next safe action: validate relative hero/reference depth and reach on an unlocked Vision Pro before adding further objects to the secondary field.
+
+## 2026-08-12 22:51 SGT — enlarge shared Family clarification cues
+
+- Target: make the authored Questions to Ask and explicit self-reported clarity cue readable during a shared family conversation without creating a patient-monitoring surface.
+- Bounded action: widened the Family clarification attachment from `360` to `430` points and raised its attached scale from `0.72` to `0.86`; the central 3D brain, finite authored questions, and explicit self-reported wording remain unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-224337/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-clarity-enlarged-20260812-2310.png` was inspected and visibly shows the larger questions and clarity surface beside the central brain and anatomy-attached points.
+- Verdict: `IMPROVED` — shared family prompts are more legible while the spatial anatomy remains the hero and clarity stays explicitly self-reported.
+- Blocker: Simulator does not establish headset legibility, physical reach, pinch reliability, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the enlarged family clarification surface with a non-clinician wearer on an unlocked Vision Pro before changing its content.

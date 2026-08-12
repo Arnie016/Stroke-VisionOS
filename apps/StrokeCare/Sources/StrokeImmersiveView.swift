@@ -687,7 +687,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: roleMicroCuesID) {
                         SpatialRoleMicroCues()
                             .environmentObject(experience)
-                            .frame(width: 360)
+                            .frame(width: 430)
                     }
                     Attachment(id: familyBrainAtlasID) {
                         SpatialFamilyBrainAtlas()
@@ -914,8 +914,10 @@ struct StrokeImmersiveView: View {
             // timeline reads as orientation rather than another toolbar.
             (teachingTimelineID, [0, 1.13, -0.86], isFamily ? 0.80 : 0.82),
             // Family questions are shared content, not a far-peripheral
-            // presenter rail. Pull them inward and keep the anatomy dominant.
-            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.56, 1.72, -0.90], isFamily ? 0.72 : 0.82)
+            // presenter rail. The larger 0.86-scale field makes authored
+            // questions and the explicit clarity check legible in a shared
+            // conversation while the anatomy remains central and dominant.
+            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.56, 1.72, -0.90], isFamily ? 0.86 : 0.82)
         ]
 
         for (id, position, scale) in placements {
