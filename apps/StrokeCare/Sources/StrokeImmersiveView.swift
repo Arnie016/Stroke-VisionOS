@@ -2203,9 +2203,10 @@ private struct SpatialTeachingTimeline: View {
                     .buttonStyle(.plain)
                     .hoverEffect(.highlight)
                     // Six timeline targets must remain easy to acquire in
-                    // spatial use; the visible disc stays compact inside a
-                    // 92-point gaze-and-pinch target.
-                    .frame(minWidth: 92, minHeight: 92)
+                    // spatial use. A fixed 108-point field and 64-point disc
+                    // improve room-scale legibility without shifting targets
+                    // when a beat becomes active or gaze-hovered.
+                    .frame(minWidth: 108, minHeight: 108)
                     .contentShape(Rectangle())
                     .onHover { isHovering in
                         hoveredBeat = isHovering ? beat : nil
@@ -2283,17 +2284,18 @@ private struct SpatialPresenterTeachingBeatNode: View {
 
     var body: some View {
         let isEmphasized = isActive || isHovered
+        let discDiameter: CGFloat = 64
         ZStack {
             Circle()
                 .fill(isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(isHovered ? 0.10 : 0.025)))
-                .frame(width: 56, height: 56)
+                .frame(width: discDiameter, height: discDiameter)
 
             Circle()
                 .stroke(
                     isEmphasized ? tint.opacity(0.78) : Color.white.opacity(0.10),
                     lineWidth: isEmphasized ? 1.6 : 1
                 )
-                .frame(width: 56, height: 56)
+                .frame(width: discDiameter, height: discDiameter)
 
             Text(String(beat.number))
                 .font(.caption.monospacedDigit().weight(.black))
@@ -2301,7 +2303,7 @@ private struct SpatialPresenterTeachingBeatNode: View {
                 .background(isEmphasized ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isEmphasized ? Color.black : Color.white.opacity(0.62))
         }
-        .frame(width: 92, height: 92)
+        .frame(width: 108, height: 108)
         .contentShape(Rectangle())
     }
 }

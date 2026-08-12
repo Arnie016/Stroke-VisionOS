@@ -1312,3 +1312,12 @@
 - Verdict: `IMPROVED` — the wearer now has one unambiguous target for progressing the explanation while spatial discovery remains a deliberate separate action.
 - Blocker: Simulator does not establish physical gaze-and-pinch reliability, reach, stereo legibility, or family comprehension; XCAT remains unavailable.
 - Next safe action: validate the card’s target size and swipe-versus-pinch distinction with a non-clinician wearer on an unlocked Vision Pro before adding further Atlas interactions.
+
+## 2026-08-12 22:20 SGT — enlarge fixed clinician timeline targets
+
+- Target: make all six presenter checkpoints easier to gaze-and-pinch at room scale without shifting their locations when a step becomes active.
+- Bounded action: enlarged each fixed target field from `92` to `108` points and its visible disc from `56` to `64` points; contextual wording still appears only initially or on hover and then fades.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-220727/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-clinician-six-beat-timeline` capture at `/tmp/strokecare-presenter-timeline-target-20260812-2220.png` was inspected and visibly shows six spaced fixed targets with the active step marked.
+- Verdict: `IMPROVED` — the six-step teaching timeline is more legible and has larger stable acquisition fields without becoming a permanent label wall.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reliability, reach, stereo legibility, or clinician workflow fit; XCAT is unavailable.
+- Next safe action: validate all six targets on an unlocked Vision Pro with a clinician presenter before changing timeline content or adding more controls.
