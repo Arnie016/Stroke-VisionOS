@@ -698,6 +698,7 @@ require(all(token in state for token in (
     "familyBrainAtlasVisible",
     "familyBrainAtlasChapter",
     "familyBrainAtlasDetailIndex",
+    "familyBrainAtlasCueChapter",
     "toggleFamilyBrainAtlas()",
     "advanceFamilyBrainAtlasChapter(by",
     "advanceFamilyBrainAtlasDetail(by",
@@ -708,6 +709,7 @@ require(all(token in state for token in (
     'label: "\\(chapter.title) · generic atlas cue"',
     "spatialZoom = max(spatialZoom, 3.2)",
     "prepareFamilyArterialAtlasFlowProof",
+    "prepareFamilyAtlasNextChapterProof",
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
@@ -719,7 +721,7 @@ require(all(token in immersive for token in (
     "Pinch this card for the next short explanation",
     "REVEAL IN 3D",
     "3D CUE ACTIVE · LOOK FOR ONE LIT MARKER",
-    "isModelCueActive",
+    "experience.familyBrainAtlasCueChapter == chapter",
     "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
     ".frame(width: 640)",
@@ -732,6 +734,7 @@ require(all(token in immersive for token in (
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
 require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArterialAtlasFlowProof" in launch, "deterministic family arterial-flow Atlas proof route is missing")
+require("--proof-family-atlas-next-chapter" in launch and "prepareFamilyAtlasNextChapterProof" in launch, "deterministic Family Atlas next-chapter proof route is missing")
 require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurfaceCueProof" in launch, "deterministic family Atlas surface-cue proof route is missing")
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require("atlas.scale = [1.02, 1.02, 1.02]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")

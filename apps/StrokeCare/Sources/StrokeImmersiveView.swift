@@ -2428,7 +2428,7 @@ private struct SpatialFamilyBrainAtlas: View {
     /// connected to the spatial model instead of turning every chapter into a
     /// permanent screen-side explanation.
     private var isModelCueActive: Bool {
-        experience.selectedPointEntityName != nil
+        experience.familyBrainAtlasCueChapter == chapter
     }
 
     var body: some View {

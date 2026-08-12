@@ -611,6 +611,11 @@ final class StrokeExperienceState: ObservableObject {
     @Published var familyBrainAtlasVisible = false
     @Published private(set) var familyBrainAtlasChapter: StrokeFamilyBrainAtlasChapter = .cortex
     @Published private(set) var familyBrainAtlasDetailIndex = 0
+    /// The chapter whose optional spatial cue the family member explicitly
+    /// revealed. It is deliberately separate from the generic selected-point
+    /// state so changing chapters cannot make an old marker look relevant to
+    /// a new explanation.
+    @Published private(set) var familyBrainAtlasCueChapter: StrokeFamilyBrainAtlasChapter?
     @Published private(set) var selectedPresenterKeyPointIndex: Int?
     @Published private(set) var presenterTeachingBeat: StrokePresenterTeachingBeat = .confirmContext
     @Published var questionPlacementArmed = false
@@ -717,6 +722,7 @@ final class StrokeExperienceState: ObservableObject {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
         familyBrainAtlasChapter = chapter
         familyBrainAtlasDetailIndex = 0
+        familyBrainAtlasCueChapter = nil
         selectLessonFamily(chapter.pointField)
     }
 
@@ -732,6 +738,7 @@ final class StrokeExperienceState: ObservableObject {
         if chapter == .arterialRoutes,
            let branchingCue = StrokePointField.procedure.lessonPoints.first(where: { $0.index == 1 }) {
             selectLessonPoint(branchingCue)
+            familyBrainAtlasCueChapter = chapter
             return
         }
         if let index = chapter.spatialCuePointIndex {
@@ -743,6 +750,7 @@ final class StrokeExperienceState: ObservableObject {
             // A vessel miniature would imply a second, unrelated reference for
             // a lobe chapter and compete with the selected local annotation.
             teachingImagingDrawerVisible = false
+            familyBrainAtlasCueChapter = chapter
             return
         }
         // This is a user-selected room-scale magnification cue. The final
@@ -753,6 +761,7 @@ final class StrokeExperienceState: ObservableObject {
             spatialZoom = max(spatialZoom, 3.2)
             anatomyViewpoint = .free
         }
+        familyBrainAtlasCueChapter = chapter
     }
 
     func advanceFamilyBrainAtlasChapter(by offset: Int) {
@@ -1007,6 +1016,7 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasVisible = false
         familyBrainAtlasChapter = .cortex
         familyBrainAtlasDetailIndex = 0
+        familyBrainAtlasCueChapter = nil
         withAnimation(.easeInOut(duration: 0.72)) {
             brainRevealProgress = 0.18
             vesselFocusProgress = 0
@@ -2111,6 +2121,7 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasVisible = false
         familyBrainAtlasChapter = .cortex
         familyBrainAtlasDetailIndex = 0
+        familyBrainAtlasCueChapter = nil
         selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         pointField = .regions
@@ -2219,6 +2230,14 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.arterialRoutes)
         revealFamilyBrainAtlasModelCue()
+    }
+
+    /// Deterministic regression receipt: after the wearer leaves a revealed
+    /// arterial chapter, the next chapter must invite a new cue instead of
+    /// claiming that the previous point belongs to it.
+    func prepareFamilyAtlasNextChapterProof() {
+        prepareFamilyArterialAtlasFlowProof()
+        advanceFamilyBrainAtlasChapter(by: 1)
     }
 
     /// Deterministic receipt for the Atlas's 3D surface-context handoff. It

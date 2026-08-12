@@ -582,6 +582,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-arterial-atlas-flow") {
             experience.prepareFamilyArterialAtlasFlowProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-next-chapter") {
+            experience.prepareFamilyAtlasNextChapterProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-presenter-plain-language") {
             experience.preparePresenterPlainLanguageProof()
             Task { await openProofSpace() }

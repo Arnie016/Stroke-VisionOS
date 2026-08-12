@@ -1267,3 +1267,12 @@
 - Verdict: `IMPROVED` — the Atlas now makes its spatial reveal and current selection legible without presenting a patient-specific vessel map or overwhelming the central model.
 - Blocker: Simulator evidence does not establish physical gaze-and-pinch reach, stereo depth, or comprehension; XCAT remains unavailable.
 - Next safe action: validate one Atlas reveal-to-marker interaction with a non-clinician wearer on an unlocked Vision Pro before adding any new chapters or references.
+
+## 2026-08-12 17:54 SGT — bind each Family Atlas cue to its own chapter
+
+- Target: stop a previously revealed 3D marker from appearing to belong to the next brain-structure chapter after a family member swipes through the Atlas.
+- Bounded action: added explicit cue-to-chapter state; a chapter transition now clears the Atlas cue confirmation, presents the new chapter's quiet markers, and invites a fresh deliberate reveal. Added a deterministic next-chapter proof route.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-174042/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-atlas-next-chapter` capture at `/tmp/strokecare-family-atlas-next-chapter-20260812-1753.png` was inspected and visibly shows `Corpus callosum`, `REVEAL IN 3D · OPEN INSIDE-BRAIN JOURNEY`, and a central brain with quiet new markers, not the old active artery cue.
+- Verdict: `IMPROVED` — the Atlas now preserves a one-chapter, one-deliberate-cue spatial learning model rather than leaving stale spatial context across chapters.
+- Blocker: Simulator does not establish physical gaze-and-pinch targeting, depth, or family comprehension; XCAT remains unavailable.
+- Next safe action: run the chapter-swipe then cue-reveal sequence with a non-clinician wearer on an unlocked Vision Pro before expanding the Atlas beyond its reviewed ten structures.
