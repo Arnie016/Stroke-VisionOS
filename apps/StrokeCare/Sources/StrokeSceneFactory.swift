@@ -2661,7 +2661,12 @@ enum StrokeSceneFactory {
         }
 
         if let boundary = root.findEntity(named: fixedBoundaryRingName) {
-            boundary.isEnabled = experience.procedureStep != .chooseCase
+            // This sparse pressure boundary is a clinician-facing orientation
+            // cue. In the Family explainer it competes with the brain and can
+            // read as a detached radial graph, so discovery stays with the
+            // anatomy-attached points and one selected local explanation.
+            boundary.isEnabled = experience.audienceLens == .clinician &&
+                experience.procedureStep != .chooseCase
             let pulse = Float(1 + sin(time * 0.72) * 0.012)
             boundary.scale = [pulse, pulse, pulse]
         }

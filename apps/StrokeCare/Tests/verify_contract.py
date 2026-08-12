@@ -970,6 +970,11 @@ require(all(copy in immersive for copy in (
 )), "presenter checkpoint annotation does not identify the active spatial explanation")
 require("isImmersivePresented = false\n        advanceJourney()" not in state, "permission incorrectly resets the companion window")
 require("pendingConsentStep" in state and "present(step: .discussCare" in state, "presenter direct-jump consent continuation is missing")
+require(
+    "boundary.isEnabled = experience.audienceLens == .clinician" in scene
+    and "experience.procedureStep != .chooseCase" in scene,
+    "the clinician pressure-boundary ring still leaks into the Family explainer",
+)
 require("StrokeModelBoardView()" in deck, "the dominant embedded 3D model is missing from the case board")
 require(all(gesture in model_board for gesture in ("DragGesture", "MagnifyGesture", "SpatialTapGesture")), "orbit, scale, or vessel-focus interaction is missing")
 require("makeScene(compact: true)" in model_board, "the windowed 3D model is not using the bounded scene profile")

@@ -1357,3 +1357,12 @@
 - Verdict: `IMPROVED` — shared family prompts are more legible while the spatial anatomy remains the hero and clarity stays explicitly self-reported.
 - Blocker: Simulator does not establish headset legibility, physical reach, pinch reliability, family comprehension, or clinical correctness; XCAT remains unavailable.
 - Next safe action: validate the enlarged family clarification surface with a non-clinician wearer on an unlocked Vision Pro before changing its content.
+
+## 2026-08-12 22:56 SGT — remove the detached pressure ring from the Family explainer
+
+- Target: stop the peripheral radial pressure-boundary graphic from competing with family-facing brain anatomy and being mistaken for a data visualisation.
+- Bounded action: restricted the fixed-space boundary ring to clinician lessons; the Family explainer retains its central brain, arteries, quiet anatomy-attached discovery points, and one local explanation path.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-225313/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-clarity-no-boundary-20260812-2256.png` was inspected and visibly shows the radial ring absent while the family questions and 3D anatomy remain.
+- Verdict: `IMPROVED` — the family scene now reads as a calm spatial anatomy explanation rather than a graph around the brain.
+- Blocker: Simulator cannot establish wearer legibility, physical targetability, room placement, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate the cleaner Family composition with a non-clinician wearer on an unlocked Vision Pro before adjusting any remaining clinician-only cues.
