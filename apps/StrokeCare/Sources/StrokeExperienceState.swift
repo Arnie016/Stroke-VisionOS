@@ -739,6 +739,10 @@ final class StrokeExperienceState: ObservableObject {
                 entityName: "\(StrokePointField.regions.entityPrefix)\(index)",
                 label: "\(chapter.title) · generic atlas cue"
             )
+            // Atlas surface cues are self-contained 3D orientation moments.
+            // A vessel miniature would imply a second, unrelated reference for
+            // a lobe chapter and compete with the selected local annotation.
+            teachingImagingDrawerVisible = false
             return
         }
         // This is a user-selected room-scale magnification cue. The final

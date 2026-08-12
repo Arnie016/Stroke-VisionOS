@@ -1222,3 +1222,12 @@
 - Verdict: `IMPROVED` — a Family chapter now produces a clear 3D anatomy-attached reveal, while the inside-brain transition remains an honest separate-experience handoff.
 - Blocker: Simulator composition does not prove physical gaze-and-pinch acquisition, room-scale depth, the paired-app launch, or clinical adequacy; XCAT was unavailable.
 - Next safe action: validate one Family Atlas surface cue and one magnify-to-inside-brain handoff on an unlocked Vision Pro before adding another anatomy subsystem.
+
+## 2026-08-12 17:05 SGT — keep Family Atlas surface cues spatially coherent
+
+- Target: prevent a selected outer-brain Atlas chapter from reading as a detached HUD label or opening an unrelated vessel reference.
+- Bounded action: parented the selected-point explanation to its actual anatomy point field and made surface chapters suppress the secondary vessel miniature, reserving that object for the arterial-flow chapter.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-165447/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow isolated-DerivedData visionOS Simulator build produced `StrokeTime.app`; fresh deterministic `--proof-family-atlas-surface-cue` capture at `/private/tmp/strokecare-family-atlas-surface-final.png` was inspected and visibly shows the `Frontal lobe` Atlas, central 3D brain/arteries, one local `FRONTAL LOBE · GENERIC ATLAS CUE`, and no right-side vessel reference.
+- Verdict: `IMPROVED` — outer-brain chapters now have one deliberate spatial reveal instead of a competing 2D-like reference surface.
+- Blocker: Simulator rendering does not prove physical gaze-and-pinch targetability, stereo depth, or family comprehension; XCAT was unavailable.
+- Next safe action: validate the one-cue Family Atlas behavior on an unlocked Vision Pro before adding more reviewed teaching references.

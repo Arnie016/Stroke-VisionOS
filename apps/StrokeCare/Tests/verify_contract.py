@@ -310,6 +310,7 @@ require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "Pre
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
 require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive, "free-standing annotation tether is missing")
+require("let selectedPoint = experience.selectedPointEntityName.flatMap" in immersive and "selectedPoint.position + [0.034, 0.026, 0.016]" in immersive, "selected point explanation is no longer anatomy-attached")
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior", "case inferior")), "named registered model-frame viewpoints are missing")
@@ -709,6 +710,7 @@ require(all(token in state for token in (
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
+require("Atlas surface cues are self-contained 3D orientation moments" in state and "teachingImagingDrawerVisible = false" in state, "Family Atlas surface cues can incorrectly open an unrelated vessel reference")
 require(all(token in immersive for token in (
     'familyBrainAtlasID = "spatial-family-brain-atlas"',
     "SpatialFamilyBrainAtlas()",

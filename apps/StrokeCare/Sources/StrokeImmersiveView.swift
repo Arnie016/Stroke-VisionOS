@@ -519,13 +519,26 @@ struct StrokeImmersiveView: View {
                         * simd_quatf(angle: smoothedOrbit.y, axis: [1, 0, 0])
 
                     if let annotation = attachments.entity(for: annotationID) {
-                        let annotationAnchor = stageRoot.findEntity(named: annotationAnchorName)
-                        if let annotationAnchor, annotation.parent !== annotationAnchor {
-                            annotation.removeFromParent()
-                            annotationAnchor.addChild(annotation)
+                        let selectedPoint = experience.selectedPointEntityName.flatMap {
+                            root.findEntity(named: $0)
                         }
-                        annotationAnchor?.position = annotationPosition
-                        annotation.position = .zero
+                        // A deliberately selected cue owns its explanation at
+                        // the same anatomical depth. This prevents an Atlas
+                        // reveal from floating up into room-space like a HUD
+                        // while retaining the existing high-level annotation
+                        // position for an unselected three-act checkpoint.
+                        let annotationParent = selectedPoint?.parent
+                            ?? stageRoot.findEntity(named: annotationAnchorName)
+                        if let annotationParent, annotation.parent !== annotationParent {
+                            annotation.removeFromParent()
+                            annotationParent.addChild(annotation)
+                        }
+                        if let selectedPoint {
+                            annotation.position = selectedPoint.position + [0.034, 0.026, 0.016]
+                        } else {
+                            annotationParent?.position = annotationPosition
+                            annotation.position = .zero
+                        }
                         annotation.scale = [0.78, 0.78, 0.78]
                         annotation.isEnabled = experience.spatialPhase == .explanation && (
                             experience.selectedPointEntityName != nil ||
