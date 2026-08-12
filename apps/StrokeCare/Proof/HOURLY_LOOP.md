@@ -1339,3 +1339,12 @@
 - Verdict: `IMPROVED` — selected-point content is now a readable spatial callout rather than text competing with the anatomy surface.
 - Blocker: Simulator cannot establish physical gaze-and-pinch targetability, stereo depth, wearer legibility, or clinical correctness; XCAT is unavailable.
 - Next safe action: test the point-to-callout and point-to-reference relationship on an unlocked Vision Pro before adding more reference types.
+
+## 2026-08-12 22:50 SGT — bring the selected vessel reference into the right reading field
+
+- Target: make the selected-point vessel teaching object feel like a legible second 3D object rather than a small model lost in room furniture.
+- Bounded action: moved the world-locked registered vessel miniature from `[0.50, 1.62, -0.86]` to `[0.40, 1.60, -0.80]` and increased its scale from `0.90` to `1.04`; it remains separate from the hero anatomy and is still not presented as patient imaging.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-223846/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-reference-field-20260812-2250.png` was inspected and visibly shows the enlarged world-locked vessel reference inside the right reading field with the point provenance/generic-teaching caption.
+- Verdict: `IMPROVED` — the reference reads as a deliberate secondary spatial object while the central brain remains dominant.
+- Blocker: Simulator does not prove headset depth, physical reach, point targeting, wearer legibility, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate relative hero/reference depth and reach on an unlocked Vision Pro before adding further objects to the secondary field.

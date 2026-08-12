@@ -744,7 +744,7 @@ require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurf
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")
 require("fixed 108-point field and 64-point disc" in immersive and ".frame(minWidth: 108, minHeight: 108)" in immersive and "let discDiameter: CGFloat = 64" in immersive, "presenter timeline targets are not room-scale legible")
-require("suggestedStagePosition: SIMD3<Float> = [0.50, 1.62, -0.86]" in scene, "the secondary 3D teaching reference must remain separated from the hero anatomy")
+require("suggestedStagePosition: SIMD3<Float> = [0.40, 1.60, -0.80]" in scene and "suggestedStageScale: Float = 1.04" in scene, "the secondary 3D teaching reference must remain separated from the hero anatomy")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require(all(token in state for token in (
     "configurePresenterPointField(",
