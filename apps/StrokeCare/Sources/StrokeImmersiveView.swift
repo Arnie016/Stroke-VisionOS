@@ -2532,7 +2532,11 @@ private struct SpatialFamilyBrainAtlas: View {
                 .foregroundStyle(.white.opacity(0.52))
         }
         .padding(18)
-        .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))
+        // Family copy has to remain readable against an arbitrary real room;
+        // the card stays peripheral while the registered anatomy remains the
+        // spatial hero, rather than letting environmental texture wash out
+        // the explanation.
+        .background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 22))
         .overlay(RoundedRectangle(cornerRadius: 22).stroke(.orange.opacity(0.42)))
         .shadow(color: .black.opacity(0.52), radius: 18, y: 8)
         .contentShape(RoundedRectangle(cornerRadius: 22))

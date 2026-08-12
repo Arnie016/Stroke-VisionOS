@@ -1294,3 +1294,12 @@
 - Verdict: `NEUTRAL` — no unverified recovery UI was shipped; the existing separately installed journey control is unchanged.
 - Blocker: the current room-scale composition can leave the control/cue outside the captured field, and Simulator cannot establish companion-app launch or wearer legibility; XCAT remains unavailable.
 - Next safe action: redesign the handoff as an anatomy-attached, in-field cue and test it on an unlocked Vision Pro with both applications installed.
+
+## 2026-08-12 21:56 SGT — strengthen Family Atlas room contrast
+
+- Target: keep the family Brain Atlas readable over a real room without turning the explainer into a large flat vessel map or competing with the central 3D anatomy.
+- Bounded action: raised only the existing Atlas backing opacity from `0.56` to `0.72`; its one-chapter swipe rhythm, single selected 3D cue, and peripheral attachment placement are unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-214831/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-contrast-20260812-2156.png` was inspected and visibly shows a clearer `Arterial routes` three-beat Atlas beside the central 3D brain, arteries, and qualitative flow cues.
+- Verdict: `IMPROVED` — the family explanation has better environmental contrast while the live 3D model remains dominant.
+- Blocker: Simulator does not prove headset legibility, physical pinch-drag reach, room lighting performance, or family comprehension; XCAT remains unavailable.
+- Next safe action: test the Atlas in a bright physical room with a non-clinician wearer on an unlocked Vision Pro before changing its content density or adding unreviewed topics.

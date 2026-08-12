@@ -728,7 +728,7 @@ require(all(token in immersive for token in (
     "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
     ".frame(width: 640)",
-    ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 22))",
+    ".background(.black.opacity(0.72), in: RoundedRectangle(cornerRadius: 22))",
     "atlasCueAccessibilityLabel",
     "atlasCueAccessibilityHint",
     "revealFamilyBrainAtlasModelCue()",
