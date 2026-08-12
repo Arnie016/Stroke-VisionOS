@@ -1285,3 +1285,12 @@
 - Verdict: `IMPROVED` — deep Atlas chapters now state the room-scale transition explicitly instead of requiring the wearer to discover the separate journey control unaided.
 - Blocker: Simulator does not prove cross-app handoff success, physical control reach, stereo depth, or wearer comprehension; XCAT remains unavailable and the paired guided journey must be installed separately.
 - Next safe action: install both experiences on an unlocked Vision Pro and verify one deliberate `Enter the Brain` handoff end-to-end before describing the journey as device-ready.
+
+## 2026-08-12 20:01 SGT — inspect a recoverable inside-brain handoff cue
+
+- Target: make the `ENTER THE BRAIN` companion-app handoff recoverable if the separate journey is not installed.
+- Bounded action: tested a small visible fallback cue after the handoff request, then rejected and reverted it when it did not render in the room-scale Simulator proof.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-194550/BLOCKED.md`; `python3 Tests/verify_contract.py` passed and a narrow visionOS Simulator Debug build succeeded during the attempted change; fresh `--proof-interior-handoff --proof-interior-handoff-notice` capture at `/tmp/strokecare-interior-handoff-clean-20260812-2001.png` was inspected and shows no readable fallback cue.
+- Verdict: `NEUTRAL` — no unverified recovery UI was shipped; the existing separately installed journey control is unchanged.
+- Blocker: the current room-scale composition can leave the control/cue outside the captured field, and Simulator cannot establish companion-app launch or wearer legibility; XCAT remains unavailable.
+- Next safe action: redesign the handoff as an anatomy-attached, in-field cue and test it on an unlocked Vision Pro with both applications installed.
