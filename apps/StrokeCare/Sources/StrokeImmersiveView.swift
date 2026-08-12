@@ -2434,6 +2434,17 @@ private struct SpatialFamilyBrainAtlas: View {
                     .foregroundStyle(.white.opacity(0.58))
             }
 
+            // Make the three wearer-controlled explanations legible before a
+            // pinch. This is a compact story rhythm, not another navigation
+            // rail: one tap advances Position → Meaning → Conversation.
+            HStack(spacing: 6) {
+                atlasBeat("1", "POSITION", index: 0)
+                atlasBeatConnector
+                atlasBeat("2", "MEANING", index: 1)
+                atlasBeatConnector
+                atlasBeat("3", "ASK", index: 2)
+            }
+
             HStack(alignment: .center, spacing: 12) {
                 atlasStepButton(symbol: "chevron.left", label: "Previous") {
                     experience.advanceFamilyBrainAtlasChapter(by: -1)
@@ -2552,6 +2563,29 @@ private struct SpatialFamilyBrainAtlas: View {
         .buttonStyle(.plain)
         .hoverEffect(.highlight)
         .accessibilityLabel(label + " Brain Atlas chapter")
+    }
+
+    private func atlasBeat(_ number: String, _ title: String, index: Int) -> some View {
+        let active = experience.familyBrainAtlasDetailIndex == index
+        return HStack(spacing: 5) {
+            Text(number)
+                .font(.caption2.monospacedDigit().weight(.black))
+                .frame(width: 18, height: 18)
+                .foregroundStyle(active ? .black : .white.opacity(0.72))
+                .background(active ? .orange : .white.opacity(0.10), in: Circle())
+            Text(title)
+                .font(.caption2.weight(active ? .black : .bold))
+                .tracking(0.45)
+                .foregroundStyle(active ? .orange : .white.opacity(0.42))
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var atlasBeatConnector: some View {
+        Capsule()
+            .fill(.white.opacity(0.16))
+            .frame(width: 14, height: 1)
+            .accessibilityHidden(true)
     }
 }
 

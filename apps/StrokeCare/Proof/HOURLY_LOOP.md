@@ -1240,3 +1240,12 @@
 - Verdict: `IMPROVED` — the evidence space now has a visible, state-resetting escape route rather than relying solely on the normal anatomy return.
 - Blocker: the Simulator screenshot proves rendering and process launch only; it does not prove physical pinch acquisition or XCAT recovery behavior while the device is unavailable.
 - Next safe action: tap `Restart at roles` on an unlocked Vision Pro and record the resulting role-threshold recovery receipt.
+
+## 2026-08-12 17:31 SGT — make the Family Brain Atlas explanation rhythm explicit
+
+- Target: help a family member understand that each of the ten generic brain chapters is a short, spatially connected learning sequence rather than a dense static card.
+- Bounded action: added a compact, visible `1 POSITION → 2 MEANING → 3 ASK` progression to the existing pinch-controlled Atlas card; the active beat follows the current three explanatory states while the central 3D brain and one optional model cue remain primary.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-172435/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-beats.png` was inspected and visibly shows the ten-chapter `Arterial routes` Atlas, highlighted `2 MEANING` beat, the central 3D brain/arteries, and qualitative flow points.
+- Verdict: `IMPROVED` — the Family Atlas now clearly communicates its controlled three-beat learning rhythm without converting the model into a 2D vessel map or adding diagnostic detail.
+- Blocker: Simulator proof does not establish pinch-drag reach, headset legibility, family comprehension, or clinical accuracy; XCAT remains unavailable.
+- Next safe action: run one family member through one full Atlas chapter on an unlocked Vision Pro and record whether the three beats and 3D cue are understandable.
