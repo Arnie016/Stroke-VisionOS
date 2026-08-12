@@ -2189,8 +2189,8 @@ private struct SpatialTeachingTimeline: View {
                     .hoverEffect(.highlight)
                     // Six timeline targets must remain easy to acquire in
                     // spatial use; the visible disc stays compact inside a
-                    // 76-point gaze-and-pinch target.
-                    .frame(minWidth: 76, minHeight: 76)
+                    // 92-point gaze-and-pinch target.
+                    .frame(minWidth: 92, minHeight: 92)
                     .contentShape(Rectangle())
                     .onHover { isHovering in
                         hoveredBeat = isHovering ? beat : nil
@@ -2204,7 +2204,7 @@ private struct SpatialTeachingTimeline: View {
                 ForEach(StrokePresenterTeachingBeat.allCases) { beat in
                     Capsule()
                         .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.98 : 0.64))
-                        .frame(height: beat == experience.presenterTeachingBeat ? 10 : 7)
+                        .frame(height: beat == experience.presenterTeachingBeat ? 12 : 8)
                 }
             }
         }
@@ -2271,22 +2271,22 @@ private struct SpatialPresenterTeachingBeatNode: View {
         ZStack {
             Circle()
                 .fill(isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(isHovered ? 0.10 : 0.025)))
-                .frame(width: 48, height: 48)
+                .frame(width: 56, height: 56)
 
             Circle()
                 .stroke(
                     isEmphasized ? tint.opacity(0.78) : Color.white.opacity(0.10),
                     lineWidth: isEmphasized ? 1.6 : 1
                 )
-                .frame(width: 48, height: 48)
+                .frame(width: 56, height: 56)
 
             Text(String(beat.number))
                 .font(.caption.monospacedDigit().weight(.black))
-                .frame(width: 34, height: 34)
+                .frame(width: 40, height: 40)
                 .background(isEmphasized ? tint : Color.white.opacity(0.08), in: Circle())
                 .foregroundStyle(isEmphasized ? Color.black : Color.white.opacity(0.62))
         }
-        .frame(width: 76, height: 76)
+        .frame(width: 92, height: 92)
         .contentShape(Rectangle())
     }
 }

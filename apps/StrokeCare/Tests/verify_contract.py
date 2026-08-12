@@ -626,14 +626,14 @@ require(all(token in immersive for token in (
     "ForEach(StrokePresenterTeachingBeat.allCases)",
     "experience.selectPresenterTeachingBeat(beat)",
     "SpatialPresenterTeachingBeatNode",
-    ".frame(minWidth: 76, minHeight: 76)",
-    ".frame(width: 76, height: 76)",
+    ".frame(minWidth: 92, minHeight: 92)",
+    ".frame(width: 92, height: 92)",
     "@State private var hoveredBeat",
     "let displayedBeat = hoveredBeat ?? experience.presenterTeachingBeat",
     "let showsContext = labelsVisible || hoveredBeat != nil",
     "STEP \\(displayedBeat.number) OF 6",
     "isHovered: hoveredBeat == beat",
-    ".frame(height: beat == experience.presenterTeachingBeat ? 10 : 7)",
+    ".frame(height: beat == experience.presenterTeachingBeat ? 12 : 8)",
     "Color(red: 0.86, green: 0.31, blue: 0.34)",
 )), "doctor presenter timeline does not expose six stable direct checkpoints with context above")
 require("(teachingTimelineID, [0, 1.13, -0.86]" in immersive, "teaching timeline is not staged in the central-lower demo field")

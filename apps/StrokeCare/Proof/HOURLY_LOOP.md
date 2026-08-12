@@ -1204,3 +1204,12 @@
 - Verdict: `IMPROVED` — the Family arterial lesson now uses primary/secondary spatial depth instead of visually stacking its reference on the anatomy.
 - Blocker: Simulator framing does not prove headset depth perception, peripheral legibility, room placement, or physical gaze-and-pinch; XCAT remains unavailable.
 - Next safe action: validate this primary/secondary composition on an unlocked Vision Pro before adding another teaching reference.
+
+## 2026-08-12 10:45 SGT — enlarge the presenter timeline targets
+
+- Target: make all six clinician checkpoints—including the former hard-to-acquire middle steps—easy to revisit in the lower spatial field.
+- Bounded action: increased each six-step timeline target from 76 to 92 points, enlarged the visible numbered markers, and strengthened the active cool-to-warm story band while retaining hover/focus wording above the timeline.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-095628/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-clinician-six-beat-timeline` capture at `/tmp/strokecare-timeline-after.png` visibly shows the enlarged six-node lower timeline, with step 5 active and the centre anatomy unobscured.
+- Verdict: `IMPROVED` — the six checkpoints now have materially larger direct gaze-and-pinch affordances without turning the explanation into a text-heavy panel.
+- Blocker: Simulator capture does not prove physical gaze-and-pinch acquisition, wearer legibility, or clinical adequacy; XCAT remains unavailable.
+- Next safe action: validate all six timeline targets on an unlocked Vision Pro before introducing additional clinician controls.
