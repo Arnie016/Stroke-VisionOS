@@ -1321,3 +1321,12 @@
 - Verdict: `IMPROVED` — the six-step teaching timeline is more legible and has larger stable acquisition fields without becoming a permanent label wall.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reliability, reach, stereo legibility, or clinician workflow fit; XCAT is unavailable.
 - Next safe action: validate all six targets on an unlocked Vision Pro with a clinician presenter before changing timeline content or adding more controls.
+
+## 2026-08-12 22:30 SGT — enlarge the browsable Family Brain Atlas
+
+- Target: make the family-side, ten-chapter brain-structure explanation more readable while retaining the central 3D anatomy as the spatial hero.
+- Bounded action: widened the optional Atlas attachment from `640` to `720` points and raised its attached reading scale from `1.02` to `1.10`; its existing one-chapter pinch/drag navigation, three short Position → Meaning → Ask beats, and one-at-a-time 3D cue remain unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-221932/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-enlarged-20260812-2230.png` was inspected and visibly shows the wider Arterial routes explanation beside the central 3D brain, arteries, and discrete flow cues.
+- Verdict: `IMPROVED` — the browsing explanation is more legible without replacing the anatomy with a flat vessel map.
+- Blocker: Simulator cannot establish headset text legibility, physical pinch-drag reliability, reach, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the widened Atlas with a non-clinician wearer on an unlocked Vision Pro before adding any new medical topics or disclosures.

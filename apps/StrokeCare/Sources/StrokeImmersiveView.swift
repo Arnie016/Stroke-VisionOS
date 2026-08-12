@@ -687,7 +687,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: familyBrainAtlasID) {
                         SpatialFamilyBrainAtlas()
                             .environmentObject(experience)
-                            .frame(width: 640)
+                            .frame(width: 720)
                     }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
@@ -923,11 +923,12 @@ struct StrokeImmersiveView: View {
 
         if let atlas = attachments.entity(for: familyBrainAtlasID) {
             // The Atlas is a readable family-side teaching surface, not a
-            // miniature dashboard. Give its one-at-a-time text enough scale
-            // to be legible while leaving the central registered anatomy as
-            // the primary spatial object.
+            // miniature dashboard. Its wider, 1.10-scale reading field gives
+            // the ten-chapter swipe journey room for one short explanation at
+            // a time while leaving the central registered anatomy as the
+            // primary spatial object.
             atlas.position = [-0.40, 1.60, -0.92]
-            atlas.scale = [1.02, 1.02, 1.02]
+            atlas.scale = [1.10, 1.10, 1.10]
             atlas.isEnabled = visible && isFamily && experience.familyBrainAtlasVisible
             atlas.components.set(BillboardComponent())
         }
