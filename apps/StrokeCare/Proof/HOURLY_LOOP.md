@@ -1375,3 +1375,12 @@
 - Verdict: `IMPROVED` — Family Pressure now reads as an anchored anatomy lesson rather than an unexplained data graphic.
 - Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
 - Next safe action: validate the Family Pressure composition with a non-clinician wearer on an unlocked Vision Pro before revising any additional Family teaching cues.
+
+## 2026-08-13 00:33 SGT — strengthen the central Family anatomy hero
+
+- Target: use the primary spatial field more intentionally so the 3D brain and arterial anatomy read as the shared explanation’s hero rather than a small object in an otherwise empty room.
+- Bounded action: raised the explanation scale from `2.12` to `2.34` and the Orient scale from `1.98` to `2.18`, preserving the world-locked secondary reference, left family conversation surface, and lower controls.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-003000/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the default DerivedData build was blocked by an existing build database lock, then the same narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-primary-scale`; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-hero-scale-20260813-0033.png` was inspected and visibly shows the enlarged central anatomy clear of the Family questions and controls.
+- Verdict: `IMPROVED` — the shared anatomy has stronger room-scale presence while peripheral surfaces remain secondary.
+- Blocker: Simulator cannot prove actual headset scale comfort, reach, physical pinch reliability, room placement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the enlarged hero scale with a non-clinician wearer on an unlocked Vision Pro before further resizing or adding new Family content.

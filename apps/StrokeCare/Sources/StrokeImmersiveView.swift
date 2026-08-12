@@ -196,8 +196,11 @@ private enum SpatialVisualField {
     static let secondaryCaseDrawer: SIMD3<Float> = [0.50, 1.50, -0.74]
     static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
 
-    static let primaryScale: Float = 2.12
-    static let orientScale: Float = 1.98
+    // The shared anatomy is the spatial hero. A modestly larger base scale
+    // fills the primary field without pulling it into the left conversation
+    // surface or the lower family controls.
+    static let primaryScale: Float = 2.34
+    static let orientScale: Float = 2.18
     static let secondaryScale: Float = 0.62
     static let tertiaryScale: Float = 0.92
 }

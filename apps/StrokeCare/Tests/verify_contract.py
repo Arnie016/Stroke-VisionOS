@@ -980,6 +980,11 @@ require(
     and "clotTarget?.isEnabled = showsPressureFocus" in scene,
     "the Family Pressure story still renders the clinician-only dashed boundary instead of the direct clot target",
 )
+require(
+    "static let primaryScale: Float = 2.34" in immersive
+    and "static let orientScale: Float = 2.18" in immersive,
+    "the central anatomy no longer fills the intended primary spatial field",
+)
 require("StrokeModelBoardView()" in deck, "the dominant embedded 3D model is missing from the case board")
 require(all(gesture in model_board for gesture in ("DragGesture", "MagnifyGesture", "SpatialTapGesture")), "orbit, scale, or vessel-focus interaction is missing")
 require("makeScene(compact: true)" in model_board, "the windowed 3D model is not using the bounded scene profile")
