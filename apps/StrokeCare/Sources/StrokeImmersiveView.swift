@@ -922,10 +922,12 @@ struct StrokeImmersiveView: View {
         }
 
         if let atlas = attachments.entity(for: familyBrainAtlasID) {
-            // The widened card remains peripheral but must not clip beyond
-            // the room's left display edge at the default three-quarter view.
-            atlas.position = [-0.46, 1.62, -0.92]
-            atlas.scale = [0.90, 0.90, 0.90]
+            // The Atlas is a readable family-side teaching surface, not a
+            // miniature dashboard. Give its one-at-a-time text enough scale
+            // to be legible while leaving the central registered anatomy as
+            // the primary spatial object.
+            atlas.position = [-0.40, 1.60, -0.92]
+            atlas.scale = [1.02, 1.02, 1.02]
             atlas.isEnabled = visible && isFamily && experience.familyBrainAtlasVisible
             atlas.components.set(BillboardComponent())
         }
@@ -2457,7 +2459,7 @@ private struct SpatialFamilyBrainAtlas: View {
                         Text(chapter.title)
                             .font(.title3.weight(.bold))
                             .foregroundStyle(.white)
-                        Text("\(detailTitle) · \(experience.familyBrainAtlasDetailIndex + 1) / \(StrokeFamilyBrainAtlasChapter.detailCount)")
+                        Text("\(experience.familyBrainAtlasDetailIndex + 1) OF \(StrokeFamilyBrainAtlasChapter.detailCount) · \(detailTitle)")
                             .font(.caption2.weight(.black))
                             .tracking(0.8)
                             .foregroundStyle(.orange.opacity(0.90))

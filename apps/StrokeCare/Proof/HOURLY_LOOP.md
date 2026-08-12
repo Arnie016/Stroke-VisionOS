@@ -1249,3 +1249,12 @@
 - Verdict: `IMPROVED` — the Family Atlas now clearly communicates its controlled three-beat learning rhythm without converting the model into a 2D vessel map or adding diagnostic detail.
 - Blocker: Simulator proof does not establish pinch-drag reach, headset legibility, family comprehension, or clinical accuracy; XCAT remains unavailable.
 - Next safe action: run one family member through one full Atlas chapter on an unlocked Vision Pro and record whether the three beats and 3D cue are understandable.
+
+## 2026-08-12 17:36 SGT — enlarge the Family Atlas reading surface
+
+- Target: make the one-chapter-at-a-time family explanation readable as a peripheral spatial surface without letting it overtake the 3D anatomy.
+- Bounded action: increased the Atlas attachment scale from `0.90` to `1.02`, shifted it inward to avoid left-edge clipping, and simplified the active-beat caption to `2 OF 3 · WHAT IT HELPS WITH`.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-173254/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-legibility.png` was inspected and visibly shows the widened Atlas, the `POSITION → MEANING → ASK` rhythm, and active `2 OF 3` explanation beside the spatial teaching model.
+- Verdict: `IMPROVED` — the family explanation is more legible and self-guiding without becoming a full-screen 2D vessel map.
+- Blocker: Simulator evidence cannot establish headset legibility, physical pinch-drag reach, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate this enlarged Atlas on an unlocked Vision Pro with one non-clinician wearer before increasing its content density.
