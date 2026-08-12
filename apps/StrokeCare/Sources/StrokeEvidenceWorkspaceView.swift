@@ -7,6 +7,8 @@ import SwiftUI
 struct StrokeEvidenceWorkspaceView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @State private var query = ""
 
     var body: some View {
@@ -28,6 +30,12 @@ struct StrokeEvidenceWorkspaceView: View {
                 CommandLine.arguments.contains("--proof-evidence-window") {
                 experience.prepareEvidenceProof()
             }
+        }
+        .onDisappear {
+            // A system-close must have the same cleanup as either visible
+            // return control. Evidence is a temporary source workspace, never
+            // a state that can strand the family or presenter explanation.
+            experience.sourceBoundDraftVisible = false
         }
     }
 
@@ -104,6 +112,13 @@ struct StrokeEvidenceWorkspaceView: View {
             .tint(.cyan)
             .frame(maxWidth: .infinity)
             .accessibilityHint("Closes this source space and returns to the spatial explanation")
+
+            Button("Restart at roles", systemImage: "arrow.counterclockwise") {
+                restartAtRoles()
+            }
+            .buttonStyle(.bordered)
+            .frame(maxWidth: .infinity)
+            .accessibilityHint("Closes this source space and returns to the Patient or Doctor choice")
         }
         .padding(18)
     }
@@ -234,5 +249,18 @@ struct StrokeEvidenceWorkspaceView: View {
         // reopens evidence; only the temporary draft presentation is cleared.
         experience.sourceBoundDraftVisible = false
         dismissWindow(id: StrokeSpace.evidence)
+    }
+
+    /// A redundant recovery path for a stale or misplaced source window. It
+    /// deliberately returns to the explicit role threshold instead of trying
+    /// to guess which teaching phase a wearer meant to resume.
+    private func restartAtRoles() {
+        experience.reset()
+        Task { @MainActor in
+            await dismissImmersiveSpace()
+            experience.isImmersivePresented = false
+            openWindow(id: StrokeSpace.window)
+            dismissWindow(id: StrokeSpace.evidence)
+        }
     }
 }

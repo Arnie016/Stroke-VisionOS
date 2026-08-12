@@ -1231,3 +1231,12 @@
 - Verdict: `IMPROVED` — outer-brain chapters now have one deliberate spatial reveal instead of a competing 2D-like reference surface.
 - Blocker: Simulator rendering does not prove physical gaze-and-pinch targetability, stereo depth, or family comprehension; XCAT was unavailable.
 - Next safe action: validate the one-cue Family Atlas behavior on an unlocked Vision Pro before adding more reviewed teaching references.
+
+## 2026-08-12 17:22 SGT — add a non-sticky evidence-workspace recovery path
+
+- Target: prevent a stale Clinical evidence workspace from trapping the wearer away from the Patient or Doctor role threshold.
+- Bounded action: added an explicit `Restart at roles` control that resets teaching state, closes the immersive/evidence spaces, and restores the launch window; system dismissal now also clears the temporary source-bound draft state.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-170613/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh visionOS Simulator app bundle installed and launched `--proof-evidence-window` as process `73756`; inspected capture `/tmp/strokecare-evidence-recovery-20260812-1721.png` visibly shows both `Return to anatomy` and `Restart at roles` recovery controls in the evidence workspace.
+- Verdict: `IMPROVED` — the evidence space now has a visible, state-resetting escape route rather than relying solely on the normal anatomy return.
+- Blocker: the Simulator screenshot proves rendering and process launch only; it does not prove physical pinch acquisition or XCAT recovery behavior while the device is unavailable.
+- Next safe action: tap `Restart at roles` on an unlocked Vision Pro and record the resulting role-threshold recovery receipt.
