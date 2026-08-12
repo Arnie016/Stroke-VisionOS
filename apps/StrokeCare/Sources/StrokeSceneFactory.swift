@@ -2572,7 +2572,11 @@ enum StrokeSceneFactory {
         // This small beacon marks the exact registered clot-derived target. It
         // is a focus affordance, not a simulated lesion volume or outcome.
         let showsPressureFocus = showsPressureStory && anatomyFocus != .internalStructures
-        pressureStory?.isEnabled = showsPressureFocus
+        // The clot-derived target remains a clear Family teaching cue. The
+        // surrounding disc-and-dash pressure boundary is clinician context;
+        // without its technical framing it reads as a detached graph beside a
+        // family member's brain, rather than a meaningful spatial explanation.
+        pressureStory?.isEnabled = showsPressureFocus && experience.audienceLens == .clinician
         clotTarget?.isEnabled = showsPressureFocus
         let motionTime = experience.requestedPause || reduceMotion ? 0 : time
         if let affectedCue = pressureStory?.findEntity(named: registeredPressureAffectedCueName) {

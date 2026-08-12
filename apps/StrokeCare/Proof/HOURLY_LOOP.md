@@ -1366,3 +1366,12 @@
 - Verdict: `IMPROVED` — the family scene now reads as a calm spatial anatomy explanation rather than a graph around the brain.
 - Blocker: Simulator cannot establish wearer legibility, physical targetability, room placement, or family comprehension; XCAT remains unavailable.
 - Next safe action: validate the cleaner Family composition with a non-clinician wearer on an unlocked Vision Pro before adjusting any remaining clinician-only cues.
+
+## 2026-08-13 00:28 SGT — keep the technical Pressure boundary out of Family mode
+
+- Target: remove the second detached radial graphic around the Family Pressure teaching view while preserving the direct clot-derived target.
+- Bounded action: restricted the registered Pressure story’s affected-area disc and dashed swelling boundary to clinician mode; the Family explainer continues to show the direct clot target, brain, arteries, quiet point prompts, and one selected local explanation.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-235933/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-pressure-direct-target-20260813-0003.png` was inspected and visibly shows the radial cue absent with the point-owned targets retained.
+- Verdict: `IMPROVED` — Family Pressure now reads as an anchored anatomy lesson rather than an unexplained data graphic.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the Family Pressure composition with a non-clinician wearer on an unlocked Vision Pro before revising any additional Family teaching cues.
