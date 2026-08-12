@@ -710,6 +710,7 @@ require(all(token in state for token in (
     "spatialZoom = max(spatialZoom, 3.2)",
     "prepareFamilyArterialAtlasFlowProof",
     "prepareFamilyAtlasNextChapterProof",
+    "prepareFamilyAtlasInteriorReadyProof",
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
@@ -722,6 +723,8 @@ require(all(token in immersive for token in (
     "REVEAL IN 3D",
     "3D CUE ACTIVE · LOOK FOR ONE LIT MARKER",
     "experience.familyBrainAtlasCueChapter == chapter",
+    "ROOM SCALE READY · USE ENTER THE BRAIN BELOW",
+    "isDeepStructureChapter",
     "FIND IT IN SPACE",
     "generic teaching anatomy, not a patient scan",
     ".frame(width: 640)",
@@ -735,6 +738,7 @@ require(all(token in immersive for token in (
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
 require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArterialAtlasFlowProof" in launch, "deterministic family arterial-flow Atlas proof route is missing")
 require("--proof-family-atlas-next-chapter" in launch and "prepareFamilyAtlasNextChapterProof" in launch, "deterministic Family Atlas next-chapter proof route is missing")
+require("--proof-family-atlas-interior-ready" in launch and "prepareFamilyAtlasInteriorReadyProof" in launch, "deterministic Family Atlas interior-ready proof route is missing")
 require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurfaceCueProof" in launch, "deterministic family Atlas surface-cue proof route is missing")
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require("atlas.scale = [1.02, 1.02, 1.02]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")

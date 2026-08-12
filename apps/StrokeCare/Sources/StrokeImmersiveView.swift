@@ -2515,6 +2515,18 @@ private struct SpatialFamilyBrainAtlas: View {
             .accessibilityLabel(atlasCueAccessibilityLabel)
             .accessibilityHint(atlasCueAccessibilityHint)
 
+            if isDeepStructureChapter, experience.isInteriorPortalAvailable {
+                Label("ROOM SCALE READY · USE ENTER THE BRAIN BELOW", systemImage: "arrow.down.right.and.arrow.up.left")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.45)
+                    .foregroundStyle(.mint.opacity(0.95))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(.mint.opacity(0.10), in: RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(.mint.opacity(0.28)))
+                    .accessibilityLabel("Room scale is ready. Use Enter the Brain below to open the separate guided vessel journey")
+            }
+
             Text("Pinch-drag left or right for the next structure · reveal one 3D marker at a time · generic teaching anatomy, not a patient scan")
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.52))
@@ -2546,6 +2558,10 @@ private struct SpatialFamilyBrainAtlas: View {
             return "Show \(chapter.title) context on the 3D teaching model"
         }
         return "Open the separate inside-brain journey"
+    }
+
+    private var isDeepStructureChapter: Bool {
+        chapter.spatialCuePointIndex == nil && chapter != .arterialRoutes
     }
 
     private var atlasCueAccessibilityHint: String {

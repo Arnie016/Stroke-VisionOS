@@ -2240,6 +2240,21 @@ final class StrokeExperienceState: ObservableObject {
         advanceFamilyBrainAtlasChapter(by: 1)
     }
 
+    /// Deterministic receipt for a deep Atlas chapter at the explicit
+    /// room-scale threshold. This stays a generic handoff to a separately
+    /// installed journey rather than an assertion about internal patient
+    /// anatomy.
+    func prepareFamilyAtlasInteriorReadyProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.16
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.corpusCallosum)
+        revealFamilyBrainAtlasModelCue()
+    }
+
     /// Deterministic receipt for the Atlas's 3D surface-context handoff. It
     /// starts on the frontal chapter because the selected point has a visible
     /// tether to the outer teaching model rather than implying a deep or

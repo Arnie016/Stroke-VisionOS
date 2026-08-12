@@ -1276,3 +1276,12 @@
 - Verdict: `IMPROVED` — the Atlas now preserves a one-chapter, one-deliberate-cue spatial learning model rather than leaving stale spatial context across chapters.
 - Blocker: Simulator does not establish physical gaze-and-pinch targeting, depth, or family comprehension; XCAT remains unavailable.
 - Next safe action: run the chapter-swipe then cue-reveal sequence with a non-clinician wearer on an unlocked Vision Pro before expanding the Atlas beyond its reviewed ten structures.
+
+## 2026-08-12 19:43 SGT — make the deep-structure room-scale handoff discoverable
+
+- Target: help a family member who has chosen a deep Atlas structure understand what to do after the existing room-scale magnification threshold is reached.
+- Bounded action: added a deep-chapter-only `ROOM SCALE READY · USE ENTER THE BRAIN BELOW` confirmation inside the Atlas and a deterministic proof route for the Corpus callosum handoff; the existing `ENTER THE BRAIN` control still opens the separately installed guided vessel journey.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-182723/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded. The first immediate screenshot was black and was rejected as insufficient; a fresh settled capture at `/tmp/strokecare-family-atlas-interior-ready-retry-20260812-1834.png` was inspected and visibly shows room-scale generic brain anatomy, the `Corpus callosum` Atlas, `ROOM SCALE READY`, and the orange `ENTER THE BRAIN` family control.
+- Verdict: `IMPROVED` — deep Atlas chapters now state the room-scale transition explicitly instead of requiring the wearer to discover the separate journey control unaided.
+- Blocker: Simulator does not prove cross-app handoff success, physical control reach, stereo depth, or wearer comprehension; XCAT remains unavailable and the paired guided journey must be installed separately.
+- Next safe action: install both experiences on an unlocked Vision Pro and verify one deliberate `Enter the Brain` handoff end-to-end before describing the journey as device-ready.
