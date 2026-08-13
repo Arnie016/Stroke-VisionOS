@@ -554,24 +554,26 @@ struct StrokeImmersiveView: View {
                         let selectedPoint = experience.selectedPointEntityName.flatMap {
                             root.findEntity(named: $0)
                         }
-                        // A deliberately selected cue owns its explanation at
-                        // the same anatomical depth. This prevents an Atlas
-                        // reveal from floating up into room-space like a HUD
-                        // while retaining the existing high-level annotation
-                        // position for an unselected three-act checkpoint.
-                        let annotationParent = selectedPoint?.parent
-                            ?? stageRoot.findEntity(named: annotationAnchorName)
+                        // Keep a selected cue spatially related to anatomy but
+                        // parent its explanation to the stage. Parenting the
+                        // SwiftUI attachment inside the scaled hero hierarchy
+                        // multiplies its size as the wearer zooms, eventually
+                        // turning a local explanation into an anatomy-blocking
+                        // pane. Stage-space placement preserves readable scale.
+                        let annotationParent = selectedPoint == nil
+                            ? stageRoot.findEntity(named: annotationAnchorName)
+                            : stageRoot
                         if let annotationParent, annotation.parent !== annotationParent {
                             annotation.removeFromParent()
                             annotationParent.addChild(annotation)
                         }
                         if let selectedPoint {
-                            // The selected-point callout deliberately clears
-                            // the anatomy silhouette before billboarding to
-                            // the wearer. It remains parented to the point
-                            // field, but reads as a compact spatial callout
-                            // rather than overlapping detail on the brain.
-                            annotation.position = selectedPoint.position + [0.064, 0.052, 0.032]
+                            // Resolve the anatomy point into stage coordinates,
+                            // then give the local card breathing room outside
+                            // the silhouette. It stays near the selected point
+                            // without inheriting hero scale or rotation.
+                            annotation.position = selectedPoint.position(relativeTo: stageRoot)
+                                + [0.44, 0.12, 0.30]
                         } else {
                             annotationParent?.position = annotationPosition
                             annotation.position = .zero
@@ -579,7 +581,8 @@ struct StrokeImmersiveView: View {
                         // A selected point should reveal a compact local cue,
                         // leaving the primary anatomy and its full 3D teaching
                         // structure visibly dominant.
-                        annotation.scale = [0.48, 0.48, 0.48]
+                        let annotationScale: Float = selectedPoint == nil ? 0.48 : 0.92
+                        annotation.scale = [annotationScale, annotationScale, annotationScale]
                         // When the Family Atlas owns the selected chapter, its
                         // left surface already contains the explanation, voice
                         // choice, and reference control. Suppress the duplicate
@@ -633,21 +636,12 @@ struct StrokeImmersiveView: View {
                         drawer.components.set(BillboardComponent())
                     }
                     if let rail = attachments.entity(for: lessonSpecimenRailID) {
-                        let selected = experience.selectedPointEntityName.flatMap {
-                            root.findEntity(named: $0)
-                        }
-                        if let selected, let pointField = selected.parent {
-                            if rail.parent !== pointField {
-                                rail.removeFromParent()
-                                pointField.addChild(rail)
-                            }
-                            // Keep the one revealed explanation beside its
-                            // selected point at the same anatomical depth.
-                            rail.position = selected.position + [0.038, 0.020, 0.012]
-                            rail.scale = [0.42, 0.42, 0.42]
-                        }
-                        rail.isEnabled = experience.spatialPhase == .explanation && selected != nil
-                        rail.components.set(BillboardComponent())
+                        // The intention callout now owns the selected lesson's
+                        // title, meaning, reference action, voice choice, and
+                        // close affordance. Keeping the old capsule enabled as
+                        // well duplicated the disclosure and inherited the
+                        // magnified brain hierarchy, obscuring the anatomy.
+                        rail.isEnabled = false
                     }
                     updateSpatialIntakeAttachments(attachments)
                     updateSpatialTeachingAttachments(attachments)
@@ -658,7 +652,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: annotationID) {
                         StrokeIntentionAnnotation()
                             .environmentObject(experience)
-                            .frame(width: 255)
+                            .frame(width: 310)
                     }
                     Attachment(id: questionMarkerID) {
                         FamilyQuestionMarker()
@@ -3165,6 +3159,26 @@ private struct StrokeIntentionAnnotation: View {
             }
 
             VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 7) {
+                    Text(experience.pointField == .procedure ? "VESSEL STORY" : "BRAIN ATLAS")
+                        .font(.caption2.weight(.black))
+                        .tracking(0.9)
+                        .foregroundStyle(.white.opacity(0.68))
+
+                    Spacer(minLength: 8)
+
+                    if experience.selectedPointEntityName != nil {
+                        Button {
+                            experience.clearPointSelection()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.caption2.weight(.bold))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Close selected lesson")
+                    }
+                }
+
                 Text(annotationTitle)
                     .font(.headline.weight(.black))
                     .tracking(0.35)
@@ -3178,12 +3192,12 @@ private struct StrokeIntentionAnnotation: View {
                 if experience.audienceLens == .family,
                    experience.familyNarrationPromptVisible {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Want to hear one layer deeper?")
+                        Text("Hear more?")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(.white)
 
                         if !experience.narrationSetupAvailable {
-                            Text("Optional voice needs Realtime proxy setup. Nothing is recording.")
+                            Text("Voice setup needed · nothing is recording")
                                 .font(.caption2.weight(.medium))
                                 .foregroundStyle(.white.opacity(0.68))
                                 .fixedSize(horizontal: false, vertical: true)
@@ -3236,11 +3250,12 @@ private struct StrokeIntentionAnnotation: View {
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 9)
+        .padding(.vertical, 7)
+        .padding(.horizontal, 8)
         .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(annotationTint.opacity(0.26)))
         .shadow(color: .black.opacity(0.72), radius: 8, y: 2)
+        .frame(maxWidth: 310, alignment: .leading)
         .accessibilityElement(children: .contain)
     }
 

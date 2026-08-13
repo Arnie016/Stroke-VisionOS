@@ -14,7 +14,8 @@ readonly OUTPUT_PATH="$4"
 readonly BUNDLE_ID="com.arnav.StrokeTime"
 readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"
-readonly SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
+readonly REQUESTED_SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
+SETTLE_SECONDS="${REQUESTED_SETTLE_SECONDS}"
 
 case "${PROOF_ROUTE}" in
     --proof-role-choice|--proof-spatial-prelude|--proof-print-request|--proof-realtime-narration|--proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose|--proof-family-surface-reference|--proof-family-arterial-reference|--proof-family-layer-reference|--proof-family-atlas-surface-cue|--proof-family-atlas-temporal-cue|--proof-family-atlas-internal-reference) ;;
@@ -23,6 +24,16 @@ case "${PROOF_ROUTE}" in
         exit 64
         ;;
 esac
+
+# The full arterial route loads the hero brain, registered arterial tree, and
+# its selected-point SwiftUI attachment. An early frame can contain enough of
+# the right caption to satisfy generic route OCR while the hero and callout are
+# still resolving. Give this asset-heavy proof a deterministic cold-start floor.
+if [[ "${PROOF_ROUTE}" == "--proof-family-arterial-reference" ]] &&
+    (( ${SETTLE_SECONDS} < 15 )); then
+    SETTLE_SECONDS=15
+fi
+readonly SETTLE_SECONDS
 
 if [[ ! -d "${APP_PATH}" ]]; then
     print -u2 -- "SIMULATOR_PROOF=FAIL app bundle is missing: ${APP_PATH}"

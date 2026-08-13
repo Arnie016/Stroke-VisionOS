@@ -1,6 +1,6 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.11`
+- Content version: `SC-AIS-001.12`
 - App version: `0.6 (29)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
@@ -17,7 +17,14 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.11`, the complete arterial teaching reference
+In content version `SC-AIS-001.12`, a selected anatomy point now opens one
+stage-space disclosure containing its point-specific meaning, optional voice
+choice, complete-reference control, and close action. The former duplicate
+specimen capsule is suppressed. This changes presentation hierarchy only; it
+does not add anatomy, physiology, diagnosis, or patient-specific claims. The
+wording and spatial placement remain pending wearer and clinician review.
+
+The complete arterial teaching reference
 adds seven sparse amber direction markers before the example blockage and only
 two dim markers beyond it. The counts are a legibility choice, not blood-cell
 count, flow velocity, perfusion, CFD, or patient physiology. Pause and Reduce

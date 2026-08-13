@@ -349,7 +349,7 @@ require("SpatialAudioComponent" in immersive and "FlowBed" in immersive and "Pre
 require("Digital Crown" in immersive, "progressive immersion rationale is missing")
 require("BillboardComponent" in immersive and "StrokeIntentionAnnotation" in immersive, "entity-anchored intention annotation is missing")
 require("Capsule()" in immersive and "annotationTint.opacity(0.52)" in immersive, "free-standing annotation tether is missing")
-require("let selectedPoint = experience.selectedPointEntityName.flatMap" in immersive and "selectedPoint.position + [0.064, 0.052, 0.032]" in immersive, "selected point explanation is no longer anatomy-attached")
+require("let selectedPoint = experience.selectedPointEntityName.flatMap" in immersive and "selectedPoint.position(relativeTo: stageRoot)" in immersive, "selected point explanation is no longer spatially related to its anatomy point")
 require("DragGesture" in immersive and "MagnifyGesture" in immersive, "Heart Field orbit/scale interaction pattern is missing")
 require("resetSpatialView" in state and "Reset view" in immersive, "spatial reset is missing")
 require("StrokeAnatomyViewpoint" in state and all(view in state for view in ("case threeQuarter", "case anterior", "case lateralA", "case lateralB", "case superior", "case inferior")), "named registered model-frame viewpoints are missing")
@@ -569,20 +569,20 @@ require(all(token in state for token in (
     "narrationSetupAvailable,",
 )), "Curious Learner narration does not require explicit point-level consent and visible setup state")
 require(all(token in immersive for token in (
-    'Text("Want to hear one layer deeper?")',
+    'Text("Hear more?")',
     'Button("Yes", systemImage: "waveform")',
     'Button("Not now")',
     "experience.setNarrationSetupAvailable(narrator.isConfigured)",
     "let pointNarration = experience.activeFamilyNarrationText",
     "narrator.speak(pointNarration)",
-    "Nothing is recording.",
+    "nothing is recording",
 )), "selected-point voice invitation is not explicit, pauseable, or honest when the proxy is missing")
 require('experience.soundEnabled ? "Ambient off" : "Ambient"' in immersive and 'experience.narrationEnabled ? "Voice off" : "Voice"' not in immersive, "doctor controls still expose synthesized voice instead of ambient sound")
 require("spatial-family-controls" in immersive and "spatial-presenter-controls" in immersive and "SpatialRoleControls" in immersive, "role controls are not embedded in the immersive room")
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
 require(all(question in immersive for question in ("WHAT CHANGED?", "WHY DOES PRESSURE BUILD?", "WHAT CAN MAKING SPACE DO?")), "top intention questions are missing")
 require("LessonSpecimenRail" in immersive and "lesson-specimen-rail" in immersive and "selectLessonPoint" in state and "Native two-hand magnification remains the only zoom" in state, "role-aware specimen focus rail is missing")
-require("selected.position + [0.038, 0.020, 0.012]" in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "depth-attached lesson disclosure or direct presenter cycle controls are incomplete")
+require("rail.isEnabled = false" in immersive and 'experience.clearPointSelection()' in immersive and "private var presenterControls" in immersive and all(call in immersive for call in ("cycleAnatomyPresentation()", "cycleLessonFamily()", "cycleEnvironment()")), "single selected-point disclosure or direct presenter cycle controls are incomplete")
 require(not re.search(r"\bMenu\s*\{", immersive), "immersive controls must not use SwiftUI Menu presentation")
 require("[-0.43, 1.28, -0.90]" in immersive and "[0.58, 1.38, -0.92]" in immersive, "family and presenter controls are not spatially separated")
 require("openWindow(id: companion)" not in immersive, "immersive case docking still opens a desktop-like companion window")
@@ -613,7 +613,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.11" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.12" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -951,7 +951,15 @@ require(all(token in immersive for token in (
     'case "Flow beyond the blockage changes":',
     '"Fewer cues continue beyond the example blockage; no perfusion value is inferred."',
 )), "selected flow points can inherit unrelated checkpoint copy or quantitative physiology claims")
-require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selectedPoint.position + [0.064, 0.052, 0.032]" in immersive and "annotation.scale = [0.48, 0.48, 0.48]" in immersive and ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))" in immersive, "selected-point disclosure is still a permanent label rail, overlaps anatomy, or is not depth-attached")
+require(all(token in immersive for token in (
+    "selectedPoint.position(relativeTo: stageRoot)",
+    "+ [0.44, 0.12, 0.30]",
+    "let annotationScale: Float = selectedPoint == nil ? 0.48 : 0.92",
+    'Text(experience.pointField == .procedure ? "VESSEL STORY" : "BRAIN ATLAS")',
+    ".frame(maxWidth: 310, alignment: .leading)",
+    ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))",
+)) and "ForEach(experience.pointField.lessonPoints)" not in immersive,
+"selected-point disclosure is still a permanent label rail, inherits hero scale, or overlaps anatomy")
 require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
 require(all(token in immersive for token in (
     '"FULL ARTERIAL TREE · TEACHING VIEW"',
@@ -1130,7 +1138,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.11" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.12" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")
