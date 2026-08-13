@@ -1429,3 +1429,12 @@
 - Verdict: `IMPROVED` — selected points now make the complete structure they reveal explicit, with a quieter point-owned explanation.
 - Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
 - Next safe action: have a Family wearer compare the arterial-tree and whole-brain-surface paths on an unlocked Vision Pro before expanding the reference catalog.
+
+## 2026-08-13 10:31 SGT — reject a point-to-reference bridge that fails at room scale
+
+- Target: make the selected point’s relationship to its full 3D teaching structure more spatially explicit without adding a second text surface.
+- Bounded action: prototyped five non-interactive dotted 3D bridge segments between the selected point and the world-locked teaching object, then inspected the deterministic arterial-reference route.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-102212/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-bridge-final`; the fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-bridge-final-20260813-1031.png` failed its route check and inspection showed the bridge transformed into oversized room-scale geometry. The experiment was fully reverted; no bridge code is retained.
+- Verdict: `REGRESSED` — the test would have obscured the anatomy and falsely implied a clean spatial connection, so the established point provenance caption remains preferable.
+- Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the existing point-provenance caption and full-structure reference with a Family wearer on an unlocked Vision Pro before introducing another relationship cue.
