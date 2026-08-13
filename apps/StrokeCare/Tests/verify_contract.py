@@ -753,6 +753,12 @@ require(all(token in state for token in (
 require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTitle()" in immersive and "toggleSelectedPointReference()" in immersive, "selected Family points are missing their explicit spatial-reference follow-up")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
+require("--proof-family-arterial-reference" in launch and "prepareFamilyArterialReferenceProof" in launch and "prepareFamilyArterialReferenceProof" in state, "family arterial-tree reference proof route is missing")
+require(all(point_label in state for point_label in (
+    '"Example affected area"', '"Blood supply approaches"', '"Arteries branch"',
+    '"Example blockage"', '"Flow beyond the blockage changes"', '"Affected territory"',
+    '"Nearby brain tissue"', '"Brain surface"', '"Opposite-side context"',
+)) and "case \"Generic craniotomy teaching story\":" in state, "every current point label must map to an explicit structure-specific teaching lens")
 require(all(token in state for token in (
     "configurePresenterPointField(",
     "case .confirmContext:",

@@ -1411,3 +1411,12 @@
 - Verdict: `IMPROVED` — anatomy points now lead to legible, structure-specific 3D teaching objects rather than a generic reference label.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: test an arterial-tree point and a brain-surface point with a Family wearer on an unlocked Vision Pro, then record whether the two reference choices are easy to distinguish.
+
+## 2026-08-13 10:07 SGT — verify the complete arterial-tree teaching reference
+
+- Target: ensure every current vascular point maps explicitly to the complete arterial teaching structure, not merely a text annotation or an ambiguous generic reference.
+- Bounded action: made the point-to-lens map exhaustive for all current region, blood-flow, and access labels; added a deterministic arterial-tree route and proof gate. The `Example blockage` point now discloses the world-locked complete arterial tree with the point provenance caption, while brain-surface/context labels retain their distinct brain-surface object.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-100243/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-arterial-reference`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-20260813-1005.png` passed route OCR (2/2) and was inspected, showing `Hide arterial tree`, the full arterial object in the secondary field, and `FROM POINT · EXAMPLE BLOCKAGE` provenance.
+- Verdict: `IMPROVED` — the complete arterial-tree path is now explicit, structure-specific, and separately evidenced from the surface-reference path.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: test the arterial-tree and brain-surface disclosure paths with a Family wearer on an unlocked Vision Pro, and record which relationship is clearer.

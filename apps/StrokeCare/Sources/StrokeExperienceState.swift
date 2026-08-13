@@ -1101,10 +1101,23 @@ final class StrokeExperienceState: ObservableObject {
     private func teachingLens(for label: String?) -> StrokeTeachingImagingLens {
         if procedureStep == .discussCare { return .makingRoomPurpose }
         return switch label {
+        case "Example affected area",
+             "Blood supply approaches",
+             "Arteries branch",
+             "Example blockage",
+             "Flow beyond the blockage changes",
+             "Affected territory":
+            .affectedVessel
         case "Nearby brain tissue", "Brain surface", "Opposite-side context":
             .brainSurface
+        case "Generic craniotomy teaching story":
+            .makingRoomPurpose
+        case nil:
+            // No point is selected at this boundary; preserve the quiet
+            // generic surface view rather than guessing at a vascular claim.
+            .brainSurface
         default:
-            .affectedVessel
+            .brainSurface
         }
     }
 
@@ -2434,6 +2447,21 @@ final class StrokeExperienceState: ObservableObject {
         selectPoint(
             entityName: "clinician-region-point-field-point-2",
             label: "Brain surface"
+        )
+        toggleSelectedPointReference()
+    }
+
+    /// Receipt for a vascular point that owns the complete registered arterial
+    /// tree, presented as generic teaching anatomy rather than a patient map.
+    func prepareFamilyArterialReferenceProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        pointField = .procedure
+        lessonPointsVisible = true
+        selectPoint(
+            entityName: "clinician-procedure-point-field-point-2",
+            label: "Example blockage"
         )
         toggleSelectedPointReference()
     }

@@ -31,6 +31,7 @@ ROUTE_TEXT_TOKENS = {
     "--proof-clinician-craniotomy": ("generic craniotomy", "scholar references"),
     "--proof-family-make-space-purpose": ("make space", "questions to as"),
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
+    "--proof-family-arterial-reference": ("arterial tree", "example blockage"),
 }
 
 OCR_SWIFT_SOURCE = r"""
