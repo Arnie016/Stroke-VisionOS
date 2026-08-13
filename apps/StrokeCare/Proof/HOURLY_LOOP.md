@@ -1420,3 +1420,12 @@
 - Verdict: `IMPROVED` — the complete arterial-tree path is now explicit, structure-specific, and separately evidenced from the surface-reference path.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: test the arterial-tree and brain-surface disclosure paths with a Family wearer on an unlocked Vision Pro, and record which relationship is clearer.
+
+## 2026-08-13 10:18 SGT — clarify the full-structure teaching payoff
+
+- Target: make it immediately clear that selecting a point can reveal a complete related 3D structure, while keeping the local annotation subordinate to the anatomy.
+- Bounded action: renamed the Family actions and secondary captions to `full arterial tree` and `whole brain surface`; added lens-specific generic-atlas boundaries; reduced the selected-point annotation scale from `0.78` to `0.48` so the full 3D reference remains visually dominant.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-100916/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-copy-final`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-final-20260813-1018.png` passed route OCR (2/2) and was inspected, visibly showing `Hide full arterial tree`, the full arterial object in the secondary field, and the more compact local cue.
+- Verdict: `IMPROVED` — selected points now make the complete structure they reveal explicit, with a quieter point-owned explanation.
+- Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: have a Family wearer compare the arterial-tree and whole-brain-surface paths on an unlocked Vision Pro before expanding the reference catalog.

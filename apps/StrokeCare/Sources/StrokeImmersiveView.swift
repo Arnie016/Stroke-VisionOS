@@ -547,7 +547,10 @@ struct StrokeImmersiveView: View {
                             annotationParent?.position = annotationPosition
                             annotation.position = .zero
                         }
-                        annotation.scale = [0.78, 0.78, 0.78]
+                        // A selected point should reveal a compact local cue,
+                        // leaving the primary anatomy and its full 3D teaching
+                        // structure visibly dominant.
+                        annotation.scale = [0.48, 0.48, 0.48]
                         annotation.isEnabled = experience.spatialPhase == .explanation && (
                             experience.selectedPointEntityName != nil ||
                             experience.closingReflectionVisible ||
@@ -1817,8 +1820,8 @@ private struct StrokeTeachingImagingDrawer: View {
 
     private var referenceTitle: String {
         switch (experience.audienceLens, experience.teachingImagingLens) {
-        case (.family, .affectedVessel): "ARTERIAL TREE · TEACHING VIEW"
-        case (.family, .brainSurface): "BRAIN SURFACE · TEACHING VIEW"
+        case (.family, .affectedVessel): "FULL ARTERIAL TREE · TEACHING VIEW"
+        case (.family, .brainSurface): "WHOLE BRAIN SURFACE · TEACHING VIEW"
         case (.family, .makingRoomPurpose): "MAKING-ROOM PURPOSE · TEACHING VIEW"
         case (.clinician, .affectedVessel): "AFFECTED-VESSEL REFERENCE"
         case (.clinician, .brainSurface): "BRAIN-SURFACE REFERENCE"
@@ -1827,9 +1830,17 @@ private struct StrokeTeachingImagingDrawer: View {
     }
 
     private var referenceBoundary: String {
-        experience.audienceLens == .family
-            ? "Generic anatomy · not a patient scan"
-            : "Registered-v2 teaching asset · review pending"
+        if experience.audienceLens == .clinician {
+            return "Registered-v2 teaching asset · review pending"
+        }
+        switch experience.teachingImagingLens {
+        case .affectedVessel:
+            return "Complete generic arterial structure · not a patient scan"
+        case .brainSurface:
+            return "Complete generic brain surface · not a patient scan"
+        case .makingRoomPurpose:
+            return "Generic layer relationship · not a patient scan"
+        }
     }
 
     private var referenceTint: Color {

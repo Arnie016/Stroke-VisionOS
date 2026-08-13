@@ -1092,8 +1092,8 @@ final class StrokeExperienceState: ObservableObject {
     /// structure. This is a generic atlas relationship, never a patient scan.
     func teachingReferenceActionTitle(for label: String? = nil) -> String {
         switch teachingLens(for: label ?? selectedPointLabel) {
-        case .affectedVessel: "arterial tree"
-        case .brainSurface: "brain surface"
+        case .affectedVessel: "full arterial tree"
+        case .brainSurface: "whole brain surface"
         case .makingRoomPurpose: "layer view"
         }
     }
