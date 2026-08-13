@@ -17,7 +17,7 @@ readonly APP_ROOT="${SCRIPT_DIR:h}"
 readonly SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
 
 case "${PROOF_ROUTE}" in
-    --proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose|--proof-family-surface-reference|--proof-family-arterial-reference|--proof-family-layer-reference) ;;
+    --proof-role-choice|--proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose|--proof-family-surface-reference|--proof-family-arterial-reference|--proof-family-layer-reference) ;;
     *)
         print -u2 -- "SIMULATOR_PROOF=FAIL unsupported route ${PROOF_ROUTE}"
         exit 64

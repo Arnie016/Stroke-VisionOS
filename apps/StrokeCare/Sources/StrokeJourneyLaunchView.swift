@@ -101,18 +101,29 @@ struct StrokeJourneyLaunchView: View {
                     .contentTransition(.opacity)
 
                 if introBeat >= 2 {
-                    HStack(spacing: 14) {
-                        Button("Patient / family", systemImage: "person.2.fill") {
+                    HStack(spacing: 16) {
+                        roleChoiceCard(
+                            title: "Patient / family",
+                            subtitle: "Explore a calm, guided anatomy exhibit",
+                            detail: "Questions, narration, and plain-language explanations",
+                            systemImage: "person.2.fill",
+                            tint: .orange,
+                            prominent: true
+                        ) {
                             Task { await enterSpatialCaseRoom(as: .family) }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.orange)
                         .accessibilityHint("Open the calm, generic anatomy exhibit")
 
-                        Button("Doctor presenter", systemImage: "stethoscope") {
+                        roleChoiceCard(
+                            title: "Doctor presenter",
+                            subtitle: "Review a fictional case, then guide the story",
+                            detail: "Presenter timeline, teaching references, and evidence",
+                            systemImage: "stethoscope",
+                            tint: .cyan,
+                            prominent: false
+                        ) {
                             Task { await enterSpatialCaseRoom(as: .clinician) }
                         }
-                        .buttonStyle(.bordered)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else {
@@ -131,7 +142,7 @@ struct StrokeJourneyLaunchView: View {
             .opacity(isOpening ? 0.28 : 1)
             .blur(radius: isOpening && !reduceMotion ? 10 : 0)
         }
-        .frame(width: 620, height: 360)
+        .frame(width: 720, height: 440)
         .onAppear {
             prelude.play()
             routeProofIfNeeded()
@@ -160,6 +171,53 @@ struct StrokeJourneyLaunchView: View {
         withAnimation(.easeInOut(duration: 0.55)) {
             introBeat = min(introBeat + 1, 2)
         }
+    }
+
+    private func roleChoiceCard(
+        title: String,
+        subtitle: String,
+        detail: String,
+        systemImage: String,
+        tint: Color,
+        prominent: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 9) {
+                HStack(spacing: 9) {
+                    Image(systemName: systemImage)
+                        .font(.title3.weight(.semibold))
+                    Text(title)
+                        .font(.headline.weight(.semibold))
+                    Spacer(minLength: 0)
+                    Image(systemName: "arrow.right")
+                        .font(.caption.weight(.bold))
+                        .opacity(0.62)
+                }
+                Text(subtitle)
+                    .font(.callout.weight(.medium))
+                    .multilineTextAlignment(.leading)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(prominent ? .white.opacity(0.72) : .secondary)
+                    .multilineTextAlignment(.leading)
+            }
+            .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
+            .padding(16)
+            .contentShape(RoundedRectangle(cornerRadius: 22))
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(prominent ? Color.white : tint)
+        .background(
+            prominent ? tint.gradient : Color.white.opacity(0.055).gradient,
+            in: RoundedRectangle(cornerRadius: 22)
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(tint.opacity(prominent ? 0.22 : 0.48), lineWidth: 1)
+        }
+        .hoverEffect(.highlight)
+        .accessibilityElement(children: .combine)
     }
 
     private func playIntroSequence() async {
@@ -466,7 +524,9 @@ struct StrokeJourneyLaunchView: View {
     private func routeProofIfNeeded() {
         guard !proofRouteHasRun else { return }
         proofRouteHasRun = true
-        if CommandLine.arguments.contains("--proof-case-unfold") ||
+        if CommandLine.arguments.contains("--proof-role-choice") {
+            introBeat = 2
+        } else if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
             experience.prepareCaseHistoryWebProof()
             Task { await openProofSpace(opensCompanion: false) }

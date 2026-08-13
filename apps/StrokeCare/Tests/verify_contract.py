@@ -180,6 +180,12 @@ require("experience.audienceLens == .family ? 360 : 300" in immersive and "minHe
 require("var selectedFamilyQuestionAnswer: String?" in state and "never a\n    /// generated diagnosis" in state and "not a personal scan or a conclusion" in state, "family question selection does not produce a bounded, authored clarification")
 require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive and "A CLEARER WAY TO SAY IT" in immersive and "Plain-language answer:" in immersive, "family rail does not surface the selected question's plain-language answer")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
+require(
+    "--proof-role-choice" in launch
+    and 'subtitle: "Explore a calm, guided anatomy exhibit"' in launch
+    and 'subtitle: "Review a fictional case, then guide the story"' in launch,
+    "role choice does not explain the Family and Doctor journeys",
+)
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
 require(
     "paused: experience.spatialPhase != .explanation" in immersive,

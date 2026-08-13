@@ -1492,3 +1492,12 @@
 - Verdict: `IMPROVED` — a selected local point now has an explicit counterpart inside its complete 3D teaching reference across all three current families.
 - Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: compare all ten point-to-reference beacons with a clinician and family wearer on Vision Pro before authoring additional reference families.
+
+## 2026-08-13 13:02 SGT — make the first role choice self-explanatory
+
+- Target: let a first-time wearer understand the Family and Doctor journeys before committing to either immersive route.
+- Bounded action: replaced the two terse launch buttons with larger role cards. Family now promises a calm guided anatomy exhibit with questions, narration, and plain-language explanations; Doctor now promises a fictional case-led story with the presenter timeline, teaching references, and evidence. Added a deterministic `--proof-role-choice` route and OCR contract.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-125404/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-role-choice`; fresh capture `/tmp/strokecare-role-choice-20260813-1301.png` passed route OCR (2/2) and was visually inspected.
+- Verdict: `IMPROVED` — the initial choice now communicates audience, interaction style, and available support instead of asking the wearer to infer those differences from role names.
+- Blocker: Simulator cannot establish physical gaze/pinch targeting, wearer comprehension, comfort, or clinical validity; XCAT remains unavailable.
+- Next safe action: run a physical cold-start test and ask one unfamiliar wearer to explain the two choices before selecting either card.

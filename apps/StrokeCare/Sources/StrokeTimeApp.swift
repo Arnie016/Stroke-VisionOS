@@ -25,7 +25,7 @@ struct StrokeTimeApp: App {
                     .environmentObject(experience)
             }
         }
-        .defaultSize(width: 620, height: 360)
+        .defaultSize(width: 720, height: 440)
         .windowResizability(.contentSize)
 
         WindowGroup(id: StrokeSpace.family) {
