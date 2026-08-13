@@ -304,13 +304,17 @@ enum StrokeSceneFactory {
         root: Entity,
         isVisible: Bool,
         lens: StrokeTeachingImagingLens,
-        selectedPointLabel: String?
+        selectedPointLabel: String?,
+        time: TimeInterval = 0,
+        isPaused: Bool = false
     ) {
         TeachingImagingMiniatureFactory.update(
             in: root,
             isVisible: isVisible,
             lens: lens,
-            selectedPointLabel: selectedPointLabel
+            selectedPointLabel: selectedPointLabel,
+            time: time,
+            isPaused: isPaused
         )
     }
 
@@ -3087,6 +3091,7 @@ enum TeachingImagingMiniatureFactory {
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
     static let pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"
+    static let flowMarkerRootName = "registered-teaching-imaging-flow-markers"
 
     /// Suggested stage-space placement for the parent view. The miniature is
     /// initially attached to the anatomy scene for deterministic loading; the
@@ -3201,6 +3206,7 @@ enum TeachingImagingMiniatureFactory {
                 namePrefix: "affected-clot"
             )
         }
+        affected.addChild(makeQualitativeFlowMarkers())
         if let brainSource {
             // Surface/context points have their own full generic brain object
             // instead of recycling an artery-only reference. This clones the
@@ -3296,7 +3302,9 @@ enum TeachingImagingMiniatureFactory {
         in sceneRoot: Entity,
         isVisible: Bool,
         lens: StrokeTeachingImagingLens,
-        selectedPointLabel: String?
+        selectedPointLabel: String?,
+        time: TimeInterval,
+        isPaused: Bool
     ) {
         guard let root = sceneRoot.findEntity(named: rootName) else { return }
         let affected = root.findEntity(named: affectedRootName)
@@ -3310,12 +3318,110 @@ enum TeachingImagingMiniatureFactory {
         internalStructures?.isEnabled = isVisible && lens == .internalStructures
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
 
+        let procedureLabels = Set(StrokePointField.procedure.lessonPoints.map(\.fullTitle))
+        let showsFlow = isVisible && lens == .affectedVessel &&
+            selectedPointLabel.map(procedureLabels.contains) == true
+        updateQualitativeFlowMarkers(
+            in: affected,
+            isVisible: showsFlow,
+            time: time,
+            isPaused: isPaused
+        )
+
         let authoredLabels = StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle)
             + Array(atlasSurfaceDirections.keys)
         for label in authoredLabels {
             root.findEntity(named: highlightName(for: label))?.isEnabled =
                 isVisible && label == selectedPointLabel
         }
+    }
+
+    /// A sparse, legible motion layer for the complete arterial reference.
+    /// Seven upstream markers approach the teaching blockage while only two
+    /// dim markers continue along the example downstream branches. This is a
+    /// categorical direction cue—not cell count, velocity, perfusion, CFD, or
+    /// patient physiology—and it never changes the registered vessel meshes.
+    private static func makeQualitativeFlowMarkers() -> Entity {
+        let root = Entity()
+        root.name = flowMarkerRootName
+        root.isEnabled = false
+
+        let upstreamTint = UIColor(red: 1.00, green: 0.72, blue: 0.18, alpha: 0.94)
+        let downstreamTint = UIColor(red: 1.00, green: 0.58, blue: 0.18, alpha: 0.42)
+        for index in 0..<9 {
+            let downstream = index >= 7
+            let marker = ModelEntity(
+                mesh: .generateSphere(radius: downstream ? 0.0025 : 0.0031),
+                materials: [UnlitMaterial(color: downstream ? downstreamTint : upstreamTint)]
+            )
+            marker.name = "registered-flow-marker-\(index)"
+            root.addChild(marker)
+        }
+        return root
+    }
+
+    private static func updateQualitativeFlowMarkers(
+        in affected: Entity?,
+        isVisible: Bool,
+        time: TimeInterval,
+        isPaused: Bool
+    ) {
+        guard let markers = affected?.findEntity(named: flowMarkerRootName) else { return }
+        markers.isEnabled = isVisible
+        guard isVisible else { return }
+
+        // A paused lesson holds its last authored phase. Reduce Motion enters
+        // this same branch, retaining the directional composition without
+        // movement. The stable phase is intentionally non-zero so the route
+        // remains readable in a still.
+        // Take the remainder while the wall clock is still Double precision.
+        // Converting an epoch-sized value to Float first discards the subsecond
+        // motion and leaves every marker visually frozen.
+        let phase = isPaused
+            ? Float(0.34)
+            : Float((time * 0.18).truncatingRemainder(dividingBy: 1))
+        let upstream = Array(referenceProcedurePositions[0...2])
+        let downstreamA = [referenceProcedurePositions[2], referenceProcedurePositions[3]]
+        let downstreamB = [referenceProcedurePositions[2], referenceProcedurePositions[4]]
+
+        for (index, marker) in markers.children.enumerated() {
+            if index < 7 {
+                let offset = Float(index) / 7
+                marker.position = samplePolyline(
+                    upstream,
+                    phase: (phase + offset).truncatingRemainder(dividingBy: 1)
+                )
+                let pulse = 0.90 + sin((phase + offset) * 2 * .pi) * 0.12
+                marker.scale = [pulse, pulse, pulse]
+            } else {
+                let branch = index == 7 ? downstreamA : downstreamB
+                let branchPhase = (phase * 0.58 + Float(index - 7) * 0.36)
+                    .truncatingRemainder(dividingBy: 1)
+                marker.position = samplePolyline(branch, phase: branchPhase)
+                marker.scale = [0.72, 0.72, 0.72]
+            }
+        }
+    }
+
+    private static func samplePolyline(_ points: [SIMD3<Float>], phase: Float) -> SIMD3<Float> {
+        guard let first = points.first, points.count > 1 else { return points.first ?? .zero }
+        var lengths: [Float] = []
+        var total: Float = 0
+        for index in 1..<points.count {
+            let length = simd_distance(points[index - 1], points[index])
+            lengths.append(length)
+            total += length
+        }
+        guard total > 0.000_001 else { return first }
+
+        var target = max(0, min(phase, 0.999_999)) * total
+        for (index, length) in lengths.enumerated() {
+            if target <= length {
+                return simd_mix(points[index], points[index + 1], SIMD3<Float>(repeating: target / length))
+            }
+            target -= length
+        }
+        return points.last ?? first
     }
 
     /// Places a quiet, non-interactive beacon inside the complete registered

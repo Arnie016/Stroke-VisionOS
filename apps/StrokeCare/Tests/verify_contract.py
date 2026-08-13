@@ -272,6 +272,11 @@ require(all(token in scene for token in (
     "qualitative teaching cues—not CFD",
     "qualitativeFlowOverlayLayer?.isEnabled = showsAuthoredBloodflow",
     "procedure-point selection",
+    'flowMarkerRootName = "registered-teaching-imaging-flow-markers"',
+    "Seven upstream markers approach the teaching blockage",
+    "isPaused: experience.requestedPause || reduceMotion",
+    "updateQualitativeFlowMarkers",
+    "Float((time * 0.18).truncatingRemainder(dividingBy: 1))",
 )), "registered detail layers are not role/lesson/pause gated or recursively animated")
 require(all(token in scene for token in (
     'importedVenousName = "dural_sinuses_jugulars_realistic_v2"',
@@ -608,7 +613,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.10" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.11" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -1125,7 +1130,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.10" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.11" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")

@@ -1,6 +1,6 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.10`
+- Content version: `SC-AIS-001.11`
 - App version: `0.6 (29)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
@@ -17,7 +17,14 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.10`, the Pressure scene uses three deliberately
+In content version `SC-AIS-001.11`, the complete arterial teaching reference
+adds seven sparse amber direction markers before the example blockage and only
+two dim markers beyond it. The counts are a legibility choice, not blood-cell
+count, flow velocity, perfusion, CFD, or patient physiology. Pause and Reduce
+Motion retain a fixed directional composition. This animation and its wording
+remain pending specialist review.
+
+The Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
 affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
 positions come from the loaded registered-v2 brain and clot bounds, not a
@@ -69,6 +76,7 @@ full situation.
 | Procedure purpose | Decompressive hemicraniectomy removes part of the skull to make room and ease pressure; it cannot undo stroke injury. | NICE NG128 recommendations 1.9.5–1.9.6 and the patient decision aid describe purpose, selection, uncertainty, and shared discussion. | Pending |
 | Conversation boundary | The app does not recommend surgery, estimate survival or disability, or replace a risk/benefit and preferences conversation. | NICE states that the choice is preference-sensitive and should consider pre-stroke function, wishes, benefits, harms, and uncertainty. | Pending |
 | Curious Learner Brain Atlas | A combined internal-structures mesh and ventricular system provide generic 3D context. Individual deep chapters are not separately segmented or presented as patient anatomy. | Bundled registered-v2 generic teaching assets; chapter labels and spatial registration require neuroanatomist review. | Pending |
+| Qualitative arterial reference | Sparse amber markers show route direction toward an example blockage, with fewer dim markers continuing beyond it. They do not quantify blood cells, velocity, perfusion, collateral flow, or outcome. | App-authored motion over the bundled registered-v2 generic arterial model; direction, pacing, density, and wording require specialist review. | Pending |
 
 ## Exact three-act review
 
