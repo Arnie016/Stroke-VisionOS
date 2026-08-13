@@ -7,6 +7,8 @@ import SwiftUI
 struct StrokeEvidenceWorkspaceView: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
     @State private var query = ""
 
     var body: some View {
@@ -29,6 +31,12 @@ struct StrokeEvidenceWorkspaceView: View {
                 experience.prepareEvidenceProof()
             }
         }
+        .onDisappear {
+            // A system-close must have the same cleanup as either visible
+            // return control. Evidence is a temporary source workspace, never
+            // a state that can strand the family or presenter explanation.
+            experience.sourceBoundDraftVisible = false
+        }
     }
 
     private var sourceShelf: some View {
@@ -42,13 +50,13 @@ struct StrokeEvidenceWorkspaceView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button {
-                    dismissWindow(id: StrokeSpace.evidence)
-                } label: {
-                    Image(systemName: "xmark")
+                Button("Return", systemImage: "arrow.uturn.backward") {
+                    returnToExplanation()
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .tint(.cyan)
                 .accessibilityLabel("Close evidence space")
+                .accessibilityHint("Returns to the spatial explanation without changing the selected source")
             }
 
             TextField("Search sources", text: $query)
@@ -96,6 +104,21 @@ struct StrokeEvidenceWorkspaceView: View {
             Label("Draft catalog · clinical review pending", systemImage: "exclamationmark.shield")
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(.orange)
+
+            Button("Return to anatomy", systemImage: "arrow.uturn.backward") {
+                returnToExplanation()
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.cyan)
+            .frame(maxWidth: .infinity)
+            .accessibilityHint("Closes this source space and returns to the spatial explanation")
+
+            Button("Restart at roles", systemImage: "arrow.counterclockwise") {
+                restartAtRoles()
+            }
+            .buttonStyle(.bordered)
+            .frame(maxWidth: .infinity)
+            .accessibilityHint("Closes this source space and returns to the Patient or Doctor choice")
         }
         .padding(18)
     }
@@ -132,6 +155,13 @@ struct StrokeEvidenceWorkspaceView: View {
                 }
 
                 Spacer()
+
+                Button("Return to anatomy", systemImage: "arrow.uturn.backward") {
+                    returnToExplanation()
+                }
+                .buttonStyle(.bordered)
+                .tint(.cyan)
+                .accessibilityHint("Closes this source space and returns to the spatial explanation")
             }
 
             HStack(alignment: .top, spacing: 12) {
@@ -212,5 +242,25 @@ struct StrokeEvidenceWorkspaceView: View {
         .padding(12)
         .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
         .background(tint.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func returnToExplanation() {
+        // The selected source and pins remain available when the presenter
+        // reopens evidence; only the temporary draft presentation is cleared.
+        experience.sourceBoundDraftVisible = false
+        dismissWindow(id: StrokeSpace.evidence)
+    }
+
+    /// A redundant recovery path for a stale or misplaced source window. It
+    /// deliberately returns to the explicit role threshold instead of trying
+    /// to guess which teaching phase a wearer meant to resume.
+    private func restartAtRoles() {
+        experience.reset()
+        Task { @MainActor in
+            await dismissImmersiveSpace()
+            experience.isImmersivePresented = false
+            openWindow(id: StrokeSpace.window)
+            dismissWindow(id: StrokeSpace.evidence)
+        }
     }
 }

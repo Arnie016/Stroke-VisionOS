@@ -73,3 +73,16 @@ node payload or new Figma asset was claimed in this pass.
 positions for a Simulator screenshot. That route proves layout and state only;
 it does not prove palm tracking. Palm tracking, selection comfort, tool scale,
 stereo readability and hand occlusion require XCAT.
+
+The current selector is a 150-degree arc placed beside and slightly in front of
+the left palm. Its five 84-point controls render at a 0.78 attachment scale, so
+their effective target size remains above 60 points. A presenter-side `Tools`
+bubble provides a non-hand fallback. The app does not infer a cup pose or use
+palm roll; standard visionOS gaze plus pinch remains the only selection gesture,
+and system Home/Control Center gestures remain reserved.
+
+The showcase architecture is one headset: the doctor wears XCAT and the family
+watches the mirrored view. The hand arc is therefore a presenter control, not a
+patient interaction. A family comfort response is recorded only after the
+presenter asks aloud; it is session-local and never inferred from gaze, voice,
+face, physiology, diagnosis, or patient data.

@@ -5,7 +5,7 @@ Promise: **See the pressure. Understand the purpose.**
 
 | Time | Act | Presenter action | Rehearsable cue |
 | --- | --- | --- | --- |
-| 0–8s | Prelude | Let both calm lines appear, then choose **Doctor → family**. | “When time is urgent, clarity matters. One shared picture can reduce uncertainty.” |
+| 0–8s | Prelude | Let both calm lines appear, then choose **Doctor presenter**. | “When time is urgent, clarity matters. One shared picture can reduce uncertainty.” |
 | 8–22s | Case threshold | Turn left, carry **File 78** to the centre, and let the case constellation unfold. | “This is one fictional teaching case—not a scan, record, or recommendation.” |
 | 22–30s | Enter | Select **Begin family view**. The complete case room disappears as the brain enters primary focus. | “Now we enter only the part we need to explain.” |
 | 30–48s | Orient | Choose **Brain regions** and select one anchored point. | “The points invite one question at a time, while the model stays whole.” |

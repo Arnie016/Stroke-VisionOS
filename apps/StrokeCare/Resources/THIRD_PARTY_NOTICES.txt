@@ -1,0 +1,46 @@
+Stroke Care — Third-Party Anatomy Notices
+==========================================
+
+This prototype includes atlas-derived teaching anatomy from Z-Anatomy and
+BodyParts3D. The derived geometry remains subject to the upstream attribution
+and ShareAlike terms:
+
+- Z-Anatomy — Creative Commons Attribution-ShareAlike 4.0 International
+  https://www.z-anatomy.com/
+  https://creativecommons.org/licenses/by-sa/4.0/
+- BodyParts3D — Creative Commons Attribution-ShareAlike 2.1 Japan
+  https://lifesciencedb.jp/bp3d/
+  https://creativecommons.org/licenses/by-sa/2.1/jp/
+
+The registered-v2 dural venous sinus and internal jugular reference is a
+generic atlas-derived educational model. Purple/blue is a display convention;
+it does not depict blood colour, oxygenation, flow direction, velocity,
+pressure, stenosis, collateral status, perfusion, or a patient scan. The asset
+must not be used for diagnosis, treatment planning, navigation, device sizing,
+procedural rehearsal, or a clinical decision. Anatomical identity,
+registration, terminology, and patient-facing use require specialist review.
+
+Project asset manifest: vision_pro_stroke_kit_v2 /
+asset_manifest_cranial_vascular_v2.json, version 0.4.0-cranial-vascular.
+
+The Scholar Surface view includes an NIH Human Reference Atlas male scalp
+cutaway and NIH Visible Human eye context, distributed under Creative Commons
+Attribution 4.0 International:
+
+- NIH 3D 3DPX-021016 v2 / HRA Skin, Male / CC BY 4.0
+- NIH 3D 3DPX-020591 v1.03 / Visible Human Skull and Eyes / CC BY 4.0
+  https://creativecommons.org/licenses/by/4.0/
+
+The cutaway window is illustrative; it is not a surgical incision or a
+patient-specific craniotomy. Eye alignment is an approximate cross-source fit
+for orientation only. Neither asset is a patient scan or suitable for
+diagnosis, treatment planning, navigation, device sizing, procedural rehearsal,
+or outcome prediction. Specialist review remains pending.
+
+Project asset manifest: vision_pro_stroke_kit_v2 /
+asset_manifest_head_details_v2.json, version 0.3.0-head-detail-expansion.
+
+The project-authored Circle-of-Willis overlay is conceptual teaching geometry.
+Its coral/gold route lines, arrows, brightness, and spacing are qualitative—not
+CFD, a patient measurement, or evidence of flow speed, pressure, perfusion,
+collateral circulation, treatment response, or outcome.

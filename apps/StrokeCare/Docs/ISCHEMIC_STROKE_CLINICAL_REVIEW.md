@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.4`
-- App version: `0.6 (10)` review candidate
+- Content version: `SC-AIS-001.12`
+- App version: `0.6 (29)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -16,6 +16,56 @@ Stroke Care is a communication aid. It does not diagnose stroke, read imaging,
 determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
+
+In content version `SC-AIS-001.12`, a selected anatomy point now opens one
+stage-space disclosure containing its point-specific meaning, optional voice
+choice, complete-reference control, and close action. The former duplicate
+specimen capsule is suppressed. This changes presentation hierarchy only; it
+does not add anatomy, physiology, diagnosis, or patient-specific claims. The
+wording and spatial placement remain pending wearer and clinician review.
+
+The complete arterial teaching reference
+adds seven sparse amber direction markers before the example blockage and only
+two dim markers beyond it. The counts are a legibility choice, not blood-cell
+count, flow velocity, perfusion, CFD, or patient physiology. Pause and Reduce
+Motion retain a fixed directional composition. This animation and its wording
+remain pending specialist review.
+
+The Pressure scene uses three deliberately
+different qualitative forms: a compact clot pulse, a filled amber
+affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
+positions come from the loaded registered-v2 brain and clot bounds, not a
+patient segmentation or edema measurement. The change remains pending the
+same clinician review required by the 3D-model and Act-2 rows below.
+
+The optional Scholar Surface focus adds an HRA-derived scalp cutaway and a
+separate Visible Human eye context. The viewing window is illustrative—not a
+surgical opening or patient-specific craniotomy—and the eye alignment is an
+approximate cross-source orientation reference. Both remain clinician-only,
+generic teaching anatomy pending specialist review.
+
+The Curious Learner Brain Atlas can reveal one combined internal-structures
+mesh and the ventricular system beside the complete exterior model. The
+source package does not expose separately named corpus-callosum, thalamus, or
+hippocampus meshes, so the reference is labelled as combined context and never
+pretends to highlight an individual deep structure. Its naming, registration,
+and chapter wording remain pending specialist review.
+
+The Make-space scene now adds a separate registered-frame conceptual cue at the
+same derived cortical direction: a dashed aperture, a translucent protective
+cover that moves outward, and a wider dashed room boundary. It is a reversible
+purpose explanation, not an access-site plan, bone segmentation, incision,
+patient-specific surgical step, or claim that pressure was relieved. The
+prototype-v1 bone flap and dural patch remain disabled.
+
+The doctor-presenter sequence now gives its six checkpoints distinct, reversible
+compositions over that same bounded anatomy. The access checkpoint separates a
+generic skull reference without defining an opening; the covering checkpoint
+offsets the conceptual dura only after permission; the purpose checkpoint alone
+reveals the room-making aperture; checks remain authored discussion prompts; and
+closure reassembles the teaching layers without suturing, fixation, or a success
+state. All six checkpoints and their transitions return to Pending review in
+this content version.
 
 The shipped spatial path explains one mechanical purpose: why a stroke team may
 discuss making room when a severe large-territory infarction causes dangerous
@@ -32,6 +82,8 @@ full situation.
 | 3D model | A blockage, affected tissue, swelling, and the fixed skull are separate schematic cues. | AHA describes ischemic stroke as blocked blood supply. NICE describes severe-stroke swelling and pressure inside the skull. All geometry is app-authored and needs clinical review. | Pending |
 | Procedure purpose | Decompressive hemicraniectomy removes part of the skull to make room and ease pressure; it cannot undo stroke injury. | NICE NG128 recommendations 1.9.5–1.9.6 and the patient decision aid describe purpose, selection, uncertainty, and shared discussion. | Pending |
 | Conversation boundary | The app does not recommend surgery, estimate survival or disability, or replace a risk/benefit and preferences conversation. | NICE states that the choice is preference-sensitive and should consider pre-stroke function, wishes, benefits, harms, and uncertainty. | Pending |
+| Curious Learner Brain Atlas | A combined internal-structures mesh and ventricular system provide generic 3D context. Individual deep chapters are not separately segmented or presented as patient anatomy. | Bundled registered-v2 generic teaching assets; chapter labels and spatial registration require neuroanatomist review. | Pending |
+| Qualitative arterial reference | Sparse amber markers show route direction toward an example blockage, with fewer dim markers continuing beyond it. They do not quantify blood cells, velocity, perfusion, collateral flow, or outcome. | App-authored motion over the bundled registered-v2 generic arterial model; direction, pacing, density, and wording require specialist review. | Pending |
 
 ## Exact three-act review
 
@@ -42,7 +94,7 @@ approval alone is not sufficient.
 | --- | --- | --- | --- | --- |
 | 1 — Orient | “This model shows one severe stroke affecting one side of the brain.” | Generic cortex and arterial anatomy appear inside a fixed-space boundary. | Generic anatomy; the scenario is not inferred from reported signs and is not this person's scan. | Pending |
 | 2 — Pressure | “In this severe stroke, swelling builds inside the fixed skull.” | Blocked flow, affected tissue, swelling, and fixed skull remain distinct cues. | This is the selected fictional scenario; it is not a claim that every ischemic stroke causes dangerous swelling. | Pending |
-| 3 — Make space | “Surgery can make room for swelling. It cannot undo the stroke injury.” | After permission, one protective layer fades and a small reversible offset shows the mechanical purpose without cutting, peeling, or exposed blood. | Making room may ease pressure; this is not a recommendation, consent discussion, or outcome promise. | Pending |
+| 3 — Make space | “Surgery can make room for swelling. It cannot undo the stroke injury.” | After permission, a dashed conceptual aperture, a lifted translucent protective cover, and a wider room boundary show mechanical purpose without cutting, peeling, or exposed blood. | The cue is not an access-site plan or patient anatomy. Making room may ease pressure; this is not a recommendation, consent discussion, or outcome promise. | Pending |
 
 ### Required reviewer questions
 

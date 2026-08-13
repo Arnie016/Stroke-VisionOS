@@ -314,3 +314,1271 @@
   result exists for build 10.
 - Next safe action: wear and unlock XCAT, then rerun the guarded build-10
   deploy/install/foreground-launch lane once.
+
+## 2026-08-09 17:52 SGT — Page 2 teaching-imaging scaffold
+
+- Target: expose the Figma Page 2 stroke-effect and making-room comparison as
+  an on-demand spatial reference without adding another persistent modal.
+- Bounded action: added two separate, slightly fanned teaching plates at the
+  right-secondary field; both retain the affected-region cue, while only the
+  second adds a making-room displacement cue. Added explicit fictional,
+  non-scan, no-recovery, and clinical-review labels plus a deterministic proof
+  route. Kept the drawer closed outside the explanation phase.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; generic physical and
+  visionOS Simulator builds for `0.6 (11)` ended `** BUILD SUCCEEDED **`;
+  Simulator install and `--proof-teaching-imaging` launch returned PID 96960;
+  `Proof/52-teaching-imaging-drawer-simulator.png` records layout only.
+- Verdict: `IMPROVED` — the missing evidence location and safe comparison state
+  are now executable, but the procedural schematics are only a scaffold and
+  have been rejected as the final visual quality bar.
+- Blocker: Figma MCP is rate-limited, XCAT remains unavailable, and no licensed
+  patient-figure or patient-imaging asset is currently verified for runtime.
+- Next safe action: replace the two procedural plates with registered-v2
+  RealityKit anatomy miniatures after the duplicate-surface and performance
+  audit passes.
+
+## 2026-08-09 19:31 SGT — XCAT reachability gate
+
+- Target: deploy the current Stroke Care build to the paired XCAT before
+  continuing Simulator-only visual work.
+- Bounded action: ran the guarded `Scripts/deploy_xcat.zsh` lane once and
+  stopped before build, install, or launch when CoreDevice reported the paired
+  headset unavailable. Preserved the active dirty feature worktree.
+- Evidence: the command returned `XCAT_DEPLOY=BLOCKED`; dated machine receipt:
+  `Proof/xcat/20260809-193113/BLOCKED.md`.
+- Verdict: `BLOCKED` — no device build, install, launch, wearer, or clinical
+  evidence was created in this pass.
+- Blocker: CoreDevice reports
+  `613CC48C-A6AD-5170-A238-D518B6012491` as `unavailable`.
+- Next safe action: wear and unlock XCAT near this Mac, then rerun
+  `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-09 20:20 SGT — restore deterministic Simulator placement
+
+- Target: replace the near-black Simulator capture with an honest, visible
+  three-act scene without changing the physical XCAT placement path.
+- Bounded action: reproduced the failure on the normal Pressure route, then
+  kept Simulator runs in the authored coordinate frame while leaving the
+  tracked device-anchor room placement enabled for physical builds.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; the OS 26.5 visionOS Simulator build ended
+  `** BUILD SUCCEEDED **`; a fresh install launched PID 89225; and
+  `Proof/54-simulator-authored-frame-pressure.png` shows the brain, timeline,
+  atlas rail, and attachments instead of an empty black field.
+- Verdict: `IMPROVED` — the scene is visible and falsifiable again, though its
+  lighting, scale, point behavior, and final composition remain unfinished.
+- Blocker: the semantic v2 skull is an approximate cross-source fit and still
+  requires specialist registration review before it can overlay the family
+  anatomy as if exact.
+- Next safe action: build one isolated, clearly labelled skull inspection state
+  for registration review before enabling any skull overlay in the family path.
+
+## 2026-08-09 20:49 SGT — gated Scholar skull inspection
+
+- Target: make the next registered-model increment visible without presenting
+  an approximate cross-source skull as exact patient anatomy.
+- Bounded action: added an exact-ID, clinician-only Scholar inspection that
+  isolates the existing v2 skull in bright Surroundings, supplies focused
+  registration-review copy, removes competing point/tool/voice/image controls,
+  and restores the normal assembly when the presenter moves to another act.
+- Evidence: `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; a fresh install launched PID
+  18592; `Proof/55-scholar-skull-registration-review-simulator.png` records the
+  visible 3840×2160 layout with SHA-256
+  `641190c1add4f0a6200062f5da37a58222cbf2419d72c914906fd60b3a9759c2`.
+- Verdict: `IMPROVED` — the skull is now a falsifiable, calm inspection object
+  with an honest review boundary instead of a hidden catalog entry or a false
+  family overlay.
+- Blocker: the skull/brain cross-source fit still lacks specialist registration
+  review, and Simulator evidence does not prove XCAT or wearer behavior.
+- Next safe action: make the default lesson field truly dots-first by clearing
+  auto-selection and revealing exactly one local label only after pinch.
+
+## 2026-08-09 21:25 SGT — integrated dots-first main explanation
+
+- Target: restore the normal brain, vessels, clot target, point cloud, timeline,
+  and selected teaching reference after the isolated Scholar-skull proof.
+- Bounded action: made region points quietly visible and surface-readable,
+  derived a visible focus beacon from the loaded clot bounds, removed automatic
+  point selection and duplicate image controls, enlarged the top timeline, and
+  made one act-matched registered reference appear only after point selection.
+- Evidence: guarded XCAT receipt
+  `Proof/xcat/20260809-210457/BLOCKED.md` recorded `unavailable` before any
+  physical build; `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 Simulator
+  build ended `** BUILD SUCCEEDED **`; fresh launches returned PIDs 68034 and
+  68202; runtime captures are `Proof/56-main-dots-first-overview-simulator.png`
+  and `Proof/57-main-selected-point-reference-simulator.png`.
+- Verdict: `IMPROVED` — the main scene is visible, dots-first, and causally
+  discloses one teaching reference instead of showing only a skull or a label
+  cloud.
+- Blocker: XCAT remained unavailable, so gaze-and-pinch selection, stereo depth,
+  wearer legibility, comfort, comprehension, and clinical validity are unproven.
+- Next safe action: on an awake and unlocked XCAT, pinch each of the four region
+  points once and record whether its local label and single right reference stay
+  registered while orbiting the anatomy.
+
+## 2026-08-09 22:01 SGT — showcase control-agency pass
+
+- Target: make the doctor-worn, mirrored family explanation readable and
+  operable for the three-minute table demo.
+- Bounded action: increased the unlabeled region-marker visibility, widened the
+  three-act timeline, fixed the reparented teaching-reference update path,
+  replaced the palm disk with a gaze-sized semicircle and fallback, and kept
+  family questions plus a presenter-recorded comfort check in one left field.
+- Evidence: guarded receipt `Proof/xcat/20260809-213124/BLOCKED.md` recorded
+  paired XCAT as `unavailable`; `python3 Tests/verify_contract.py` returned
+  `STROKE_CARE_CONTRACT=PASS`; `git diff --check` passed; the OS 26.5 Simulator
+  build ended `** BUILD SUCCEEDED **`; launches returned PIDs 98600, 98741, and
+  3425; runtime captures are Proof 58, 59, and 60 with hashes recorded in
+  `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the main point field and timeline now read immediately,
+  clinician tools form an intentional hand arc, and the single-headset family
+  conversation has explicit pacing without inferred anxiety.
+- Blocker: XCAT remained unavailable, and Simulator cannot prove hand-relative
+  reach, AirPlay mirroring, gaze-and-pinch reliability, wearer comfort,
+  comprehension, or clinical validity.
+- Next safe action: run one awake/unlocked XCAT-to-AirPlay dress rehearsal of
+  the three-minute route and record the launch, four point selections, one
+  timeline jump, one comfort response, and clean exit.
+
+## 2026-08-09 22:58 SGT — role split, detailed layers, and presenter checklist
+
+- Target: make the entry purpose unambiguous and replace the basic anatomy proof
+  with a readable, evidence-backed layered view.
+- Bounded action: split launch into **Patient / family** direct anatomy and
+  **Doctor presenter** case-led explanation; staged deep structures, ventricles,
+  and selected-point authored flow inside the existing registered frame; mapped
+  the Page 2 cool-to-warm act colors; and reshaped the left doctor field into a
+  vertical presentation checklist.
+- Evidence: all three added USDZs passed strict ARKit USD validation; the built
+  Simulator app contains exactly thirteen USDZ files; contract and diff checks
+  passed; the visionOS Simulator build succeeded; Proof 65–68 and the 4.8-second
+  Proof 66b motion receipt have hashes recorded in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the first choice now matches the actual audience model,
+  the clinician can inspect named internal layers, the selected vessel story no
+  longer summons an unrelated giant skull, and the left cues read as a spatial
+  checklist rather than a notes card.
+- Blocker: the wider 134-asset catalog is not a license/registration/performance
+  clearance, and Simulator cannot establish XCAT interaction or clinical truth.
+- Next safe action: on an awake XCAT, run the doctor-presenter route once and
+  record four point pinches, one timeline jump, checklist legibility, and Pause
+  freezing the authored-flow lesson.
+
+## 2026-08-09 23:32 SGT — case dossier becomes a spatial history web
+
+- Target: replace the retired case-unfold window with one doctor-only spatial
+  transition from fictional dossier to case context.
+- Bounded action: connected `--proof-case-unfold` to the active immersive case
+  review; added a roughly one-second card-to-case reveal, one selected filament
+  branch, directly selectable history endpoints, a Reduce Motion final state,
+  and an explicit Enter-case threshold; kept patient/family out of the archive.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`, clean diff check, successful OS 26.5
+  visionOS Simulator build, and `Proof/69-case-history-unfold-simulator.png`
+  with SHA-256 recorded in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the dossier now has a spatial handoff and the patient
+  history reveals by relationship rather than appearing as four simultaneous
+  cards.
+- Blocker: the neutral procedural anchor is not a licensed diverse patient
+  representation, and Simulator does not prove wearer targeting or comfort.
+- Next safe action: enforce the role-specific voice contract: no synthesized
+  doctor voice, family-only opt-in Realtime narration, and honest tappable
+  question/check-in semantics.
+
+## 2026-08-09 23:49 SGT — role-specific voice and language contract
+
+- Target: prevent synthetic narration from competing with the doctor while
+  preserving optional, bounded access support for a patient or family.
+- Bounded action: restricted narration to family + enabled + not paused;
+  replaced the doctor Voice control with Ambient; made three family questions
+  finite tappable pause markers; replaced the comfort proxy with an explicit
+  Again/Unsure/Clear clarity check; and made each doctor cue reveal one authored
+  plain-language line.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`, clean diff check, successful OS 26.5
+  visionOS Simulator Debug build, and Proof 70/71 with SHA-256 hashes recorded
+  in `Proof/BUILD_PROOF.md`.
+- Verdict: `IMPROVED` — the app now distinguishes patient/family narration from
+  doctor-led explanation without implying listening, inferred anxiety, or
+  generated medical advice.
+- Blocker: no live Realtime request was made in this slice, and Simulator does
+  not prove audibility, XCAT legibility, AirPlay composition, comprehension, or
+  clinical validity.
+- Next safe action: on an awake XCAT, verify that switching from Family to
+  Doctor immediately stops narration and that one family question plus one
+  doctor plain-language expansion remain readable in the mirrored view.
+
+## 2026-08-10 00:13 SGT — pause hidden 60 Hz anatomy work
+
+- Target: stop the static doctor intake and case review from continuously
+  updating a hidden high-density anatomy scene.
+- Bounded action: paused the display-rate `TimelineView` outside the explanation
+  phase and guarded the anatomy update behind the same visible-phase boundary;
+  retained the state-driven dossier unfold and active explanation motion.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; the fixed five-sample intake
+  median fell from 27.7% to 7.3% CPU, recorded in
+  `Proof/IDLE_CPU_RECEIPT.md`; the case-unfold route still reached its authored
+  final state.
+- Verdict: `IMPROVED` — the accepted Simulator sample reduced static intake CPU
+  by 73.6% without removing the case reveal or the active anatomy cadence.
+- Blocker: XCAT is unavailable, RSS did not improve, and Simulator cannot prove
+  device thermals, battery, wearer interaction, AirPlay, or clinical validity.
+- Next safe action: when XCAT is awake and unlocked, run one doctor intake →
+  case unfold → explanation transition while recording launch, pinch response,
+  and device frame/thermal evidence.
+
+## 2026-08-10 01:22 SGT — registered clinician anatomy hierarchy
+
+- Target: make the doctor explanation visibly richer without bulk-loading the
+  mixed-frame 134-asset catalog or adding another modal dashboard.
+- Bounded action: added the same-frame venous atlas to the clinician Regions
+  lesson, direct Front/Side/Top and Calm/Guided/Scholar controls, a point-gated
+  Scholar reference rail, shipped atlas attribution, and a visible review
+  boundary.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; built app contains exactly 14
+  USDZs plus `THIRD_PARTY_NOTICES.txt`; clean proof 72 SHA-256 is
+  `5d0c3f443ebb305cc8087fab49f88f658489c02642d6e381309ce38f98c651dd`.
+- Verdict: `IMPROVED` — arteries, veins, brain, regional points, direct views,
+  top timeline, and the bounded reference hierarchy now read together in one
+  spatial composition.
+- Blocker: XCAT is unavailable; specialist registration, wearer interaction,
+  AirPlay legibility, performance, haptics, comprehension, and clinical
+  validity are not proven.
+- Next safe action: on an awake XCAT, pinch each of the four region points once
+  and verify that exactly one point-local reference appears without the skull
+  or Scholar rail stealing focus.
+
+## 2026-08-10 01:57 SGT — role-aware presenter timeline
+
+- Target: turn the supplied six-frame doctor story into revisitable spatial
+  checkpoints without complicating the patient/family three-act path.
+- Bounded action: added six doctor-presenter checkpoints with direct selection,
+  Next/Back traversal, existing consent continuity for beats 3–6, beat-specific
+  left cues, and assembled-layer closure; increased the build to `0.6 (13)`.
+- Evidence: `STROKE_CARE_CONTRACT=PASS`; clean diff check; OS 26.5 visionOS
+  Simulator build ended `** BUILD SUCCEEDED **`; clean proof 73 SHA-256 is
+  `32995ff96325f5ec61bfe002ddc829d6f1f0ed48520bcae552f390a6984e667e`.
+- Verdict: `IMPROVED` — the doctor can now revisit one of six concise teaching
+  checkpoints while the patient/family path keeps the simpler three-act story.
+- Blocker: XCAT remained paired but `unavailable`; Figma structured context was
+  Starter-plan rate-limited; wearer interaction, AirPlay, comprehension,
+  specialist review, and clinical validity are not proven.
+- Next safe action: on an awake XCAT, pinch checkpoints 1, 3, 5, and 6 and verify
+  direct targeting, the permission/refusal path, assembled closure, and mirrored
+  legibility without opening a second control surface.
+
+## 2026-08-10 02:11 SGT — complete direct viewpoint grid
+
+- Target: expose the missing side and underside perspectives without detaching
+  any registered anatomy or adding another panel.
+- Bounded action: added direct Side B and Bottom model-frame presets, converted
+  the existing clinician viewpoint row into a compact two-row grid, added a
+  deterministic inferior-view proof route, and increased the build to
+  `0.6 (14)`.
+- Evidence: XCAT deploy stopped with the dated `unavailable` receipt at
+  `Proof/xcat/20260810-020448/BLOCKED.md`; contract and diff checks passed;
+  XcodeGen and the OS 26.5 Simulator build succeeded; proof 74 is 3840×2160
+  with SHA-256 `38b6abfc025dedea5b742bf73a0848df67f8ba611072c14466ed2044ea6ba9b2`.
+- Verdict: `IMPROVED` — all five requested fixed model-frame perspectives are
+  now one-pinch choices while the whole authored assembly remains registered.
+- Blocker: XCAT is unavailable, and Simulator cannot validate target reach,
+  stereo depth, wearer comfort, AirPlay legibility, anatomical orientation, or
+  clinical validity.
+- Next safe action: when XCAT is awake and unlocked, pinch Side B and Bottom
+  once each and verify that brain, vessels, skull reference, and lesson points
+  remain attached throughout the transition.
+
+## 2026-08-10 02:40 SGT — selected-point registered flow direction
+
+- Target: make flow direction visible on the detailed registered arterial model
+  without loading the mixed-frame 134-asset catalog or presenting CFD.
+- Bounded action: added the same-frame Circle-of-Willis flow overlay, kept it
+  behind a deliberate Blood-flow point selection, added a visible qualitative /
+  not-CFD boundary, regenerated the project, and increased the build to
+  `0.6 (15)`.
+- Evidence: strict ARKit USD validation passed; contract and diff checks passed;
+  the OS 26.5 Simulator build succeeded; the built app contains exactly 15 USDZ
+  files; clean proof 75 is 3840×2160 with SHA-256
+  `86887fccc6df7f760c306783e535dd6b2a364f6a18104016e2020bce2f6841d8`.
+- Verdict: `IMPROVED` — the selected Blood-flow lesson now reveals authored
+  same-frame route lines and direction chevrons on the registered artery model.
+- Blocker: XCAT is unavailable; Simulator cannot prove motion quality, point
+  targeting, stereo depth, AirPlay readability, specialist meaning, or clinical
+  validity.
+- Next safe action: on an awake XCAT, select the Blood-flow blockage point once
+  and verify that the directional overlay remains registered, readable, and
+  subordinate to the central anatomy during orbit and viewpoint changes.
+
+## 2026-08-10 03:06 SGT — complete-or-visible anatomy loading
+
+- Target: prevent an incomplete registered head from appearing as a complete
+  teaching model when one required USDZ fails to load.
+- Bounded action: defined brain, arteries, clot, and dura as the required
+  registered-v2 core; added exact OSLog diagnostics, a deterministic five-case
+  failure-injection matrix, a complete procedural fallback, and a visible
+  simplified-view boundary; increased the build to `0.6 (16)`.
+- Evidence: XCAT deploy stopped at the dated `unavailable` receipt
+  `Proof/xcat/20260810-030404/BLOCKED.md`; contract and diff checks passed;
+  XcodeGen and the OS 26.5 Simulator build succeeded; complete, brain-only,
+  missing-artery, missing-clot, and missing-dura launches all remained running;
+  each degraded route logged the exact omitted asset; proof 76 SHA-256 is
+  `1f1a44305cd82aa5de29a098c28a72d96bedd17930d671f024e8636eaa62dd34`.
+- Verdict: `IMPROVED` — a required anatomy failure is now complete and visible,
+  never a silently partial registered head.
+- Blocker: XCAT is unavailable, so device loading, wearer legibility,
+  interaction, AirPlay, specialist registration, and clinical validity remain
+  unproven.
+- Next safe action: on an awake and unlocked XCAT, launch the normal build-16
+  path once and confirm the detailed registered brain, arteries, clot, and dura
+  all appear without the simplified-view boundary.
+
+## 2026-08-10 03:23 SGT — current Simulator stage regression
+
+- Target: prevent a blank or stale room-scale screenshot from being accepted as
+  proof that the patient-file intake and Pressure anatomy are visible.
+- Bounded action: added one fresh-install route runner for intake/Pressure and a
+  dependency-free PNG verifier; captured both routes from the exact build-16
+  app after terminating competing immersive apps.
+- Evidence: XCAT deployment stopped at the exact `unavailable` gate in
+  `Proof/xcat/20260810-031333/BLOCKED.md`; contract and diff checks passed; a
+  synthetic black image failed the verifier; proofs 77 and 78 are 3840×2160,
+  show the intended current scenes, retained live PIDs through capture, and have
+  SHA-256 values `ceba5848…da4cdc4` and `1a2ce6f6…779595e2`.
+- Verdict: `IMPROVED` — the two P0 demo routes are visibly present in the
+  deterministic Simulator frame and now have a repeatable blank/stale-proof
+  rejection path.
+- Blocker: XCAT is unavailable, so room-locked device placement, targetability,
+  stereo depth, wearer comfort, AirPlay readability, and clinical validity are
+  not proven.
+- Next safe action: on an awake and unlocked XCAT, run build 16 once and verify
+  that the patient-file archive and Pressure anatomy remain in the primary
+  visual field after the sample-once room placement path.
+
+## 2026-08-10 03:48 SGT — distinct Pressure story in registered frame
+
+- Target: GitHub issue #25; make blockage, affected tissue, and constrained
+  swelling visibly distinct for both family and doctor-presenter roles without
+  loading unregistered prototype-v1 meshes.
+- Bounded action: derived one cortical cue anchor from the loaded registered-v2
+  brain/clot bounds; added a compact clot pulse, filled amber affected-tissue
+  cue, wider dashed mint swelling boundary, two deterministic proof routes, and
+  raised the app to `0.6 (17)`.
+- Evidence: contract and diff checks passed; XcodeGen and the OS 26.5 visionOS
+  Simulator build succeeded; the built app contains 15 unique USDZ files;
+  proofs 79 and 80 are 3840×2160, passed the image verifier, and have SHA-256
+  values `2935c054…6f07e3` and `872a180a…4bf9b`.
+- Verdict: `IMPROVED` — the two roles now share one registered Pressure visual
+  grammar while retaining their different timelines and guidance surfaces.
+- Blocker: XCAT is `unavailable`; wearer targetability, depth, AirPlay
+  readability, comfort, comprehension, specialist review, and clinical
+  validity are not proven.
+- Next safe action: when XCAT is awake and unlocked, launch build 17, select one
+  Pressure point, and verify that clot pulse, amber tissue cue, and mint swelling
+  boundary remain attached and distinguishable from front and side views.
+
+## 2026-08-10 04:23 SGT — family Make-space purpose cue
+
+- Target: GitHub issue #28; make the normal family Make-space path visibly
+  explain opening and additional room without importing the unregistered
+  prototype-v1 flap/patch or simulating surgery.
+- Bounded action: added a registered-frame amber aperture, translucent lifted
+  protective cover, wider mint room boundary, deterministic proof route, and
+  raised the review candidate to `0.6 (18)` / `SC-AIS-001.7`.
+- Evidence: contract and diff checks passed; the OS 26.5 Simulator build
+  succeeded; the built app contains 15 unique USDZ files; proof 81 is
+  3840×2160, passed the image verifier, and has SHA-256
+  `96c77c71…1b51e`; source commit is `2293265b…5e5326`.
+- Verdict: `IMPROVED` — Make-space now has a visible, reversible mechanical
+  purpose cue while the central anatomy, attached points, family questions,
+  and top three-act timeline remain present.
+- Blocker: XCAT is `unavailable`; wearer targetability, stereo depth, AirPlay
+  readability, motion quality, comprehension, specialist review, and clinical
+  validity are not proven.
+- Next safe action: on an awake and unlocked XCAT, run build 18 and confirm the
+  amber aperture, moving protective cover, and mint room boundary remain
+  co-located and legible from the default family viewpoint.
+
+## 2026-08-10 04:37 SGT — nonblocking audio preparation
+
+- Target: GitHub issue #31; remove synchronous `AVAudioPlayer` construction and
+  preparation from the main actor before the three-minute judged demo.
+- Bounded action: introduced one isolated `StrokeAudioPlayback` actor shared by
+  the ambient prelude and family-only GPT-Realtime-2.1 narration; moved player
+  construction, `prepareToPlay`, play, and stop onto that actor; raised the
+  review candidate to `0.6 (19)` in source commit `ffd49c1`.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded; build `0.6 (19)` installed with 15 USDZ resources and
+  remained alive as PID 71948 after an eight-second observation window; its
+  executable SHA-256 is
+  `aafd2aef8320a37d6a7a7f4a68e2608d8bf11605e5826953549b8492c8dbf56b`;
+  the focused 45-second process query returned `HANG_MATCHES=0` while audio
+  preparation ran on a non-main executor. The exact XCAT gate is
+  `Proof/xcat/20260810-043035/BLOCKED.md`.
+- Verdict: `IMPROVED` — the known blocking preparation path no longer executes
+  on the main actor, while the authored prelude and GPT-only narration boundary
+  remain unchanged.
+- Blocker: the Realtime proxy was not configured for this Simulator pass, XCAT
+  is unavailable, and interruption/replay quality on hardware is not proven.
+- Next safe action: on an awake XCAT with the existing Realtime proxy configured,
+  run one family narration play → pause → resume → exit cycle and retain the
+  device log plus wearer-observed continuity result.
+
+## 2026-08-10 05:08 SGT — progressive anatomy comparison
+
+- Target: simplify the doctor-presenter composition while preserving the
+  optional high-detail skull and venous references requested for anatomy study.
+- Bounded action: gated the separated cross-source skull geometry, status copy,
+  and review caption behind Guided/Scholar detail; raised the candidate to
+  `0.6 (20)` without changing authored transforms or clinical content.
+- Evidence: contract and diff checks passed; the OS 26.5 Simulator Debug build
+  succeeded with 15 USDZ resources; clean 3840×2160 Calm and Scholar captures
+  are Proof 84 (`b2555f6c…d98`) and Proof 85 (`da8f8046…b0b5`). Two contaminated
+  captures were explicitly rejected after a concurrent RBC Journey process was
+  detected and terminated. XCAT is exactly `unavailable` in CoreDevice.
+- Verdict: `IMPROVED` — Calm now presents one dominant anatomy story, while
+  Scholar deliberately reveals the skull/venous comparison and review limits.
+- Blocker: Simulator captures do not prove wearer legibility, stereo separation,
+  targetability, AirPlay quality, anatomical registration, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, compare Calm and Scholar from
+  the default presenter position and record whether the added skull remains a
+  clearly optional reference rather than competing with the brain.
+
+## 2026-08-10 05:21 SGT — idle timeline verification
+
+- Target: GitHub issue #30; verify that the case archive/review no longer run
+  the display-rate teaching animation loop while preserving active lessons.
+- Bounded action: measured six one-second process samples on the archive,
+  unfolded review, and active Pressure routes; ran a five-second stack sample;
+  compared two active-lesson screenshots eight seconds apart.
+- Evidence: archive averaged 8.08% CPU, unfolded review 0.33%, active Pressure
+  28.17%; active screenshot hashes differed; the intake main thread waited in
+  `mach_msg` for 3,462/3,742 sampled stacks. Full receipt:
+  `Proof/performance/20260810-build20-simulator-idle.md`.
+- Verdict: `IMPROVED` — the historical 67.3–78.4% idle behavior is not
+  reproduced and the active lesson remains animated.
+- Blocker: the original benchmark command is absent, XCAT is unavailable, and
+  hardware frame pacing, thermals, battery impact, and residual intake cost are
+  not proven.
+- Next safe action: repeat the archive, review, and Pressure routes with
+  Instruments on an awake and unlocked XCAT before closing issue #30.
+
+## 2026-08-10 05:36 SGT — visible venous-atlas attribution
+
+- Target: make the optional clinician venous reference traceable without adding
+  another modal, tab, or family-facing burden.
+- Bounded action: added one compact app-facing Z-Anatomy + BodyParts3D CC BY-SA
+  line and an equivalent accessibility label beneath the existing generic-atlas,
+  colour-convention, and review-pending boundary; preserved the bundled full
+  third-party notice.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded; its app contains 15 USDZs plus the 1,515-byte notice;
+  clean Proof 86 is 3840×2160 with SHA-256 `0fc43e42…6298` and visibly shows the
+  attribution in the Scholar anatomy composition.
+- Verdict: `IMPROVED` — provenance is now visible at the point of presentation
+  and complete in the app bundle, while Calm and family views remain unchanged.
+- Blocker: Simulator does not prove wearer legibility, legal sufficiency,
+  anatomical registration, specialist approval, or clinical validity; XCAT is
+  unavailable.
+- Next safe action: on an awake and unlocked XCAT, verify the attribution and
+  review boundary remain legible beside the venous reference and record the
+  wearer observation separately from the machine receipt.
+
+## 2026-08-10 06:00 SGT — clinician anatomy-focus hierarchy
+
+- Target: make skull/brain/vessel/internal anatomy deliberately selectable
+  without bulk-loading the 134-item mixed-frame catalog or adding another
+  dashboard.
+- Bounded action: added clinician-only Whole, Vessels, and Scholar-only
+  Internal focus controls; wired them to the existing registered brain,
+  arterial, venous, deep-structure, and ventricular layers; preserved the
+  family Whole view, region points, direct viewpoints, detail depth, and
+  six-beat timeline.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as build 21 with exactly 15 USDZs; clean Proof 87 is
+  3840×2160 with SHA-256 `10d63ea5…99b5` and visibly shows the red/purple
+  vessel focus, four attached points, top timeline, and focus hierarchy. One
+  black back-to-back capture was rejected as Simulator scene invalidation.
+- Verdict: `IMPROVED` — the presenter can now reveal a coherent subsystem
+  rather than stacking every asset or seeing only a skull.
+- Blocker: XCAT is unavailable, and Simulator does not prove targeting,
+  stereo placement, AirPlay legibility, registration accuracy, specialist
+  approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, validate gaze-and-pinch
+  selection of Whole, Vessels, and Internal while confirming the anatomy points
+  remain targetable from the default presenter position.
+
+## 2026-08-10 06:17 SGT — optional anatomy availability fallback
+
+- Target: prevent an optional USDZ load failure from appearing as a selected
+  but empty Vessels or Internal anatomy focus.
+- Bounded action: connected RealityKit's loaded entity hierarchy to the
+  presenter state; queued focus requests until the report arrives; restored
+  Whole with an explicit message when either required optional pair is absent;
+  added deterministic venous/internal failure routes.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (22)` with exactly 15 USDZs; Proof 88 is
+  3840×2160 with SHA-256 `b6be1411…9935` and visibly shows Whole restored,
+  Vessels dimmed, the failure boundary, attached points, and the top timeline.
+- Verdict: `IMPROVED` — optional anatomy failure is now explicit and reversible
+  instead of producing a misleading empty subsystem.
+- Blocker: XCAT is unavailable, and Simulator fault injection does not prove
+  physical targeting, stereo placement, wearer legibility, real device load
+  behavior, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, select Whole, Vessels, and
+  Internal once each and record both the loaded layer and presenter-visible
+  boundary before any further anatomy expansion.
+
+## 2026-08-10 06:39 SGT — presenter checkpoints become scene states
+
+- Target: make the six doctor-presenter checkpoints visually distinct instead
+  of relabelling the same three-act anatomy composition.
+- Bounded action: mapped Access to the separated generic skull reference,
+  Protective covering to a permission-gated conceptual-dura offset, Purpose to
+  the reversible room-making aperture, Checks to a no-result discussion state,
+  and Closure to reassembled teaching layers; added concise beat-specific copy
+  and a deterministic Protective-covering proof route.
+- Evidence: contract and diff checks passed; the generic OS 26.5 visionOS
+  Simulator Debug build succeeded as `0.6 (23)` with exactly 15 USDZs; the
+  installed route remained listed after capture; Proof 89 is 3840×2160 with
+  SHA-256 `b83cd123…ee7e1` and visibly shows the six-stop timeline, direct
+  viewpoints, Guided depth, four attached points, and offset covering state.
+- Verdict: `IMPROVED` — the presenter sequence now communicates change through
+  anatomy composition rather than copy alone while retaining the family-safe
+  three-act boundary.
+- Blocker: XCAT is unavailable, Figma MCP is Starter-plan rate-limited, and
+  Simulator evidence does not establish targeting, depth, comfort, AirPlay
+  legibility, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, traverse all six checkpoints
+  once and record whether skull, covering, purpose, and reassembly remain
+  spatially distinct and legible in the mirrored three-minute demo.
+
+## 2026-08-10 07:26 SGT — point selection owns its teaching reference
+
+- Target: prevent the Scholar reference lane from becoming a parallel image
+  browser that can open without an anatomy point.
+- Bounded action: required a selected authored point in both state-level
+  teaching-reference entry points, retained the filtered high-priority point
+  gesture, and captured the deterministic selected-point composition.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (25)` with 17 USDZs; the installed process
+  remained listed; Proof 91 is 3840×2160 with SHA-256 `b98fb7ab…b6b41f0` and
+  visibly shows the six-step timeline, multiple points, one selected disclosure,
+  and one right-side registered teaching reference.
+- Verdict: `IMPROVED` — the secondary reference is now causally owned by a
+  deliberate point choice instead of an independent rail action.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reliability,
+  stereo depth, wearer comfort, AirPlay legibility, anatomical registration,
+  specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, pinch one unselected point,
+  confirm exactly one reference appears, then change the timeline step and
+  confirm the reference clears before the next point choice.
+
+## 2026-08-10 07:37 SGT — one selected point, one teaching lane
+
+- Target: remove the visual competition between a selected point's local
+  teaching reference and the checkpoint-level access-skull context.
+- Bounded action: made the large access reference conditional on there being no
+  selected point, leaving the central anatomy, point state, and checkpoint
+  timeline unchanged; captured the same deterministic route again.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (26)` with 17 USDZs; the installed process
+  remained listed; Proof 92 is 3840×2160 with SHA-256
+  `c9eac95d…3bf8c3f` and visibly shows one selected disclosure and one right
+  affected-vessel reference without the competing separated skull.
+- Verdict: `IMPROVED` — point selection now produces one dominant explanatory
+  relationship instead of two simultaneous secondary anatomy stories.
+- Blocker: XCAT is unavailable, and Simulator cannot establish physical
+  gaze-and-pinch reliability, stereo depth, comfort, AirPlay legibility,
+  anatomical registration, specialist approval, or clinical validity.
+- Next safe action: on an awake and unlocked XCAT, select and clear the same
+  point once; verify that one local reference appears on selection and that the
+  broader access context returns only after clearing it.
+
+## 2026-08-10 07:58 SGT — selected blockage owns the flow explanation
+
+- Target: make the selected blood-flow point and its annotation tell the same
+  story while preserving the always-visible presenter timeline.
+- Bounded action: added authored point-specific annotation meanings, corrected
+  `Example blockage` to describe an interrupted qualitative route, and recorded
+  a short Simulator motion receipt.
+- Evidence: contract and diff checks passed; the OS 26.5 visionOS Simulator
+  Debug build succeeded as `0.6 (27)` with 17 USDZs; Proof 94 is 3840×2160
+  with SHA-256 `299698cf…b6e45a45`; Proof 95 is a six-second 1920×1080 H.264
+  clip with SHA-256 `b9c18dff…7419244e`; StrokeTime remained listed.
+- Verdict: `IMPROVED` — a selected flow point now produces one concise,
+  anatomically relevant explanation and an explicit not-CFD boundary.
+- Blocker: XCAT is unavailable, and Simulator motion does not establish
+  physical point acquisition, stereo placement, wearer comfort, AirPlay
+  legibility, anatomical registration, specialist approval, or clinical
+  validity.
+- Next safe action: after reviewing Prakash's `a9b64b8` five-asset surgical
+  state pack, promote only an applicable clinician-gated registered state and
+  bind it to one of the existing six checkpoints; do not bulk-enable the pack
+  in the ischemic family path.
+
+## 2026-08-10 10:21 SGT — restore a testable XCAT overview and point acquisition
+
+- Target: replace the stale black launch state with the complete main anatomy
+  overview and make anatomy-attached lesson points more reliably selectable on
+  the physical headset.
+- Bounded action: changed the guarded device route to
+  `--proof-main-overview`, enlarged point visuals and non-overlapping collision
+  proxies slightly, and added a nearest-visible-point fallback when the larger
+  transparent brain proxy receives the pinch first.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  signed visionOS device build `0.6 (29)` succeeded, installed on XCAT,
+  foreground-launched, and remained listed as PID 801. Machine receipt:
+  `Proof/xcat/20260810-102108/RECEIPT.md`.
+- Verdict: `IMPROVED` — XCAT now starts from the bright, complete overview and
+  the input path no longer depends solely on the small point collider winning
+  ray selection.
+- Blocker: the machine receipt cannot prove wearer visibility, gaze-and-pinch
+  acquisition, stereo placement, comfort, comprehension, anatomical accuracy,
+  or clinical validity.
+- Next safe action: while wearing XCAT, gaze at one mint point and pinch once;
+  confirm that it enlarges and reveals exactly one right-side teaching
+  reference.
+
+## 2026-08-10 11:49 SGT — adaptive craniotomy reference on XCAT
+
+- Target: keep the reversible craniotomy teaching reference legible when the
+  presenter changes the explicit visual-detail level.
+- Bounded action: retained one registered access assembly across Simplified,
+  Standard, and Full, with progressively stronger scalp, bone, and dura
+  opacity; kept the optional edema cue restricted to Full clinician detail.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  the generic visionOS Simulator Debug build succeeded; signed XCAT build
+  `0.6 (29)` codesign-verified, installed, foreground-launched, and remained
+  listed as PID 986. Machine receipt:
+  `Proof/xcat/20260810-114913/RECEIPT.md`.
+- Verdict: `IMPROVED` — changing explicit visual detail no longer makes the
+  access reference disappear, while higher-detail secondary anatomy remains
+  gated.
+- Blocker: the machine receipt cannot prove wearer visibility, point
+  acquisition, stereo registration, comfort, comprehension, or clinical
+  correctness.
+- Next safe action: on XCAT, enter `Access`, pinch the orange tethered marker,
+  then move Visual Detail through Simplified, Standard, and Full and confirm
+  that one reversible access reference remains visible throughout.
+
+## 2026-08-10 12:52 SGT — restore the full showcase entry and brain handoff
+
+- Target: stop launching directly into a proof-only brain state and preserve
+  the complete role → fictional case → explanation flow for the showcase.
+- Bounded action: changed the guarded device route to `--hackathon-demo`,
+  removed the procedural case bust while retaining the case-history
+  constellation, exposed the existing scale-gated `Enter brain` handoff, and
+  kept the revised six-checkpoint timeline, off-surface points, right reference
+  rail, and reversible craniotomy composition in the same build.
+- Evidence: `python3 Tests/verify_contract.py`, `zsh -n
+  Scripts/deploy_xcat.zsh`, `git diff --check`, and the narrow visionOS
+  Simulator Debug build passed. Signed Stroke Care `0.6 (29)` codesign-verified
+  and installed on paired XCAT; the installed-app query confirmed build 29.
+  Foreground activation timed out while waiting for the CoreDevice reply, but a
+  subsequent filtered process query confirmed StrokeTime running as PID 1097.
+  Machine receipt: `Proof/xcat/20260810-124735/RECEIPT.md`.
+- Verdict: `IMPROVED` — the verified binary now contains the complete showcase
+  route instead of a brain-only proof route, with a deterministic handoff at
+  3.2× scale.
+- Blocker: the XCAT machine receipt does not prove wearer visibility, pinch
+  acquisition, spatial audio, comfort, cross-app handoff, anatomical accuracy,
+  or clinical validity; RBCJourneyVision also lacks a device provisioning
+  profile in this checkout.
+- Next safe action: with XCAT awake and worn, open Stroke Care manually and
+  verify role → case → Access point → timeline → 3.2× `Enter brain` once.
+
+## 2026-08-10 13:41 SGT — stabilize points, vessel close-up, and hand tools
+
+- Target: make every visible teaching point independently selectable and keep
+  the clinician cuff/tools correctly oriented during the live demo.
+- Bounded action: separated animated lesson orbs from fixed non-overlapping
+  collision parents, widened the anatomy-proxy nearest-point fallback, added a
+  registered-assembly vessel/clot close-up on selection, bill-boarded the hand
+  cuff, and corrected the held-tool forward axis.
+- Evidence: `python3 Tests/verify_contract.py` and `git diff --check` passed;
+  commit `c651201` was pushed to PR #22; signed XCAT build `0.6 (29)` built,
+  codesign-verified, installed, and was subsequently listed as PID 1161.
+  Machine receipt: `Proof/xcat/20260810-134012/RECEIPT.md`.
+- Verdict: `IMPROVED` — point hit geometry no longer pulses into neighbouring
+  targets, selecting Flow/Blockage moves the complete registered assembly into
+  a close-up, and the hand-attached interface has an explicit wearer-facing
+  orientation.
+- Blocker: machine evidence cannot prove actual gaze-and-pinch acquisition,
+  tool direction, visual clarity, audio perception, comfort, registration, or
+  clinical validity on the wearer.
+- Next safe action: while wearing XCAT, pinch each visible point once, then open
+  Tools and confirm one held instrument points toward the central anatomy.
+
+## 2026-08-10 13:53 SGT — isolate Realtime playback capture
+
+- Target: keep family GPT-Realtime narration compile-clean and isolated after
+  the XCAT tunnel gate.
+- Bounded action: captured `StrokeAudioPlayback` directly in the narration task
+  instead of retaining an unused weak reference to the main-actor narration
+  engine.
+- Evidence: `python3 Tests/verify_contract.py`, `git diff --check`, and the
+  narrow visionOS Simulator Debug build passed. The guarded XCAT pass built and
+  codesign-verified Stroke Care `0.6 (29)`, but failed before install with
+  CoreDevice error 4, RemotePairing error 4, and Network `NWError 60` (`Operation
+  timed out`). No install, launch, or running-process receipt was produced by
+  this pass.
+- Verdict: `IMPROVED` — the Swift 6 capture warnings are removed while audio
+  preparation and playback remain behind the existing actor boundary.
+- Blocker: the XCAT tunnel timed out before install; Simulator compilation does
+  not prove narration playback, latency, spatial-audio perception, or wearer
+  comfort.
+- Next safe action: when XCAT is awake, unlocked, and its developer tunnel is
+  available, rerun `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-10 17:55 SGT — separate Simulator and device placement paths
+
+- Target: keep deterministic Simulator launches free of unreachable physical
+  tracking work while preserving the authored fallback composition.
+- Bounded action: made the stage-placement compile-time branch mutually
+  exclusive, so Simulator builds set the authored transform only and physical
+  builds retain the one-shot tracked-device placement path.
+- Evidence: `python3 Tests/verify_contract.py`, `git diff --check`, and the
+  narrow visionOS Simulator Debug build passed without the prior unreachable
+  placement-code warning. The guarded XCAT pass stopped at the exact
+  `unavailable` device gate and saved
+  `Proof/xcat/20260810-175317/BLOCKED.md`.
+- Verdict: `IMPROVED` — Simulator and physical placement behavior now compile
+  as explicit, non-overlapping paths.
+- Blocker: XCAT was unavailable, so this pass produced no install, launch,
+  wearer, spatial-audio, registration, or clinical evidence.
+- Next safe action: when XCAT is awake and unlocked, rerun
+  `Scripts/deploy_xcat.zsh` once.
+
+## 2026-08-11 18:50 SGT — prove the room-scale Inside the Flow handoff
+
+- Target: make the existing `Enter brain` control testable from a large family teaching view without implying entry into a patient's anatomy.
+- Bounded action: added `--proof-interior-handoff`, which establishes the family lens, a generic blockage focus, and the existing room-scale threshold before exposing the separate Inside the Flow link.
+- Evidence: `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator build completed; `xcrun simctl openurl ... rbcjourney://enter` reached the system confirmation for the installed `Inside the Flow` app.
+- Verdict: `IMPROVED` — the cross-experience handoff now has an explicit deterministic source route and the Simulator resolved its registered destination.
+- Blocker: the Simulator still retained a prior Clinical evidence window over the requested Stroke Care proof scene, and the confirmation does not prove a wearer pinched `Enter brain` or completed the cross-app launch.
+- Next safe action: on an unlocked headset, open the magnified family scene, pinch `Enter brain`, approve the system handoff, and capture the four-beat Inside the Flow entry view.
+
+## 2026-08-11 19:04 SGT — publish a visual README gallery
+
+- Target: make the GitHub repository communicate the complete Stroke Care teaching story at a glance.
+- Bounded action: expanded the README gallery with tracked Simulator captures for case intake, point discovery, timeline, flow, internal layers, craniotomy teaching checkpoints, purpose, and the distinct Scholar skull-review state.
+- Evidence: `git diff --check` passed and every README `Proof/*.png` gallery reference resolves to a tracked repository file.
+- Verdict: `IMPROVED` — the public repository now has a curated visual narrative rather than only an isolated hero image.
+- Blocker: these are Simulator and visual-direction images; they do not prove wearer interaction, physical-device legibility, registration accuracy, or clinical validity.
+- Next safe action: add one fresh, verified physical-device capture only after a wearer validates the corresponding interaction.
+
+## 2026-08-11 19:19 SGT — guarantee a fresh role-entry surface
+
+- Target: prevent an earlier Clinical evidence window from obscuring a new Family/Doctor journey.
+- Bounded action: dismiss the evidence window before both role-threshold entry and the placed-case story entry, with a static contract guard for both paths.
+- Evidence: XCAT guarded deploy stopped at `Proof/xcat/20260811-191054/BLOCKED.md` before build/install (`unavailable`, tunnel unavailable, DDI false); `python3 Tests/verify_contract.py` passed and the narrow visionOS Simulator build completed.
+- Verdict: `IMPROVED` — a fresh journey no longer intentionally carries the app-owned evidence window forward.
+- Blocker: the Simulator currently shows a separate system confirmation left by the prior `Inside the Flow` handoff; it blocks the visual role-threshold capture but is not Stroke Care's Clinical evidence window. XCAT was unavailable, so there is no physical-device validation.
+- Next safe action: dismiss the system confirmation, then validate the normal Family/Doctor entry and fresh evidence-return cycle on an unlocked XCAT.
+
+## 2026-08-11 21:11 SGT — add a movable generic 2D imaging reference
+
+- Target: give the clinician a spatially placeable 2D imaging companion without presenting an unreviewed patient scan or calling stroke imaging an X-ray.
+- Bounded action: added a clinician-only `Open 2D reference` handoff from the selected-point teaching lens to a standard resizable visionOS window with generic vascular-map and cross-section schematics.
+- Evidence: `python3 Tests/verify_contract.py` passed; `xcodegen generate` completed; the narrow visionOS Simulator Debug build completed; the updated app installed and launched with `--proof-imaging-window`.
+- Verdict: `IMPROVED` — the existing right-side 3D reference now has a separate movable 2D teaching companion, explicitly labelled generic and not a patient scan.
+- Blocker: the Simulator still showed a pending system `Open in Inside the Flow?` confirmation above the proof window, so this pass cannot claim a clean visual capture or wearer placement interaction.
+- Next safe action: dismiss that system confirmation, reopen the 2D teaching reference from a selected clinician point, and visually check the card can be placed and read in the room.
+
+## 2026-08-11 21:35 SGT — verify the current imaging window in Simulator
+
+- Target: replace the blocked imaging-window visual observation with a clean current-build capture.
+- Bounded action: restarted the visionOS Simulator, discovered that the first reinstall used stale Stroke Care 0.4 (build 4) from a second DerivedData product, then uninstalled it and installed the verified 0.6 (build 29) product before relaunching `--proof-imaging-window`.
+- Evidence: current built `Info.plist` reports build `29`; `xcrun simctl launch` returned PID `28104`; fresh `/tmp/strokecare-imaging-window-current.png` visibly shows the `2D TEACHING REFERENCE` vessel-map window, its Scan-plane control, generic/non-patient boundary, and Close control with no stale handoff alert.
+- Verdict: `IMPROVED` — the moveable generic imaging reference is now visually proven in the current Simulator build.
+- Blocker: this proves Simulator rendering only; it does not prove a clinician can pinch the selected-point handoff, reposition the window comfortably, or interpret the schematic correctly on physical XCAT.
+- Next safe action: on an unlocked XCAT, select a clinician anatomy point, open Imaging, move the 2D reference, and record the interaction separately from clinical review.
+
+## 2026-08-11 21:39 SGT — bind imaging proof to a selected anatomy point
+
+- Target: make the deterministic 2D imaging proof prove the same authored-point provenance used by the clinician experience.
+- Bounded action: made `--proof-imaging-window` prepare the existing selected-point teaching state before rendering the 2D reference.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed; the fresh current-build capture `/tmp/strokecare-imaging-selected-point.png` visibly reads `Linked from: Example affected area` alongside the vessel-map and generic/non-patient boundary.
+- Verdict: `IMPROVED` — the proof now establishes point-to-reference provenance rather than showing an unlinked standalone card.
+- Blocker: this remains a deterministic Simulator state; it does not prove physical gaze-and-pinch selection, room placement, or clinical adequacy.
+- Next safe action: validate the live clinician point -> Imaging action on unlocked XCAT, then capture it as a separate physical interaction receipt.
+
+## 2026-08-11 21:46 SGT — distinguish stroke-imaging teaching references
+
+- Target: make the movable 2D imaging companion use the image language relevant to a stroke explanation without misrepresenting a generic diagram as an X-ray or patient result.
+- Bounded action: expanded the reference picker from Vessel map / Scan plane to Vessel map / CT guide / MRI guide, with distinct generic CT-style and MRI-style schematics and an explicit non-patient/non-diagnostic boundary.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed; fresh `/tmp/strokecare-ct-mri-reference.png` visibly shows the selected-point-linked window and its Vessel map, CT guide, and MRI guide controls.
+- Verdict: `IMPROVED` — the 2D reference now better matches the imaging concepts a clinician may explain in an acute stroke conversation while remaining movable and clearly illustrative.
+- Blocker: the generic diagrams do not substitute for actual imaging, and this Simulator capture does not prove physical placement, interpretation, or clinical review.
+- Next safe action: define a separate, opt-in Brain Health education lane for sleep and cognitive-health topics instead of mixing them into the acute stroke/craniotomy story.
+
+## 2026-08-12 01:55 SGT — stop access dots leaking through presenter checkpoints
+
+- Target: stop the single generic craniotomy invitation from appearing at every later presenter checkpoint as an unrelated skull marker.
+- Bounded action: made presenter point visibility checkpoint-owned: Context shows the regional discovery family, Access shows the single generic access invitation, and Protective covering / Purpose / Checks / Closure hide point cues until reviewed point families exist for those discussions.
+- Evidence: `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build completed. A fresh `--proof-clinician-six-beat-timeline` screenshot reached only the room and did not open the immersive scene, so it is not visual evidence for this change.
+- Verdict: `IMPROVED` — later clinician checkpoints no longer intentionally inherit the same access point in runtime state.
+- Blocker: a fresh Simulator immersive-route receipt is still required; additional point families need authored, reviewed anchors rather than reusing a skull location.
+- Next safe action: repair the six-beat deterministic immersive proof route, then inspect Context, Access, and Checks as separate visual states.
+
+## 2026-08-12 02:06 SGT — verify delayed six-beat immersive composition
+
+- Target: determine whether the current six-beat presenter route is actually empty in Simulator before using its screenshot as product evidence.
+- Bounded action: restarted the verified `0.6 (29)` Simulator app with `--proof-clinician-six-beat-timeline`, then compared an 8-second screenshot with a later settled capture.
+- Evidence: the 8-second capture showed only the room; the fresh 53-second capture at `/tmp/strokecare-six-beat-53s.png` visibly shows the registered brain and arteries, presenter checklist, timeline, and peripheral controls. The running process remained `StrokeTime` PID `83246`.
+- Verdict: `IMPROVED` — the scene is present after its large asset load; the prior empty room was an early-capture artefact, not proof that the six-beat state renders no anatomy.
+- Blocker: this exposes an unacceptable proof/loading latency and remains Simulator composition evidence only, not physical-device responsiveness, targetability, or clinical review.
+- Next safe action: add an explicit scene-readiness receipt/visual loading boundary before treating any timed immersive screenshot as a valid regression proof.
+
+## 2026-08-12 02:44 SGT — add a spatial Family Brain Atlas
+
+- Target: give the patient/family route a larger, self-paced neuroanatomy guide without turning the central brain into a permanent label cloud or presenting generic anatomy as a patient scan.
+- Bounded action: added an opt-in room-anchored ten-chapter Brain Atlas with pinch-drag navigation; each chapter changes only the closest reviewed discovery-point family on the existing 3D brain and explicitly routes deep concepts to the separate inside-brain handoff after magnification.
+- Evidence: `python3 Tests/verify_contract.py` passed; `xcodegen generate` plus the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-brain-atlas.png` visibly shows the large left Atlas (Arterial routes, 6/10), central 3D brain/arteries, quiet flow points, and family controls.
+- Verdict: `IMPROVED` — family learning now has a progressive, spatially placed anatomy guide rather than only static questions or a flat vessel reference.
+- Blocker: the ten chapters are orientation content; only the current reviewed whole-brain and blood-flow layers are locally shown. Exact deep-structure landmark anchoring, patient comprehension, and physical-device pinch-drag comfort need separate review.
+- Next safe action: validate the Family Atlas interaction and its inside-brain handoff on a physical Vision Pro before adding another anatomy subsystem.
+
+## 2026-08-12 03:00 SGT — stage the immersive anatomy before heavy assets
+
+- Target: prevent a blank-looking immersive room while the detailed brain assets decode.
+- Bounded action: presented the compact local anatomy immediately, then swapped it for the complete imported anatomy root after it finished loading.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-024606/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` captures at `/tmp/strokecare-readiness-split-4s.png` and `/tmp/strokecare-readiness-split-50s.png` show immediate fallback anatomy followed by the detailed brain-and-artery assembly.
+- Verdict: `IMPROVED` — the experience no longer begins as an empty immersive room during the large-asset handoff.
+- Blocker: XCAT was unavailable, and Simulator captures do not prove physical-device load timing, wearer comfort, or gesture quality.
+- Next safe action: validate the staged anatomy handoff on an unlocked physical Vision Pro before changing another interaction.
+
+## 2026-08-12 03:10 SGT — make the Family Brain Atlas progressively explorable
+
+- Target: let a patient/family member move through each general brain concept at a comfortable pace instead of receiving a single dense text block.
+- Bounded action: expanded each Atlas chapter into three pinch-through beats — spatial location, plain-language purpose, and a clinician-conversation prompt — while keeping pinch-drag for moving between the ten concepts and retaining the generic-teaching/not-a-patient-scan boundary.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-031011/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-three-beat.png` visibly shows `Arterial routes`, `WHAT IT HELPS WITH · 2 / 3`, the enlarged left card, and the central 3D brain/artery assembly.
+- Verdict: `IMPROVED` — the family route now supports a spatial, user-paced three-beat explanation without adding a permanent label cloud to the anatomy.
+- Blocker: this is Simulator rendering only; XCAT is unavailable, and physical pinch-drag legibility plus clinical review remain unproven.
+- Next safe action: validate one complete Atlas chapter on an unlocked physical Vision Pro before adding further anatomy content.
+
+## 2026-08-12 03:22 SGT — verify the Family point-to-spatial-reference path
+
+- Target: ensure that the patient/family route—not only the clinician route—can reveal one selected anatomy point with a spatial teaching reference and clear question controls.
+- Bounded action: added a deterministic Family selected-point route that selects one generic affected-area cue during the existing Pressure act and exposes the existing world-locked vessel teaching object.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-032143/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-selected-point.png` visibly shows one selected local cue, the left Family question/clarity surface, and the right `BLOCKED VESSEL · TEACHING VIEW` object with its generic-anatomy boundary.
+- Verdict: `IMPROVED` — the Family explainer now has a repeatable, screenshot-inspected receipt for the intended one-point → one-spatial-reference interaction.
+- Blocker: Simulator composition does not prove physical gaze-and-pinch targetability, room-scale legibility, or clinical adequacy; XCAT remains unavailable.
+- Next safe action: validate the Family selected-point interaction on an unlocked physical Vision Pro before increasing the reference catalogue.
+
+## 2026-08-12 04:05 SGT — make the inside-brain handoff discoverable at room scale
+
+- Target: make the separate guided blood-vessel journey discoverable once a Family wearer has magnified the generic brain model to the explicit interior threshold.
+- Bounded action: replaced the tiny generic hand-control bubble with a clearly labelled orange `ENTER THE BRAIN · Guided vessel journey` control that appears only at room-scale magnification and keeps the separate-app handoff explicit.
+- Evidence: `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-interior-handoff` capture at `/tmp/strokecare-interior-handoff-prominent.png` visibly shows the enlarged orange hand-adjacent entry control alongside the room-scale brain. `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-040523/BLOCKED.md`.
+- Verdict: `IMPROVED` — the next experience is now visually discoverable rather than buried as an unlabeled small control.
+- Blocker: the paired internal journey must be installed and launched on physical hardware; this Simulator capture does not prove cross-app launch, wearer targeting, comfort, or comprehension.
+- Next safe action: install the paired interior app on an unlocked Vision Pro and record a user-selected handoff receipt.
+
+## 2026-08-12 04:22 SGT — enlarge the Family Brain Atlas without flattening the anatomy story
+
+- Target: make the Family learning surface legible in the spatial room while retaining the 3D brain and vessels as the primary teaching object.
+- Bounded action: widened the ten-chapter, pinch-drag Brain Atlas by about 20%, increased its chapter target size, and replaced the faint material card with a black-translucent high-contrast surface; corrected its room placement after the first wider capture clipped at the display edge.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-041010/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-brain-atlas-contrast-final.png` visibly shows a complete, readable left Atlas (`Arterial routes`, `2 / 3`) alongside the unoccluded 3D brain and arteries.
+- Verdict: `IMPROVED` — the family member can now read and pinch through the ten-part Atlas without a flat full-screen vessel map or a permanent annotation cloud around the anatomy.
+- Blocker: this is generic educational anatomy only. Clinical review is needed before adding more specific physiology claims, and XCAT remains unavailable for real-world legibility and pinch-drag verification.
+- Next safe action: validate the corrected Family Atlas on an unlocked Vision Pro before adding another family teaching subsystem.
+
+## 2026-08-12 04:48 SGT — connect the arterial Atlas chapter to one 3D flow reference
+
+- Target: keep the Family arterial lesson spatial instead of leaving its vessel cue as a text-led point-family switch.
+- Bounded action: changed the Arterial routes Atlas action to `SHOW BRANCHING FLOW IN 3D`; one deliberate pinch now selects the generic branching-flow point, moves the registered teaching assembly into its existing close-up state, and reveals exactly one local qualitative vessel reference.
+- Evidence: `Scripts/deploy_xcat.zsh` had already recorded XCAT unavailable in `Proof/xcat/20260812-041010/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh isolated-DerivedData Simulator bundle launched `--proof-family-arterial-atlas-flow` as process `44214`; inspected capture `/tmp/strokecare-family-arterial-atlas-flow.png` visibly shows the `Arterial routes` Atlas, `SHOW BRANCHING FLOW IN 3D`, one `ARTERIES BRANCH` local cue, and the `VESSEL STORY` reference alongside the 3D brain and arteries.
+- Verdict: `IMPROVED` — the vessel chapter now has an explicit user-selected spatial flow reveal rather than a flat map or permanent label cloud.
+- Blocker: this is qualitative, generic teaching anatomy only; Simulator proof does not establish physical gaze-and-pinch targeting, motion legibility, or clinical adequacy, and XCAT remains unavailable.
+- Next safe action: validate the selected Family arterial-flow interaction on an unlocked Vision Pro before adding more physiology references.
+
+## 2026-08-12 05:31 SGT — separate the 3D vessel reference from the hero anatomy
+
+- Target: make the selected arterial teaching reference read as a second spatial object rather than a flattened overlay competing with the central brain.
+- Bounded action: moved the world-locked registered vessel miniature into the right secondary field and shifted/enlarged its associated readable disclosure without changing the generic-teaching, one-selected-point contract.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-045046/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh isolated-DerivedData Simulator bundle launched `--proof-family-arterial-atlas-flow` as process `68477`; inspected capture `/tmp/strokecare-secondary-reference-balanced.png` visibly shows the complete right-side 3D vessel object and its readable reference capsule, separate from the dominant centre brain.
+- Verdict: `IMPROVED` — the Family arterial lesson now uses primary/secondary spatial depth instead of visually stacking its reference on the anatomy.
+- Blocker: Simulator framing does not prove headset depth perception, peripheral legibility, room placement, or physical gaze-and-pinch; XCAT remains unavailable.
+- Next safe action: validate this primary/secondary composition on an unlocked Vision Pro before adding another teaching reference.
+
+## 2026-08-12 10:45 SGT — enlarge the presenter timeline targets
+
+- Target: make all six clinician checkpoints—including the former hard-to-acquire middle steps—easy to revisit in the lower spatial field.
+- Bounded action: increased each six-step timeline target from 76 to 92 points, enlarged the visible numbered markers, and strengthened the active cool-to-warm story band while retaining hover/focus wording above the timeline.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-095628/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-clinician-six-beat-timeline` capture at `/tmp/strokecare-timeline-after.png` visibly shows the enlarged six-node lower timeline, with step 5 active and the centre anatomy unobscured.
+- Verdict: `IMPROVED` — the six checkpoints now have materially larger direct gaze-and-pinch affordances without turning the explanation into a text-heavy panel.
+- Blocker: Simulator capture does not prove physical gaze-and-pinch acquisition, wearer legibility, or clinical adequacy; XCAT remains unavailable.
+- Next safe action: validate all six timeline targets on an unlocked Vision Pro before introducing additional clinician controls.
+
+## 2026-08-12 16:53 SGT — connect Family Atlas chapters to visible 3D cues
+
+- Target: ensure the ten-part Family Brain Atlas teaches through the central spatial anatomy rather than behaving like a flat vessel map or a generic point-family switch.
+- Bounded action: mapped each reviewed outer-brain Atlas chapter to one deliberate lifted regional cue, kept Arterial routes on its qualitative 3D flow cue, and made deep chapters surface the explicit magnify-to-inside-brain handoff instead of implying unreviewed internal landmark registration.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-104942/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow isolated-DerivedData visionOS Simulator build produced `StrokeTime.app`; fresh deterministic `--proof-family-atlas-surface-cue` capture at `/tmp/strokecare-family-atlas-surface-cue.png` was inspected and visibly shows the `Frontal lobe` Atlas chapter, one tethered `FRONTAL LOBE · GENERIC ATLAS CUE`, the central 3D brain and arteries, and no permanent label cloud.
+- Verdict: `IMPROVED` — a Family chapter now produces a clear 3D anatomy-attached reveal, while the inside-brain transition remains an honest separate-experience handoff.
+- Blocker: Simulator composition does not prove physical gaze-and-pinch acquisition, room-scale depth, the paired-app launch, or clinical adequacy; XCAT was unavailable.
+- Next safe action: validate one Family Atlas surface cue and one magnify-to-inside-brain handoff on an unlocked Vision Pro before adding another anatomy subsystem.
+
+## 2026-08-12 17:05 SGT — keep Family Atlas surface cues spatially coherent
+
+- Target: prevent a selected outer-brain Atlas chapter from reading as a detached HUD label or opening an unrelated vessel reference.
+- Bounded action: parented the selected-point explanation to its actual anatomy point field and made surface chapters suppress the secondary vessel miniature, reserving that object for the arterial-flow chapter.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-165447/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow isolated-DerivedData visionOS Simulator build produced `StrokeTime.app`; fresh deterministic `--proof-family-atlas-surface-cue` capture at `/private/tmp/strokecare-family-atlas-surface-final.png` was inspected and visibly shows the `Frontal lobe` Atlas, central 3D brain/arteries, one local `FRONTAL LOBE · GENERIC ATLAS CUE`, and no right-side vessel reference.
+- Verdict: `IMPROVED` — outer-brain chapters now have one deliberate spatial reveal instead of a competing 2D-like reference surface.
+- Blocker: Simulator rendering does not prove physical gaze-and-pinch targetability, stereo depth, or family comprehension; XCAT was unavailable.
+- Next safe action: validate the one-cue Family Atlas behavior on an unlocked Vision Pro before adding more reviewed teaching references.
+
+## 2026-08-12 17:22 SGT — add a non-sticky evidence-workspace recovery path
+
+- Target: prevent a stale Clinical evidence workspace from trapping the wearer away from the Patient or Doctor role threshold.
+- Bounded action: added an explicit `Restart at roles` control that resets teaching state, closes the immersive/evidence spaces, and restores the launch window; system dismissal now also clears the temporary source-bound draft state.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-170613/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a fresh visionOS Simulator app bundle installed and launched `--proof-evidence-window` as process `73756`; inspected capture `/tmp/strokecare-evidence-recovery-20260812-1721.png` visibly shows both `Return to anatomy` and `Restart at roles` recovery controls in the evidence workspace.
+- Verdict: `IMPROVED` — the evidence space now has a visible, state-resetting escape route rather than relying solely on the normal anatomy return.
+- Blocker: the Simulator screenshot proves rendering and process launch only; it does not prove physical pinch acquisition or XCAT recovery behavior while the device is unavailable.
+- Next safe action: tap `Restart at roles` on an unlocked Vision Pro and record the resulting role-threshold recovery receipt.
+
+## 2026-08-12 17:31 SGT — make the Family Brain Atlas explanation rhythm explicit
+
+- Target: help a family member understand that each of the ten generic brain chapters is a short, spatially connected learning sequence rather than a dense static card.
+- Bounded action: added a compact, visible `1 POSITION → 2 MEANING → 3 ASK` progression to the existing pinch-controlled Atlas card; the active beat follows the current three explanatory states while the central 3D brain and one optional model cue remain primary.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-172435/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-beats.png` was inspected and visibly shows the ten-chapter `Arterial routes` Atlas, highlighted `2 MEANING` beat, the central 3D brain/arteries, and qualitative flow points.
+- Verdict: `IMPROVED` — the Family Atlas now clearly communicates its controlled three-beat learning rhythm without converting the model into a 2D vessel map or adding diagnostic detail.
+- Blocker: Simulator proof does not establish pinch-drag reach, headset legibility, family comprehension, or clinical accuracy; XCAT remains unavailable.
+- Next safe action: run one family member through one full Atlas chapter on an unlocked Vision Pro and record whether the three beats and 3D cue are understandable.
+
+## 2026-08-12 17:36 SGT — enlarge the Family Atlas reading surface
+
+- Target: make the one-chapter-at-a-time family explanation readable as a peripheral spatial surface without letting it overtake the 3D anatomy.
+- Bounded action: increased the Atlas attachment scale from `0.90` to `1.02`, shifted it inward to avoid left-edge clipping, and simplified the active-beat caption to `2 OF 3 · WHAT IT HELPS WITH`.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-173254/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-family-atlas-legibility.png` was inspected and visibly shows the widened Atlas, the `POSITION → MEANING → ASK` rhythm, and active `2 OF 3` explanation beside the spatial teaching model.
+- Verdict: `IMPROVED` — the family explanation is more legible and self-guiding without becoming a full-screen 2D vessel map.
+- Blocker: Simulator evidence cannot establish headset legibility, physical pinch-drag reach, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate this enlarged Atlas on an unlocked Vision Pro with one non-clinician wearer before increasing its content density.
+
+## 2026-08-12 17:46 SGT — make the Family Atlas 3D handoff explicit
+
+- Target: make it clear that an Atlas chapter can reveal one real, anatomy-attached teaching cue rather than only changing text in a peripheral card.
+- Bounded action: changed the Atlas action from a passive cue label to an explicit `REVEAL IN 3D` control; after a deliberate reveal it changes to `3D CUE ACTIVE · LOOK FOR ONE LIT MARKER`, with a distinct confirmation colour and no permanent label cloud.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-174042/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh deterministic `--proof-family-arterial-atlas-flow` capture at `/tmp/strokecare-family-atlas-cue-active-20260812-1745.png` was inspected and visibly shows the active 3D cue confirmation, one anatomy-attached `ARTERIES BRANCH` explanation, and one contextual teaching reference.
+- Verdict: `IMPROVED` — the Atlas now makes its spatial reveal and current selection legible without presenting a patient-specific vessel map or overwhelming the central model.
+- Blocker: Simulator evidence does not establish physical gaze-and-pinch reach, stereo depth, or comprehension; XCAT remains unavailable.
+- Next safe action: validate one Atlas reveal-to-marker interaction with a non-clinician wearer on an unlocked Vision Pro before adding any new chapters or references.
+
+## 2026-08-12 17:54 SGT — bind each Family Atlas cue to its own chapter
+
+- Target: stop a previously revealed 3D marker from appearing to belong to the next brain-structure chapter after a family member swipes through the Atlas.
+- Bounded action: added explicit cue-to-chapter state; a chapter transition now clears the Atlas cue confirmation, presents the new chapter's quiet markers, and invites a fresh deliberate reveal. Added a deterministic next-chapter proof route.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-174042/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-atlas-next-chapter` capture at `/tmp/strokecare-family-atlas-next-chapter-20260812-1753.png` was inspected and visibly shows `Corpus callosum`, `REVEAL IN 3D · OPEN INSIDE-BRAIN JOURNEY`, and a central brain with quiet new markers, not the old active artery cue.
+- Verdict: `IMPROVED` — the Atlas now preserves a one-chapter, one-deliberate-cue spatial learning model rather than leaving stale spatial context across chapters.
+- Blocker: Simulator does not establish physical gaze-and-pinch targeting, depth, or family comprehension; XCAT remains unavailable.
+- Next safe action: run the chapter-swipe then cue-reveal sequence with a non-clinician wearer on an unlocked Vision Pro before expanding the Atlas beyond its reviewed ten structures.
+
+## 2026-08-12 19:43 SGT — make the deep-structure room-scale handoff discoverable
+
+- Target: help a family member who has chosen a deep Atlas structure understand what to do after the existing room-scale magnification threshold is reached.
+- Bounded action: added a deep-chapter-only `ROOM SCALE READY · USE ENTER THE BRAIN BELOW` confirmation inside the Atlas and a deterministic proof route for the Corpus callosum handoff; the existing `ENTER THE BRAIN` control still opens the separately installed guided vessel journey.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-182723/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded. The first immediate screenshot was black and was rejected as insufficient; a fresh settled capture at `/tmp/strokecare-family-atlas-interior-ready-retry-20260812-1834.png` was inspected and visibly shows room-scale generic brain anatomy, the `Corpus callosum` Atlas, `ROOM SCALE READY`, and the orange `ENTER THE BRAIN` family control.
+- Verdict: `IMPROVED` — deep Atlas chapters now state the room-scale transition explicitly instead of requiring the wearer to discover the separate journey control unaided.
+- Blocker: Simulator does not prove cross-app handoff success, physical control reach, stereo depth, or wearer comprehension; XCAT remains unavailable and the paired guided journey must be installed separately.
+- Next safe action: install both experiences on an unlocked Vision Pro and verify one deliberate `Enter the Brain` handoff end-to-end before describing the journey as device-ready.
+
+## 2026-08-12 20:01 SGT — inspect a recoverable inside-brain handoff cue
+
+- Target: make the `ENTER THE BRAIN` companion-app handoff recoverable if the separate journey is not installed.
+- Bounded action: tested a small visible fallback cue after the handoff request, then rejected and reverted it when it did not render in the room-scale Simulator proof.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-194550/BLOCKED.md`; `python3 Tests/verify_contract.py` passed and a narrow visionOS Simulator Debug build succeeded during the attempted change; fresh `--proof-interior-handoff --proof-interior-handoff-notice` capture at `/tmp/strokecare-interior-handoff-clean-20260812-2001.png` was inspected and shows no readable fallback cue.
+- Verdict: `NEUTRAL` — no unverified recovery UI was shipped; the existing separately installed journey control is unchanged.
+- Blocker: the current room-scale composition can leave the control/cue outside the captured field, and Simulator cannot establish companion-app launch or wearer legibility; XCAT remains unavailable.
+- Next safe action: redesign the handoff as an anatomy-attached, in-field cue and test it on an unlocked Vision Pro with both applications installed.
+
+## 2026-08-12 21:56 SGT — strengthen Family Atlas room contrast
+
+- Target: keep the family Brain Atlas readable over a real room without turning the explainer into a large flat vessel map or competing with the central 3D anatomy.
+- Bounded action: raised only the existing Atlas backing opacity from `0.56` to `0.72`; its one-chapter swipe rhythm, single selected 3D cue, and peripheral attachment placement are unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-214831/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-contrast-20260812-2156.png` was inspected and visibly shows a clearer `Arterial routes` three-beat Atlas beside the central 3D brain, arteries, and qualitative flow cues.
+- Verdict: `IMPROVED` — the family explanation has better environmental contrast while the live 3D model remains dominant.
+- Blocker: Simulator does not prove headset legibility, physical pinch-drag reach, room lighting performance, or family comprehension; XCAT remains unavailable.
+- Next safe action: test the Atlas in a bright physical room with a non-clinician wearer on an unlocked Vision Pro before changing its content density or adding unreviewed topics.
+
+## 2026-08-12 22:04 SGT — make the Family Atlas explanation target explicit
+
+- Target: make the family Atlas’s three short explanations easy to discover and pinch without adding a new panel or reducing the central 3D model to a diagram.
+- Bounded action: turned the existing central chapter card into a bordered `150`-point minimum pinch target with a visible `PINCH FOR THE NEXT SHORT EXPLANATION` affordance; chapter arrows, pinch-drag chapter navigation, and the separate `REVEAL IN 3D` action remain distinct.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-220014/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-pinch-target-20260812-2204.png` was inspected and visibly shows the enlarged central pinch target, one-chapter Atlas, central brain/arteries, and qualitative flow cues.
+- Verdict: `IMPROVED` — the wearer now has one unambiguous target for progressing the explanation while spatial discovery remains a deliberate separate action.
+- Blocker: Simulator does not establish physical gaze-and-pinch reliability, reach, stereo legibility, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate the card’s target size and swipe-versus-pinch distinction with a non-clinician wearer on an unlocked Vision Pro before adding further Atlas interactions.
+
+## 2026-08-12 22:20 SGT — enlarge fixed clinician timeline targets
+
+- Target: make all six presenter checkpoints easier to gaze-and-pinch at room scale without shifting their locations when a step becomes active.
+- Bounded action: enlarged each fixed target field from `92` to `108` points and its visible disc from `56` to `64` points; contextual wording still appears only initially or on hover and then fades.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-220727/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-clinician-six-beat-timeline` capture at `/tmp/strokecare-presenter-timeline-target-20260812-2220.png` was inspected and visibly shows six spaced fixed targets with the active step marked.
+- Verdict: `IMPROVED` — the six-step teaching timeline is more legible and has larger stable acquisition fields without becoming a permanent label wall.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reliability, reach, stereo legibility, or clinician workflow fit; XCAT is unavailable.
+- Next safe action: validate all six targets on an unlocked Vision Pro with a clinician presenter before changing timeline content or adding more controls.
+
+## 2026-08-12 22:30 SGT — enlarge the browsable Family Brain Atlas
+
+- Target: make the family-side, ten-chapter brain-structure explanation more readable while retaining the central 3D anatomy as the spatial hero.
+- Bounded action: widened the optional Atlas attachment from `640` to `720` points and raised its attached reading scale from `1.02` to `1.10`; its existing one-chapter pinch/drag navigation, three short Position → Meaning → Ask beats, and one-at-a-time 3D cue remain unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-221932/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-brain-atlas` capture at `/tmp/strokecare-atlas-enlarged-20260812-2230.png` was inspected and visibly shows the wider Arterial routes explanation beside the central 3D brain, arteries, and discrete flow cues.
+- Verdict: `IMPROVED` — the browsing explanation is more legible without replacing the anatomy with a flat vessel map.
+- Blocker: Simulator cannot establish headset text legibility, physical pinch-drag reliability, reach, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the widened Atlas with a non-clinician wearer on an unlocked Vision Pro before adding any new medical topics or disclosures.
+
+## 2026-08-12 22:40 SGT — separate the selected-point callout from anatomy detail
+
+- Target: preserve a selected point’s local spatial explanation without allowing its wording to overlap the central 3D brain.
+- Bounded action: moved the point-owned callout outward from `[0.034, 0.026, 0.016]` to `[0.064, 0.052, 0.032]` relative to its selected point and added a compact dark callout backing; the explanation remains parented to the selected point field and the registered vessel reference remains world-locked in the secondary right field.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-222921/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-selected-point-callout-20260812-2240.png` was inspected and visibly shows the `EXAMPLE AFFECTED AREA` callout clearing the brain silhouette, with its generic/non-measured boundary and one separate vessel teaching reference.
+- Verdict: `IMPROVED` — selected-point content is now a readable spatial callout rather than text competing with the anatomy surface.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targetability, stereo depth, wearer legibility, or clinical correctness; XCAT is unavailable.
+- Next safe action: test the point-to-callout and point-to-reference relationship on an unlocked Vision Pro before adding more reference types.
+
+## 2026-08-12 22:50 SGT — bring the selected vessel reference into the right reading field
+
+- Target: make the selected-point vessel teaching object feel like a legible second 3D object rather than a small model lost in room furniture.
+- Bounded action: moved the world-locked registered vessel miniature from `[0.50, 1.62, -0.86]` to `[0.40, 1.60, -0.80]` and increased its scale from `0.90` to `1.04`; it remains separate from the hero anatomy and is still not presented as patient imaging.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-223846/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-reference-field-20260812-2250.png` was inspected and visibly shows the enlarged world-locked vessel reference inside the right reading field with the point provenance/generic-teaching caption.
+- Verdict: `IMPROVED` — the reference reads as a deliberate secondary spatial object while the central brain remains dominant.
+- Blocker: Simulator does not prove headset depth, physical reach, point targeting, wearer legibility, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate relative hero/reference depth and reach on an unlocked Vision Pro before adding further objects to the secondary field.
+
+## 2026-08-12 22:51 SGT — enlarge shared Family clarification cues
+
+- Target: make the authored Questions to Ask and explicit self-reported clarity cue readable during a shared family conversation without creating a patient-monitoring surface.
+- Bounded action: widened the Family clarification attachment from `360` to `430` points and raised its attached scale from `0.72` to `0.86`; the central 3D brain, finite authored questions, and explicit self-reported wording remain unchanged.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-224337/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-clarity-enlarged-20260812-2310.png` was inspected and visibly shows the larger questions and clarity surface beside the central brain and anatomy-attached points.
+- Verdict: `IMPROVED` — shared family prompts are more legible while the spatial anatomy remains the hero and clarity stays explicitly self-reported.
+- Blocker: Simulator does not establish headset legibility, physical reach, pinch reliability, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the enlarged family clarification surface with a non-clinician wearer on an unlocked Vision Pro before changing its content.
+
+## 2026-08-12 22:56 SGT — remove the detached pressure ring from the Family explainer
+
+- Target: stop the peripheral radial pressure-boundary graphic from competing with family-facing brain anatomy and being mistaken for a data visualisation.
+- Bounded action: restricted the fixed-space boundary ring to clinician lessons; the Family explainer retains its central brain, arteries, quiet anatomy-attached discovery points, and one local explanation path.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-225313/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-clarity-no-boundary-20260812-2256.png` was inspected and visibly shows the radial ring absent while the family questions and 3D anatomy remain.
+- Verdict: `IMPROVED` — the family scene now reads as a calm spatial anatomy explanation rather than a graph around the brain.
+- Blocker: Simulator cannot establish wearer legibility, physical targetability, room placement, or family comprehension; XCAT remains unavailable.
+- Next safe action: validate the cleaner Family composition with a non-clinician wearer on an unlocked Vision Pro before adjusting any remaining clinician-only cues.
+
+## 2026-08-13 00:28 SGT — keep the technical Pressure boundary out of Family mode
+
+- Target: remove the second detached radial graphic around the Family Pressure teaching view while preserving the direct clot-derived target.
+- Bounded action: restricted the registered Pressure story’s affected-area disc and dashed swelling boundary to clinician mode; the Family explainer continues to show the direct clot target, brain, arteries, quiet point prompts, and one selected local explanation.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260812-235933/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-pressure-direct-target-20260813-0003.png` was inspected and visibly shows the radial cue absent with the point-owned targets retained.
+- Verdict: `IMPROVED` — Family Pressure now reads as an anchored anatomy lesson rather than an unexplained data graphic.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the Family Pressure composition with a non-clinician wearer on an unlocked Vision Pro before revising any additional Family teaching cues.
+
+## 2026-08-13 00:33 SGT — strengthen the central Family anatomy hero
+
+- Target: use the primary spatial field more intentionally so the 3D brain and arterial anatomy read as the shared explanation’s hero rather than a small object in an otherwise empty room.
+- Bounded action: raised the explanation scale from `2.12` to `2.34` and the Orient scale from `1.98` to `2.18`, preserving the world-locked secondary reference, left family conversation surface, and lower controls.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-003000/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the default DerivedData build was blocked by an existing build database lock, then the same narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-primary-scale`; fresh `--proof-family-clarity` capture at `/tmp/strokecare-family-hero-scale-20260813-0033.png` was inspected and visibly shows the enlarged central anatomy clear of the Family questions and controls.
+- Verdict: `IMPROVED` — the shared anatomy has stronger room-scale presence while peripheral surfaces remain secondary.
+- Blocker: Simulator cannot prove actual headset scale comfort, reach, physical pinch reliability, room placement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: validate the enlarged hero scale with a non-clinician wearer on an unlocked Vision Pro before further resizing or adding new Family content.
+
+## 2026-08-13 08:59 SGT — inspect Family point-to-reference composition
+
+- Target: ensure a selected anatomy point yields one intelligible local explanation and a genuinely secondary teaching reference, rather than a room decoration or a competing second hero.
+- Bounded action: inspected the deterministic `--proof-family-selected-point` route after the preceding Family hero changes; tested a compact secondary-reference/caption placement, then reverted it when the inspected render made the relationship less legible.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-010924/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-caption`; inspected captures `/tmp/strokecare-family-selected-point-20260813-0110.png`, `/tmp/strokecare-family-selected-point-clear-reference-20260813-0130.png`, and `/tmp/strokecare-family-secondary-reference-20260813-0140.png` showed that the experimental compact placement reduced reference legibility, so no speculative layout change was retained.
+- Verdict: `NEUTRAL` — the existing selected-point composition is still the clearer of the tested variants; the inspection narrowed the next annotation redesign.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: prototype a point-owned three-part annotation (title, one plain-language sentence, optional "show me" action) and evaluate it as a complete spatial disclosure rather than by repositioning the current caption alone.
+
+## 2026-08-13 09:13 SGT — make Family point references progressive
+
+- Target: replace automatic second-object disclosure with a calmer point-owned explanation that lets a Family wearer choose whether to see the related 3D reference.
+- Bounded action: added explicit Family selection state and a `Show reference` / `Hide reference` action to the local point annotation. Selecting a point now shows its short generic meaning first; the related registered teaching object remains hidden until the wearer requests it. Clinician selection retains its existing direct teaching-reference behavior.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-090410/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-disclosure`; inspected fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-progressive-disclosure-20260813-0920.png` visibly shows the one local annotation and its explicit reference action, with no competing secondary anatomy object.
+- Verdict: `IMPROVED` — Family discovery now has a legible first explanation and a deliberate second spatial layer instead of an automatic reference reveal.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: test the two-step disclosure with a Family wearer on an unlocked Vision Pro and record whether the action label, reach, and reference relationship are clear.
+
+## 2026-08-13 10:01 SGT — map each Family point to its full 3D teaching structure
+
+- Target: make the selected point disclose the structure it actually reveals, so a vessel point can open the complete arterial tree while a surface/context point opens a complete brain-surface object.
+- Bounded action: kept the explicit point-first Family flow and added a third registered teaching lens, `brainSurface`, cloned from the already-loaded generic registered-v2 brain. Point actions now say `Show arterial tree`, `Show brain surface`, or `Show layer view`; flow/affected points map to the arterial tree, surface/context points map to the brain surface, and the permission-gated care act retains its layer view.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-091316/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-owned-structures`; fresh `--proof-family-surface-reference` capture at `/tmp/strokecare-family-surface-reference-20260813-1000.png` passed route OCR (2/2) and was inspected, showing the selected Brain surface annotation, matching hide action, caption provenance, and distinct full brain-surface object in the right field.
+- Verdict: `IMPROVED` — anatomy points now lead to legible, structure-specific 3D teaching objects rather than a generic reference label.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: test an arterial-tree point and a brain-surface point with a Family wearer on an unlocked Vision Pro, then record whether the two reference choices are easy to distinguish.
+
+## 2026-08-13 10:07 SGT — verify the complete arterial-tree teaching reference
+
+- Target: ensure every current vascular point maps explicitly to the complete arterial teaching structure, not merely a text annotation or an ambiguous generic reference.
+- Bounded action: made the point-to-lens map exhaustive for all current region, blood-flow, and access labels; added a deterministic arterial-tree route and proof gate. The `Example blockage` point now discloses the world-locked complete arterial tree with the point provenance caption, while brain-surface/context labels retain their distinct brain-surface object.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-100243/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-arterial-reference`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-20260813-1005.png` passed route OCR (2/2) and was inspected, showing `Hide arterial tree`, the full arterial object in the secondary field, and `FROM POINT · EXAMPLE BLOCKAGE` provenance.
+- Verdict: `IMPROVED` — the complete arterial-tree path is now explicit, structure-specific, and separately evidenced from the surface-reference path.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: test the arterial-tree and brain-surface disclosure paths with a Family wearer on an unlocked Vision Pro, and record which relationship is clearer.
+
+## 2026-08-13 10:18 SGT — clarify the full-structure teaching payoff
+
+- Target: make it immediately clear that selecting a point can reveal a complete related 3D structure, while keeping the local annotation subordinate to the anatomy.
+- Bounded action: renamed the Family actions and secondary captions to `full arterial tree` and `whole brain surface`; added lens-specific generic-atlas boundaries; reduced the selected-point annotation scale from `0.78` to `0.48` so the full 3D reference remains visually dominant.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-100916/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-copy-final`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-final-20260813-1018.png` passed route OCR (2/2) and was inspected, visibly showing `Hide full arterial tree`, the full arterial object in the secondary field, and the more compact local cue.
+- Verdict: `IMPROVED` — selected points now make the complete structure they reveal explicit, with a quieter point-owned explanation.
+- Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: have a Family wearer compare the arterial-tree and whole-brain-surface paths on an unlocked Vision Pro before expanding the reference catalog.
+
+## 2026-08-13 10:31 SGT — reject a point-to-reference bridge that fails at room scale
+
+- Target: make the selected point’s relationship to its full 3D teaching structure more spatially explicit without adding a second text surface.
+- Bounded action: prototyped five non-interactive dotted 3D bridge segments between the selected point and the world-locked teaching object, then inspected the deterministic arterial-reference route.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-102212/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-bridge-final`; the fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-reference-bridge-final-20260813-1031.png` failed its route check and inspection showed the bridge transformed into oversized room-scale geometry. The experiment was fully reverted; no bridge code is retained.
+- Verdict: `REGRESSED` — the test would have obscured the anatomy and falsely implied a clean spatial connection, so the established point provenance caption remains preferable.
+- Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the existing point-provenance caption and full-structure reference with a Family wearer on an unlocked Vision Pro before introducing another relationship cue.
+
+## 2026-08-13 10:55 SGT — prove the Family craniotomy layer reference
+
+- Target: give the access-story point the same complete-structure payoff as vessel and surface points, without turning the explainer into an operative simulation.
+- Bounded action: added a deterministic Family route that enters the existing permission-granted generic craniotomy teaching story, selects its authored access point, and opens the complete making-room layer relationship in the secondary field.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-104951/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-layer-reference`; fresh `--proof-family-layer-reference` capture at `/tmp/strokecare-family-layer-reference-20260813-1055.png` passed route OCR (2/2) and was inspected, showing the selected generic craniotomy point, `Hide layer view`, and the matching `MAKING-ROOM PURPOSE · TEACHING VIEW` reference.
+- Verdict: `IMPROVED` — all three current teaching-reference families now have a verified point-owned disclosure: full arterial tree, whole brain surface, and generic layer relationship.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: conduct one physical Vision Pro walkthrough with a clinician and a family tester, comparing the three references before adding more content.
+
+## 2026-08-13 11:03 SGT — contextualize the complete arterial teaching reference
+
+- Target: let a selected vessel point reveal the arterial network as part of the whole brain, rather than as a disconnected red object.
+- Bounded action: added a low-opacity clone of the already-loaded registered-v2 brain behind the existing complete arterial tree and unchanged generic clot. It is context only; it neither adds a patient-specific claim nor changes the point-first disclosure.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-110141/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-arterial-brain-context`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-brain-context-20260813-1103.png` passed route OCR (2/2) and was inspected, showing the full arterial tree in a quiet whole-brain context beside the selected blockage explanation.
+- Verdict: `IMPROVED` — vessel teaching references now preserve the brain-wide spatial relationship requested by the point, while the hero anatomy and local explanation remain distinct.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: have a clinician and family tester compare the contextual arterial reference with the surface and layer references on Vision Pro before adding additional point families.
+
+## 2026-08-13 11:09 SGT — complete the generic access-layer teaching reference
+
+- Target: ensure the craniotomy access point reveals the entire generic skull–dura–brain relationship, not only an isolated covering and target cue.
+- Bounded action: added low-opacity skull and brain context clones behind the existing conceptual dura layer and unchanged target cue. The view remains a static, non-graphic explanatory assembly behind the existing Family permission boundary; it does not depict cutting, a patient-specific site, or an operative plan.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-110644/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-purpose-whole-context`; fresh `--proof-family-layer-reference` capture at `/tmp/strokecare-family-purpose-whole-context-20260813-1109.png` passed route OCR (2/2) and was inspected, showing the generic access point and complete translucent layer relationship in the right secondary field.
+- Verdict: `IMPROVED` — each current point family now reveals a complete related teaching structure: arterial route in brain, brain surface, or generic skull–dura–brain layer relationship.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: run one supervised Vision Pro walkthrough comparing all three full-structure disclosures before adding new point families.
+
+## 2026-08-13 12:31 SGT — clarify the exterior exhibit and retain a bounded interior handoff
+
+- Target: prevent the main whole-brain explainer from being mistaken for an inside-the-brain simulation, while retaining the existing separate vessel-journey handoff.
+- Bounded action: added an always-visible peripheral exterior-orientation cue and moved the detailed teaching miniature into the world stage before its first visibility mutation, preventing it from inheriting the hero brain's room-scale transform when a point is preselected.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-122259/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; the current source retains the explicit `rbcjourney://enter` handoff at room scale. A fresh `--proof-family-arterial-reference` capture was inspected at `/tmp/strokecare-family-arterial-reference-exterior-clarity-20260813-1231.png`, but it was blocked by the Simulator system confirmation `Open in “Inside the Flow”?`, so it is not accepted as an exterior visual proof.
+- Verdict: `IMPROVED` — the product now states that the current view is generic outside-the-brain anatomy and avoids the known first-frame inherited-scale reference failure; the interior journey remains an explicit separate handoff.
+- Blocker: the lingering Simulator cross-app confirmation prevents a clean deterministic exterior capture. Simulator and an unavailable XCAT cannot establish wearer comprehension, physical targeting, spatial comfort, or clinical validity.
+- Next safe action: clear the system confirmation on-device or in a freshly reset Simulator, then capture the exterior arterial-reference route before adding further point-specific highlights.
+
+## 2026-08-13 12:41 SGT — explain each point's relationship to its complete 3D reference
+
+- Target: remove the ambiguity between a selected anatomy point and the complete teaching structure that appears in the right secondary field.
+- Bounded action: added a point-specific relationship map for all ten current invitations; the selected-point caption now states `POINT → FULL 3D STRUCTURE` and identifies tissue context, surface, opposite-side comparison, arterial route, branch, blockage, downstream flow, affected territory, or the generic skull–dura–brain layer relationship. Enlarged the secondary 3D object and its caption while preserving its subordinate right-field placement.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-123345/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-relationship-v2`; after restarting the Simulator to clear a stale cross-app confirmation, the fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-point-relationship-v2-20260813-1241.png` passed route OCR (2/2) and was inspected, showing `Example blockage`, the complete enlarged arterial tree, `POINT → FULL 3D STRUCTURE`, and `BLOCKAGE · GENERIC FLOW INTERRUPTION`.
+- Verdict: `IMPROVED` — the wearer can now distinguish the selected local invitation, the whole related 3D structure, and the exact generic relationship being taught.
+- Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the ten point-to-structure relationships with one clinician and one family wearer on an unlocked Vision Pro before adding new point families.
+
+## 2026-08-13 12:53 SGT — localize the selected point inside its full 3D reference
+
+- Target: make the connection between each selected invitation and the complete right-side teaching structure spatially visible, rather than relying on copy alone.
+- Bounded action: added one quiet, non-interactive beacon for every authored point inside the existing arterial, brain-surface, or skull–dura–brain reference; only the currently selected point's beacon is enabled. The generic access beacon identifies the assembled layer relationship and is explicitly not a patient-specific site.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-124307/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-highlight`; fresh captures for `--proof-family-arterial-reference`, `--proof-family-surface-reference`, and `--proof-family-layer-reference` passed route OCR (2/2 each) and were visually inspected at `/tmp/strokecare-family-point-highlight-20260813-1247.png`, `/tmp/strokecare-family-surface-highlight-20260813-1248.png`, and `/tmp/strokecare-family-layer-highlight-fixed-20260813-1252.png`. The first layer placement was rejected as too detached and recaptured after moving the beacon onto the assembled cutaway.
+- Verdict: `IMPROVED` — a selected local point now has an explicit counterpart inside its complete 3D teaching reference across all three current families.
+- Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: compare all ten point-to-reference beacons with a clinician and family wearer on Vision Pro before authoring additional reference families.
+
+## 2026-08-13 13:02 SGT — make the first role choice self-explanatory
+
+- Target: let a first-time wearer understand the Family and Doctor journeys before committing to either immersive route.
+- Bounded action: replaced the two terse launch buttons with larger role cards. Family now promises a calm guided anatomy exhibit with questions, narration, and plain-language explanations; Doctor now promises a fictional case-led story with the presenter timeline, teaching references, and evidence. Added a deterministic `--proof-role-choice` route and OCR contract.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-125404/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-role-choice`; fresh capture `/tmp/strokecare-role-choice-20260813-1301.png` passed route OCR (2/2) and was visually inspected.
+- Verdict: `IMPROVED` — the initial choice now communicates audience, interaction style, and available support instead of asking the wearer to infer those differences from role names.
+- Blocker: Simulator cannot establish physical gaze/pinch targeting, wearer comprehension, comfort, or clinical validity; XCAT remains unavailable.
+- Next safe action: run a physical cold-start test and ask one unfamiliar wearer to explain the two choices before selecting either card.
+
+## 2026-08-13 13:30 SGT — establish the post-hackathon product threshold
+
+- Target: replace the rushed hackathon entry with a coherent Curious Learner threshold, explicit point-local voice consent, and a safe physical-model request foundation.
+- Bounded action: added a four-beat, skippable conceptual spatial prelude (whole brain and vessels, cortical columns, neuron network, invitation); reframed Family as `Curious learner`; added a selected-point `Yes / Not now` Realtime invitation that remains silent when the proxy is unavailable; added a clinician `Teaching model` reference lane and local review-only request for three already-catalogued generic model configurations.
+- Evidence: `python3 Tests/verify_contract.py` passed; `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-v2-build`; fresh captures passed route OCR for `--proof-spatial-prelude` (`/tmp/strokecare-spatial-prelude-20260813.png`), `--proof-role-choice` (`/tmp/strokecare-role-choice-v2.png`), `--proof-realtime-narration` (`/tmp/strokecare-family-voice-invitation-v2.png`), and `--proof-print-request` (`/tmp/strokecare-print-request-v2.png`). All four were visually inspected.
+- Verdict: `IMPROVED` — the product now tells a spatial story before the role choice, makes learner voice assistance explicit and reversible, and turns the 3D-print idea into an honest review artifact rather than a false live-order claim.
+- Blocker: the voice lane still requires the separately configured Realtime proxy; the print lane has no vendor, upload, pricing, order, manufacturability, or licensing integration; Simulator does not establish wearer comfort, physical targeting, clinical correctness, or device readiness.
+- Next safe action: validate the four-beat prelude and selected-point voice invitation with one Curious Learner, then refine timing and language from that observed walkthrough before expanding content families.
+
+## 2026-08-13 13:44 SGT — give surface Atlas chapters complete localized 3D references
+
+- Target: make each surface chapter teach through the complete brain rather than reusing a generic point or opening an unrelated vessel reference.
+- Bounded action: mapped the cortex and four lobe chapters to the existing complete generic brain-surface teaching object, added one chapter-specific non-interactive focus beacon inside that object, and kept the selected chapter's plain-language sequence in the left Atlas.
+- Evidence: `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-focus-build`; fresh `--proof-family-atlas-surface-cue` capture `/tmp/strokecare-family-atlas-full-reference-20260813.png` passed route OCR (2/2), image metrics, process checks, and was visually inspected. It shows `Frontal lobe` in the Atlas, the dominant hero anatomy, and a separate `WHOLE BRAIN SURFACE · TEACHING VIEW` with a localized cyan focus.
+- Verdict: `IMPROVED` — surface Atlas chapters now answer both “which structure?” and “where is it in the whole brain?” without presenting a patient scan or a precise functional boundary.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, anatomical registration accuracy, or clinical correctness.
+- Next safe action: extend this same named full-structure grammar to one reviewed deep-structure chapter after a clinician approves its source registration and wording.
+
+## 2026-08-13 13:52 SGT — restore a clear Atlas–anatomy–reference hierarchy
+
+- Target: remove the duplicate selected-point card that obscured the hero brain after an Atlas chapter revealed its complete 3D reference.
+- Bounded action: made the left Family Atlas own the chapter explanation, optional voice decision, and reversible Show/Hide reference action; suppressed the duplicate center annotation only while that Atlas chapter owns the active selection. Ordinary anatomy points retain their existing local explanation card.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-134612/BLOCKED.md`; `python3 Tests/verify_contract.py` and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-hierarchy-build`; fresh `--proof-family-atlas-surface-cue` capture `/tmp/strokecare-family-atlas-clean-hierarchy-20260813.png` passed route OCR (2/2), image metrics, and process checks and was visually inspected against the prior capture. The left Atlas contains `Frontal lobe`, `HIDE · WHOLE BRAIN SURFACE`, and the optional voice choice; the center contains unobstructed hero anatomy; the right contains the localized complete-brain reference.
+- Verdict: `IMPROVED` — each spatial surface now has one job, and revealing an Atlas chapter no longer creates a second explanation window over the anatomy.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, or clinical correctness; XCAT is currently unavailable.
+- Next safe action: test the Atlas reveal and Show/Hide cycle with one unfamiliar wearer on an unlocked Vision Pro before further increasing chapter density.
+
+## 2026-08-13 14:01 SGT — give every surface chapter its own spatial invitation
+
+- Target: stop Brain Atlas chapters from reusing or misplacing generic lesson dots, especially the cortex and temporal-lobe chapters that previously shared one anchor.
+- Bounded action: added a dedicated five-point Atlas field registered to the generic whole-brain envelope. Cortex, frontal, parietal, temporal, and occipital chapters now each select one distinct lifted invitation with a tether; the ordinary four-region point cloud is hidden while the Atlas owns the lesson.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-135318/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-distinct-build`; fresh frontal and temporal captures passed route OCR (2/2), image metrics, and process checks at `/tmp/strokecare-atlas-frontal-distinct-20260813.png` and `/tmp/strokecare-atlas-temporal-distinct-20260813.png`. Visual comparison confirms the frontal invitation is high/anterior while the temporal invitation moves lower/lateral, and the right full-brain reference beacon moves with the selected chapter.
+- Verdict: `IMPROVED` — each surface chapter now has one coherent hero-brain invitation and one matching localized full-structure reference instead of borrowing a repeated generic dot.
+- Blocker: these are generic teaching anchors, not sulcal boundaries or patient-specific landmarks; Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness, and XCAT remains unavailable.
+- Next safe action: have a neuroanatomist review all five generic Atlas marker locations together on an unlocked Vision Pro before adding deeper structure chapters.
+
+## 2026-08-13 14:57 SGT — reveal bundled internal anatomy without inventing segmentation
+
+- Target: give the four deeper Brain Atlas chapters a real in-app 3D teaching reference instead of sending every chapter directly to the separate inside-brain journey.
+- Bounded action: added one mutually exclusive right-field reference composed from the bundled registered-v2 combined deep-structures mesh, ventricular system, and a quiet whole-brain envelope; updated the Atlas, narration, caption grammar, deterministic route, and clinical-review packet so Thalamus and the other deep chapters are explicitly presented as chapter-to-combined-context relationships, never separately segmented landmarks or patient anatomy.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-140410/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-internal-build`; fresh `--proof-family-atlas-internal-reference` capture `/tmp/strokecare-atlas-internal-reference-final-20260813.png` passed route OCR (2/2), image metrics, and process checks and was visually inspected. It shows the Thalamus chapter, dominant exterior anatomy, and a distinct right-side `INTERNAL STRUCTURES + VENTRICLES` 3D reference labelled `CHAPTER → COMBINED 3D CONTEXT`.
+- Verdict: `IMPROVED` — deeper Atlas chapters now reveal actual bundled internal geometry while stating the source's segmentation limit instead of implying a precise thalamic, hippocampal, or callosal highlight.
+- Blocker: the source USDZ exposes one combined deep-structures mesh and one ventricular mesh, not separately named deep structures. Its labels and registration remain pending neuroanatomist review; Simulator does not establish wearer comprehension, stereo placement, comfort, or clinical correctness.
+- Next safe action: obtain a licensed stable-ID structure manifest plus one sample segmented mesh, then prove one named deep structure end-to-end before expanding the four chapter references.
+
+## 2026-08-13 15:18 SGT — make qualitative arterial motion visible and provable
+
+- Target: make the complete arterial teaching reference communicate route direction instead of appearing as another static vessel model.
+- Bounded action: added seven sparse amber markers that travel toward the selected example blockage and only two dim markers beyond it; Pause and Reduce Motion hold a fixed readable composition. Fixed an epoch-to-`Float` precision bug that the new two-frame proof exposed, then added a reusable ROI motion-pair verifier.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-145953/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, `git diff --check`, and the narrow generic visionOS Simulator build at `/tmp/strokecare-flow-reference-build` passed. Fresh `--proof-family-arterial-reference` capture `/tmp/strokecare-flow-reference-fixed-a-20260813.png` passed route OCR (2/2) and was visually inspected. A second frame two seconds later at `/tmp/strokecare-flow-reference-fixed-b-20260813.png` passed the right-reference ROI motion proof with a 0.006545 changed-pixel ratio, versus exactly 0 before the precision fix.
+- Verdict: `IMPROVED` — the full 3D arterial reference now visibly distinguishes approach to the generic blockage from the sparse downstream continuation, and future captures have an automated check that rejects a frozen reference.
+- Blocker: marker density and direction remain app-authored qualitative teaching cues pending specialist review. Simulator cannot establish wearer targeting, stereo depth, comfort, comprehension, clinical correctness, or physical-device motion quality; XCAT is unavailable.
+- Next safe action: have a stroke clinician review the route direction, marker density, and `not CFD` wording together on an unlocked Vision Pro before adding collateral-flow or perfusion concepts.
+
+## 2026-08-13 16:16 SGT — keep one selected-point explanation clear of the anatomy
+
+- Target: stop an ordinary selected lesson point from creating two competing disclosures across the magnified hero anatomy.
+- Bounded action: consolidated the former `VESSEL STORY` capsule and intention card into one stage-space callout containing the selected point title, bounded meaning, explicit optional-voice choice, reversible full-reference action, and close control. The callout resolves from the anatomy point into stage coordinates, clears the brain silhouette, and no longer inherits hero scale. The arterial proof now waits at least 15 seconds and requires `Hear more` in addition to its point and structure tokens so a partially loaded frame cannot pass.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-151846/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-single-callout-build`; an initial black compositor frame and an anatomy-overlapping recovery frame were rejected. The final fresh `--proof-family-arterial-reference` capture `/tmp/strokecare-family-single-callout-final-20260813.png` passed image metrics and route OCR (3/3) and was visually inspected, showing one readable callout beside the hero brain and a separate complete arterial reference.
+- Verdict: `IMPROVED` — point selection now yields one coherent spatial explanation without obscuring the anatomy or duplicating controls.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer reading comfort, comprehension, or clinical correctness; XCAT is unavailable.
+- Next safe action: test point selection, `Hear more`, Show/Hide reference, and close as one loop with an unfamiliar Curious Learner on an unlocked Vision Pro.
+
+## 2026-08-13 17:24 SGT — connect a selected point to its spatial explanation
+
+- Target: make the relationship between the selected anatomy invitation and its explanation immediately legible without adding another panel or permanent label cloud.
+- Bounded action: added a quiet, two-segment stage-space leader from the selected point's live transformed position to the existing explanation card. The leader is non-interactive, leaves the anatomy before turning toward the card, follows zoom/orbit updates, and disappears whenever the point-owned callout is not visible.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-171527/BLOCKED.md`; `python3 Tests/verify_contract.py` and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-point-connector-build`; fresh `--proof-family-arterial-reference` capture `/tmp/strokecare-point-callout-connector-20260813.png` passed route OCR (3/3), image metrics, and process checks and was visually inspected against `/tmp/strokecare-family-single-callout-final-20260813.png`. The amber leader visibly begins at the selected white orb, clears the lower cortex, and terminates at the callout's leading edge.
+- Verdict: `IMPROVED` — the selected point, its explanation, and the separate full 3D arterial reference now read as one authored sequence rather than three nearby objects whose relationship must be inferred.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, clinical correctness, or whether the leader remains comfortable from every room viewpoint; XCAT is unavailable.
+- Next safe action: validate the point-to-callout leader from two physical viewing angles with one unfamiliar Curious Learner before tuning thickness, depth, or colour.
+
+## 2026-08-13 17:49 SGT — localise every vessel point inside the complete arterial reference
+
+- Target: stop the five blood-flow invitations from appearing to reveal the same undifferentiated arterial miniature with different text.
+- Bounded action: retained the complete registered-v2 arterial tree and added a mutually exclusive amber route trace for Supply, Branch, Blockage, Beyond, and Territory. Supply now illuminates the proximal approach, Branch the division and both continuations, Blockage the interrupted segment, Beyond one distal continuation, and Territory a separate terminal dependency cue. These are explicitly generic teaching samples—not segmented centre-lines, patient landmarks, perfusion measurements, or a navigation plan.
+- Evidence: `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-point-route-reference-build`. Fresh `--proof-family-arterial-supply-reference` and `--proof-family-arterial-beyond-reference` captures passed image metrics, route OCR (2/2 each), and process checks at `/tmp/strokecare-arterial-supply-reference-20260813.png` and `/tmp/strokecare-arterial-beyond-reference-20260813.png`. Both were visually inspected: the former shows a low/proximal amber trace while the latter moves the trace to the distal branch; cropped right-field receipts have distinct SHA-256 hashes.
+- Verdict: `IMPROVED` — each vessel invitation now visibly answers “which part of the complete vessel map am I looking at?” instead of relying on caption changes alone.
+- Blocker: these route samples remain app-authored and pending stroke-clinician/anatomy review. Simulator cannot establish physical pinch targeting, stereo depth, wearer comprehension, registration accuracy, or clinical correctness.
+- Next safe action: review all five route traces together with a stroke clinician, then adjust or reject each generic sample before introducing named arterial segments.

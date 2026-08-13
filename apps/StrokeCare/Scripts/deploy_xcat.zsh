@@ -5,6 +5,10 @@ set -euo pipefail
 readonly DEVICE_ID="613CC48C-A6AD-5170-A238-D518B6012491"
 readonly DEVICE_NAME="XCAT"
 readonly BUNDLE_ID="com.arnav.StrokeTime"
+# The showcase build must exercise the actual product journey instead of
+# bypassing role choice and case intake with a deterministic proof route.
+# Machine receipts still prove launch/process state only; the wearer verifies
+# the prelude -> role -> case -> anatomy sequence separately.
 readonly PROOF_ROUTE="--hackathon-demo"
 readonly SCRIPT_DIR="${0:A:h}"
 readonly APP_ROOT="${SCRIPT_DIR:h}"

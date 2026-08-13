@@ -14,12 +14,23 @@ struct StrokeTimeApp: App {
             if CommandLine.arguments.contains("--proof-evidence-window") {
                 StrokeEvidenceWorkspaceView()
                     .environmentObject(experience)
+            } else if CommandLine.arguments.contains("--proof-imaging-window")
+                        || CommandLine.arguments.contains("--proof-imaging-ct")
+                        || CommandLine.arguments.contains("--proof-imaging-mri") {
+                StrokeTeachingImagingWorkspaceView()
+                    .environmentObject(experience)
+                    .onAppear { experience.prepareTeachingImagingProof() }
+            } else if CommandLine.arguments.contains("--proof-print-request") {
+                StrokeTeachingModelPrintRequestView(closeWindowID: StrokeSpace.window)
             } else {
                 StrokeJourneyLaunchView()
                     .environmentObject(experience)
             }
         }
-        .defaultSize(width: 620, height: 360)
+        .defaultSize(
+            width: CommandLine.arguments.contains("--proof-print-request") ? 900 : 820,
+            height: CommandLine.arguments.contains("--proof-print-request") ? 680 : 520
+        )
         .windowResizability(.contentSize)
 
         WindowGroup(id: StrokeSpace.family) {
@@ -66,6 +77,22 @@ struct StrokeTimeApp: App {
             }
         }
 
+        // A standard visionOS window is deliberately used here: the clinician
+        // can place this generic 2D reference anywhere in the room without
+        // moving the anatomy-attached explanation or central teaching model.
+        WindowGroup(id: StrokeSpace.imaging) {
+            StrokeTeachingImagingWorkspaceView()
+                .environmentObject(experience)
+        }
+        .defaultSize(width: 600, height: 470)
+        .windowResizability(.contentSize)
+
+        WindowGroup(id: StrokeSpace.printRequest) {
+            StrokeTeachingModelPrintRequestView(closeWindowID: StrokeSpace.printRequest)
+        }
+        .defaultSize(width: 900, height: 680)
+        .windowResizability(.contentSize)
+
         ImmersiveSpace(id: StrokeSpace.immersive) {
             StrokeImmersiveView(immersionStyle: $immersionStyle)
                 .environmentObject(experience)
@@ -79,5 +106,7 @@ enum StrokeSpace {
     static let family = "stroke-family-questions"
     static let presenter = "stroke-presenter-rail"
     static let evidence = "stroke-clinical-evidence"
+    static let imaging = "stroke-teaching-imaging"
+    static let printRequest = "stroke-teaching-model-print-request"
     static let immersive = "stroke-time-immersive"
 }

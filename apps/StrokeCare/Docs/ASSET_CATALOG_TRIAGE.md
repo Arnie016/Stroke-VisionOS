@@ -1,17 +1,18 @@
 # Stroke asset catalog runtime triage
 
-Updated after `git fetch --all --prune` on 8 August 2026.
+Updated after `git fetch --all --prune` on 10 August 2026.
 
 ## Repository comparison
 
 - The expanded catalog is already in the shared history through merge commit
   `b46d133` (`Merge 65-asset visionOS stroke education catalog (#2)`).
-- It contains **65 manifest-backed USDZ packages**: 36 higher-detail v2 assets
-  and 29 prototype-v1 assets.
-- No newer asset delta exists between this feature branch and `origin/main` at
-  the time of the fetch. The current main-only delta concerns XCAT acceptance
-  files, not anatomy or tool assets.
-- Stroke Care deliberately bundles an eight-asset runtime shortlist today. A
+- The merged catalog contains **65 manifest-backed USDZ packages**: 36
+  higher-detail v2 assets and 29 prototype-v1 assets.
+- Draft PR #8 at audited head `12728df2e856897a44df2bbfbe01236f8b142303`
+  adds 69 v3 packages, bringing the repository candidate catalog to **134 unique USDZ assets**.
+  Those draft files are metadata candidates, not current
+  app runtime dependencies.
+- Stroke Care deliberately declares a twenty-two-asset runtime slice today. A
   catalog file existing in Git is not proof that it is registered, clinically
   suitable, performant, or visible in the app.
 
@@ -19,13 +20,16 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 
 | Candidate | Size | Best role | Decision |
 |---|---:|---|---|
-| `brain_deep_structures_v2` | 2.2 MB | Clinician Regions field | Next, after opacity/occlusion visual QA. |
-| `brain_ventricles_v2` | 0.8 MB | Clinician Regions field | Next, after specialist label review. |
-| `cerebral_bloodflow_animation_v2` | 0.19 MB | Calm qualitative flow layer | High-value next experiment; play imported animation explicitly and retain non-CFD label. |
+| `brain_deep_structures_v2` | 2.2 MB | Clinician Study-apart field | Bundled and runtime-gated; Simulator opacity/occlusion proof still required. |
+| `brain_ventricles_v2` | 0.8 MB | Clinician Study-apart field | Bundled and runtime-gated; specialist label review still required. |
+| `cerebral_bloodflow_animation_v2` | 0.19 MB | Calm qualitative flow layer | Bundled and explicitly looped only after a deliberate Blood-flow point selection; non-CFD and motion proof remain required. |
+| `circle_of_willis_flow_overlay_v2` | 0.48 MB | Registered directional teaching cue | Bundled in the registered-v2 frame and point-gated; authored route lines/chevrons are qualitative, not CFD or a patient measurement. Simulator composition proof exists; XCAT and specialist review remain required. |
+| `dural_sinuses_jugulars_realistic_v2` | 4.22 MB | Clinician Guided/Scholar venous reference | Bundled in the registered-v2 frame; generic atlas only. Z-Anatomy/BodyParts3D ShareAlike attribution and specialist review are mandatory. Blue/purple is a UI convention, not venous blood colour or flow. |
+| `external_head_scalp_cutaway_v2` + `eyes_context_realistic_v2` | 9.60 MB | Scholar exterior orientation | Bundled and jointly gated behind Surface. The HRA scalp cutaway is illustrative—not a surgical opening—and eye alignment is approximate; generic CC BY 4.0 teaching context pending specialist review. |
+| Five Page 2 access-state assets | staged registered conceptual slice | Clinician-only reversible access story | Bundled as conceptual presentation states for scalp, cranial bone, dura, edema, and hematoma. They do not authorize cutting, tool contact, operative training, or a patient-specific site; specialist review remains pending. |
 | `artery_cutaway_complete_v2` | 6.5 MB | Magnified vessel close-up | Separate on-demand volume, never permanent centre clutter. |
 | `thrombectomy_device_set_educational_v2` | 2.47 MB | Presenter-only Plan B tool tray | Use only when thrombectomy is the chosen discussion; label magnification and generic-device status. |
 | Individual v2 guidewire/catheters/stent | 0.24–1.05 MB each | Grabbable clinician inventory | Prefer lazy individual loading over the combined set. |
-| `external_head_scalp_cutaway_v2` | 7.97 MB | Non-graphic layer reveal | Requires registration and clinical wording review before replacing the current schematic reveal. |
 
 ## Hold from patient runtime
 
@@ -40,9 +44,12 @@ Updated after `git fetch --all --prune` on 8 August 2026.
 
 ## Recommended next asset slice
 
-Load `cerebral_bloodflow_animation_v2` lazily in presenter Procedure mode and
-compare it against the existing procedural droplets on Simulator and XCAT. If
-the imported animation stays registered, legible, and calm, replace—not stack—
-the fallback flow. Then test one individual generic device in a private tool
-tray. This preserves depth over breadth and avoids turning the central brain
-into an asset gallery.
+Verify the deep-structures and ventricles layers in the existing
+`--proof-layer-study` route, then verify the baked flow loop and same-frame
+direction overlay in `--proof-procedure-field`. The registered overlay and
+imported animation replace the hidden room-space registered-flow attempt rather
+than stacking a detached centreline.
+After Simulator verification, repeat on XCAT and profile frame time before
+considering one individual generic device in the private tool tray. This
+preserves depth over breadth and avoids turning the central brain into an asset
+gallery.
