@@ -1474,3 +1474,12 @@
 - Verdict: `IMPROVED` — the product now states that the current view is generic outside-the-brain anatomy and avoids the known first-frame inherited-scale reference failure; the interior journey remains an explicit separate handoff.
 - Blocker: the lingering Simulator cross-app confirmation prevents a clean deterministic exterior capture. Simulator and an unavailable XCAT cannot establish wearer comprehension, physical targeting, spatial comfort, or clinical validity.
 - Next safe action: clear the system confirmation on-device or in a freshly reset Simulator, then capture the exterior arterial-reference route before adding further point-specific highlights.
+
+## 2026-08-13 12:41 SGT — explain each point's relationship to its complete 3D reference
+
+- Target: remove the ambiguity between a selected anatomy point and the complete teaching structure that appears in the right secondary field.
+- Bounded action: added a point-specific relationship map for all ten current invitations; the selected-point caption now states `POINT → FULL 3D STRUCTURE` and identifies tissue context, surface, opposite-side comparison, arterial route, branch, blockage, downstream flow, affected territory, or the generic skull–dura–brain layer relationship. Enlarged the secondary 3D object and its caption while preserving its subordinate right-field placement.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-123345/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-relationship-v2`; after restarting the Simulator to clear a stale cross-app confirmation, the fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-point-relationship-v2-20260813-1241.png` passed route OCR (2/2) and was inspected, showing `Example blockage`, the complete enlarged arterial tree, `POINT → FULL 3D STRUCTURE`, and `BLOCKAGE · GENERIC FLOW INTERRUPTION`.
+- Verdict: `IMPROVED` — the wearer can now distinguish the selected local invitation, the whole related 3D structure, and the exact generic relationship being taught.
+- Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: validate the ten point-to-structure relationships with one clinician and one family wearer on an unlocked Vision Pro before adding new point families.

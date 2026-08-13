@@ -3009,8 +3009,8 @@ enum TeachingImagingMiniatureFactory {
     // Keep the secondary vessel object inside the comfortable right reading
     // field, clear of room furniture but still distinctly separate from the
     // hero anatomy. It is a second 3D teaching object, not a flattened image.
-    static let suggestedStagePosition: SIMD3<Float> = [0.40, 1.60, -0.80]
-    static let suggestedStageScale: Float = 1.04
+    static let suggestedStagePosition: SIMD3<Float> = [0.43, 1.60, -0.78]
+    static let suggestedStageScale: Float = 1.22
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
     private static let brainAssetName = "brain_anatomy_realistic_v2"

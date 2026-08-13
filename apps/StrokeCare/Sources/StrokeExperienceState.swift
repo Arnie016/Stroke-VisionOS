@@ -1098,6 +1098,38 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    /// Explains why the selected invitation owns the complete 3D reference.
+    /// The wording stays relational and generic: it does not turn technical
+    /// marker samples into approved landmarks or a patient-specific finding.
+    func teachingReferenceRelationship(for label: String? = nil) -> String {
+        switch label ?? selectedPointLabel {
+        case "Example affected area":
+            "TISSUE RELATIONSHIP · THIS AREA DEPENDS ON THE VESSEL ROUTE"
+        case "Nearby brain tissue":
+            "NEARBY TISSUE · CONTEXT OUTSIDE THE SELECTED AREA"
+        case "Brain surface":
+            "SURFACE · THE BRAIN'S OUTER FOLDED LAYER"
+        case "Opposite-side context":
+            "CONTEXT · COMPARE THE OTHER SIDE OF THE SAME BRAIN"
+        case "Blood supply approaches":
+            "ROUTE · BLOOD APPROACHES THROUGH LARGER ARTERIES"
+        case "Arteries branch":
+            "BRANCHING · ONE ROUTE DIVIDES INTO SMALLER PATHS"
+        case "Example blockage":
+            "BLOCKAGE · GENERIC FLOW INTERRUPTION"
+        case "Flow beyond the blockage changes":
+            "DOWNSTREAM · COMPARE FLOW BEYOND THE BLOCKAGE"
+        case "Affected territory":
+            "TERRITORY · THIS REGION DEPENDS ON THE UPSTREAM ROUTE"
+        case "Generic craniotomy teaching story":
+            "LAYERS · SKULL, DURA, AND BRAIN — NOT A SITE PLAN"
+        case nil:
+            "GENERIC TEACHING RELATIONSHIP"
+        default:
+            "GENERIC TEACHING RELATIONSHIP"
+        }
+    }
+
     private func teachingLens(for label: String?) -> StrokeTeachingImagingLens {
         if procedureStep == .discussCare { return .makingRoomPurpose }
         return switch label {

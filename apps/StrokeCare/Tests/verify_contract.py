@@ -733,8 +733,8 @@ require(all(token in immersive for token in (
     "atlasCueAccessibilityLabel",
     "atlasCueAccessibilityHint",
     "revealFamilyBrainAtlasModelCue()",
-    "static let secondaryCaseDrawer: SIMD3<Float> = [0.50, 1.50, -0.74]",
-    "drawer.scale = [0.68, 0.68, 0.68]",
+    "static let secondaryCaseDrawer: SIMD3<Float> = [0.52, 1.49, -0.72]",
+    "drawer.scale = [0.82, 0.82, 0.82]",
 )), "family Brain Atlas is missing its spatial, one-chapter-at-a-time interface")
 require("--proof-family-brain-atlas" in launch and "prepareFamilyBrainAtlasProof" in launch, "deterministic family Brain Atlas proof route is missing")
 require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArterialAtlasFlowProof" in launch, "deterministic family arterial-flow Atlas proof route is missing")
@@ -744,13 +744,28 @@ require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurf
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")
 require("fixed 108-point field and 64-point disc" in immersive and ".frame(minWidth: 108, minHeight: 108)" in immersive and "let discDiameter: CGFloat = 64" in immersive, "presenter timeline targets are not room-scale legible")
-require("suggestedStagePosition: SIMD3<Float> = [0.40, 1.60, -0.80]" in scene and "suggestedStageScale: Float = 1.04" in scene, "the secondary 3D teaching reference must remain separated from the hero anatomy")
+require("suggestedStagePosition: SIMD3<Float> = [0.43, 1.60, -0.78]" in scene and "suggestedStageScale: Float = 1.22" in scene, "the secondary 3D teaching reference must remain separated and legible beside the hero anatomy")
+require('.frame(width: 400)' in immersive and 'drawer.scale = [0.82, 0.82, 0.82]' in immersive, "the selected-point explanation is too small to read beside its full 3D reference")
 require(all(token in state for token in (
     "selectedPointReferenceExpanded",
     "toggleSelectedPointReference()",
     "teachingImagingDrawerVisible = true",
 )), "Family point selection must disclose its secondary 3D reference explicitly")
 require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTitle()" in immersive and "toggleSelectedPointReference()" in immersive, "selected Family points are missing their explicit spatial-reference follow-up")
+require(
+    "teachingReferenceRelationship" in state
+    and 'Text("FULL 3D STRUCTURE")' in immersive
+    and "experience.teachingReferenceRelationship()" in immersive
+    and all(token in state for token in (
+        '"ROUTE · BLOOD APPROACHES THROUGH LARGER ARTERIES"',
+        '"BRANCHING · ONE ROUTE DIVIDES INTO SMALLER PATHS"',
+        '"BLOCKAGE · GENERIC FLOW INTERRUPTION"',
+        '"DOWNSTREAM · COMPARE FLOW BEYOND THE BLOCKAGE"',
+        '"TERRITORY · THIS REGION DEPENDS ON THE UPSTREAM ROUTE"',
+        '"LAYERS · SKULL, DURA, AND BRAIN — NOT A SITE PLAN"',
+    )),
+    "selected points do not explain their relationship to the complete 3D reference",
+)
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
 require("--proof-family-arterial-reference" in launch and "prepareFamilyArterialReferenceProof" in launch and "prepareFamilyArterialReferenceProof" in state, "family arterial-tree reference proof route is missing")

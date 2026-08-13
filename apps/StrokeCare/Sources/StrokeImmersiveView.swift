@@ -193,7 +193,7 @@ private enum SpatialVisualField {
     static let eyePlaneHeight: Float = 1.62
     static let primaryAnatomy: SIMD3<Float> = [0.00, 1.62, -1.16]
     static let primaryVesselFocus: SIMD3<Float> = [0.00, 1.61, -0.76]
-    static let secondaryCaseDrawer: SIMD3<Float> = [0.50, 1.50, -0.74]
+    static let secondaryCaseDrawer: SIMD3<Float> = [0.52, 1.49, -0.72]
     static let tertiaryHorizon: SIMD3<Float> = [0.10, 1.64, -1.72]
 
     // The shared anatomy is the spatial hero. A modestly larger base scale
@@ -731,7 +731,7 @@ struct StrokeImmersiveView: View {
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
                             .environmentObject(experience)
-                            .frame(width: 330)
+                            .frame(width: 400)
                     }
                     Attachment(id: scholarReferenceRailID) {
                         StrokeScholarReferenceRail()
@@ -988,7 +988,7 @@ struct StrokeImmersiveView: View {
 
         if let drawer = attachments.entity(for: teachingImagingDrawerID) {
             drawer.position = SpatialVisualField.secondaryCaseDrawer
-            drawer.scale = [0.68, 0.68, 0.68]
+            drawer.scale = [0.82, 0.82, 0.82]
             drawer.isEnabled = visible && experience.teachingImagingDrawerVisible
             drawer.components.set(BillboardComponent())
         }
@@ -1823,6 +1823,21 @@ private struct StrokeTeachingImagingDrawer: View {
                 .font(.caption2.monospaced().weight(.black))
                 .tracking(0.8)
                 .foregroundStyle(referenceTint)
+
+            HStack(spacing: 5) {
+                Text("POINT")
+                    .font(.caption2.monospaced().weight(.black))
+                Image(systemName: "arrow.right")
+                    .font(.caption2.weight(.black))
+                Text("FULL 3D STRUCTURE")
+                    .font(.caption2.monospaced().weight(.black))
+            }
+            .foregroundStyle(referenceTint.opacity(0.92))
+
+            Text(experience.teachingReferenceRelationship())
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.78))
+                .fixedSize(horizontal: false, vertical: true)
 
             Text(referenceBoundary)
                 .font(.caption2.weight(.semibold))
