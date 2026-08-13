@@ -3014,6 +3014,7 @@ enum TeachingImagingMiniatureFactory {
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
     private static let brainAssetName = "brain_anatomy_realistic_v2"
+    private static let skullAssetName = "skull_semantic_realistic_v2"
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
 
@@ -3048,6 +3049,7 @@ enum TeachingImagingMiniatureFactory {
         // fallback geometry is never presented as registered imaging.
         let arteriesSource = importedAnatomy?.findEntity(named: arteriesAssetName)
         let brainSource = importedAnatomy?.findEntity(named: brainAssetName)
+        let skullSource = importedAnatomy?.findEntity(named: skullAssetName)
         let clotSource = importedAnatomy?.findEntity(named: clotAssetName)
         let duraSource = importedAnatomy?.findEntity(named: duraAssetName)
 
@@ -3092,6 +3094,24 @@ enum TeachingImagingMiniatureFactory {
             )
         }
         if let duraSource {
+            // The access-story reference is a whole, generic relationship:
+            // skull context → protective covering → brain. It is deliberately
+            // a static explanatory assembly, not a cutting sequence or a
+            // patient-specific approach plan.
+            if let skullSource {
+                let skullContext = Entity()
+                skullContext.name = "purpose-skull-context"
+                addRenderedLeaves(from: skullSource, to: skullContext, namePrefix: "purpose-skull")
+                skullContext.components.set(OpacityComponent(opacity: 0.16))
+                purpose.addChild(skullContext)
+            }
+            if let brainSource {
+                let brainContext = Entity()
+                brainContext.name = "purpose-brain-context"
+                addRenderedLeaves(from: brainSource, to: brainContext, namePrefix: "purpose-brain")
+                brainContext.components.set(OpacityComponent(opacity: 0.16))
+                purpose.addChild(brainContext)
+            }
             let dura = Entity()
             dura.name = "purpose-dura-layer"
             addRenderedLeaves(from: duraSource, to: dura, namePrefix: "purpose-dura")

@@ -1456,3 +1456,12 @@
 - Verdict: `IMPROVED` — vessel teaching references now preserve the brain-wide spatial relationship requested by the point, while the hero anatomy and local explanation remain distinct.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: have a clinician and family tester compare the contextual arterial reference with the surface and layer references on Vision Pro before adding additional point families.
+
+## 2026-08-13 11:09 SGT — complete the generic access-layer teaching reference
+
+- Target: ensure the craniotomy access point reveals the entire generic skull–dura–brain relationship, not only an isolated covering and target cue.
+- Bounded action: added low-opacity skull and brain context clones behind the existing conceptual dura layer and unchanged target cue. The view remains a static, non-graphic explanatory assembly behind the existing Family permission boundary; it does not depict cutting, a patient-specific site, or an operative plan.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-110644/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-purpose-whole-context`; fresh `--proof-family-layer-reference` capture at `/tmp/strokecare-family-purpose-whole-context-20260813-1109.png` passed route OCR (2/2) and was inspected, showing the generic access point and complete translucent layer relationship in the right secondary field.
+- Verdict: `IMPROVED` — each current point family now reveals a complete related teaching structure: arterial route in brain, brain surface, or generic skull–dura–brain layer relationship.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: run one supervised Vision Pro walkthrough comparing all three full-structure disclosures before adding new point families.
