@@ -1483,3 +1483,12 @@
 - Verdict: `IMPROVED` — the wearer can now distinguish the selected local invitation, the whole related 3D structure, and the exact generic relationship being taught.
 - Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: validate the ten point-to-structure relationships with one clinician and one family wearer on an unlocked Vision Pro before adding new point families.
+
+## 2026-08-13 12:53 SGT — localize the selected point inside its full 3D reference
+
+- Target: make the connection between each selected invitation and the complete right-side teaching structure spatially visible, rather than relying on copy alone.
+- Bounded action: added one quiet, non-interactive beacon for every authored point inside the existing arterial, brain-surface, or skull–dura–brain reference; only the currently selected point's beacon is enabled. The generic access beacon identifies the assembled layer relationship and is explicitly not a patient-specific site.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-124307/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; the narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-highlight`; fresh captures for `--proof-family-arterial-reference`, `--proof-family-surface-reference`, and `--proof-family-layer-reference` passed route OCR (2/2 each) and were visually inspected at `/tmp/strokecare-family-point-highlight-20260813-1247.png`, `/tmp/strokecare-family-surface-highlight-20260813-1248.png`, and `/tmp/strokecare-family-layer-highlight-fixed-20260813-1252.png`. The first layer placement was rejected as too detached and recaptured after moving the beacon onto the assembled cutaway.
+- Verdict: `IMPROVED` — a selected local point now has an explicit counterpart inside its complete 3D teaching reference across all three current families.
+- Blocker: Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: compare all ten point-to-reference beacons with a clinician and family wearer on Vision Pro before authoring additional reference families.

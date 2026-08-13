@@ -766,6 +766,14 @@ require(
     )),
     "selected points do not explain their relationship to the complete 3D reference",
 )
+require(
+    'pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"' in scene
+    and "addPointRelationshipHighlights" in scene
+    and "selectedPointLabel: String?" in scene
+    and "label == selectedPointLabel" in scene
+    and "selectedPointLabel: experience.selectedPointLabel" in immersive,
+    "the complete 3D reference does not visibly spotlight the selected point relationship",
+)
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
 require("--proof-family-arterial-reference" in launch and "prepareFamilyArterialReferenceProof" in launch and "prepareFamilyArterialReferenceProof" in state, "family arterial-tree reference proof route is missing")

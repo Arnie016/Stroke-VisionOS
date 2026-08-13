@@ -277,9 +277,15 @@ enum StrokeSceneFactory {
     static func updateRegisteredTeachingImaging(
         root: Entity,
         isVisible: Bool,
-        lens: StrokeTeachingImagingLens
+        lens: StrokeTeachingImagingLens,
+        selectedPointLabel: String?
     ) {
-        TeachingImagingMiniatureFactory.update(in: root, isVisible: isVisible, lens: lens)
+        TeachingImagingMiniatureFactory.update(
+            in: root,
+            isVisible: isVisible,
+            lens: lens,
+            selectedPointLabel: selectedPointLabel
+        )
     }
 
     /// A clinician-only presentation kit. The imported open-cranial tools are
@@ -2998,6 +3004,7 @@ enum TeachingImagingMiniatureFactory {
     static let surfaceRootName = "registered-teaching-imaging-brain-surface"
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
+    static let pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"
 
     /// Suggested stage-space placement for the parent view. The miniature is
     /// initially attached to the anatomy scene for deterministic loading; the
@@ -3017,6 +3024,17 @@ enum TeachingImagingMiniatureFactory {
     private static let skullAssetName = "skull_semantic_realistic_v2"
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
+    private static let referenceRegionDirections: [SIMD3<Float>] = [
+        [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
+        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
+    ]
+    private static let referenceProcedurePositions: [SIMD3<Float>] = [
+        [-0.028297, -0.142271, 0.010944],
+        [-0.012158, -0.059836, 0.030163],
+        [0.050, 0.052, 0.039],
+        [-0.043842, -0.014646, 0.029223],
+        [-0.053607, -0.011508, 0.017754]
+    ]
 
     static func make(from importedAnatomy: Entity?) -> Entity {
         let root = Entity()
@@ -3128,6 +3146,13 @@ enum TeachingImagingMiniatureFactory {
             let bounds = unchangedClot.visualBounds(relativeTo: purpose)
             purpose.addChild(makePurposeBoundaryCue(around: bounds))
         }
+        addPointRelationshipHighlights(
+            affected: affected,
+            surface: surface,
+            purpose: purpose,
+            brainSource: brainSource,
+            clotSource: clotSource
+        )
         stripInteractionComponentsRecursively(from: root)
         return root
     }
@@ -3137,7 +3162,8 @@ enum TeachingImagingMiniatureFactory {
     static func update(
         in sceneRoot: Entity,
         isVisible: Bool,
-        lens: StrokeTeachingImagingLens
+        lens: StrokeTeachingImagingLens,
+        selectedPointLabel: String?
     ) {
         guard let root = sceneRoot.findEntity(named: rootName) else { return }
         let affected = root.findEntity(named: affectedRootName)
@@ -3148,6 +3174,109 @@ enum TeachingImagingMiniatureFactory {
         affected?.isEnabled = isVisible && lens == .affectedVessel
         surface?.isEnabled = isVisible && lens == .brainSurface
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
+
+        for label in StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle) {
+            root.findEntity(named: highlightName(for: label))?.isEnabled =
+                isVisible && label == selectedPointLabel
+        }
+    }
+
+    /// Places a quiet, non-interactive beacon inside the complete registered
+    /// teaching structure for every authored point. Technical vessel samples
+    /// remain review-pending; the access beacon sits over the centre of the
+    /// assembled layers and denotes their relationship, never an access site.
+    private static func addPointRelationshipHighlights(
+        affected: Entity,
+        surface: Entity,
+        purpose: Entity,
+        brainSource: Entity?,
+        clotSource: Entity?
+    ) {
+        let brainBounds = brainSource?.visualBounds(relativeTo: brainSource)
+        let brainCenter = brainBounds.map { ($0.min + $0.max) / 2 } ?? .zero
+        let brainRadii = brainBounds.map { ($0.max - $0.min) / 2 } ?? [0.07, 0.10, 0.11]
+        let clotBounds = clotSource?.visualBounds(relativeTo: clotSource)
+        let clotCenter = clotBounds.map { ($0.min + $0.max) / 2 } ?? [0.05, 0.052, 0.039]
+        let affectedDirection = simd_length_squared(clotCenter - brainCenter) > 0.000_000_1
+            ? simd_normalize(clotCenter - brainCenter)
+            : simd_normalize(SIMD3<Float>(0.55, 0.48, 0.62))
+
+        addHighlight(
+            label: "Example affected area",
+            position: brainCenter + brainRadii * affectedDirection * 1.035,
+            tint: UIColor(red: 1.00, green: 0.55, blue: 0.18, alpha: 1),
+            to: affected
+        )
+
+        let regionLabels = StrokePointField.regions.lessonPoints.map(\.fullTitle)
+        for (index, label) in regionLabels.enumerated() where index > 0 {
+            let direction = simd_normalize(referenceRegionDirections[index])
+            addHighlight(
+                label: label,
+                position: brainCenter + brainRadii * direction * 1.035,
+                tint: UIColor(red: 0.32, green: 0.93, blue: 0.84, alpha: 1),
+                to: surface
+            )
+        }
+
+        let procedureLabels = StrokePointField.procedure.lessonPoints.map(\.fullTitle)
+        for (index, label) in procedureLabels.enumerated() {
+            let position = index == 2 ? clotCenter : referenceProcedurePositions[index]
+            addHighlight(
+                label: label,
+                position: position,
+                tint: UIColor(red: 1.00, green: 0.55, blue: 0.18, alpha: 1),
+                to: affected
+            )
+        }
+
+        let purposeBounds = purpose.visualBounds(relativeTo: purpose)
+        let purposeCenter = (purposeBounds.min + purposeBounds.max) / 2
+        let purposeHeight = purposeBounds.max.y - purposeBounds.min.y
+        addHighlight(
+            label: "Generic craniotomy teaching story",
+            position: [
+                purposeCenter.x,
+                purposeCenter.y + purposeHeight * 0.24,
+                purposeBounds.max.z + 0.003
+            ],
+            tint: UIColor(red: 0.38, green: 0.94, blue: 0.72, alpha: 1),
+            to: purpose
+        )
+    }
+
+    private static func addHighlight(
+        label: String,
+        position: SIMD3<Float>,
+        tint: UIColor,
+        to parent: Entity
+    ) {
+        let highlight = Entity()
+        highlight.name = highlightName(for: label)
+        highlight.position = position
+        highlight.isEnabled = false
+
+        let halo = ModelEntity(
+            mesh: .generateSphere(radius: 0.009),
+            materials: [UnlitMaterial(color: tint.withAlphaComponent(0.16))]
+        )
+        halo.name = "\(highlight.name)-halo"
+        highlight.addChild(halo)
+
+        let core = ModelEntity(
+            mesh: .generateSphere(radius: 0.0042),
+            materials: [UnlitMaterial(color: tint)]
+        )
+        core.name = "\(highlight.name)-core"
+        highlight.addChild(core)
+        parent.addChild(highlight)
+    }
+
+    private static func highlightName(for label: String) -> String {
+        let slug = label.lowercased().map { character -> Character in
+            character.isLetter || character.isNumber ? character : "-"
+        }
+        return pointHighlightPrefix + String(slug)
     }
 
     private static var wearerFacingTilt: simd_quatf {

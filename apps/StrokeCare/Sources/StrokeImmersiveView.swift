@@ -326,7 +326,8 @@ struct StrokeImmersiveView: View {
                                 root: stageRoot,
                                 isVisible: experience.spatialPhase == .explanation
                                     && experience.teachingImagingDrawerVisible,
-                                lens: experience.teachingImagingLens
+                                lens: experience.teachingImagingLens,
+                                selectedPointLabel: experience.selectedPointLabel
                             )
                         }
                         experience.updateAvailableAnatomyFocuses(
@@ -477,7 +478,8 @@ struct StrokeImmersiveView: View {
                             root: stageRoot,
                             isVisible: experience.spatialPhase == .explanation
                                 && experience.teachingImagingDrawerVisible,
-                            lens: experience.teachingImagingLens
+                            lens: experience.teachingImagingLens,
+                            selectedPointLabel: experience.selectedPointLabel
                         )
                     }
 
