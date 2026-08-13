@@ -1510,3 +1510,12 @@
 - Verdict: `IMPROVED` — the product now tells a spatial story before the role choice, makes learner voice assistance explicit and reversible, and turns the 3D-print idea into an honest review artifact rather than a false live-order claim.
 - Blocker: the voice lane still requires the separately configured Realtime proxy; the print lane has no vendor, upload, pricing, order, manufacturability, or licensing integration; Simulator does not establish wearer comfort, physical targeting, clinical correctness, or device readiness.
 - Next safe action: validate the four-beat prelude and selected-point voice invitation with one Curious Learner, then refine timing and language from that observed walkthrough before expanding content families.
+
+## 2026-08-13 13:44 SGT — give surface Atlas chapters complete localized 3D references
+
+- Target: make each surface chapter teach through the complete brain rather than reusing a generic point or opening an unrelated vessel reference.
+- Bounded action: mapped the cortex and four lobe chapters to the existing complete generic brain-surface teaching object, added one chapter-specific non-interactive focus beacon inside that object, and kept the selected chapter's plain-language sequence in the left Atlas.
+- Evidence: `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-focus-build`; fresh `--proof-family-atlas-surface-cue` capture `/tmp/strokecare-family-atlas-full-reference-20260813.png` passed route OCR (2/2), image metrics, process checks, and was visually inspected. It shows `Frontal lobe` in the Atlas, the dominant hero anatomy, and a separate `WHOLE BRAIN SURFACE · TEACHING VIEW` with a localized cyan focus.
+- Verdict: `IMPROVED` — surface Atlas chapters now answer both “which structure?” and “where is it in the whole brain?” without presenting a patient scan or a precise functional boundary.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, anatomical registration accuracy, or clinical correctness.
+- Next safe action: extend this same named full-structure grammar to one reviewed deep-structure chapter after a clinician approves its source registration and wording.

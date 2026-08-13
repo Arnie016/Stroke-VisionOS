@@ -758,7 +758,8 @@ require(all(token in state for token in (
     "revealFamilyBrainAtlasModelCue()",
     "var spatialCuePointIndex: Int?",
     "selectPoint(",
-    'label: "\\(chapter.title) · generic atlas cue"',
+    "var teachingReferenceLabel: String?",
+    'label: chapter.teachingReferenceLabel ?? "\\(chapter.title) · generic atlas focus"',
     "spatialZoom = max(spatialZoom, 3.2)",
     "prepareFamilyArterialAtlasFlowProof",
     "prepareFamilyAtlasNextChapterProof",
@@ -766,7 +767,12 @@ require(all(token in state for token in (
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
-require("Atlas surface cues are self-contained 3D orientation moments" in state and "teachingImagingDrawerVisible = false" in state, "Family Atlas surface cues can incorrectly open an unrelated vessel reference")
+require(all(token in state for token in (
+    "complete generic brain with this chapter's localized focus",
+    "teachingImagingLens = .brainSurface",
+    "teachingImagingDrawerVisible = true",
+)), "Family Atlas surface chapters do not reveal their complete localized 3D brain reference")
+require("atlasSurfaceDirections" in scene and "Array(atlasSurfaceDirections.keys)" in scene, "Family Atlas surface references are missing their chapter-specific 3D focus beacons")
 require(all(token in immersive for token in (
     'familyBrainAtlasID = "spatial-family-brain-atlas"',
     "SpatialFamilyBrainAtlas()",

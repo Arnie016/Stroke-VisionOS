@@ -3028,6 +3028,13 @@ enum TeachingImagingMiniatureFactory {
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
         [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
     ]
+    private static let atlasSurfaceDirections: [String: SIMD3<Float>] = [
+        "Cerebral cortex · generic atlas focus": [-0.58, 0.58, 0.61],
+        "Frontal lobe · generic atlas focus": [-0.74, 0.35, 0.43],
+        "Parietal lobe · generic atlas focus": [-0.18, 0.76, 0.44],
+        "Temporal lobe · generic atlas focus": [-0.48, -0.20, 0.72],
+        "Occipital lobe · generic atlas focus": [0.68, 0.34, 0.50],
+    ]
     private static let referenceProcedurePositions: [SIMD3<Float>] = [
         [-0.028297, -0.142271, 0.010944],
         [-0.012158, -0.059836, 0.030163],
@@ -3175,7 +3182,9 @@ enum TeachingImagingMiniatureFactory {
         surface?.isEnabled = isVisible && lens == .brainSurface
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
 
-        for label in StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle) {
+        let authoredLabels = StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle)
+            + Array(atlasSurfaceDirections.keys)
+        for label in authoredLabels {
             root.findEntity(named: highlightName(for: label))?.isEnabled =
                 isVisible && label == selectedPointLabel
         }
@@ -3214,6 +3223,16 @@ enum TeachingImagingMiniatureFactory {
             addHighlight(
                 label: label,
                 position: brainCenter + brainRadii * direction * 1.035,
+                tint: UIColor(red: 0.32, green: 0.93, blue: 0.84, alpha: 1),
+                to: surface
+            )
+        }
+
+        for (label, rawDirection) in atlasSurfaceDirections {
+            let direction = simd_normalize(rawDirection)
+            addHighlight(
+                label: label,
+                position: brainCenter + brainRadii * direction * 1.04,
                 tint: UIColor(red: 0.32, green: 0.93, blue: 0.84, alpha: 1),
                 to: surface
             )

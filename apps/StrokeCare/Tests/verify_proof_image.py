@@ -37,6 +37,7 @@ ROUTE_TEXT_TOKENS = {
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
     "--proof-family-arterial-reference": ("arterial tree", "example blockage"),
     "--proof-family-layer-reference": ("generic craniotomy", "hide layer view"),
+    "--proof-family-atlas-surface-cue": ("frontal lobe", "whole brain surface"),
 }
 
 OCR_SWIFT_SOURCE = r"""

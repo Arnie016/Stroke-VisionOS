@@ -214,6 +214,21 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
         self == .arterialRoutes ? .procedure : .regions
     }
 
+    /// Surface Atlas chapters reuse one reviewed whole-brain teaching object,
+    /// then localize the requested region inside that complete structure. The
+    /// focus is an orientation cue, not a patient landmark or functional map.
+    var teachingReferenceLabel: String? {
+        switch self {
+        case .cortex: "Cerebral cortex · generic atlas focus"
+        case .frontalLobe: "Frontal lobe · generic atlas focus"
+        case .parietalLobe: "Parietal lobe · generic atlas focus"
+        case .temporalLobe: "Temporal lobe · generic atlas focus"
+        case .occipitalLobe: "Occipital lobe · generic atlas focus"
+        case .arterialRoutes, .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+            nil
+        }
+    }
+
     var systemImage: String {
         self == .arterialRoutes ? "point.3.connected.trianglepath.dotted" : "brain.head.profile"
     }
@@ -754,12 +769,12 @@ final class StrokeExperienceState: ObservableObject {
         if let index = chapter.spatialCuePointIndex {
             selectPoint(
                 entityName: "\(StrokePointField.regions.entityPrefix)\(index)",
-                label: "\(chapter.title) · generic atlas cue"
+                label: chapter.teachingReferenceLabel ?? "\(chapter.title) · generic atlas focus"
             )
-            // Atlas surface cues are self-contained 3D orientation moments.
-            // A vessel miniature would imply a second, unrelated reference for
-            // a lobe chapter and compete with the selected local annotation.
-            teachingImagingDrawerVisible = false
+            // The point is the invitation; the right field now reveals the
+            // complete generic brain with this chapter's localized focus.
+            teachingImagingLens = .brainSurface
+            teachingImagingDrawerVisible = true
             familyBrainAtlasCueChapter = chapter
             return
         }
@@ -1120,6 +1135,16 @@ final class StrokeExperienceState: ObservableObject {
             "SURFACE · THE BRAIN'S OUTER FOLDED LAYER"
         case "Opposite-side context":
             "CONTEXT · COMPARE THE OTHER SIDE OF THE SAME BRAIN"
+        case "Cerebral cortex · generic atlas focus":
+            "ATLAS FOCUS · FOLDED OUTER CORTEX IN THE WHOLE BRAIN"
+        case "Frontal lobe · generic atlas focus":
+            "ATLAS FOCUS · FRONT REGION IN WHOLE-BRAIN CONTEXT"
+        case "Parietal lobe · generic atlas focus":
+            "ATLAS FOCUS · UPPER REAR REGION IN WHOLE-BRAIN CONTEXT"
+        case "Temporal lobe · generic atlas focus":
+            "ATLAS FOCUS · SIDE REGION IN WHOLE-BRAIN CONTEXT"
+        case "Occipital lobe · generic atlas focus":
+            "ATLAS FOCUS · REAR REGION IN WHOLE-BRAIN CONTEXT"
         case "Blood supply approaches":
             "ROUTE · BLOOD APPROACHES THROUGH LARGER ARTERIES"
         case "Arteries branch":
@@ -1149,7 +1174,12 @@ final class StrokeExperienceState: ObservableObject {
              "Flow beyond the blockage changes",
              "Affected territory":
             .affectedVessel
-        case "Nearby brain tissue", "Brain surface", "Opposite-side context":
+        case "Nearby brain tissue", "Brain surface", "Opposite-side context",
+             "Cerebral cortex · generic atlas focus",
+             "Frontal lobe · generic atlas focus",
+             "Parietal lobe · generic atlas focus",
+             "Temporal lobe · generic atlas focus",
+             "Occipital lobe · generic atlas focus":
             .brainSurface
         case "Generic craniotomy teaching story":
             .makingRoomPurpose
@@ -1371,6 +1401,8 @@ final class StrokeExperienceState: ObservableObject {
             "This territory helps connect a vessel route to the tissue it supplies. It explains a relationship, not measured damage or prognosis."
         case "Generic craniotomy teaching story":
             "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
+        case let label where label.hasSuffix("· generic atlas focus"):
+            "This lit focus locates \(label.replacingOccurrences(of: " · generic atlas focus", with: "")) within a complete generic brain. It is an orientation aid, not a patient scan or a precise functional boundary."
         default:
             "This is a generic teaching reference. It can help orient the next question, but it is not a patient scan, measurement, or diagnosis."
         }
