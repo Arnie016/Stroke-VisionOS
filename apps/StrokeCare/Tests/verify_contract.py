@@ -745,7 +745,14 @@ require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEA
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")
 require("fixed 108-point field and 64-point disc" in immersive and ".frame(minWidth: 108, minHeight: 108)" in immersive and "let discDiameter: CGFloat = 64" in immersive, "presenter timeline targets are not room-scale legible")
 require("suggestedStagePosition: SIMD3<Float> = [0.40, 1.60, -0.80]" in scene and "suggestedStageScale: Float = 1.04" in scene, "the secondary 3D teaching reference must remain separated from the hero anatomy")
+require(all(token in state for token in (
+    "selectedPointReferenceExpanded",
+    "toggleSelectedPointReference()",
+    "teachingImagingDrawerVisible = audienceLens == .clinician",
+)), "Family point selection must disclose its secondary 3D reference explicitly")
+require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTitle()" in immersive and "toggleSelectedPointReference()" in immersive, "selected Family points are missing their explicit spatial-reference follow-up")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
+require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
 require(all(token in state for token in (
     "configurePresenterPointField(",
     "case .confirmContext:",
@@ -755,8 +762,8 @@ require(all(token in state for token in (
 )), "presenter checkpoints do not own their point-field visibility")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
 require("focusLight.isEnabled = experience.environmentMode != .surroundings" in immersive and "high-density cortex reads like flat clay" in immersive, "warm anatomy field is missing its sculpting key light")
-require(all(copy in scene for copy in ("Stroke effect", "Making-room purpose")) and all(copy in immersive for copy in ("Generic anatomy · not a patient scan", "Registered-v2 teaching asset · review pending")), "registered teaching-lens boundaries or two-state sequence are missing")
-require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
+require(all(copy in scene for copy in ("Stroke effect", "Brain surface", "Making-room purpose")) and all(copy in immersive for copy in ("ARTERIAL TREE · TEACHING VIEW", "BRAIN SURFACE · TEACHING VIEW", "Generic anatomy · not a patient scan", "Registered-v2 teaching asset · review pending")), "registered teaching-lens boundaries or point-owned structure sequence are missing")
+require(all(token in scene for token in ("registered-teaching-imaging-root", "registered-teaching-imaging-affected-vessel", "registered-teaching-imaging-brain-surface", "registered-teaching-imaging-making-room-purpose", "cerebral_arteries_realistic_v2", "brain_anatomy_realistic_v2", "ischemic_mca_clot_v2", "dura_mater_cutaway_conceptual_v2")), "registered-v2 teaching miniature or required leaf assets are missing")
 require("Canvas" not in immersive and "StrokeTeachingImagingSchematic" not in immersive, "rejected procedural imaging plates remain in the runtime UI")
 require("teachingImagingDrawerVisible = false" in state and "teachingImagingLens" in state and "selectTeachingImagingLens" in state and "careViewPermissionGranted" in state and "present(step: .discussCare" in state, "teaching lens is not explanation-gated or consent-aware")
 require(
@@ -806,8 +813,9 @@ require(all(token in state for token in (
     "The secondary reference is an outcome of selecting a teaching point",
     "teachingImagingLens = .affectedVessel",
     "teachingImagingLens = .makingRoomPurpose",
-    "teachingImagingDrawerVisible = careViewPermissionGranted",
-)), "point selection does not drive one consent-aware, act-matched reference")
+    "audienceLens == .clinician && careViewPermissionGranted",
+    "toggleSelectedPointReference()",
+)), "point selection does not keep one consent-aware, act-matched reference available")
 require(
     "experience.presenterTeachingBeat == .discussAccess &&\n            experience.selectedPointEntityName == nil" in scene,
     "selected-point reference competes with the large access-skull composition",
@@ -822,7 +830,8 @@ require(all(token in immersive for token in (
 require("ForEach(experience.pointField.lessonPoints)" not in immersive and "selectedPoint.position + [0.064, 0.052, 0.032]" in immersive and ".background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))" in immersive, "selected-point disclosure is still a permanent label rail, overlaps anatomy, or is not depth-attached")
 require('"Images"' not in immersive and '"Close images"' not in immersive, "duplicated image-browser controls remain in the spatial role rails")
 require(all(token in immersive for token in (
-    '"BLOCKED VESSEL · TEACHING VIEW"',
+    '"ARTERIAL TREE · TEACHING VIEW"',
+    '"BRAIN SURFACE · TEACHING VIEW"',
     '"AFFECTED-VESSEL REFERENCE"',
     '"Generic anatomy · not a patient scan"',
     '"Registered-v2 teaching asset · review pending"',

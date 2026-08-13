@@ -641,6 +641,9 @@ final class StrokeExperienceState: ObservableObject {
     @Published var regionPortalActive = false
     @Published private(set) var selectedPointEntityName: String?
     @Published private(set) var selectedPointLabel: String?
+    /// Family explanations disclose one idea first. The secondary 3D reference
+    /// is an explicit follow-up, never a second competing object on selection.
+    @Published private(set) var selectedPointReferenceExpanded = false
     @Published var selectedEvidenceID: String = StrokeEvidenceSource.library[0].id
     @Published private(set) var pinnedEvidenceIDs: [String] = []
     @Published var sourceBoundDraftVisible = false
@@ -1068,6 +1071,41 @@ final class StrokeExperienceState: ObservableObject {
             return
         }
         teachingImagingDrawerVisible.toggle()
+    }
+
+    /// Expands the one already-selected point into its related spatial teaching
+    /// object. This is deliberately a user choice for Family mode; it does not
+    /// infer whether a person wants more or less detail.
+    func toggleSelectedPointReference() {
+        guard spatialPhase == .explanation,
+              selectedPointEntityName != nil else { return }
+
+        if procedureStep == .discussCare && !careViewPermissionGranted {
+            return
+        }
+        selectedPointReferenceExpanded.toggle()
+        teachingImagingLens = teachingLens(for: selectedPointLabel)
+        teachingImagingDrawerVisible = selectedPointReferenceExpanded
+    }
+
+    /// Maps a quiet anatomy-attached invitation to one coherent full teaching
+    /// structure. This is a generic atlas relationship, never a patient scan.
+    func teachingReferenceActionTitle(for label: String? = nil) -> String {
+        switch teachingLens(for: label ?? selectedPointLabel) {
+        case .affectedVessel: "arterial tree"
+        case .brainSurface: "brain surface"
+        case .makingRoomPurpose: "layer view"
+        }
+    }
+
+    private func teachingLens(for label: String?) -> StrokeTeachingImagingLens {
+        if procedureStep == .discussCare { return .makingRoomPurpose }
+        return switch label {
+        case "Nearby brain tissue", "Brain surface", "Opposite-side context":
+            .brainSurface
+        default:
+            .affectedVessel
+        }
     }
 
     /// Chooses one real registered teaching lens. The making-room purpose view
@@ -1880,17 +1918,19 @@ final class StrokeExperienceState: ObservableObject {
         }
         selectedPointEntityName = entityName
         selectedPointLabel = label
+        selectedPointReferenceExpanded = false
         // The secondary reference is an outcome of selecting a teaching point,
-        // not a parallel image browser. Exactly one act-matched object appears.
+        // not a parallel image browser. Clinicians receive the reference in
+        // their fast teaching lane; Family opens it as an explicit follow-up.
         switch procedureStep {
         case .chooseCase:
             teachingImagingDrawerVisible = false
         case .inspectOcclusion:
-            teachingImagingLens = .affectedVessel
-            teachingImagingDrawerVisible = true
+            teachingImagingLens = teachingLens(for: label)
+            teachingImagingDrawerVisible = audienceLens == .clinician
         case .discussCare:
             teachingImagingLens = .makingRoomPurpose
-            teachingImagingDrawerVisible = careViewPermissionGranted
+            teachingImagingDrawerVisible = audienceLens == .clinician && careViewPermissionGranted
         }
         // A lesson point should reveal motion, not freeze it. Family pause is a
         // separate, reversible control.
@@ -1916,6 +1956,7 @@ final class StrokeExperienceState: ObservableObject {
     func clearPointSelection() {
         selectedPointEntityName = nil
         selectedPointLabel = nil
+        selectedPointReferenceExpanded = false
         teachingImagingDrawerVisible = false
     }
 
@@ -2380,6 +2421,21 @@ final class StrokeExperienceState: ObservableObject {
             entityName: "clinician-region-point-field-point-0",
             label: "Example affected area"
         )
+    }
+
+    /// Receipt for a surface/context point that owns a distinct full 3D
+    /// brain-surface object after the Family wearer asks for it.
+    func prepareFamilySurfaceReferenceProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        pointField = .regions
+        lessonPointsVisible = true
+        selectPoint(
+            entityName: "clinician-region-point-field-point-2",
+            label: "Brain surface"
+        )
+        toggleSelectedPointReference()
     }
 
     func prepareScholarSkullProof() {

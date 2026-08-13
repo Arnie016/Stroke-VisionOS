@@ -1384,3 +1384,30 @@
 - Verdict: `IMPROVED` — the shared anatomy has stronger room-scale presence while peripheral surfaces remain secondary.
 - Blocker: Simulator cannot prove actual headset scale comfort, reach, physical pinch reliability, room placement, family comprehension, or clinical correctness; XCAT remains unavailable.
 - Next safe action: validate the enlarged hero scale with a non-clinician wearer on an unlocked Vision Pro before further resizing or adding new Family content.
+
+## 2026-08-13 08:59 SGT — inspect Family point-to-reference composition
+
+- Target: ensure a selected anatomy point yields one intelligible local explanation and a genuinely secondary teaching reference, rather than a room decoration or a competing second hero.
+- Bounded action: inspected the deterministic `--proof-family-selected-point` route after the preceding Family hero changes; tested a compact secondary-reference/caption placement, then reverted it when the inspected render made the relationship less legible.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-010924/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; a narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-reference-caption`; inspected captures `/tmp/strokecare-family-selected-point-20260813-0110.png`, `/tmp/strokecare-family-selected-point-clear-reference-20260813-0130.png`, and `/tmp/strokecare-family-secondary-reference-20260813-0140.png` showed that the experimental compact placement reduced reference legibility, so no speculative layout change was retained.
+- Verdict: `NEUTRAL` — the existing selected-point composition is still the clearer of the tested variants; the inspection narrowed the next annotation redesign.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: prototype a point-owned three-part annotation (title, one plain-language sentence, optional "show me" action) and evaluate it as a complete spatial disclosure rather than by repositioning the current caption alone.
+
+## 2026-08-13 09:13 SGT — make Family point references progressive
+
+- Target: replace automatic second-object disclosure with a calmer point-owned explanation that lets a Family wearer choose whether to see the related 3D reference.
+- Bounded action: added explicit Family selection state and a `Show reference` / `Hide reference` action to the local point annotation. Selecting a point now shows its short generic meaning first; the related registered teaching object remains hidden until the wearer requests it. Clinician selection retains its existing direct teaching-reference behavior.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-090410/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-disclosure`; inspected fresh `--proof-family-selected-point` capture at `/tmp/strokecare-family-progressive-disclosure-20260813-0920.png` visibly shows the one local annotation and its explicit reference action, with no competing secondary anatomy object.
+- Verdict: `IMPROVED` — Family discovery now has a legible first explanation and a deliberate second spatial layer instead of an automatic reference reveal.
+- Blocker: Simulator cannot prove headset legibility, physical pinch reliability, depth judgement, family comprehension, or clinical correctness; XCAT remains unavailable.
+- Next safe action: test the two-step disclosure with a Family wearer on an unlocked Vision Pro and record whether the action label, reach, and reference relationship are clear.
+
+## 2026-08-13 10:01 SGT — map each Family point to its full 3D teaching structure
+
+- Target: make the selected point disclose the structure it actually reveals, so a vessel point can open the complete arterial tree while a surface/context point opens a complete brain-surface object.
+- Bounded action: kept the explicit point-first Family flow and added a third registered teaching lens, `brainSurface`, cloned from the already-loaded generic registered-v2 brain. Point actions now say `Show arterial tree`, `Show brain surface`, or `Show layer view`; flow/affected points map to the arterial tree, surface/context points map to the brain surface, and the permission-gated care act retains its layer view.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-091316/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-point-owned-structures`; fresh `--proof-family-surface-reference` capture at `/tmp/strokecare-family-surface-reference-20260813-1000.png` passed route OCR (2/2) and was inspected, showing the selected Brain surface annotation, matching hide action, caption provenance, and distinct full brain-surface object in the right field.
+- Verdict: `IMPROVED` — anatomy points now lead to legible, structure-specific 3D teaching objects rather than a generic reference label.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, source registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: test an arterial-tree point and a brain-surface point with a Family wearer on an unlocked Vision Pro, then record whether the two reference choices are easy to distinguish.

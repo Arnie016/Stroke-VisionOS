@@ -2965,11 +2965,12 @@ enum StrokeSceneFactory {
     }
 }
 
-/// The two clinically bounded teaching lenses supported by the registered
+/// The clinically bounded teaching lenses supported by the registered
 /// miniature. They are alternate explanations of the same authored anatomy,
 /// never a before/after or outcome comparison.
 enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
     case affectedVessel
+    case brainSurface
     case makingRoomPurpose
 
     var id: String { rawValue }
@@ -2977,6 +2978,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .affectedVessel: "Stroke effect"
+        case .brainSurface: "Brain surface"
         case .makingRoomPurpose: "Making-room purpose"
         }
     }
@@ -2993,6 +2995,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
 enum TeachingImagingMiniatureFactory {
     static let rootName = "registered-teaching-imaging-root"
     static let affectedRootName = "registered-teaching-imaging-affected-vessel"
+    static let surfaceRootName = "registered-teaching-imaging-brain-surface"
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
 
@@ -3010,6 +3013,7 @@ enum TeachingImagingMiniatureFactory {
     static let suggestedStageScale: Float = 1.04
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
+    private static let brainAssetName = "brain_anatomy_realistic_v2"
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
 
@@ -3024,6 +3028,13 @@ enum TeachingImagingMiniatureFactory {
         affected.isEnabled = false
         root.addChild(affected)
 
+        let surface = Entity()
+        surface.name = surfaceRootName
+        surface.orientation = wearerFacingTilt
+        surface.scale = [0.72, 0.72, 0.72]
+        surface.isEnabled = false
+        root.addChild(surface)
+
         let purpose = Entity()
         purpose.name = purposeRootName
         purpose.orientation = wearerFacingTilt
@@ -3036,6 +3047,7 @@ enum TeachingImagingMiniatureFactory {
         // unavailable the named root remains empty and disabled; procedural
         // fallback geometry is never presented as registered imaging.
         let arteriesSource = importedAnatomy?.findEntity(named: arteriesAssetName)
+        let brainSource = importedAnatomy?.findEntity(named: brainAssetName)
         let clotSource = importedAnatomy?.findEntity(named: clotAssetName)
         let duraSource = importedAnatomy?.findEntity(named: duraAssetName)
 
@@ -3051,6 +3063,16 @@ enum TeachingImagingMiniatureFactory {
                 from: clotSource,
                 to: affected,
                 namePrefix: "affected-clot"
+            )
+        }
+        if let brainSource {
+            // Surface/context points have their own full generic brain object
+            // instead of recycling an artery-only reference. This clones the
+            // already-loaded registered source; it is not patient imaging.
+            addRenderedLeaves(
+                from: brainSource,
+                to: surface,
+                namePrefix: "surface-brain"
             )
         }
         if let duraSource {
@@ -3083,10 +3105,12 @@ enum TeachingImagingMiniatureFactory {
     ) {
         guard let root = sceneRoot.findEntity(named: rootName) else { return }
         let affected = root.findEntity(named: affectedRootName)
+        let surface = root.findEntity(named: surfaceRootName)
         let purpose = root.findEntity(named: purposeRootName)
 
         root.isEnabled = isVisible
         affected?.isEnabled = isVisible && lens == .affectedVessel
+        surface?.isEnabled = isVisible && lens == .brainSurface
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
     }
 

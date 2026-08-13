@@ -1817,9 +1817,11 @@ private struct StrokeTeachingImagingDrawer: View {
 
     private var referenceTitle: String {
         switch (experience.audienceLens, experience.teachingImagingLens) {
-        case (.family, .affectedVessel): "BLOCKED VESSEL · TEACHING VIEW"
+        case (.family, .affectedVessel): "ARTERIAL TREE · TEACHING VIEW"
+        case (.family, .brainSurface): "BRAIN SURFACE · TEACHING VIEW"
         case (.family, .makingRoomPurpose): "MAKING-ROOM PURPOSE · TEACHING VIEW"
         case (.clinician, .affectedVessel): "AFFECTED-VESSEL REFERENCE"
+        case (.clinician, .brainSurface): "BRAIN-SURFACE REFERENCE"
         case (.clinician, .makingRoomPurpose): "MAKING-ROOM REFERENCE"
         }
     }
@@ -1831,7 +1833,11 @@ private struct StrokeTeachingImagingDrawer: View {
     }
 
     private var referenceTint: Color {
-        experience.teachingImagingLens == .affectedVessel ? .orange : .mint
+        switch experience.teachingImagingLens {
+        case .affectedVessel: .orange
+        case .brainSurface: .cyan
+        case .makingRoomPurpose: .mint
+        }
     }
 }
 
@@ -2945,6 +2951,25 @@ private struct StrokeIntentionAnnotation: View {
                     .font(.callout.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.92))
                     .fixedSize(horizontal: false, vertical: true)
+
+                if showsFamilyReferenceAction {
+                    Button {
+                        experience.toggleSelectedPointReference()
+                    } label: {
+                        Label(
+                            experience.selectedPointReferenceExpanded
+                                ? "Hide \(experience.teachingReferenceActionTitle())"
+                                : "Show \(experience.teachingReferenceActionTitle())",
+                            systemImage: experience.selectedPointReferenceExpanded
+                                ? "eye.slash"
+                                : "view.3d"
+                        )
+                        .font(.caption.weight(.bold))
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(annotationTint)
+                    .accessibilityHint("Shows or hides the one generic 3D teaching reference related to this point")
+                }
             }
         }
         .padding(.vertical, 8)
@@ -2974,6 +2999,12 @@ private struct StrokeIntentionAnnotation: View {
         case .inspectOcclusion: "WHY DOES PRESSURE BUILD?"
         case .discussCare: "WHAT CAN MAKING SPACE DO?"
         }
+    }
+
+    private var showsFamilyReferenceAction: Bool {
+        experience.audienceLens == .family
+            && experience.selectedPointEntityName != nil
+            && (experience.procedureStep != .discussCare || experience.careViewPermissionGranted)
     }
 
     private var annotationMeaning: String {

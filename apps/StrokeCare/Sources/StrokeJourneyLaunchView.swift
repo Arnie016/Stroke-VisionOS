@@ -567,6 +567,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-selected-point") {
             experience.prepareFamilyTeachingReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-surface-reference") {
+            experience.prepareFamilySurfaceReferenceProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-teaching-imaging") {
             experience.prepareTeachingImagingProof()
             Task { await openProofSpace() }
