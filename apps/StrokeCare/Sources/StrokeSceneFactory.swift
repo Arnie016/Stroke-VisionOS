@@ -3091,6 +3091,7 @@ enum TeachingImagingMiniatureFactory {
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
     static let pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"
+    static let pointRouteTracePrefix = "registered-teaching-imaging-route-trace-"
     static let flowMarkerRootName = "registered-teaching-imaging-flow-markers"
 
     /// Suggested stage-space placement for the parent view. The miniature is
@@ -3331,8 +3332,9 @@ enum TeachingImagingMiniatureFactory {
         let authoredLabels = StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle)
             + Array(atlasSurfaceDirections.keys)
         for label in authoredLabels {
-            root.findEntity(named: highlightName(for: label))?.isEnabled =
-                isVisible && label == selectedPointLabel
+            let selected = isVisible && label == selectedPointLabel
+            root.findEntity(named: highlightName(for: label))?.isEnabled = selected
+            root.findEntity(named: routeTraceName(for: label))?.isEnabled = selected
         }
     }
 
@@ -3481,6 +3483,7 @@ enum TeachingImagingMiniatureFactory {
                 tint: UIColor(red: 1.00, green: 0.55, blue: 0.18, alpha: 1),
                 to: affected
             )
+            addProcedureRouteTrace(label: label, index: index, to: affected)
         }
 
         let purposeBounds = purpose.visualBounds(relativeTo: purpose)
@@ -3525,11 +3528,86 @@ enum TeachingImagingMiniatureFactory {
         parent.addChild(highlight)
     }
 
+    /// Gives each blood-flow invitation a different, legible relationship
+    /// inside the same complete registered arterial tree. These amber traces
+    /// join authored teaching samples only; they are not segmented vessels,
+    /// measured centre-lines, patient landmarks, or a navigation plan.
+    private static func addProcedureRouteTrace(
+        label: String,
+        index: Int,
+        to parent: Entity
+    ) {
+        let trace = Entity()
+        trace.name = routeTraceName(for: label)
+        trace.isEnabled = false
+
+        let supply = referenceProcedurePositions[0]
+        let branch = referenceProcedurePositions[1]
+        let blockage = referenceProcedurePositions[2]
+        let beyondA = referenceProcedurePositions[3]
+        let beyondB = referenceProcedurePositions[4]
+        let segments: [(SIMD3<Float>, SIMD3<Float>)] = switch index {
+        case 0: [(supply, branch)]
+        case 1: [(branch, blockage), (blockage, beyondA), (blockage, beyondB)]
+        case 2: [(branch, blockage)]
+        case 3: [(blockage, beyondA)]
+        case 4: [(blockage, beyondB)]
+        default: []
+        }
+
+        let amber = UnlitMaterial(color: UIColor(
+            red: 1.00,
+            green: 0.67,
+            blue: 0.20,
+            alpha: 0.82
+        ))
+        for (segmentIndex, pair) in segments.enumerated() {
+            let delta = pair.1 - pair.0
+            let length = simd_length(delta)
+            guard length > 0.000_001 else { continue }
+            let segment = ModelEntity(
+                mesh: .generateCylinder(height: length, radius: 0.00155),
+                materials: [amber]
+            )
+            segment.name = "\(trace.name)-segment-\(segmentIndex)"
+            segment.position = (pair.0 + pair.1) / 2
+            segment.orientation = simd_quatf(from: [0, 1, 0], to: simd_normalize(delta))
+            trace.addChild(segment)
+        }
+
+        // Territory is a dependency relationship rather than another vessel
+        // segment, so its terminal cue broadens gently without implying an
+        // infarct boundary or measured perfusion territory.
+        if index == 4 {
+            let territory = ModelEntity(
+                mesh: .generateSphere(radius: 0.0105),
+                materials: [UnlitMaterial(color: UIColor(
+                    red: 1.00,
+                    green: 0.55,
+                    blue: 0.18,
+                    alpha: 0.15
+                ))]
+            )
+            territory.name = "\(trace.name)-generic-territory-cue"
+            territory.position = beyondB
+            territory.scale = [1.45, 0.72, 1.0]
+            trace.addChild(territory)
+        }
+        parent.addChild(trace)
+    }
+
     private static func highlightName(for label: String) -> String {
         let slug = label.lowercased().map { character -> Character in
             character.isLetter || character.isNumber ? character : "-"
         }
         return pointHighlightPrefix + String(slug)
+    }
+
+    private static func routeTraceName(for label: String) -> String {
+        let slug = label.lowercased().map { character -> Character in
+            character.isLetter || character.isNumber ? character : "-"
+        }
+        return pointRouteTracePrefix + String(slug)
     }
 
     private static var wearerFacingTilt: simd_quatf {

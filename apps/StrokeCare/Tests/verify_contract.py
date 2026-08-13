@@ -860,7 +860,10 @@ require(
 )
 require(
     'pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"' in scene
+    and 'pointRouteTracePrefix = "registered-teaching-imaging-route-trace-"' in scene
     and "addPointRelationshipHighlights" in scene
+    and "addProcedureRouteTrace" in scene
+    and "routeTraceName(for: label)" in scene
     and "selectedPointLabel: String?" in scene
     and "label == selectedPointLabel" in scene
     and "selectedPointLabel: experience.selectedPointLabel" in immersive,
@@ -869,6 +872,15 @@ require(
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
 require("--proof-family-arterial-reference" in launch and "prepareFamilyArterialReferenceProof" in launch and "prepareFamilyArterialReferenceProof" in state, "family arterial-tree reference proof route is missing")
+require(
+    "--proof-family-arterial-supply-reference" in launch
+    and "prepareFamilyArterialSupplyReferenceProof" in launch
+    and "prepareFamilyArterialSupplyReferenceProof" in state
+    and "--proof-family-arterial-beyond-reference" in launch
+    and "prepareFamilyArterialBeyondReferenceProof" in launch
+    and "prepareFamilyArterialBeyondReferenceProof" in state,
+    "arterial selected-point comparison proof routes are missing",
+)
 require("--proof-family-layer-reference" in launch and "prepareFamilyLayerReferenceProof" in launch and "prepareFamilyLayerReferenceProof" in state and "pointField = .craniotomy" in state, "family access-story layer-reference proof route is missing")
 require(all(point_label in state for point_label in (
     '"Example affected area"', '"Blood supply approaches"', '"Arteries branch"',

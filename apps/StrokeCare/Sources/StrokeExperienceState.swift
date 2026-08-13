@@ -2653,14 +2653,42 @@ final class StrokeExperienceState: ObservableObject {
     /// Receipt for a vascular point that owns the complete registered arterial
     /// tree, presented as generic teaching anatomy rather than a patient map.
     func prepareFamilyArterialReferenceProof() {
+        prepareFamilyArterialReferenceProof(
+            pointIndex: 2,
+            label: "Example blockage"
+        )
+    }
+
+    /// Comparison receipt: the same complete arterial tree must visibly
+    /// localise its upstream supply segment, not merely swap caption text.
+    func prepareFamilyArterialSupplyReferenceProof() {
+        prepareFamilyArterialReferenceProof(
+            pointIndex: 0,
+            label: "Blood supply approaches"
+        )
+    }
+
+    /// Comparison receipt: the same complete arterial tree must visibly
+    /// localise the downstream relationship beyond the teaching blockage.
+    func prepareFamilyArterialBeyondReferenceProof() {
+        prepareFamilyArterialReferenceProof(
+            pointIndex: 3,
+            label: "Flow beyond the blockage changes"
+        )
+    }
+
+    private func prepareFamilyArterialReferenceProof(
+        pointIndex: Int,
+        label: String
+    ) {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
         environmentMode = .surroundings
         pointField = .procedure
         lessonPointsVisible = true
         selectPoint(
-            entityName: "clinician-procedure-point-field-point-2",
-            label: "Example blockage"
+            entityName: "clinician-procedure-point-field-point-\(pointIndex)",
+            label: label
         )
     }
 

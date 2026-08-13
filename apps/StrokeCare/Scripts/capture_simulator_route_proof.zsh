@@ -18,7 +18,7 @@ readonly REQUESTED_SETTLE_SECONDS="${PROOF_SETTLE_SECONDS:-8}"
 SETTLE_SECONDS="${REQUESTED_SETTLE_SECONDS}"
 
 case "${PROOF_ROUTE}" in
-    --proof-role-choice|--proof-spatial-prelude|--proof-print-request|--proof-realtime-narration|--proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose|--proof-family-surface-reference|--proof-family-arterial-reference|--proof-family-layer-reference|--proof-family-atlas-surface-cue|--proof-family-atlas-temporal-cue|--proof-family-atlas-internal-reference) ;;
+    --proof-role-choice|--proof-spatial-prelude|--proof-print-request|--proof-realtime-narration|--proof-spatial-intake|--proof-pressure|--proof-family-pressure-story|--proof-clinician-pressure-story|--proof-clinician-craniotomy|--proof-family-make-space-purpose|--proof-family-surface-reference|--proof-family-arterial-reference|--proof-family-arterial-supply-reference|--proof-family-arterial-beyond-reference|--proof-family-layer-reference|--proof-family-atlas-surface-cue|--proof-family-atlas-temporal-cue|--proof-family-atlas-internal-reference) ;;
     *)
         print -u2 -- "SIMULATOR_PROOF=FAIL unsupported route ${PROOF_ROUTE}"
         exit 64
@@ -29,7 +29,7 @@ esac
 # its selected-point SwiftUI attachment. An early frame can contain enough of
 # the right caption to satisfy generic route OCR while the hero and callout are
 # still resolving. Give this asset-heavy proof a deterministic cold-start floor.
-if [[ "${PROOF_ROUTE}" == "--proof-family-arterial-reference" ]] &&
+if [[ "${PROOF_ROUTE}" == --proof-family-arterial-* ]] &&
     (( ${SETTLE_SECONDS} < 15 )); then
     SETTLE_SECONDS=15
 fi

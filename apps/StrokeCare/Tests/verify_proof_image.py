@@ -36,6 +36,14 @@ ROUTE_TEXT_TOKENS = {
     "--proof-family-make-space-purpose": ("make space", "questions to as"),
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
     "--proof-family-arterial-reference": ("arterial tree", "example blockage", "hear more"),
+    "--proof-family-arterial-supply-reference": (
+        "blood supply approaches",
+        "hear more",
+    ),
+    "--proof-family-arterial-beyond-reference": (
+        "flow beyond the blockage",
+        "hear more",
+    ),
     "--proof-family-layer-reference": ("generic craniotomy", "hide layer view"),
     "--proof-family-atlas-surface-cue": ("frontal lobe", "whole brain surface"),
     "--proof-family-atlas-temporal-cue": ("temporal lobe", "whole brain surface"),
