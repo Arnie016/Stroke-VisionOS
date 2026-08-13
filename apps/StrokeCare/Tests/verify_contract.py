@@ -748,7 +748,7 @@ require("suggestedStagePosition: SIMD3<Float> = [0.40, 1.60, -0.80]" in scene an
 require(all(token in state for token in (
     "selectedPointReferenceExpanded",
     "toggleSelectedPointReference()",
-    "teachingImagingDrawerVisible = audienceLens == .clinician",
+    "teachingImagingDrawerVisible = true",
 )), "Family point selection must disclose its secondary 3D reference explicitly")
 require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTitle()" in immersive and "toggleSelectedPointReference()" in immersive, "selected Family points are missing their explicit spatial-reference follow-up")
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
@@ -819,10 +819,10 @@ require(all(token in launch for token in (
 )), "deterministic family/clinician Pressure-story routes are missing")
 require("experience.selectedPointEntityName != nil" in immersive and "selected.uppercased()" in immersive, "main explanation appears before point selection or fails to identify the selected target")
 require(all(token in state for token in (
-    "The secondary reference is an outcome of selecting a teaching point",
+    "Every anatomy-attached point owns one matching spatial reference",
     "teachingImagingLens = .affectedVessel",
     "teachingImagingLens = .makingRoomPurpose",
-    "audienceLens == .clinician && careViewPermissionGranted",
+    "teachingImagingDrawerVisible = careViewPermissionGranted",
     "toggleSelectedPointReference()",
 )), "point selection does not keep one consent-aware, act-matched reference available")
 require(

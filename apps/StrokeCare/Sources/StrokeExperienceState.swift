@@ -1073,9 +1073,9 @@ final class StrokeExperienceState: ObservableObject {
         teachingImagingDrawerVisible.toggle()
     }
 
-    /// Expands the one already-selected point into its related spatial teaching
-    /// object. This is deliberately a user choice for Family mode; it does not
-    /// infer whether a person wants more or less detail.
+    /// Toggles the already-selected point's related spatial teaching object.
+    /// Point selection opens the matching reference; this remains the explicit,
+    /// reversible Hide/Show action and never infers a viewer preference.
     func toggleSelectedPointReference() {
         guard spatialPhase == .explanation,
               selectedPointEntityName != nil else { return }
@@ -1892,7 +1892,6 @@ final class StrokeExperienceState: ObservableObject {
             // than the generic vessel miniature. The point stays attached to
             // the authored access region while the top timeline changes only
             // reversible presentation states.
-            teachingImagingDrawerVisible = false
             requestedPause = false
             if audienceLens == .clinician {
                 if presenterTeachingBeat == .confirmContext {
@@ -1906,6 +1905,12 @@ final class StrokeExperienceState: ObservableObject {
             // source of the teaching story.
             selectedPointEntityName = entityName
             selectedPointLabel = label
+            // The access story shares the same point-first disclosure rule as
+            // vascular and surface cues. Its only extra condition is the
+            // existing explicit, reversible non-graphic permission boundary.
+            selectedPointReferenceExpanded = careViewPermissionGranted
+            teachingImagingLens = .makingRoomPurpose
+            teachingImagingDrawerVisible = careViewPermissionGranted
             return
         }
 
@@ -1931,19 +1936,20 @@ final class StrokeExperienceState: ObservableObject {
         }
         selectedPointEntityName = entityName
         selectedPointLabel = label
-        selectedPointReferenceExpanded = false
-        // The secondary reference is an outcome of selecting a teaching point,
-        // not a parallel image browser. Clinicians receive the reference in
-        // their fast teaching lane; Family opens it as an explicit follow-up.
+        // Every anatomy-attached point owns one matching spatial reference.
+        // A direct gaze-and-pinch discloses it immediately for both roles;
+        // the existing Hide action makes the disclosure reversible without
+        // turning the right field into a parallel image browser.
+        selectedPointReferenceExpanded = true
         switch procedureStep {
         case .chooseCase:
             teachingImagingDrawerVisible = false
         case .inspectOcclusion:
             teachingImagingLens = teachingLens(for: label)
-            teachingImagingDrawerVisible = audienceLens == .clinician
+            teachingImagingDrawerVisible = true
         case .discussCare:
             teachingImagingLens = .makingRoomPurpose
-            teachingImagingDrawerVisible = audienceLens == .clinician && careViewPermissionGranted
+            teachingImagingDrawerVisible = careViewPermissionGranted
         }
         // A lesson point should reveal motion, not freeze it. Family pause is a
         // separate, reversible control.
@@ -2448,7 +2454,6 @@ final class StrokeExperienceState: ObservableObject {
             entityName: "clinician-region-point-field-point-2",
             label: "Brain surface"
         )
-        toggleSelectedPointReference()
     }
 
     /// Receipt for a vascular point that owns the complete registered arterial
@@ -2463,7 +2468,6 @@ final class StrokeExperienceState: ObservableObject {
             entityName: "clinician-procedure-point-field-point-2",
             label: "Example blockage"
         )
-        toggleSelectedPointReference()
     }
 
     /// Receipt for the access-story point. This is deliberately a generic,
@@ -2479,7 +2483,6 @@ final class StrokeExperienceState: ObservableObject {
             entityName: "clinician-access-point-field-point-0",
             label: "Generic craniotomy teaching story"
         )
-        toggleSelectedPointReference()
     }
 
     func prepareScholarSkullProof() {

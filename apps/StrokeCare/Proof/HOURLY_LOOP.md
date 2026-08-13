@@ -1465,3 +1465,12 @@
 - Verdict: `IMPROVED` — each current point family now reveals a complete related teaching structure: arterial route in brain, brain surface, or generic skull–dura–brain layer relationship.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: run one supervised Vision Pro walkthrough comparing all three full-structure disclosures before adding new point families.
+
+## 2026-08-13 12:31 SGT — clarify the exterior exhibit and retain a bounded interior handoff
+
+- Target: prevent the main whole-brain explainer from being mistaken for an inside-the-brain simulation, while retaining the existing separate vessel-journey handoff.
+- Bounded action: added an always-visible peripheral exterior-orientation cue and moved the detailed teaching miniature into the world stage before its first visibility mutation, preventing it from inheriting the hero brain's room-scale transform when a point is preselected.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-122259/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded; the current source retains the explicit `rbcjourney://enter` handoff at room scale. A fresh `--proof-family-arterial-reference` capture was inspected at `/tmp/strokecare-family-arterial-reference-exterior-clarity-20260813-1231.png`, but it was blocked by the Simulator system confirmation `Open in “Inside the Flow”?`, so it is not accepted as an exterior visual proof.
+- Verdict: `IMPROVED` — the product now states that the current view is generic outside-the-brain anatomy and avoids the known first-frame inherited-scale reference failure; the interior journey remains an explicit separate handoff.
+- Blocker: the lingering Simulator cross-app confirmation prevents a clean deterministic exterior capture. Simulator and an unavailable XCAT cannot establish wearer comprehension, physical targeting, spatial comfort, or clinical validity.
+- Next safe action: clear the system confirmation on-device or in a freshly reset Simulator, then capture the exterior arterial-reference route before adding further point-specific highlights.

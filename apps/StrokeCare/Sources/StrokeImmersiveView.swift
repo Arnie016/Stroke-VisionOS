@@ -266,6 +266,7 @@ struct StrokeImmersiveView: View {
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let viewpointControlID = "spatial-viewpoint-control"
     private let roleMicroCuesID = "spatial-role-micro-cues"
+    private let exteriorOrientationID = "spatial-exterior-orientation"
     private let familyBrainAtlasID = "spatial-family-brain-atlas"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
     private let scholarReferenceRailID = "spatial-scholar-reference-rail"
@@ -307,6 +308,27 @@ struct StrokeImmersiveView: View {
                         guard !Task.isCancelled else { return }
                         root.removeFromParent()
                         stageRoot.addChild(detailedRoot)
+                        // The detailed scene arrives after the proof route may
+                        // already have selected an anatomy point. Move the
+                        // dormant secondary reference out of the hero root
+                        // before its first visibility update, otherwise it
+                        // inherits room-scale brain magnification for one
+                        // frame and can fill the wearer’s view.
+                        if let miniature = detailedRoot.findEntity(
+                            named: StrokeSceneFactory.registeredTeachingImagingRootName
+                        ) {
+                            miniature.removeFromParent()
+                            stageRoot.addChild(miniature)
+                            miniature.position = StrokeSceneFactory.registeredTeachingImagingSuggestedStagePosition
+                            let miniatureScale = StrokeSceneFactory.registeredTeachingImagingSuggestedStageScale
+                            miniature.scale = [miniatureScale, miniatureScale, miniatureScale]
+                            StrokeSceneFactory.updateRegisteredTeachingImaging(
+                                root: stageRoot,
+                                isVisible: experience.spatialPhase == .explanation
+                                    && experience.teachingImagingDrawerVisible,
+                                lens: experience.teachingImagingLens
+                            )
+                        }
                         experience.updateAvailableAnatomyFocuses(
                             StrokeSceneFactory.availableAnatomyFocuses(in: detailedRoot)
                         )
@@ -398,7 +420,8 @@ struct StrokeImmersiveView: View {
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
                         caseHistoryTimelineID,
-                        teachingTimelineID, viewpointControlID, roleMicroCuesID, familyBrainAtlasID, teachingImagingDrawerID,
+                        teachingTimelineID, viewpointControlID, roleMicroCuesID, exteriorOrientationID,
+                        familyBrainAtlasID, teachingImagingDrawerID,
                         scholarReferenceRailID,
                         familyControlsID, presenterControlsID
                     ] {
@@ -695,6 +718,11 @@ struct StrokeImmersiveView: View {
                             .environmentObject(experience)
                             .frame(width: 430)
                     }
+                    Attachment(id: exteriorOrientationID) {
+                        SpatialExteriorOrientationCue()
+                            .environmentObject(experience)
+                            .frame(width: 310)
+                    }
                     Attachment(id: familyBrainAtlasID) {
                         SpatialFamilyBrainAtlas()
                             .environmentObject(experience)
@@ -923,7 +951,12 @@ struct StrokeImmersiveView: View {
             // presenter rail. The larger 0.86-scale field makes authored
             // questions and the explicit clarity check legible in a shared
             // conversation while the anatomy remains central and dominant.
-            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.56, 1.72, -0.90], isFamily ? 0.86 : 0.82)
+            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.56, 1.72, -0.90], isFamily ? 0.86 : 0.82),
+            // The current experience is an exterior, whole-brain exhibit.
+            // State that plainly before a wearer tries to interpret a vessel
+            // reference as an interior fly-through. The separate journey is
+            // only named when room-scale magnification has made it available.
+            (exteriorOrientationID, [-0.46, 1.92, -0.94], isFamily ? 0.78 : 0.74)
         ]
 
         for (id, position, scale) in placements {
@@ -2655,6 +2688,54 @@ private struct SpatialFamilyBrainAtlas: View {
             .fill(.white.opacity(0.16))
             .frame(width: 14, height: 1)
             .accessibilityHidden(true)
+    }
+}
+
+/// A glanceable location cue that prevents the exterior exhibit from being
+/// confused with the separately installed vessel fly-through. It is passive:
+/// the brain stays the primary interaction surface, and the handoff remains
+/// the explicit Enter the Brain control once room scale is available.
+private struct SpatialExteriorOrientationCue: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 9) {
+            Image(systemName: "view.3d")
+                .font(.caption.weight(.black))
+                .foregroundStyle(.mint)
+                .frame(width: 28, height: 28)
+                .background(.mint.opacity(0.14), in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("OUTSIDE THE BRAIN")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.9)
+                    .foregroundStyle(.mint)
+
+                Text("Generic whole-brain anatomy · vessel paths and teaching points")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.76))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if experience.isInteriorPortalAvailable {
+                    Text("Room scale ready · Enter the Brain opens a separate guided vessel journey")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.orange.opacity(0.92))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 9)
+        .background(.black.opacity(0.58), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(.mint.opacity(0.26)))
+        .shadow(color: .black.opacity(0.42), radius: 8, y: 3)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            experience.isInteriorPortalAvailable
+                ? "Outside the brain. You are viewing generic whole-brain anatomy. Room scale is ready; Enter the Brain opens a separate guided vessel journey."
+                : "Outside the brain. You are viewing generic whole-brain anatomy with vessel paths and teaching points."
+        )
     }
 }
 
