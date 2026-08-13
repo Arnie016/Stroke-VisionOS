@@ -1438,3 +1438,12 @@
 - Verdict: `REGRESSED` — the test would have obscured the anatomy and falsely implied a clean spatial connection, so the established point provenance caption remains preferable.
 - Blocker: Simulator cannot establish headset legibility, physical gaze-and-pinch reach, stereo depth, source registration accuracy, family comprehension, or clinical correctness; XCAT is unavailable.
 - Next safe action: validate the existing point-provenance caption and full-structure reference with a Family wearer on an unlocked Vision Pro before introducing another relationship cue.
+
+## 2026-08-13 10:55 SGT — prove the Family craniotomy layer reference
+
+- Target: give the access-story point the same complete-structure payoff as vessel and surface points, without turning the explainer into an operative simulation.
+- Bounded action: added a deterministic Family route that enters the existing permission-granted generic craniotomy teaching story, selects its authored access point, and opens the complete making-room layer relationship in the secondary field.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-104951/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-layer-reference`; fresh `--proof-family-layer-reference` capture at `/tmp/strokecare-family-layer-reference-20260813-1055.png` passed route OCR (2/2) and was inspected, showing the selected generic craniotomy point, `Hide layer view`, and the matching `MAKING-ROOM PURPOSE · TEACHING VIEW` reference.
+- Verdict: `IMPROVED` — all three current teaching-reference families now have a verified point-owned disclosure: full arterial tree, whole brain surface, and generic layer relationship.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: conduct one physical Vision Pro walkthrough with a clinician and a family tester, comparing the three references before adding more content.

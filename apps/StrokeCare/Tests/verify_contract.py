@@ -754,6 +754,7 @@ require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTi
 require("--proof-family-selected-point" in launch and "prepareFamilyTeachingReferenceProof" in launch and "prepareFamilyTeachingReferenceProof" in state, "family point-to-spatial-reference proof route is missing")
 require("--proof-family-surface-reference" in launch and "prepareFamilySurfaceReferenceProof" in launch and "prepareFamilySurfaceReferenceProof" in state, "family brain-surface reference proof route is missing")
 require("--proof-family-arterial-reference" in launch and "prepareFamilyArterialReferenceProof" in launch and "prepareFamilyArterialReferenceProof" in state, "family arterial-tree reference proof route is missing")
+require("--proof-family-layer-reference" in launch and "prepareFamilyLayerReferenceProof" in launch and "prepareFamilyLayerReferenceProof" in state and "pointField = .craniotomy" in state, "family access-story layer-reference proof route is missing")
 require(all(point_label in state for point_label in (
     '"Example affected area"', '"Blood supply approaches"', '"Arteries branch"',
     '"Example blockage"', '"Flow beyond the blockage changes"', '"Affected territory"',

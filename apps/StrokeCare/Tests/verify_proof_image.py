@@ -32,6 +32,7 @@ ROUTE_TEXT_TOKENS = {
     "--proof-family-make-space-purpose": ("make space", "questions to as"),
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
     "--proof-family-arterial-reference": ("arterial tree", "example blockage"),
+    "--proof-family-layer-reference": ("generic craniotomy", "hide layer view"),
 }
 
 OCR_SWIFT_SOURCE = r"""

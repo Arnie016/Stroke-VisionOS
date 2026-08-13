@@ -2466,6 +2466,22 @@ final class StrokeExperienceState: ObservableObject {
         toggleSelectedPointReference()
     }
 
+    /// Receipt for the access-story point. This is deliberately a generic,
+    /// permission-granted layer relationship—not an operative simulation or
+    /// patient-specific procedure plan.
+    func prepareFamilyLayerReferenceProof() {
+        prepareProof(step: .discussCare)
+        audienceLens = .family
+        environmentMode = .surroundings
+        pointField = .craniotomy
+        lessonPointsVisible = true
+        selectPoint(
+            entityName: "clinician-access-point-field-point-0",
+            label: "Generic craniotomy teaching story"
+        )
+        toggleSelectedPointReference()
+    }
+
     func prepareScholarSkullProof() {
         // Orient is the quietest of the three existing acts: no clot-focus or
         // care-purpose cue competes with this reversible technical inspection.

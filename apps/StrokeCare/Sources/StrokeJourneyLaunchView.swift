@@ -573,6 +573,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-arterial-reference") {
             experience.prepareFamilyArterialReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-layer-reference") {
+            experience.prepareFamilyLayerReferenceProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-teaching-imaging") {
             experience.prepareTeachingImagingProof()
             Task { await openProofSpace() }
