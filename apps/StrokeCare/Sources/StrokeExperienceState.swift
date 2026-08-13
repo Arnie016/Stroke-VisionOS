@@ -200,11 +200,11 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
     /// generic surface marker onto unreviewed internal anatomy.
     var spatialCuePointIndex: Int? {
         switch self {
-        case .cortex: 2
-        case .frontalLobe: 0
-        case .parietalLobe: 1
-        case .temporalLobe: 2
-        case .occipitalLobe: 3
+        case .cortex: 0
+        case .frontalLobe: 1
+        case .parietalLobe: 2
+        case .temporalLobe: 3
+        case .occipitalLobe: 4
         case .arterialRoutes, .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
             nil
         }
@@ -768,7 +768,7 @@ final class StrokeExperienceState: ObservableObject {
         }
         if let index = chapter.spatialCuePointIndex {
             selectPoint(
-                entityName: "\(StrokePointField.regions.entityPrefix)\(index)",
+                entityName: "family-atlas-point-field-point-\(index)",
                 label: chapter.teachingReferenceLabel ?? "\(chapter.title) · generic atlas focus"
             )
             // The point is the invitation; the right field now reveals the
@@ -2478,6 +2478,19 @@ final class StrokeExperienceState: ObservableObject {
         spatialZoom = 1.22
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.frontalLobe)
+        advanceFamilyBrainAtlasDetail(by: 1)
+        revealFamilyBrainAtlasModelCue()
+    }
+
+    /// A second surface receipt proves that Atlas chapters do not reuse the
+    /// frontal marker. Temporal context owns a separate side-lobe invitation.
+    func prepareFamilyAtlasTemporalCueProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        spatialZoom = 1.22
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.temporalLobe)
         advanceFamilyBrainAtlasDetail(by: 1)
         revealFamilyBrainAtlasModelCue()
     }

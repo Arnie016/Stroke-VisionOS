@@ -88,6 +88,7 @@ enum StrokeSceneFactory {
     private static let duraExpansionName = "dura-expansion"
     private static let layerRevealSeamName = "calm-layer-reveal-seam"
     private static let regionPointFieldName = "clinician-region-point-field"
+    private static let atlasPointFieldName = "family-atlas-point-field"
     private static let procedurePointFieldName = "clinician-procedure-point-field"
     private static let accessPointFieldName = "clinician-access-point-field"
     private static let lessonPointOrbName = "lesson-point-visible-orb"
@@ -173,6 +174,23 @@ enum StrokeSceneFactory {
         [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
     ]
 
+    /// Five distinct, generic surface-orientation anchors for the Family
+    /// Atlas. They intentionally live in the registered brain frame but do
+    /// not claim sulcal precision, functional boundaries, or patient anatomy.
+    private static let atlasPointDirections: [SIMD3<Float>] = [
+        [-0.58, 0.58, 0.61], [-0.74, 0.35, 0.43],
+        [-0.18, 0.76, 0.44], [-0.48, -0.20, 0.72],
+        [0.68, 0.34, 0.50]
+    ]
+
+    private static let atlasPointLabels = [
+        "Cerebral cortex · generic atlas focus",
+        "Frontal lobe · generic atlas focus",
+        "Parietal lobe · generic atlas focus",
+        "Temporal lobe · generic atlas focus",
+        "Occipital lobe · generic atlas focus"
+    ]
+
     private static let regionPointLabels = [
         "Example affected area", "Nearby brain tissue",
         "Brain surface", "Opposite-side context"
@@ -228,6 +246,14 @@ enum StrokeSceneFactory {
                         simd_normalize($0) * SIMD3<Float>(0.071, 0.100, 0.117)
                     },
                     labels: regionPointLabels,
+                    material: careMaterial(opacity: 0.92)
+                ))
+                fallback.addChild(makePointField(
+                    name: atlasPointFieldName,
+                    points: atlasPointDirections.map {
+                        simd_normalize($0) * SIMD3<Float>(0.071, 0.100, 0.117)
+                    },
+                    labels: atlasPointLabels,
                     material: careMaterial(opacity: 0.92)
                 ))
                 fallback.addChild(makePointField(
@@ -834,6 +860,31 @@ enum StrokeSceneFactory {
             addPointInvitationTether(
                 to: point,
                 sourceOffset: registeredRegionSourcePoints[index] - registeredRegionPoints[index]
+            )
+        }
+        let registeredAtlasSourcePoints = atlasPointDirections.map { direction in
+            brainCenter + brainRadii * simd_normalize(direction)
+        }
+        let registeredAtlasPoints = zip(
+            registeredAtlasSourcePoints,
+            atlasPointDirections
+        ).map { source, direction in
+            source + simd_normalize(direction) * 0.016
+        }
+        let atlasPointField = makePointField(
+            name: atlasPointFieldName,
+            points: registeredAtlasPoints,
+            labels: atlasPointLabels,
+            material: careMaterial(opacity: 0.92)
+        )
+        regionPointAnchor.addChild(atlasPointField)
+        for index in registeredAtlasPoints.indices {
+            guard let point = atlasPointField.findEntity(
+                named: "\(atlasPointFieldName)-point-\(index)"
+            ) else { continue }
+            addPointInvitationTether(
+                to: point,
+                sourceOffset: registeredAtlasSourcePoints[index] - registeredAtlasPoints[index]
             )
         }
         let procedurePointField = makePointField(
@@ -1869,6 +1920,7 @@ enum StrokeSceneFactory {
 
     static func isPointFieldInteractionTarget(_ entity: Entity) -> Bool {
         entity.name.hasPrefix("\(regionPointFieldName)-point-") ||
+            entity.name.hasPrefix("\(atlasPointFieldName)-point-") ||
             entity.name.hasPrefix("\(procedurePointFieldName)-point-") ||
             entity.name.hasPrefix("\(accessPointFieldName)-point-")
     }
@@ -1881,6 +1933,11 @@ enum StrokeSceneFactory {
                let index = Int(name.replacingOccurrences(of: "\(regionPointFieldName)-point-", with: "")),
                regionPointLabels.indices.contains(index) {
                 return (name, regionPointLabels[index])
+            }
+            if name.hasPrefix("\(atlasPointFieldName)-point-"),
+               let index = Int(name.replacingOccurrences(of: "\(atlasPointFieldName)-point-", with: "")),
+               atlasPointLabels.indices.contains(index) {
+                return (name, atlasPointLabels[index])
             }
             if name.hasPrefix("\(procedurePointFieldName)-point-"),
                let index = Int(name.replacingOccurrences(of: "\(procedurePointFieldName)-point-", with: "")),
@@ -1912,7 +1969,7 @@ enum StrokeSceneFactory {
         // may be visible even though the opaque proxy wins the ray hit first.
         let effectiveMaximumDistance = max(maximumDistance, 0.085)
 
-        for fieldName in [regionPointFieldName, procedurePointFieldName, accessPointFieldName] {
+        for fieldName in [regionPointFieldName, atlasPointFieldName, procedurePointFieldName, accessPointFieldName] {
             guard let field = root.findEntity(named: fieldName), field.isEnabled else { continue }
             for point in field.children where point.isEnabled {
                 guard isPointFieldInteractionTarget(point) else { continue }
@@ -2180,13 +2237,16 @@ enum StrokeSceneFactory {
         time: TimeInterval
     ) {
         let regionField = root.findEntity(named: regionPointFieldName)
+        let atlasField = root.findEntity(named: atlasPointFieldName)
         let procedureField = root.findEntity(named: procedurePointFieldName)
         let accessField = root.findEntity(named: accessPointFieldName)
 
         let showLessons = experience.spatialPhase == .explanation &&
             experience.lessonPointsVisible &&
             !experience.isClinicianScholarSkullInspectionActive
-        regionField?.isEnabled = showLessons && experience.pointField == .regions
+        let atlasOwnsSurfacePoints = experience.audienceLens == .family && experience.familyBrainAtlasVisible
+        regionField?.isEnabled = showLessons && experience.pointField == .regions && !atlasOwnsSurfacePoints
+        atlasField?.isEnabled = showLessons && atlasOwnsSurfacePoints && experience.familyBrainAtlasCueChapter != nil
         procedureField?.isEnabled = showLessons && experience.pointField == .procedure
         accessField?.isEnabled = showLessons && experience.pointField == .craniotomy
 
@@ -2234,6 +2294,25 @@ enum StrokeSceneFactory {
                             ? lessonPointMaterial(opacity: revealAll ? CGFloat(experience.detailLevel.pointOpacity) : 1)
                             : warningMaterial(opacity: revealAll ? CGFloat(experience.detailLevel.pointOpacity) : 1))
                 ]
+            }
+        }
+
+        // The Atlas presents exactly one chapter-owned invitation. This avoids
+        // both the old four-point cloud and the cortex/temporal collision where
+        // two chapters borrowed the same generic region marker.
+        if let atlasField {
+            for (index, child) in atlasField.children.enumerated() {
+                guard isPointFieldInteractionTarget(child),
+                      let orb = child.findEntity(named: lessonPointOrbName) as? ModelEntity else {
+                    continue
+                }
+                let isSelected = child.name == experience.selectedPointEntityName
+                child.isEnabled = isSelected
+                let phase = Float(time) * experience.detailLevel.motionRate + Float(index) * 0.42
+                let pulse = 0.98 + sin(phase) * 0.035
+                let emphasis: Float = isSelected ? 1.58 : 1
+                orb.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
+                orb.model?.materials = [selectedLessonPointMaterial(opacity: isSelected ? 0.98 : 0.58)]
             }
         }
     }

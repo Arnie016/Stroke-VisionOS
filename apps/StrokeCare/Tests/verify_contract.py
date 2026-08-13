@@ -766,13 +766,25 @@ require(all(token in state for token in (
     "prepareFamilyAtlasInteriorReadyProof",
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
+    "prepareFamilyAtlasTemporalCueProof",
 )), "family Brain Atlas does not keep a user-selected, generic-model handoff")
+require(all(token in state for token in (
+    'entityName: "family-atlas-point-field-point-\\(index)"',
+    "selectFamilyBrainAtlasChapter(.temporalLobe)",
+)), "Family Atlas chapters still borrow generic region-point identities")
 require(all(token in state for token in (
     "complete generic brain with this chapter's localized focus",
     "teachingImagingLens = .brainSurface",
     "teachingImagingDrawerVisible = true",
 )), "Family Atlas surface chapters do not reveal their complete localized 3D brain reference")
 require("atlasSurfaceDirections" in scene and "Array(atlasSurfaceDirections.keys)" in scene, "Family Atlas surface references are missing their chapter-specific 3D focus beacons")
+require(all(token in scene for token in (
+    'atlasPointFieldName = "family-atlas-point-field"',
+    "atlasPointDirections",
+    "atlasPointLabels",
+    "atlasOwnsSurfacePoints",
+    "The Atlas presents exactly one chapter-owned invitation",
+)), "Family Atlas does not own five distinct, one-at-a-time hero-brain markers")
 require(all(token in immersive for token in (
     'familyBrainAtlasID = "spatial-family-brain-atlas"',
     "SpatialFamilyBrainAtlas()",
@@ -805,6 +817,7 @@ require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArteria
 require("--proof-family-atlas-next-chapter" in launch and "prepareFamilyAtlasNextChapterProof" in launch, "deterministic Family Atlas next-chapter proof route is missing")
 require("--proof-family-atlas-interior-ready" in launch and "prepareFamilyAtlasInteriorReadyProof" in launch, "deterministic Family Atlas interior-ready proof route is missing")
 require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurfaceCueProof" in launch, "deterministic family Atlas surface-cue proof route is missing")
+require("--proof-family-atlas-temporal-cue" in launch and "prepareFamilyAtlasTemporalCueProof" in launch, "deterministic temporal Atlas cue proof route is missing")
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")
 require("fixed 108-point field and 64-point disc" in immersive and ".frame(minWidth: 108, minHeight: 108)" in immersive and "let discDiameter: CGFloat = 64" in immersive, "presenter timeline targets are not room-scale legible")

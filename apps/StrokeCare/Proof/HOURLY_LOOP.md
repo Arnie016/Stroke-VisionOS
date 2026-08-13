@@ -1528,3 +1528,12 @@
 - Verdict: `IMPROVED` — each spatial surface now has one job, and revealing an Atlas chapter no longer creates a second explanation window over the anatomy.
 - Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, or clinical correctness; XCAT is currently unavailable.
 - Next safe action: test the Atlas reveal and Show/Hide cycle with one unfamiliar wearer on an unlocked Vision Pro before further increasing chapter density.
+
+## 2026-08-13 14:01 SGT — give every surface chapter its own spatial invitation
+
+- Target: stop Brain Atlas chapters from reusing or misplacing generic lesson dots, especially the cortex and temporal-lobe chapters that previously shared one anchor.
+- Bounded action: added a dedicated five-point Atlas field registered to the generic whole-brain envelope. Cortex, frontal, parietal, temporal, and occipital chapters now each select one distinct lifted invitation with a tether; the ordinary four-region point cloud is hidden while the Atlas owns the lesson.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-135318/BLOCKED.md`; `python3 Tests/verify_contract.py`, Python compilation, shell syntax, and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-distinct-build`; fresh frontal and temporal captures passed route OCR (2/2), image metrics, and process checks at `/tmp/strokecare-atlas-frontal-distinct-20260813.png` and `/tmp/strokecare-atlas-temporal-distinct-20260813.png`. Visual comparison confirms the frontal invitation is high/anterior while the temporal invitation moves lower/lateral, and the right full-brain reference beacon moves with the selected chapter.
+- Verdict: `IMPROVED` — each surface chapter now has one coherent hero-brain invitation and one matching localized full-structure reference instead of borrowing a repeated generic dot.
+- Blocker: these are generic teaching anchors, not sulcal boundaries or patient-specific landmarks; Simulator cannot establish physical gaze-and-pinch accuracy, stereo depth, wearer comprehension, registration accuracy, or clinical correctness, and XCAT remains unavailable.
+- Next safe action: have a neuroanatomist review all five generic Atlas marker locations together on an unlocked Vision Pro before adding deeper structure chapters.
