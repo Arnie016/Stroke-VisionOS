@@ -1447,3 +1447,12 @@
 - Verdict: `IMPROVED` — all three current teaching-reference families now have a verified point-owned disclosure: full arterial tree, whole brain surface, and generic layer relationship.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
 - Next safe action: conduct one physical Vision Pro walkthrough with a clinician and a family tester, comparing the three references before adding more content.
+
+## 2026-08-13 11:03 SGT — contextualize the complete arterial teaching reference
+
+- Target: let a selected vessel point reveal the arterial network as part of the whole brain, rather than as a disconnected red object.
+- Bounded action: added a low-opacity clone of the already-loaded registered-v2 brain behind the existing complete arterial tree and unchanged generic clot. It is context only; it neither adds a patient-specific claim nor changes the point-first disclosure.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-110141/BLOCKED.md`; `python3 Tests/verify_contract.py` passed; narrow visionOS Simulator Debug build succeeded with `-derivedDataPath /tmp/strokecare-arterial-brain-context`; fresh `--proof-family-arterial-reference` capture at `/tmp/strokecare-family-arterial-brain-context-20260813-1103.png` passed route OCR (2/2) and was inspected, showing the full arterial tree in a quiet whole-brain context beside the selected blockage explanation.
+- Verdict: `IMPROVED` — vessel teaching references now preserve the brain-wide spatial relationship requested by the point, while the hero anatomy and local explanation remain distinct.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, registration accuracy, or clinical correctness; XCAT is unavailable.
+- Next safe action: have a clinician and family tester compare the contextual arterial reference with the surface and layer references on Vision Pro before adding additional point families.

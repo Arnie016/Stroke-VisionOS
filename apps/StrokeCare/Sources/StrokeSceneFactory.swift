@@ -3058,6 +3058,22 @@ enum TeachingImagingMiniatureFactory {
                 namePrefix: "affected-arteries"
             )
         }
+        if let brainSource {
+            // A vascular point should disclose the *whole arterial route in
+            // the brain*, not an isolated red tree floating without context.
+            // This deliberately quiet clone keeps the registered-v2 brain as
+            // spatial orientation only; arteries and the unchanged generic
+            // clot remain the readable foreground teaching structures.
+            let brainContext = Entity()
+            brainContext.name = "affected-brain-context"
+            addRenderedLeaves(
+                from: brainSource,
+                to: brainContext,
+                namePrefix: "affected-brain"
+            )
+            brainContext.components.set(OpacityComponent(opacity: 0.18))
+            affected.addChild(brainContext)
+        }
         if let clotSource {
             addRenderedLeaves(
                 from: clotSource,
