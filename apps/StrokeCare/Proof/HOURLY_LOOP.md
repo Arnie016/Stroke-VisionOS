@@ -1519,3 +1519,12 @@
 - Verdict: `IMPROVED` — surface Atlas chapters now answer both “which structure?” and “where is it in the whole brain?” without presenting a patient scan or a precise functional boundary.
 - Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, anatomical registration accuracy, or clinical correctness.
 - Next safe action: extend this same named full-structure grammar to one reviewed deep-structure chapter after a clinician approves its source registration and wording.
+
+## 2026-08-13 13:52 SGT — restore a clear Atlas–anatomy–reference hierarchy
+
+- Target: remove the duplicate selected-point card that obscured the hero brain after an Atlas chapter revealed its complete 3D reference.
+- Bounded action: made the left Family Atlas own the chapter explanation, optional voice decision, and reversible Show/Hide reference action; suppressed the duplicate center annotation only while that Atlas chapter owns the active selection. Ordinary anatomy points retain their existing local explanation card.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-134612/BLOCKED.md`; `python3 Tests/verify_contract.py` and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-atlas-hierarchy-build`; fresh `--proof-family-atlas-surface-cue` capture `/tmp/strokecare-family-atlas-clean-hierarchy-20260813.png` passed route OCR (2/2), image metrics, and process checks and was visually inspected against the prior capture. The left Atlas contains `Frontal lobe`, `HIDE · WHOLE BRAIN SURFACE`, and the optional voice choice; the center contains unobstructed hero anatomy; the right contains the localized complete-brain reference.
+- Verdict: `IMPROVED` — each spatial surface now has one job, and revealing an Atlas chapter no longer creates a second explanation window over the anatomy.
+- Blocker: Simulator cannot establish physical gaze-and-pinch targeting, stereo depth, wearer comprehension, or clinical correctness; XCAT is currently unavailable.
+- Next safe action: test the Atlas reveal and Show/Hide cycle with one unfamiliar wearer on an unlocked Vision Pro before further increasing chapter density.

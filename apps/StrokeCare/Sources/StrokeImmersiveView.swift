@@ -576,7 +576,15 @@ struct StrokeImmersiveView: View {
                         // leaving the primary anatomy and its full 3D teaching
                         // structure visibly dominant.
                         annotation.scale = [0.48, 0.48, 0.48]
-                        annotation.isEnabled = experience.spatialPhase == .explanation && (
+                        // When the Family Atlas owns the selected chapter, its
+                        // left surface already contains the explanation, voice
+                        // choice, and reference control. Suppress the duplicate
+                        // point card so the hero brain remains unobstructed.
+                        let atlasOwnsSelection = experience.audienceLens == .family
+                            && experience.familyBrainAtlasVisible
+                            && experience.familyBrainAtlasCueChapter != nil
+                            && experience.selectedPointEntityName != nil
+                        annotation.isEnabled = experience.spatialPhase == .explanation && !atlasOwnsSelection && (
                             experience.selectedPointEntityName != nil ||
                             experience.closingReflectionVisible ||
                             experience.isClinicianScholarSkullInspectionActive
@@ -2546,6 +2554,18 @@ private struct SpatialFamilyBrainAtlas: View {
         experience.familyBrainAtlasCueChapter == chapter
     }
 
+    private var isReferenceVisible: Bool {
+        isModelCueActive && experience.teachingImagingDrawerVisible
+    }
+
+    private var atlasReferenceActionTitle: String {
+        guard isModelCueActive else {
+            return "REVEAL IN 3D · \(chapter.modelCue)"
+        }
+        let action = isReferenceVisible ? "HIDE" : "SHOW"
+        return "\(action) · \(experience.teachingReferenceActionTitle().uppercased())"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 13) {
             HStack(alignment: .firstTextBaseline) {
@@ -2618,11 +2638,15 @@ private struct SpatialFamilyBrainAtlas: View {
             }
 
             Button {
-                experience.revealFamilyBrainAtlasModelCue()
+                if isModelCueActive {
+                    experience.toggleSelectedPointReference()
+                } else {
+                    experience.revealFamilyBrainAtlasModelCue()
+                }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: isModelCueActive ? "checkmark.circle.fill" : chapter.systemImage)
-                    Text(isModelCueActive ? "3D CUE ACTIVE · LOOK FOR ONE LIT MARKER" : "REVEAL IN 3D · \(chapter.modelCue)")
+                    Image(systemName: isModelCueActive ? (isReferenceVisible ? "eye.slash" : "view.3d") : chapter.systemImage)
+                    Text(atlasReferenceActionTitle)
                         .font(.caption2.weight(.black))
                         .tracking(0.55)
                     Spacer(minLength: 0)
@@ -2638,6 +2662,42 @@ private struct SpatialFamilyBrainAtlas: View {
             .hoverEffect(.highlight)
             .accessibilityLabel(atlasCueAccessibilityLabel)
             .accessibilityHint(atlasCueAccessibilityHint)
+
+            if isModelCueActive, experience.familyNarrationPromptVisible {
+                HStack(spacing: 9) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("HEAR ONE LAYER DEEPER?")
+                            .font(.caption2.weight(.black))
+                            .tracking(0.65)
+                        Text(experience.narrationSetupAvailable
+                             ? "One optional explanation for this chapter."
+                             : "Realtime proxy setup needed · nothing is recording.")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.62))
+                    }
+                    Spacer(minLength: 4)
+                    Button("Yes", systemImage: "waveform") {
+                        experience.acceptFamilyNarrationPrompt()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.mint)
+                    .disabled(!experience.narrationSetupAvailable)
+
+                    Button("Not now") {
+                        experience.dismissFamilyNarrationPrompt()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding(10)
+                .background(.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
+                .accessibilityElement(children: .contain)
+            } else if isModelCueActive, experience.activeFamilyNarrationText != nil {
+                Button("Stop voice", systemImage: "speaker.slash.fill") {
+                    experience.dismissFamilyNarrationPrompt()
+                }
+                .buttonStyle(.bordered)
+                .tint(.mint)
+            }
 
             if isDeepStructureChapter, experience.isInteriorPortalAvailable {
                 Label("ROOM SCALE READY · USE ENTER THE BRAIN BELOW", systemImage: "arrow.down.right.and.arrow.up.left")
@@ -2679,6 +2739,9 @@ private struct SpatialFamilyBrainAtlas: View {
     }
 
     private var atlasCueAccessibilityLabel: String {
+        if isModelCueActive {
+            return "\(isReferenceVisible ? "Hide" : "Show") \(experience.teachingReferenceActionTitle()) for \(chapter.title)"
+        }
         if chapter == .arterialRoutes {
             return "Show qualitative branching flow on the 3D teaching model"
         }
@@ -2693,6 +2756,9 @@ private struct SpatialFamilyBrainAtlas: View {
     }
 
     private var atlasCueAccessibilityHint: String {
+        if isModelCueActive {
+            return "Toggles the complete generic 3D structure while keeping this chapter selected"
+        }
         if chapter == .arterialRoutes {
             return "Selects one generic vessel cue and opens one local teaching reference. It is not a patient scan or measurement"
         }
