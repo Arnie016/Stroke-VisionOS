@@ -29,6 +29,7 @@ state = (ROOT / "Sources" / "StrokeExperienceState.swift").read_text()
 deck = (ROOT / "Sources" / "StrokeControlDeck.swift").read_text()
 app = (ROOT / "Sources" / "StrokeTimeApp.swift").read_text()
 launch = (ROOT / "Sources" / "StrokeJourneyLaunchView.swift").read_text()
+print_request = (ROOT / "Sources" / "StrokeTeachingModelPrintRequestView.swift").read_text()
 scene = (ROOT / "Sources" / "StrokeSceneFactory.swift").read_text()
 immersive = (ROOT / "Sources" / "StrokeImmersiveView.swift").read_text()
 model_board = (ROOT / "Sources" / "StrokeModelBoardView.swift").read_text()
@@ -165,12 +166,24 @@ require(all(token in immersive for token in (
 require(all(token in state for token in ("detailLevel: StrokeDetailLevel = .calm", "selectedCatalogAssetID", "selectDetailLevel", "selectCatalogAsset", "resetCatalogPresentation")), "detail selection/reset state is incomplete")
 require("guard audienceLens == .clinician || level == .calm" in state and "lane.isFamilyRestricted" in catalog and "self == .legacyQuarantine || self == .openCranialTools" in catalog, "family calm/open-cranial boundary is incomplete")
 require("StrokeJourneyLaunchView()" in app and "StrokeControlDeck()" not in app, "dashboard is still the default experience")
+require(all(token in app for token in (
+    'WindowGroup(id: StrokeSpace.printRequest)',
+    '"--proof-print-request"',
+    'StrokeTeachingModelPrintRequestView',
+)), "generic teaching-model request is not wired as a dedicated review surface")
+require(all(token in print_request for token in (
+    'Text("Prepare a teaching model")',
+    'Text("NOT AN ORDER")',
+    'Label("Generic teaching anatomy only"',
+    'No patient scans, identifiers, treatment planning, or device claims are included.',
+    'Shipping and manufacturing are not connected in this prototype.',
+)), "teaching-model request does not preserve its local-only, non-patient, non-order boundary")
 require("ImmersionStyle = .progressive" in app, "progressive immersion is not the default")
 require("StrokeImmersiveView(immersionStyle: $immersionStyle)" in app and ".mixed, .progressive, .full" in app, "three deliberate system immersion styles are not wired")
 require(all(mode in state for mode in ('case surroundings', 'case warmHorizon', 'case focusField')), "three-state spatial environment contract is missing")
-require("How will you use this?" in launch and "Patient / family" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
+require("How would you like to explore?" in launch and "Curious learner" in launch and "Doctor presenter" in launch and "enterSpatialCaseRoom" in launch, "plain-language role-separated spatial threshold is missing")
 require("beginPatientExploration" in state and "if lens == .family" in launch, "patient/family anatomy exhibit does not bypass the doctor case library")
-require(".disabled(true)" not in launch and "Open the calm, generic anatomy exhibit" in launch, "the patient/family route is still locked behind the retired live-demo gate")
+require(".disabled(true)" not in launch and "Open the calm, generic anatomy discovery experience" in launch, "the patient/family route is still locked behind the retired live-demo gate")
 require(
     len(re.findall(r"private func (?:enterSpatialCaseRoom|enterStory).*?dismissWindow\(id: StrokeSpace\.evidence\)", launch, re.DOTALL)) == 2,
     "a fresh role or case-story entry can retain a stale clinical-evidence window",
@@ -182,10 +195,25 @@ require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive a
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
 require(
     "--proof-role-choice" in launch
-    and 'subtitle: "Explore a calm, guided anatomy exhibit"' in launch
+    and 'subtitle: "Wander through a guided anatomy exhibit"' in launch
     and 'subtitle: "Review a fictional case, then guide the story"' in launch,
     "role choice does not explain the Family and Doctor journeys",
 )
+spatial_prelude = (ROOT / "Sources" / "StrokeSpatialPreludeView.swift").read_text()
+require(all(token in launch for token in (
+    "StrokeSpatialPreludeView",
+    'Button("Skip story")',
+    "for target in 1...4",
+    '"Conceptual teaching anatomy · not a patient scan"',
+    "--proof-spatial-prelude",
+)), "wonder-first spatial prelude is not skippable, bounded, or deterministically routable")
+require(all(token in spatial_prelude for token in (
+    "PreludeBrainShape",
+    "PreludeVesselShape",
+    "PreludeCorticalColumn",
+    "neuronNetwork",
+    "reduceMotion",
+)), "spatial prelude does not cover whole-brain, vessel, cortical-column, and neuron scales")
 require("caseReviewRevealProgress" in state and "startCaseReviewReveal" in state, "dossier-to-history reveal state is missing")
 require(
     "paused: experience.spatialPhase != .explanation" in immersive,
@@ -516,7 +544,7 @@ require(
     and "AVAudioPlayerDelegate" not in immersive,
     "Realtime narration still prepares or owns AVAudioPlayer on the main actor",
 )
-require(all(token in launch for token in ('--proof-realtime-narration', 'experience.audienceLens = .family', 'experience.setNarrationEnabled(true)')), "deterministic family Realtime playback route is missing")
+require(all(token in launch for token in ('--proof-realtime-narration', 'experience.prepareFamilySurfaceReferenceProof()', 'never auto-accepts or starts audio')), "deterministic family Realtime invitation route bypasses explicit consent")
 require(immersive.count("narrator.speak(") == 1 and all(token in immersive for token in (
     "private func synchronizeNarration()",
     "experience.audienceLens == .family",
@@ -526,6 +554,24 @@ require(immersive.count("narrator.speak(") == 1 and all(token in immersive for t
 )), "narration is not guarded by family role, opt-in, and active playback state")
 require(".onChange(of: experience.requestedPause)" in immersive and ".onChange(of: experience.audienceLens)" in immersive, "pause or role transition cannot stop/restart narration deterministically")
 require("narrationEnabled = false" in state and "func setNarrationEnabled" in state and 'experience.narrationEnabled ? "Narrator off" : "Narrator"' in immersive, "family narration state boundary is incomplete")
+require(all(token in state for token in (
+    'case family = "Curious learner"',
+    "familyNarrationPromptVisible",
+    "activeFamilyNarrationText",
+    "narrationSetupAvailable",
+    "func acceptFamilyNarrationPrompt()",
+    "func dismissFamilyNarrationPrompt()",
+    "narrationSetupAvailable,",
+)), "Curious Learner narration does not require explicit point-level consent and visible setup state")
+require(all(token in immersive for token in (
+    'Text("Want to hear one layer deeper?")',
+    'Button("Yes", systemImage: "waveform")',
+    'Button("Not now")',
+    "experience.setNarrationSetupAvailable(narrator.isConfigured)",
+    "let pointNarration = experience.activeFamilyNarrationText",
+    "narrator.speak(pointNarration)",
+    "Nothing is recording.",
+)), "selected-point voice invitation is not explicit, pauseable, or honest when the proxy is missing")
 require('experience.soundEnabled ? "Ambient off" : "Ambient"' in immersive and 'experience.narrationEnabled ? "Voice off" : "Voice"' not in immersive, "doctor controls still expose synthesized voice instead of ambient sound")
 require("spatial-family-controls" in immersive and "spatial-presenter-controls" in immersive and "SpatialRoleControls" in immersive, "role controls are not embedded in the immersive room")
 require("SpatialControlBubbleLabel" in immersive and ".hoverEffect(.highlight)" in immersive, "gaze-sized spatial bubble controls are missing")
@@ -886,6 +932,7 @@ require(all(token in immersive for token in (
     "case medications",
     "case outcomes",
     "case guidelines",
+    "case teachingModel",
     ".frame(minHeight: 60)",
     "lane.arcInset",
     "experience.selectedPointEntityName != nil",
@@ -895,6 +942,7 @@ require(all(token in immersive for token in (
     "experience.selectCareDiscussion(.medicineReview)",
     "experience.selectEvidence(guideline)",
     "openWindow(id: StrokeSpace.evidence)",
+    "openWindow(id: StrokeSpace.printRequest)",
     "StrokeScholarReferenceArc",
     ".frame(width: 310)",
     "case .interventions, .medications: 20",

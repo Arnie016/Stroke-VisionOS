@@ -1501,3 +1501,12 @@
 - Verdict: `IMPROVED` — the initial choice now communicates audience, interaction style, and available support instead of asking the wearer to infer those differences from role names.
 - Blocker: Simulator cannot establish physical gaze/pinch targeting, wearer comprehension, comfort, or clinical validity; XCAT remains unavailable.
 - Next safe action: run a physical cold-start test and ask one unfamiliar wearer to explain the two choices before selecting either card.
+
+## 2026-08-13 13:30 SGT — establish the post-hackathon product threshold
+
+- Target: replace the rushed hackathon entry with a coherent Curious Learner threshold, explicit point-local voice consent, and a safe physical-model request foundation.
+- Bounded action: added a four-beat, skippable conceptual spatial prelude (whole brain and vessels, cortical columns, neuron network, invitation); reframed Family as `Curious learner`; added a selected-point `Yes / Not now` Realtime invitation that remains silent when the proxy is unavailable; added a clinician `Teaching model` reference lane and local review-only request for three already-catalogued generic model configurations.
+- Evidence: `python3 Tests/verify_contract.py` passed; `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-v2-build`; fresh captures passed route OCR for `--proof-spatial-prelude` (`/tmp/strokecare-spatial-prelude-20260813.png`), `--proof-role-choice` (`/tmp/strokecare-role-choice-v2.png`), `--proof-realtime-narration` (`/tmp/strokecare-family-voice-invitation-v2.png`), and `--proof-print-request` (`/tmp/strokecare-print-request-v2.png`). All four were visually inspected.
+- Verdict: `IMPROVED` — the product now tells a spatial story before the role choice, makes learner voice assistance explicit and reversible, and turns the 3D-print idea into an honest review artifact rather than a false live-order claim.
+- Blocker: the voice lane still requires the separately configured Realtime proxy; the print lane has no vendor, upload, pricing, order, manufacturability, or licensing integration; Simulator does not establish wearer comfort, physical targeting, clinical correctness, or device readiness.
+- Next safe action: validate the four-beat prelude and selected-point voice invitation with one Curious Learner, then refine timing and language from that observed walkthrough before expanding content families.

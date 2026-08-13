@@ -72,47 +72,68 @@ struct StrokeJourneyLaunchView: View {
     @State private var fileDrag = CGSize.zero
     @State private var proofRouteHasRun = false
     @State private var introBeat = 0
+    @State private var introSequenceWasSkipped = false
     @StateObject private var prelude = StrokePreludeAudio()
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color(red: 0.045, green: 0.055, blue: 0.060), .black],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            if introBeat < 4 {
+                StrokeSpatialPreludeView(beat: introBeat, reduceMotion: reduceMotion)
+                    .transition(.opacity)
+            } else {
+                LinearGradient(
+                    colors: [Color.indigo.opacity(0.16), Color.orange.opacity(0.08), Color.clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .transition(.opacity)
+            }
 
-            VStack(spacing: 24) {
-                Label("STROKE CARE", systemImage: "brain.head.profile")
-                    .font(.caption.weight(.bold))
-                    .tracking(2.0)
-                    .foregroundStyle(.orange)
+            VStack(spacing: introBeat < 4 ? 14 : 24) {
+                HStack {
+                    Label("STROKE CARE", systemImage: "brain.head.profile")
+                        .font(.caption.weight(.bold))
+                        .tracking(2.0)
+                        .foregroundStyle(.orange)
+                    Spacer()
+                    if introBeat < 4 {
+                        Button("Skip story") {
+                            introSequenceWasSkipped = true
+                            withAnimation(.easeInOut(duration: reduceMotion ? 0.01 : 0.55)) {
+                                introBeat = 4
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityHint("Move directly to the use choice")
+                    }
+                }
 
-                Text(introTitle)
-                    .font(.system(size: 34, weight: .semibold, design: .rounded))
-                    .multilineTextAlignment(.center)
-                    .contentTransition(.opacity)
+                Spacer(minLength: 0)
 
-                Text(introSubtitle)
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .contentTransition(.opacity)
+                if introBeat >= 4 {
+                    Text("How would you like to explore?")
+                        .font(.system(size: 38, weight: .semibold, design: .rounded))
+                        .multilineTextAlignment(.center)
 
-                if introBeat >= 2 {
+                    Text("Follow your curiosity, or prepare a guided clinical conversation.")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+
                     HStack(spacing: 16) {
                         roleChoiceCard(
-                            title: "Patient / family",
-                            subtitle: "Explore a calm, guided anatomy exhibit",
-                            detail: "Questions, narration, and plain-language explanations",
-                            systemImage: "person.2.fill",
+                            title: "Curious learner",
+                            subtitle: "Wander through a guided anatomy exhibit",
+                            detail: "Ask aloud, discover structures, and hear plain-language explanations",
+                            systemImage: "sparkles",
                             tint: .orange,
                             prominent: true
                         ) {
                             Task { await enterSpatialCaseRoom(as: .family) }
                         }
-                        .accessibilityHint("Open the calm, generic anatomy exhibit")
+                        .accessibilityHint("Open the calm, generic anatomy discovery experience")
 
                         roleChoiceCard(
                             title: "Doctor presenter",
@@ -127,13 +148,43 @@ struct StrokeJourneyLaunchView: View {
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else {
-                    Button("Continue", systemImage: "arrow.right") {
-                        advanceIntroBeat()
+                    VStack(spacing: 12) {
+                        Text(introTitle)
+                            .font(.system(size: 34, weight: .semibold, design: .rounded))
+                            .multilineTextAlignment(.center)
+                            .contentTransition(.opacity)
+
+                        Text(introSubtitle)
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .contentTransition(.opacity)
+
+                        HStack(spacing: 10) {
+                            ForEach(0..<4, id: \.self) { index in
+                                Capsule()
+                                    .fill(index == introBeat ? Color.orange : Color.white.opacity(0.20))
+                                    .frame(width: index == introBeat ? 34 : 10, height: 7)
+                            }
+                        }
+                        .animation(.easeInOut(duration: 0.35), value: introBeat)
+
+                        Button("Continue", systemImage: "arrow.right") {
+                            advanceIntroBeat()
+                        }
+                        .buttonStyle(.bordered)
                     }
-                    .buttonStyle(.bordered)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 18)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24))
+                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.12)))
                 }
 
-                Text("Fictional teaching case · no patient data · emergencies follow hospital protocol")
+                Spacer(minLength: 0)
+
+                Text(introBeat < 4
+                     ? "Conceptual teaching anatomy · not a patient scan"
+                     : "Fictional teaching case · no patient data · emergencies follow hospital protocol")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -142,7 +193,8 @@ struct StrokeJourneyLaunchView: View {
             .opacity(isOpening ? 0.28 : 1)
             .blur(radius: isOpening && !reduceMotion ? 10 : 0)
         }
-        .frame(width: 720, height: 440)
+        .padding(26)
+        .frame(width: 820, height: 520)
         .onAppear {
             prelude.play()
             routeProofIfNeeded()
@@ -153,23 +205,25 @@ struct StrokeJourneyLaunchView: View {
 
     private var introTitle: String {
         switch introBeat {
-        case 0: "When time is urgent, clarity matters."
-        case 1: "One calm shared picture can reduce uncertainty."
-        default: "How will you use this?"
+        case 0: "Begin with the whole brain."
+        case 1: "Zoom in: structure becomes story."
+        case 2: "Signals become networks."
+        default: "Curiosity is the way in."
         }
     }
 
     private var introSubtitle: String {
         switch introBeat {
-        case 0: "A stroke conversation can begin before every answer is known."
-        case 1: "See the case, explain the change, and leave with a next step."
-        default: "Explore the anatomy, or prepare a case-led explanation."
+        case 0: "Its folds and vessel pathways form one connected living system."
+        case 1: "Cortical columns organise local circuits in this conceptual teaching view."
+        case 2: "Neurons pass electrochemical signals across changing connections."
+        default: "Choose a guided discovery, or prepare a clinical conversation."
         }
     }
 
     private func advanceIntroBeat() {
         withAnimation(.easeInOut(duration: 0.55)) {
-            introBeat = min(introBeat + 1, 2)
+            introBeat = min(introBeat + 1, 4)
         }
     }
 
@@ -222,9 +276,9 @@ struct StrokeJourneyLaunchView: View {
 
     private func playIntroSequence() async {
         guard !CommandLine.arguments.contains(where: { $0.hasPrefix("--proof-") }) else { return }
-        for target in 1...2 {
-            try? await Task.sleep(for: .seconds(2.2))
-            guard !Task.isCancelled, introBeat < target else { continue }
+        for target in 1...4 {
+            try? await Task.sleep(for: .seconds(reduceMotion ? 2.0 : 6.4))
+            guard !Task.isCancelled, !introSequenceWasSkipped, introBeat < target else { continue }
             await MainActor.run { advanceIntroBeat() }
         }
     }
@@ -525,6 +579,8 @@ struct StrokeJourneyLaunchView: View {
         guard !proofRouteHasRun else { return }
         proofRouteHasRun = true
         if CommandLine.arguments.contains("--proof-role-choice") {
+            introBeat = 4
+        } else if CommandLine.arguments.contains("--proof-spatial-prelude") {
             introBeat = 2
         } else if CommandLine.arguments.contains("--proof-case-unfold") ||
             CommandLine.arguments.contains("--proof-cabinet-selected") {
@@ -661,9 +717,9 @@ struct StrokeJourneyLaunchView: View {
             experience.preparePresenterPlainLanguageProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-realtime-narration") {
-            experience.prepareProof(step: .inspectOcclusion)
-            experience.audienceLens = .family
-            experience.setNarrationEnabled(true)
+            // The deterministic receipt stops at the explicit invitation.
+            // It never auto-accepts or starts audio on the learner's behalf.
+            experience.prepareFamilySurfaceReferenceProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-pressure") {
             experience.prepareProof(step: .inspectOcclusion)

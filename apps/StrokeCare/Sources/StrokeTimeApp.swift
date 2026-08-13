@@ -20,12 +20,17 @@ struct StrokeTimeApp: App {
                 StrokeTeachingImagingWorkspaceView()
                     .environmentObject(experience)
                     .onAppear { experience.prepareTeachingImagingProof() }
+            } else if CommandLine.arguments.contains("--proof-print-request") {
+                StrokeTeachingModelPrintRequestView(closeWindowID: StrokeSpace.window)
             } else {
                 StrokeJourneyLaunchView()
                     .environmentObject(experience)
             }
         }
-        .defaultSize(width: 720, height: 440)
+        .defaultSize(
+            width: CommandLine.arguments.contains("--proof-print-request") ? 900 : 820,
+            height: CommandLine.arguments.contains("--proof-print-request") ? 680 : 520
+        )
         .windowResizability(.contentSize)
 
         WindowGroup(id: StrokeSpace.family) {
@@ -82,6 +87,12 @@ struct StrokeTimeApp: App {
         .defaultSize(width: 600, height: 470)
         .windowResizability(.contentSize)
 
+        WindowGroup(id: StrokeSpace.printRequest) {
+            StrokeTeachingModelPrintRequestView(closeWindowID: StrokeSpace.printRequest)
+        }
+        .defaultSize(width: 900, height: 680)
+        .windowResizability(.contentSize)
+
         ImmersiveSpace(id: StrokeSpace.immersive) {
             StrokeImmersiveView(immersionStyle: $immersionStyle)
                 .environmentObject(experience)
@@ -96,5 +107,6 @@ enum StrokeSpace {
     static let presenter = "stroke-presenter-rail"
     static let evidence = "stroke-clinical-evidence"
     static let imaging = "stroke-teaching-imaging"
+    static let printRequest = "stroke-teaching-model-print-request"
     static let immersive = "stroke-time-immersive"
 }

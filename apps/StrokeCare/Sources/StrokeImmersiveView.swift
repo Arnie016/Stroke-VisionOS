@@ -847,6 +847,7 @@ struct StrokeImmersiveView: View {
             .onAppear {
                 isSceneReady = false
                 stagePlacement.start()
+                experience.setNarrationSetupAvailable(narrator.isConfigured)
                 synchronizeImmersionStyle()
                 synchronizeNarration()
             }
@@ -854,6 +855,9 @@ struct StrokeImmersiveView: View {
                 synchronizeImmersionStyle()
             }
             .onChange(of: experience.narrationEnabled) { _, _ in
+                synchronizeNarration()
+            }
+            .onChange(of: experience.activeFamilyNarrationText) { _, _ in
                 synchronizeNarration()
             }
             .onChange(of: experience.procedureStep) { _, _ in
@@ -892,11 +896,12 @@ struct StrokeImmersiveView: View {
     private func synchronizeNarration() {
         guard experience.audienceLens == .family,
               experience.narrationEnabled,
-              !experience.requestedPause else {
+              !experience.requestedPause,
+              let pointNarration = experience.activeFamilyNarrationText else {
             narrator.stop()
             return
         }
-        narrator.speak(experience.journeyCaption)
+        narrator.speak(pointNarration)
     }
 
     private var annotationPosition: SIMD3<Float> {
@@ -1406,14 +1411,32 @@ private struct SpatialRoleControls: View {
                 .accessibilityLabel(experience.lessonPointsVisible ? "Hide lesson points" : "Show lesson points")
 
                 bubbleButton(
-                    experience.narrationEnabled ? "Narrator off" : "Narrator",
-                    systemImage: experience.narrationEnabled ? "speaker.slash.fill" : "waveform",
+                    experience.narrationSetupAvailable
+                        ? (experience.narrationEnabled ? "Narrator off" : "Narrator")
+                        : "Voice setup",
+                    systemImage: experience.narrationSetupAvailable
+                        ? (experience.narrationEnabled ? "speaker.slash.fill" : "waveform")
+                        : "waveform.badge.exclamationmark",
                     accent: .orange,
                     selected: experience.narrationEnabled
                 ) {
-                    experience.setNarrationEnabled(!experience.narrationEnabled)
+                    if experience.narrationEnabled || experience.familyNarrationPromptVisible {
+                        experience.setNarrationEnabled(false)
+                    } else {
+                        experience.setNarrationEnabled(true)
+                    }
                 }
-                .accessibilityLabel(experience.narrationEnabled ? "Turn off family narrator" : "Turn on family narrator")
+                .disabled(!experience.narrationSetupAvailable)
+                .accessibilityLabel(
+                    experience.narrationSetupAvailable
+                        ? (experience.narrationEnabled ? "Turn off Curious Learner narrator" : "Turn on Curious Learner narrator")
+                        : "Curious Learner narrator setup required"
+                )
+                .accessibilityHint(
+                    experience.narrationSetupAvailable
+                        ? "Voice remains silent until you select a point and choose Yes"
+                        : "Configure the Realtime proxy to enable optional point narration"
+                )
 
                 bubbleButton(
                     experience.familyBrainAtlasVisible ? "Atlas off" : "Atlas",
@@ -2061,7 +2084,9 @@ private struct StrokeScholarReferenceRail: View {
             experience.pointField == .craniotomy
         case .medications:
             experience.selectedCareDiscussion == .medicineReview
-        case .outcomes, .guidelines:
+        case .guidelines, .teachingModel:
+            false
+        case .outcomes:
             false
         }
     }
@@ -2072,7 +2097,7 @@ private struct StrokeScholarReferenceRail: View {
             true
         case .imaging:
             experience.selectedPointEntityName != nil
-        case .interventions, .medications, .guidelines:
+        case .interventions, .medications, .guidelines, .teachingModel:
             true
         case .outcomes:
             false
@@ -2111,6 +2136,8 @@ private struct StrokeScholarReferenceRail: View {
                 experience.selectEvidence(guideline)
             }
             openWindow(id: StrokeSpace.evidence)
+        case .teachingModel:
+            openWindow(id: StrokeSpace.printRequest)
         case .outcomes:
             break
         }
@@ -2124,16 +2151,16 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
     case medications
     case outcomes
     case guidelines
+    case teachingModel
 
     var id: String { rawValue }
-    var title: String { rawValue.capitalized }
 
     /// A shallow visual arc keeps the rail peripheral without reducing any
     /// row's 60-point interaction target.
     var arcInset: CGFloat {
         switch self {
         case .anatomy, .guidelines: 0
-        case .imaging, .outcomes: 10
+        case .imaging, .outcomes, .teachingModel: 10
         case .interventions, .medications: 20
         }
     }
@@ -2146,6 +2173,14 @@ private enum StrokeScholarReferenceLane: String, CaseIterable, Identifiable {
         case .medications: "pills"
         case .outcomes: "chart.line.uptrend.xyaxis"
         case .guidelines: "text.book.closed"
+        case .teachingModel: "cube.transparent"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .teachingModel: "Teaching model"
+        default: rawValue.capitalized
         }
     }
 }
@@ -3061,6 +3096,47 @@ private struct StrokeIntentionAnnotation: View {
                     .foregroundStyle(.white.opacity(0.92))
                     .fixedSize(horizontal: false, vertical: true)
 
+                if experience.audienceLens == .family,
+                   experience.familyNarrationPromptVisible {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Want to hear one layer deeper?")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white)
+
+                        if !experience.narrationSetupAvailable {
+                            Text("Optional voice needs Realtime proxy setup. Nothing is recording.")
+                                .font(.caption2.weight(.medium))
+                                .foregroundStyle(.white.opacity(0.68))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        HStack(spacing: 7) {
+                            Button("Yes", systemImage: "waveform") {
+                                experience.acceptFamilyNarrationPrompt()
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(annotationTint)
+                            .disabled(!experience.narrationSetupAvailable)
+                            .accessibilityHint("Plays one authored explanation for the selected teaching point")
+
+                            Button("Not now") {
+                                experience.dismissFamilyNarrationPrompt()
+                            }
+                            .buttonStyle(.bordered)
+                            .accessibilityHint("Dismisses voice without changing the lesson")
+                        }
+                    }
+                    .padding(.top, 2)
+                } else if experience.audienceLens == .family,
+                          experience.activeFamilyNarrationText != nil {
+                    Button("Stop voice", systemImage: "speaker.slash.fill") {
+                        experience.dismissFamilyNarrationPrompt()
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(annotationTint)
+                    .accessibilityHint("Stops the optional selected-point narration")
+                }
+
                 if showsFamilyReferenceAction {
                     Button {
                         experience.toggleSelectedPointReference()
@@ -3086,7 +3162,7 @@ private struct StrokeIntentionAnnotation: View {
         .background(.black.opacity(0.56), in: RoundedRectangle(cornerRadius: 12))
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(annotationTint.opacity(0.26)))
         .shadow(color: .black.opacity(0.72), radius: 8, y: 2)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
     }
 
     private var annotationTitle: String {

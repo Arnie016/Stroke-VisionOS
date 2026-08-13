@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 enum StrokeAudienceLens: String, CaseIterable, Identifiable {
-    case family = "Patient / family"
+    case family = "Curious learner"
     case clinician = "Doctor presenter"
 
     var id: String { rawValue }
@@ -586,6 +586,8 @@ final class StrokeExperienceState: ObservableObject {
                 // The presenter speaks for themself. Changing role revokes
                 // synthesized-narration eligibility at the state boundary.
                 narrationEnabled = false
+                familyNarrationPromptVisible = false
+                activeFamilyNarrationText = nil
                 selectedFamilyQuestion = nil
                 presenterTeachingBeat = .firstBeat(for: procedureStep)
                 return
@@ -623,6 +625,11 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
     @Published var soundEnabled = true
     @Published private(set) var narrationEnabled = false
+    /// Voice is optional and point-led. Looking at or pinching a point never
+    /// starts audio by itself; it only reveals a finite authored invitation.
+    @Published private(set) var familyNarrationPromptVisible = false
+    @Published private(set) var activeFamilyNarrationText: String?
+    @Published private(set) var narrationSetupAvailable = false
     @Published var closingReflectionVisible = false
     @Published var pointField: StrokePointField = .regions
     @Published var lessonPointsVisible = true
@@ -1041,6 +1048,8 @@ final class StrokeExperienceState: ObservableObject {
         vesselFocusProgress = 0
         closingReflectionVisible = false
         narrationEnabled = false
+        familyNarrationPromptVisible = false
+        activeFamilyNarrationText = nil
     }
 
     func selectLessonFamily(_ field: StrokePointField) {
@@ -1295,9 +1304,76 @@ final class StrokeExperienceState: ObservableObject {
     func setNarrationEnabled(_ enabled: Bool) {
         guard audienceLens == .family else {
             narrationEnabled = false
+            familyNarrationPromptVisible = false
+            activeFamilyNarrationText = nil
             return
         }
-        narrationEnabled = enabled
+        if !enabled {
+            narrationEnabled = false
+            familyNarrationPromptVisible = false
+            activeFamilyNarrationText = nil
+        } else if selectedPointEntityName != nil {
+            // The control arms the explicit point-level invitation. It never
+            // speaks the timeline or starts audio by itself.
+            familyNarrationPromptVisible = true
+        } else {
+            narrationEnabled = false
+            familyNarrationPromptVisible = false
+        }
+    }
+
+    /// Reports only whether the app's configured Realtime proxy exists. It is
+    /// not a network-success claim and never starts a microphone or recording.
+    func setNarrationSetupAvailable(_ available: Bool) {
+        narrationSetupAvailable = available
+    }
+
+    /// A deliberate Yes is the only path from a selected discovery point to
+    /// narrated audio. The line remains authored, generic, and non-diagnostic.
+    func acceptFamilyNarrationPrompt() {
+        guard audienceLens == .family,
+              narrationSetupAvailable,
+              selectedPointEntityName != nil,
+              let selectedPointLabel else { return }
+        narrationEnabled = true
+        familyNarrationPromptVisible = false
+        activeFamilyNarrationText = familyNarrationText(for: selectedPointLabel)
+    }
+
+    /// "Not now" is a real no-op: it dismisses the invitation and stops any
+    /// point narration without changing anatomy, timeline, or lesson state.
+    func dismissFamilyNarrationPrompt() {
+        guard audienceLens == .family else { return }
+        narrationEnabled = false
+        familyNarrationPromptVisible = false
+        activeFamilyNarrationText = nil
+    }
+
+    private func familyNarrationText(for label: String) -> String {
+        switch label {
+        case "Example affected area":
+            "This highlighted area is a generic teaching example. It shows how a brain region can depend on an upstream vessel, not what happened in a particular person's scan."
+        case "Nearby brain tissue":
+            "The nearby folds stay visible for context. A stroke explanation should keep the affected area and the surrounding brain distinct."
+        case "Brain surface":
+            "This is the folded outer surface of the brain. The folds create more surface area, but this model does not mark a surgical site."
+        case "Opposite-side context":
+            "The other side is shown as an orientation reference. It is not a claim that one side is normal or that function can be predicted here."
+        case "Blood supply approaches":
+            "The larger arteries approach the brain before dividing. The moving cues show direction only, not measured speed, pressure, or volume."
+        case "Arteries branch":
+            "One larger route divides into smaller branches that reach different territories. This is a generic arterial map, not a patient-specific vessel scan."
+        case "Example blockage":
+            "This teaching blockage interrupts one route. Less flow continues beyond it in the animation, but no perfusion value or treatment decision is calculated."
+        case "Flow beyond the blockage changes":
+            "Beyond the example blockage, fewer flow cues continue. That helps explain the relationship without predicting injury or outcome."
+        case "Affected territory":
+            "This territory helps connect a vessel route to the tissue it supplies. It explains a relationship, not measured damage or prognosis."
+        case "Generic craniotomy teaching story":
+            "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
+        default:
+            "This is a generic teaching reference. It can help orient the next question, but it is not a patient scan, measurement, or diagnosis."
+        }
     }
 
     /// Explicit family feedback replaces any attempt to infer anxiety from
@@ -1937,6 +2013,10 @@ final class StrokeExperienceState: ObservableObject {
             // source of the teaching story.
             selectedPointEntityName = entityName
             selectedPointLabel = label
+            if audienceLens == .family {
+                activeFamilyNarrationText = nil
+                familyNarrationPromptVisible = true
+            }
             // The access story shares the same point-first disclosure rule as
             // vascular and surface cues. Its only extra condition is the
             // existing explicit, reversible non-graphic permission boundary.
@@ -1968,6 +2048,12 @@ final class StrokeExperienceState: ObservableObject {
         }
         selectedPointEntityName = entityName
         selectedPointLabel = label
+        if audienceLens == .family {
+            // Point selection reveals an invitation, never audio. A separate
+            // Yes action is required before the Realtime request can begin.
+            activeFamilyNarrationText = nil
+            familyNarrationPromptVisible = true
+        }
         // Every anatomy-attached point owns one matching spatial reference.
         // A direct gaze-and-pinch discloses it immediately for both roles;
         // the existing Hide action makes the disclosure reversible without
@@ -2009,6 +2095,8 @@ final class StrokeExperienceState: ObservableObject {
         selectedPointLabel = nil
         selectedPointReferenceExpanded = false
         teachingImagingDrawerVisible = false
+        familyNarrationPromptVisible = false
+        activeFamilyNarrationText = nil
     }
 
     func rotateSpatialView(delta: CGSize) {

@@ -21,7 +21,10 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 # shortened "questions to as" stem tolerates Vision reading the small final
 # glyph as either K or I while still rejecting an empty Simulator room.
 ROUTE_TEXT_TOKENS = {
-    "--proof-role-choice": ("patient family", "doctor presenter"),
+    "--proof-role-choice": ("curious learner", "doctor presenter"),
+    "--proof-spatial-prelude": ("signals become networks", "conceptual teaching anatomy"),
+    "--proof-print-request": ("prepare a teaching model", "generic teaching anatomy only"),
+    "--proof-realtime-narration": ("want to hear one layer deeper", "brain surface"),
     "--proof-spatial-intake": ("patient files",),
     "--proof-pressure": ("pressure", "questions to as"),
     "--proof-family-pressure-story": ("pressure", "questions to as"),
