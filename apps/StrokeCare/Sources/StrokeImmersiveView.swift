@@ -249,6 +249,9 @@ struct StrokeImmersiveView: View {
 
     private let annotationID = "stroke-intention-annotation"
     private let annotationAnchorName = "stroke-intention-annotation-anchor"
+    private let annotationConnectorName = "stroke-selected-point-callout-connector"
+    private let annotationConnectorNearName = "stroke-selected-point-callout-connector-near"
+    private let annotationConnectorFarName = "stroke-selected-point-callout-connector-far"
     private let calmHorizonID = "stroke-calm-paper-horizon"
     private let focusLightID = "stroke-focus-key-light"
     private let questionMarkerID = "family-question-marker"
@@ -399,6 +402,31 @@ struct StrokeImmersiveView: View {
                         annotationAnchor.name = annotationAnchorName
                         annotationAnchor.addChild(annotation)
                         stageRoot.addChild(annotationAnchor)
+
+                        // A selected point and its explanation live in two
+                        // different coordinate spaces: the point follows the
+                        // scaled anatomy, while the readable callout stays at
+                        // a stable stage scale. Two thin, non-interactive
+                        // segments make that relationship explicit without
+                        // adding another label or collision target.
+                        let connector = Entity()
+                        connector.name = annotationConnectorName
+                        let connectorMaterial = UnlitMaterial(color: UIColor(
+                            red: 1.0,
+                            green: 0.63,
+                            blue: 0.30,
+                            alpha: 0.52
+                        ))
+                        for segmentName in [annotationConnectorNearName, annotationConnectorFarName] {
+                            let segment = ModelEntity(
+                                mesh: .generateCylinder(height: 1, radius: 0.00105),
+                                materials: [connectorMaterial]
+                            )
+                            segment.name = segmentName
+                            connector.addChild(segment)
+                        }
+                        connector.isEnabled = false
+                        stageRoot.addChild(connector)
                     }
 
                     if let marker = attachments.entity(for: questionMarkerID) {
@@ -597,6 +625,30 @@ struct StrokeImmersiveView: View {
                             experience.isClinicianScholarSkullInspectionActive
                         )
                         annotation.components.set(BillboardComponent())
+
+                        if let connector = stageRoot.findEntity(named: annotationConnectorName) {
+                            let showsPointRelationship = annotation.isEnabled && selectedPoint != nil
+                            connector.isEnabled = showsPointRelationship
+                            if let selectedPoint, showsPointRelationship {
+                                let start = selectedPoint.position(relativeTo: stageRoot)
+                                // Leave the anatomy radially before turning
+                                // toward the lower leading edge of the card.
+                                // This avoids drawing a long diagonal through
+                                // the brain while preserving a readable path.
+                                let elbow = start + SIMD3<Float>(0.18, 0.025, 0.13)
+                                let end = annotation.position + SIMD3<Float>(-0.12, -0.045, 0.015)
+                                updateCalloutConnectorSegment(
+                                    connector.findEntity(named: annotationConnectorNearName),
+                                    from: start,
+                                    to: elbow
+                                )
+                                updateCalloutConnectorSegment(
+                                    connector.findEntity(named: annotationConnectorFarName),
+                                    from: elbow,
+                                    to: end
+                                )
+                            }
+                        }
                     }
                     if let horizon = stageRoot.findEntity(named: calmHorizonID) {
                         // Environmental mood stays behind the anatomy and is
@@ -916,6 +968,27 @@ struct StrokeImmersiveView: View {
         case .inspectOcclusion: [0.27, 1.91, -0.84]
         case .discussCare: [0.27, 1.91, -0.84]
         }
+    }
+
+    private func updateCalloutConnectorSegment(
+        _ segment: Entity?,
+        from start: SIMD3<Float>,
+        to end: SIMD3<Float>
+    ) {
+        guard let segment else { return }
+        let displacement = end - start
+        let distance = simd_length(displacement)
+        guard distance > 0.000_1 else {
+            segment.isEnabled = false
+            return
+        }
+        segment.isEnabled = true
+        segment.position = (start + end) * 0.5
+        segment.scale = [1, distance, 1]
+        segment.orientation = simd_quatf(
+            from: SIMD3<Float>(0, 1, 0),
+            to: simd_normalize(displacement)
+        )
     }
 
     private func updateSpatialIntakeAttachments(_ attachments: RealityViewAttachments) {

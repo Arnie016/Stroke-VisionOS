@@ -1564,3 +1564,12 @@
 - Verdict: `IMPROVED` — point selection now yields one coherent spatial explanation without obscuring the anatomy or duplicating controls.
 - Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer reading comfort, comprehension, or clinical correctness; XCAT is unavailable.
 - Next safe action: test point selection, `Hear more`, Show/Hide reference, and close as one loop with an unfamiliar Curious Learner on an unlocked Vision Pro.
+
+## 2026-08-13 17:24 SGT — connect a selected point to its spatial explanation
+
+- Target: make the relationship between the selected anatomy invitation and its explanation immediately legible without adding another panel or permanent label cloud.
+- Bounded action: added a quiet, two-segment stage-space leader from the selected point's live transformed position to the existing explanation card. The leader is non-interactive, leaves the anatomy before turning toward the card, follows zoom/orbit updates, and disappears whenever the point-owned callout is not visible.
+- Evidence: `Scripts/deploy_xcat.zsh` recorded XCAT unavailable in `Proof/xcat/20260813-171527/BLOCKED.md`; `python3 Tests/verify_contract.py` and `git diff --check` passed; the narrow generic visionOS Simulator build succeeded at `/tmp/strokecare-point-connector-build`; fresh `--proof-family-arterial-reference` capture `/tmp/strokecare-point-callout-connector-20260813.png` passed route OCR (3/3), image metrics, and process checks and was visually inspected against `/tmp/strokecare-family-single-callout-final-20260813.png`. The amber leader visibly begins at the selected white orb, clears the lower cortex, and terminates at the callout's leading edge.
+- Verdict: `IMPROVED` — the selected point, its explanation, and the separate full 3D arterial reference now read as one authored sequence rather than three nearby objects whose relationship must be inferred.
+- Blocker: Simulator cannot establish physical gaze-and-pinch reach, stereo depth, wearer comprehension, clinical correctness, or whether the leader remains comfortable from every room viewpoint; XCAT is unavailable.
+- Next safe action: validate the point-to-callout leader from two physical viewing angles with one unfamiliar Curious Learner before tuning thickness, depth, or colour.
