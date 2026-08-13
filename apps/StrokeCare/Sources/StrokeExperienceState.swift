@@ -190,7 +190,7 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
         case .occipitalLobe:
             "HIGHLIGHT REAR CONTEXT IN 3D"
         case .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
-            "OPEN INSIDE-BRAIN JOURNEY"
+            "REVEAL INTERNAL STRUCTURES IN 3D"
         }
     }
 
@@ -224,7 +224,9 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
         case .parietalLobe: "Parietal lobe · generic atlas focus"
         case .temporalLobe: "Temporal lobe · generic atlas focus"
         case .occipitalLobe: "Occipital lobe · generic atlas focus"
-        case .arterialRoutes, .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+        case .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+            "\(title) · combined internal atlas context"
+        case .arterialRoutes:
             nil
         }
     }
@@ -778,14 +780,19 @@ final class StrokeExperienceState: ObservableObject {
             familyBrainAtlasCueChapter = chapter
             return
         }
-        // This is a user-selected room-scale magnification cue. The final
-        // cross-app handoff still requires the paired experience to be
-        // installed; Stroke Care never claims to have entered a patient's
-        // anatomy itself.
-        withAnimation(.easeInOut(duration: 0.52)) {
-            spatialZoom = max(spatialZoom, 3.2)
-            anatomyViewpoint = .free
-        }
+        // The source package exposes one combined deep-structures mesh and one
+        // ventricular mesh, not separately named chapter structures. Reveal
+        // that complete registered context without inventing a precise marker;
+        // the optional room-scale journey remains a separate next action.
+        let internalLabel = chapter.teachingReferenceLabel ??
+            "\(chapter.title) · combined internal atlas context"
+        selectedPointEntityName = "family-atlas-internal-reference"
+        selectedPointLabel = internalLabel
+        selectedPointReferenceExpanded = true
+        teachingImagingLens = .internalStructures
+        teachingImagingDrawerVisible = true
+        activeFamilyNarrationText = nil
+        familyNarrationPromptVisible = true
         familyBrainAtlasCueChapter = chapter
     }
 
@@ -1118,6 +1125,7 @@ final class StrokeExperienceState: ObservableObject {
         switch teachingLens(for: label ?? selectedPointLabel) {
         case .affectedVessel: "full arterial tree"
         case .brainSurface: "whole brain surface"
+        case .internalStructures: "internal structures"
         case .makingRoomPurpose: "layer view"
         }
     }
@@ -1145,6 +1153,8 @@ final class StrokeExperienceState: ObservableObject {
             "ATLAS FOCUS · SIDE REGION IN WHOLE-BRAIN CONTEXT"
         case "Occipital lobe · generic atlas focus":
             "ATLAS FOCUS · REAR REGION IN WHOLE-BRAIN CONTEXT"
+        case let label? where label.hasSuffix("· combined internal atlas context"):
+            "ATLAS CONTEXT · COMBINED INTERNAL STRUCTURES + VENTRICLES"
         case "Blood supply approaches":
             "ROUTE · BLOOD APPROACHES THROUGH LARGER ARTERIES"
         case "Arteries branch":
@@ -1181,6 +1191,8 @@ final class StrokeExperienceState: ObservableObject {
              "Temporal lobe · generic atlas focus",
              "Occipital lobe · generic atlas focus":
             .brainSurface
+        case let label? where label.hasSuffix("· combined internal atlas context"):
+            .internalStructures
         case "Generic craniotomy teaching story":
             .makingRoomPurpose
         case nil:
@@ -1403,6 +1415,8 @@ final class StrokeExperienceState: ObservableObject {
             "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
         case let label where label.hasSuffix("· generic atlas focus"):
             "This lit focus locates \(label.replacingOccurrences(of: " · generic atlas focus", with: "")) within a complete generic brain. It is an orientation aid, not a patient scan or a precise functional boundary."
+        case let label where label.hasSuffix("· combined internal atlas context"):
+            "This view shows the complete combined internal-structures mesh and ventricular system available in this generic atlas. It helps with orientation, but it does not separately outline \(label.replacingOccurrences(of: " · combined internal atlas context", with: "")) or represent a patient scan."
         default:
             "This is a generic teaching reference. It can help orient the next question, but it is not a patient scan, measurement, or diagnosis."
         }
@@ -2464,6 +2478,21 @@ final class StrokeExperienceState: ObservableObject {
         cortexOpacity = 0.16
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(.corpusCallosum)
+        revealFamilyBrainAtlasModelCue()
+        spatialZoom = 3.2
+    }
+
+    /// Proves the bounded in-app reference separately from the optional
+    /// room-scale journey. The source asset is one combined internal mesh plus
+    /// ventricles, so this route never claims a precise thalamic segmentation.
+    func prepareFamilyAtlasInternalReferenceProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .surroundings
+        spatialZoom = 1.22
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.thalamus)
+        advanceFamilyBrainAtlasDetail(by: 1)
         revealFamilyBrainAtlasModelCue()
     }
 

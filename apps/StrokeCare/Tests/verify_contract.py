@@ -608,7 +608,7 @@ require("left" in product_map.lower() and "centre" in product_map.lower() and "r
 require("BLENDER_LAYER_STUDY=PASS" in blender_manifest and "REGION_ANCHOR" in blender_builder, "executed Blender layer-study receipt is missing")
 require("Houdini is not installed" in dcc_pipeline and "Unreal Editor is not installed" in dcc_pipeline, "DCC pipeline overclaims unexecuted Houdini or Unreal work")
 require("RealityKit remains the runtime source of truth" in dcc_pipeline and "hub-and-spoke USD" in dcc_pipeline, "DCC/runtime authority boundary is missing")
-require("SC-AIS-001.9" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
+require("SC-AIS-001.10" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical-review boundary is missing")
 require("familyFeedback" in immersive and '"Clarify"' in immersive, "family-only clarification control is missing")
 require("Point on brain" in immersive and "family-question-marker" in immersive, "family spatial question marker is missing")
 require("PlacedStrokeQuestion" in state and "rootLocalPosition" in state, "question placement is not owned in anatomy-local coordinates")
@@ -759,11 +759,13 @@ require(all(token in state for token in (
     "var spatialCuePointIndex: Int?",
     "selectPoint(",
     "var teachingReferenceLabel: String?",
-    'label: chapter.teachingReferenceLabel ?? "\\(chapter.title) · generic atlas focus"',
-    "spatialZoom = max(spatialZoom, 3.2)",
+    'chapter.teachingReferenceLabel ??',
+    '"\\(chapter.title) · combined internal atlas context"',
+    "teachingImagingLens = .internalStructures",
     "prepareFamilyArterialAtlasFlowProof",
     "prepareFamilyAtlasNextChapterProof",
     "prepareFamilyAtlasInteriorReadyProof",
+    "prepareFamilyAtlasInternalReferenceProof",
     "prepareFamilyBrainAtlasProof",
     "prepareFamilyAtlasSurfaceCueProof",
     "prepareFamilyAtlasTemporalCueProof",
@@ -778,6 +780,13 @@ require(all(token in state for token in (
     "teachingImagingDrawerVisible = true",
 )), "Family Atlas surface chapters do not reveal their complete localized 3D brain reference")
 require("atlasSurfaceDirections" in scene and "Array(atlasSurfaceDirections.keys)" in scene, "Family Atlas surface references are missing their chapter-specific 3D focus beacons")
+require(all(token in scene for token in (
+    "case internalStructures",
+    'internalRootName = "registered-teaching-imaging-internal-structures"',
+    'deepStructuresAssetName = "brain_deep_structures_v2"',
+    'ventriclesAssetName = "brain_ventricles_v2"',
+)) and "Combined generic internal mesh" in immersive,
+"Family Atlas deep chapters do not use the bundled combined internal reference honestly")
 require(all(token in scene for token in (
     'atlasPointFieldName = "family-atlas-point-field"',
     "atlasPointDirections",
@@ -818,6 +827,7 @@ require("--proof-family-atlas-next-chapter" in launch and "prepareFamilyAtlasNex
 require("--proof-family-atlas-interior-ready" in launch and "prepareFamilyAtlasInteriorReadyProof" in launch, "deterministic Family Atlas interior-ready proof route is missing")
 require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurfaceCueProof" in launch, "deterministic family Atlas surface-cue proof route is missing")
 require("--proof-family-atlas-temporal-cue" in launch and "prepareFamilyAtlasTemporalCueProof" in launch, "deterministic temporal Atlas cue proof route is missing")
+require("--proof-family-atlas-internal-reference" in launch and "prepareFamilyAtlasInternalReferenceProof" in launch, "deterministic internal Atlas reference route is missing")
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")
 require("fixed 108-point field and 64-point disc" in immersive and ".frame(minWidth: 108, minHeight: 108)" in immersive and "let discDiameter: CGFloat = 64" in immersive, "presenter timeline targets are not room-scale legible")
@@ -831,7 +841,7 @@ require(all(token in state for token in (
 require("showsFamilyReferenceAction" in immersive and "teachingReferenceActionTitle()" in immersive and "toggleSelectedPointReference()" in immersive, "selected Family points are missing their explicit spatial-reference follow-up")
 require(
     "teachingReferenceRelationship" in state
-    and 'Text("FULL 3D STRUCTURE")' in immersive
+    and '"COMBINED 3D CONTEXT" : "FULL 3D STRUCTURE"' in immersive
     and "experience.teachingReferenceRelationship()" in immersive
     and all(token in state for token in (
         '"ROUTE · BLOOD APPROACHES THROUGH LARGER ARTERIES"',
@@ -945,7 +955,9 @@ require(all(token in immersive for token in (
     '"Complete generic arterial structure · not a patient scan"',
     '"Complete generic brain surface · not a patient scan"',
     '"Registered-v2 teaching asset · review pending"',
-    '"FROM POINT · \\(selectedPointLabel.uppercased())"',
+    'Text("FROM \\(isCombinedInternalChapter' ,
+    'selectedPointLabel.uppercased())")',
+    '"COMBINED 3D CONTEXT"',
     '"DIRECTION CUE · QUALITATIVE · NOT CFD"',
 )), "right-side teaching reference lacks role-safe selected-point captions")
 require(all(token in immersive for token in (
@@ -1113,7 +1125,7 @@ require('--proof-inspect' in deck and '--proof-discuss' in deck, "deterministic 
 require('--proof-rig' in deck and 'experience.focusOcclusion()' in deck, "animated spatial-rig proof route is missing")
 require("clinician review pending" in readme.lower(), "clinical review status is missing")
 require("Simulator builds and screenshots do not prove XCAT" in readme, "device evidence boundary is missing")
-require("SC-AIS-001.9" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
+require("SC-AIS-001.10" in clinical_packet and "PENDING CLINICIAN REVIEW" in clinical_packet, "versioned clinical review packet is missing")
 require("Exact three-act review" in clinical_packet and "Reviewed on XCAT app version/build" in clinical_packet, "XCAT three-act clinical review gate is missing")
 require("determine eligibility" in clinical_packet and "does not show treatment ranking" in clinical_packet, "clinical review packet lacks decision-support boundaries")
 require("Houdini-ready, not Houdini-executed" in houdini, "Houdini execution boundary is missing")

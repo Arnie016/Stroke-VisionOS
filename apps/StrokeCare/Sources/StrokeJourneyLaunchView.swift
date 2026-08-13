@@ -607,6 +607,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-atlas-temporal-cue") {
             experience.prepareFamilyAtlasTemporalCueProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-internal-reference") {
+            experience.prepareFamilyAtlasInternalReferenceProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-transparent-layer") {
             experience.prepareTransparentLayerProof()
             Task { await openProofSpace() }

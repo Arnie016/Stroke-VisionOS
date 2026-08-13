@@ -3056,6 +3056,7 @@ enum StrokeSceneFactory {
 enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
     case affectedVessel
     case brainSurface
+    case internalStructures
     case makingRoomPurpose
 
     var id: String { rawValue }
@@ -3064,6 +3065,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
         switch self {
         case .affectedVessel: "Stroke effect"
         case .brainSurface: "Brain surface"
+        case .internalStructures: "Internal structures"
         case .makingRoomPurpose: "Making-room purpose"
         }
     }
@@ -3081,6 +3083,7 @@ enum TeachingImagingMiniatureFactory {
     static let rootName = "registered-teaching-imaging-root"
     static let affectedRootName = "registered-teaching-imaging-affected-vessel"
     static let surfaceRootName = "registered-teaching-imaging-brain-surface"
+    static let internalRootName = "registered-teaching-imaging-internal-structures"
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
     static let pointHighlightPrefix = "registered-teaching-imaging-point-highlight-"
@@ -3100,6 +3103,8 @@ enum TeachingImagingMiniatureFactory {
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
     private static let brainAssetName = "brain_anatomy_realistic_v2"
+    private static let deepStructuresAssetName = "brain_deep_structures_v2"
+    private static let ventriclesAssetName = "brain_ventricles_v2"
     private static let skullAssetName = "skull_semantic_realistic_v2"
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
@@ -3140,6 +3145,13 @@ enum TeachingImagingMiniatureFactory {
         surface.isEnabled = false
         root.addChild(surface)
 
+        let internalStructures = Entity()
+        internalStructures.name = internalRootName
+        internalStructures.orientation = wearerFacingTilt
+        internalStructures.scale = [1.08, 1.08, 1.08]
+        internalStructures.isEnabled = false
+        root.addChild(internalStructures)
+
         let purpose = Entity()
         purpose.name = purposeRootName
         purpose.orientation = wearerFacingTilt
@@ -3153,6 +3165,8 @@ enum TeachingImagingMiniatureFactory {
         // fallback geometry is never presented as registered imaging.
         let arteriesSource = importedAnatomy?.findEntity(named: arteriesAssetName)
         let brainSource = importedAnatomy?.findEntity(named: brainAssetName)
+        let deepStructuresSource = importedAnatomy?.findEntity(named: deepStructuresAssetName)
+        let ventriclesSource = importedAnatomy?.findEntity(named: ventriclesAssetName)
         let skullSource = importedAnatomy?.findEntity(named: skullAssetName)
         let clotSource = importedAnatomy?.findEntity(named: clotAssetName)
         let duraSource = importedAnatomy?.findEntity(named: duraAssetName)
@@ -3196,6 +3210,39 @@ enum TeachingImagingMiniatureFactory {
                 to: surface,
                 namePrefix: "surface-brain"
             )
+        }
+        if let brainSource {
+            // Keep a very quiet whole-brain envelope around the registered
+            // internal sources. It supplies orientation only and must not make
+            // the combined mesh look like a patient scan or a separately
+            // segmented corpus callosum, thalamus, or hippocampus.
+            let brainContext = Entity()
+            brainContext.name = "internal-brain-context"
+            addRenderedLeaves(
+                from: brainSource,
+                to: brainContext,
+                namePrefix: "internal-brain"
+            )
+            brainContext.components.set(OpacityComponent(opacity: 0.10))
+            internalStructures.addChild(brainContext)
+        }
+        if let deepStructuresSource {
+            addRenderedLeaves(
+                from: deepStructuresSource,
+                to: internalStructures,
+                namePrefix: "internal-deep-structures"
+            )
+        }
+        if let ventriclesSource {
+            let ventricles = Entity()
+            ventricles.name = "internal-ventricular-system"
+            addRenderedLeaves(
+                from: ventriclesSource,
+                to: ventricles,
+                namePrefix: "internal-ventricles"
+            )
+            ventricles.components.set(OpacityComponent(opacity: 0.88))
+            internalStructures.addChild(ventricles)
         }
         if let duraSource {
             // The access-story reference is a whole, generic relationship:
@@ -3254,11 +3301,13 @@ enum TeachingImagingMiniatureFactory {
         guard let root = sceneRoot.findEntity(named: rootName) else { return }
         let affected = root.findEntity(named: affectedRootName)
         let surface = root.findEntity(named: surfaceRootName)
+        let internalStructures = root.findEntity(named: internalRootName)
         let purpose = root.findEntity(named: purposeRootName)
 
         root.isEnabled = isVisible
         affected?.isEnabled = isVisible && lens == .affectedVessel
         surface?.isEnabled = isVisible && lens == .brainSurface
+        internalStructures?.isEnabled = isVisible && lens == .internalStructures
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
 
         let authoredLabels = StrokePointField.allCases.flatMap(\.lessonPoints).map(\.fullTitle)

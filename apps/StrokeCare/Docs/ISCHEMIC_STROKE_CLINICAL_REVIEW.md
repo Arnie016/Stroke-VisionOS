@@ -1,7 +1,7 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.9`
-- App version: `0.6 (27)` review candidate
+- Content version: `SC-AIS-001.10`
+- App version: `0.6 (29)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
   decompressive hemicraniectomy explanation, not a treatment-selection flow
@@ -17,7 +17,7 @@ determine eligibility, recommend treatment, predict outcome, capture consent,
 or become part of a medical record. The 3D anatomy and flow are authored
 schematics, not patient-specific anatomy or computed fluid dynamics.
 
-In content version `SC-AIS-001.9`, the Pressure scene uses three deliberately
+In content version `SC-AIS-001.10`, the Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
 affected-tissue surface cue, and a wider dashed mint swelling boundary. Their
 positions come from the loaded registered-v2 brain and clot bounds, not a
@@ -29,6 +29,13 @@ separate Visible Human eye context. The viewing window is illustrative—not a
 surgical opening or patient-specific craniotomy—and the eye alignment is an
 approximate cross-source orientation reference. Both remain clinician-only,
 generic teaching anatomy pending specialist review.
+
+The Curious Learner Brain Atlas can reveal one combined internal-structures
+mesh and the ventricular system beside the complete exterior model. The
+source package does not expose separately named corpus-callosum, thalamus, or
+hippocampus meshes, so the reference is labelled as combined context and never
+pretends to highlight an individual deep structure. Its naming, registration,
+and chapter wording remain pending specialist review.
 
 The Make-space scene now adds a separate registered-frame conceptual cue at the
 same derived cortical direction: a dashed aperture, a translucent protective
@@ -61,6 +68,7 @@ full situation.
 | 3D model | A blockage, affected tissue, swelling, and the fixed skull are separate schematic cues. | AHA describes ischemic stroke as blocked blood supply. NICE describes severe-stroke swelling and pressure inside the skull. All geometry is app-authored and needs clinical review. | Pending |
 | Procedure purpose | Decompressive hemicraniectomy removes part of the skull to make room and ease pressure; it cannot undo stroke injury. | NICE NG128 recommendations 1.9.5–1.9.6 and the patient decision aid describe purpose, selection, uncertainty, and shared discussion. | Pending |
 | Conversation boundary | The app does not recommend surgery, estimate survival or disability, or replace a risk/benefit and preferences conversation. | NICE states that the choice is preference-sensitive and should consider pre-stroke function, wishes, benefits, harms, and uncertainty. | Pending |
+| Curious Learner Brain Atlas | A combined internal-structures mesh and ventricular system provide generic 3D context. Individual deep chapters are not separately segmented or presented as patient anatomy. | Bundled registered-v2 generic teaching assets; chapter labels and spatial registration require neuroanatomist review. | Pending |
 
 ## Exact three-act review
 

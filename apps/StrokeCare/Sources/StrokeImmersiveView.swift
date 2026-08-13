@@ -1845,7 +1845,7 @@ private struct StrokeTeachingImagingDrawer: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             if let selectedPointLabel = experience.selectedPointLabel {
-                Text("FROM POINT · \(selectedPointLabel.uppercased())")
+                Text("FROM \(isCombinedInternalChapter ? "CHAPTER" : "POINT") · \(selectedPointLabel.uppercased())")
                     .font(.caption2.monospaced().weight(.semibold))
                     .tracking(0.55)
                     .foregroundStyle(.white.opacity(0.58))
@@ -1858,11 +1858,11 @@ private struct StrokeTeachingImagingDrawer: View {
                 .foregroundStyle(referenceTint)
 
             HStack(spacing: 5) {
-                Text("POINT")
+                Text(isCombinedInternalChapter ? "CHAPTER" : "POINT")
                     .font(.caption2.monospaced().weight(.black))
                 Image(systemName: "arrow.right")
                     .font(.caption2.weight(.black))
-                Text("FULL 3D STRUCTURE")
+                Text(isCombinedInternalChapter ? "COMBINED 3D CONTEXT" : "FULL 3D STRUCTURE")
                     .font(.caption2.monospaced().weight(.black))
             }
             .foregroundStyle(referenceTint.opacity(0.92))
@@ -1903,11 +1903,17 @@ private struct StrokeTeachingImagingDrawer: View {
         switch (experience.audienceLens, experience.teachingImagingLens) {
         case (.family, .affectedVessel): "FULL ARTERIAL TREE · TEACHING VIEW"
         case (.family, .brainSurface): "WHOLE BRAIN SURFACE · TEACHING VIEW"
+        case (.family, .internalStructures): "INTERNAL STRUCTURES + VENTRICLES · TEACHING VIEW"
         case (.family, .makingRoomPurpose): "MAKING-ROOM PURPOSE · TEACHING VIEW"
         case (.clinician, .affectedVessel): "AFFECTED-VESSEL REFERENCE"
         case (.clinician, .brainSurface): "BRAIN-SURFACE REFERENCE"
+        case (.clinician, .internalStructures): "INTERNAL-STRUCTURES REFERENCE"
         case (.clinician, .makingRoomPurpose): "MAKING-ROOM REFERENCE"
         }
+    }
+
+    private var isCombinedInternalChapter: Bool {
+        experience.selectedPointLabel?.hasSuffix("· combined internal atlas context") == true
     }
 
     private var referenceBoundary: String {
@@ -1919,6 +1925,8 @@ private struct StrokeTeachingImagingDrawer: View {
             return "Complete generic arterial structure · not a patient scan"
         case .brainSurface:
             return "Complete generic brain surface · not a patient scan"
+        case .internalStructures:
+            return "Combined generic internal mesh · labels and registration under specialist review"
         case .makingRoomPurpose:
             return "Generic layer relationship · not a patient scan"
         }
@@ -1928,6 +1936,7 @@ private struct StrokeTeachingImagingDrawer: View {
         switch experience.teachingImagingLens {
         case .affectedVessel: .orange
         case .brainSurface: .cyan
+        case .internalStructures: .purple
         case .makingRoomPurpose: .mint
         }
     }
@@ -2748,7 +2757,7 @@ private struct SpatialFamilyBrainAtlas: View {
         if chapter.spatialCuePointIndex != nil {
             return "Show \(chapter.title) context on the 3D teaching model"
         }
-        return "Open the separate inside-brain journey"
+        return "Show the combined internal structures and ventricular system in 3D"
     }
 
     private var isDeepStructureChapter: Bool {
@@ -2765,7 +2774,7 @@ private struct SpatialFamilyBrainAtlas: View {
         if chapter.spatialCuePointIndex != nil {
             return "Selects one lifted generic anatomy cue. It does not identify anatomy in a patient scan"
         }
-        return "Makes the room-scale inside-brain handoff available. The paired guided journey must be installed separately"
+        return "Shows the complete combined internal mesh without pretending this chapter is separately segmented. The optional guided journey remains available at room scale"
     }
 
     private func atlasStepButton(
