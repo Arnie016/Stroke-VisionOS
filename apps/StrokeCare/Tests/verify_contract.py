@@ -1173,6 +1173,11 @@ require(all(token in immersive for token in (
     "id == roleMicroCuesID && familyLeftFieldOccupied",
 )), "family Explore Next remains stacked behind an active point explanation")
 require(all(token in immersive for token in (
+    "let exteriorOrientationRedundant = id == exteriorOrientationID",
+    "(!isFamily || familyLeftFieldOccupied)",
+    "!exteriorOrientationRedundant",
+)), "the exterior orientation card still floats above clinician or active family teaching scenes")
+require(all(token in immersive for token in (
     "StrokeSceneReadinessOverlay",
     "Preparing the 3D teaching model",
     "brain, vessel paths, and discovery points will appear together",
@@ -2064,10 +2069,14 @@ require(all(token in scene for token in (
     'registeredPressureSwellingCueName = "registered-pressure-swelling-cue"',
     "let affectedSurfaceMarker = brainCenter + brainRadii * affectedDirection * 1.018",
     "mesh: .generateCylinder(height: 0.0022, radius: 0.030)",
-    "for index in 0..<14",
+    "let contourPointMesh = MeshResource.generateSphere(radius: 0.00225)",
+    "for index in 0..<12",
+    'contourPoint.name = "registered-pressure-swelling-contour-point-\\(index)"',
+    "contourPoint.position = [cos(angle) * 0.038, 0.0026, sin(angle) * 0.030]",
     "experience.procedureStep != .chooseCase",
     "pressureStory?.isEnabled = showsPressureFocus",
 )), "registered-frame blockage, affected-tissue, and constrained-swelling Pressure cues are incomplete")
+require("registered-pressure-swelling-dash" not in scene, "the detached radial swelling bars remain in the pressure story")
 require(
     "imported.findEntity(named: importedEdemaName)?.isEnabled = false" in scene
     and "imported.findEntity(named: importedFlapName)?.isEnabled = false" in scene

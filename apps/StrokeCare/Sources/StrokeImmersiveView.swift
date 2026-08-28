@@ -1397,9 +1397,18 @@ struct StrokeImmersiveView: View {
             // underneath it. Closing the point restores the chooser.
             let familyLeftFieldOccupied = isFamily &&
                 (experience.familyBrainAtlasVisible || familyPointDisclosureActive)
+            // The exterior/interior distinction is a one-time family
+            // orientation cue. A clinician already has the labelled
+            // presenter rail and current-act guide, so keeping this card high
+            // above the model creates a detached floating object rather than
+            // useful context. It also yields once the family has selected a
+            // point or opened the Atlas.
+            let exteriorOrientationRedundant = id == exteriorOrientationID &&
+                (!isFamily || familyLeftFieldOccupied)
             attachment.isEnabled = visible &&
                 !imageWorkingMode &&
-                !(id == roleMicroCuesID && familyLeftFieldOccupied)
+                !(id == roleMicroCuesID && familyLeftFieldOccupied) &&
+                !exteriorOrientationRedundant
             attachment.components.set(BillboardComponent())
         }
 

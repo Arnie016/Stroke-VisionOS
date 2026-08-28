@@ -30,7 +30,7 @@ ROUTE_TEXT_TOKENS = {
     "--proof-spatial-intake": ("patient files",),
     "--proof-selected-case-handoff": ("f 168", "elena"),
     "--proof-pressure": ("pressure", "questions to as"),
-    "--proof-family-pressure-story": ("outside the brain", "explore next"),
+    "--proof-family-pressure-story": ("outside the brain", "begin here"),
     # The first-action cue is deliberately small and peripheral, so whole-frame
     # OCR anchors this route to the one direct family entry action. Contract
     # checks preserve the transient cue; human screenshot inspection confirms

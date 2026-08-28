@@ -136,18 +136,18 @@ not prove anatomical meaning, gaze-and-pinch quality, stereo depth, AirPlay
 legibility, wearer comfort, comprehension, specialist review, or clinical
 validity.
 
-Build `0.6 (17)` made the Pressure story visually explicit without adding a
-diagnostic overlay. The registered clot keeps a compact pulse; a filled amber
-surface cue marks affected tissue; and a wider dashed mint boundary represents
-constrained swelling. All three cues are derived from the loaded registered-v2
-brain/clot bounds, remain qualitative, and disappear outside Pressure / Make
-space. The prototype-v1 edema, flap, and patch meshes remain quarantined.
+The Pressure story stays visually explicit without adding a diagnostic overlay.
+The registered clot keeps a compact pulse; a filled amber surface cue marks
+affected tissue; and a quiet dotted mint boundary represents constrained
+swelling. All three cues are derived from the loaded registered-v2 brain/clot
+bounds, remain qualitative, and disappear outside Pressure / Make space. The
+prototype-v1 edema, flap, and patch meshes remain quarantined.
 
 ![Family Pressure story in visionOS Simulator](Proof/79-family-pressure-story-simulator.png)
 
-![Doctor-presenter Pressure story in visionOS Simulator](Proof/80-clinician-pressure-story-simulator.png)
+![Quiet doctor-presenter Pressure story in visionOS Simulator](Proof/111-quiet-clinician-pressure-story-simulator.png)
 
-The two Pressure captures prove the build-17 Simulator render/process state only. They do
+The two Pressure captures prove Simulator render/process state only. They do
 not prove anatomical meaning, clinical correctness, gaze-and-pinch quality,
 stereo depth, AirPlay legibility, wearer comfort, or family comprehension.
 

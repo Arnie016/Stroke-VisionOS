@@ -1252,7 +1252,7 @@ enum StrokeSceneFactory {
         // Their anchor is derived from the clot-to-cortex direction and the
         // loaded brain bounds; it is not a segmented patient lesion or edema
         // measurement. Morphology—not dense labels—keeps the meanings apart:
-        // a filled amber disc marks affected tissue, while the wider dashed
+        // a filled amber disc marks affected tissue, while the wider dotted
         // mint boundary communicates constrained swelling inside fixed space.
         let pressureStory = makeRegisteredPressureStory(
             affectedSurfaceMarker: affectedSurfaceMarker,
@@ -1303,20 +1303,20 @@ enum StrokeSceneFactory {
         swelling.position = affectedSurfaceMarker + affectedDirection * 0.004
         swelling.orientation = simd_quatf(from: [0, 1, 0], to: affectedDirection)
 
-        let dashMesh = MeshResource.generateBox(
-            size: [0.010, 0.0020, 0.0024],
-            cornerRadius: 0.001
-        )
-        for index in 0..<14 {
-            let angle = Float(index) / 14 * 2 * Float.pi
-            let dash = ModelEntity(
-                mesh: dashMesh,
-                materials: [careMaterial(opacity: 0.74)]
+        // A dotted contour reads as a boundary on the tissue rather than the
+        // old radial burst of elongated bars. It remains deliberately
+        // qualitative: the contour does not encode volume, pressure, severity,
+        // or a measured patient border.
+        let contourPointMesh = MeshResource.generateSphere(radius: 0.00225)
+        for index in 0..<12 {
+            let angle = Float(index) / 12 * 2 * Float.pi
+            let contourPoint = ModelEntity(
+                mesh: contourPointMesh,
+                materials: [careMaterial(opacity: 0.60)]
             )
-            dash.name = "registered-pressure-swelling-dash-\(index)"
-            dash.position = [cos(angle) * 0.045, 0.003, sin(angle) * 0.035]
-            dash.orientation = simd_quatf(angle: -angle, axis: [0, 1, 0])
-            swelling.addChild(dash)
+            contourPoint.name = "registered-pressure-swelling-contour-point-\(index)"
+            contourPoint.position = [cos(angle) * 0.038, 0.0026, sin(angle) * 0.030]
+            swelling.addChild(contourPoint)
         }
         story.addChild(swelling)
         return story
