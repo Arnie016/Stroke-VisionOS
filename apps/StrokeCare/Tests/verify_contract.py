@@ -311,6 +311,17 @@ require(
     "a fresh role or case-story entry can retain a stale clinical-evidence window",
 )
 require("audienceLens == .family, familyClarityWasSet" in state and "Let’s slow down." in state and "Pause, ask a question" in state, "family self-reported clarity does not adapt the visible teaching copy")
+require(
+    all(token in state for token in (
+        "private var familyClarityPauseOwned = false",
+        "private var familyClarityClarificationOwned = false",
+        "private func resetFamilyPointConversation()",
+        "selectedPointEntityName != entityName",
+        "if familyClarityCheck < 1.5",
+        "familyClarityPauseOwned = false\n        requestedPause.toggle()",
+    )),
+    "family clarity is not point-owned or can still override a manual pause",
+)
 require("experience.audienceLens == .family ? 360 : 460" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 220" in immersive, "family entry cue and clinician conversation rail lack their readable spatial footprints")
 require("var selectedFamilyQuestionAnswer: String?" in state and "Only a boundary action opens a clarification card" in state and "does not measure flow, identify a diagnosis, or predict an outcome" in state, "family exploration boundary does not produce a bounded, authored clarification")
 require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive and "WHY THIS VIEW MATTERS" in immersive and "Plain-language answer:" in immersive, "family rail does not surface the selected exploration's plain-language answer")
@@ -1435,6 +1446,16 @@ require(
     and '"still unsure"' in proof_image_check
     and '"teal branches"' in proof_image_check,
     "deterministic visible family clarity-response route is missing",
+)
+require(
+    "--proof-family-point-conversation-reset" in launch
+    and "prepareFamilyPointConversationResetProof" in launch
+    and "--proof-family-point-conversation-reset" in simulator_proof
+    and '"--proof-family-point-conversation-reset": (' in proof_image_check
+    and '"still unsure"' in proof_image_check
+    and '"resume"' in proof_image_check
+    and "ROUTE_FORBIDDEN_TEXT_TOKENS" in proof_image_check,
+    "deterministic point-owned family clarity regression route is missing",
 )
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")

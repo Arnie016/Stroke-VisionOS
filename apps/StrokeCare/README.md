@@ -91,6 +91,15 @@ clinical validity.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (29)` now treats the family learner's clarity response as part of
+one selected anatomy conversation. Moving from a neuron marked **Unsure** to
+the affected-area lesson begins with unanswered **Again**, **Unsure**, and
+**Clear** choices, removes the prior response, and returns the rail to
+**Pause**. A manual pause or separately placed question is not cleared by a
+later clarity choice.
+
+![Affected-area lesson without stale neuron clarity state](Proof/120-family-point-conversation-reset-simulator.png)
+
 Build `0.6 (29)` makes the family learner's explicit clarity choice visibly
 useful at the selected teaching point. Choosing **Again**, **Unsure**, or
 **Clear** now replaces the prior response with one short, authored next cue in

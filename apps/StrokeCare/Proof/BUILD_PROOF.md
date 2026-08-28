@@ -1033,3 +1033,36 @@ The guarded XCAT deploy stopped because paired device
 `Proof/xcat/20260828-201854/BLOCKED.md`. Simulator proof does not establish
 headset targetability, stereo placement, device audio, comprehension,
 specialist acceptance or clinical validity.
+
+## 2026-08-28 20:51 SGT — family clarity is point-owned
+
+Build `0.6 (29)` prevents an explicit family clarity response from leaking
+into another anatomy lesson. The deterministic route marks the neuron
+explanation **Unsure**, then selects **Example affected area**. The second
+point starts with unanswered clarity choices, no `Still unsure` response, and
+a visible **Pause** control. Clarity releases only the pause or clarification
+state that it introduced; a manual pause or separately placed question keeps
+its own state.
+
+`python3 Tests/verify_contract.py`, `git diff --check`, shell syntax checking,
+and Python compilation pass. The visionOS Simulator `xcodebuild` for
+`F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777` exits 0. The locally signed bundle
+passes `codesign --verify --deep --strict`; its executable has SHA-256
+`e9d9267401747ddf74d2accd1013ea3d8103c33e435877f5019c551fd72662e1`.
+
+`Proof/120-family-point-conversation-reset-simulator.png`, 3840×2160, passes
+the unchanged image-quality gate and route OCR 4/4 for `example affected
+area`, `plain words`, `did this make sense`, and `pause`. The same OCR gate
+rejects stale `still unsure`, `please explain again`, or `resume` content.
+SHA-256:
+`10f3be3b56c657534864aa05f9d0ebcbcde45e21e7e55b264ee1d00615851e8e`.
+Visual inspection confirms one dominant registered brain, one affected-area
+card, one separate arterial teaching reference, one family rail, and one
+three-act timeline.
+
+The guarded XCAT deploy stopped before build/install because
+`XCAT.coredevice.local` / paired device
+`613CC48C-A6AD-5170-A238-D518B6012491` was unavailable. Receipt:
+`Proof/xcat/20260828-203246/BLOCKED.md`. Simulator evidence does not establish
+headset targetability, stereo placement, wearer comprehension, device audio,
+specialist acceptance, anatomical registration, or clinical validity.

@@ -1250,6 +1250,10 @@ struct StrokeImmersiveView: View {
 
     @MainActor
     private func restoreProofRouteIfNeeded() {
+        if CommandLine.arguments.contains("--proof-family-point-conversation-reset") {
+            experience.prepareFamilyPointConversationResetProof()
+            return
+        }
         if CommandLine.arguments.contains("--proof-family-neuron-unsure") {
             experience.prepareFamilyNeuronUnsureProof()
             return

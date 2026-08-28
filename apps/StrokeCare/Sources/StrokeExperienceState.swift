@@ -963,6 +963,14 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var familyClarityCheck: Double = 1
     @Published private(set) var familyClarityWasSet = false
     @Published private(set) var selectedFamilyQuestion: String?
+    /// Tracks only the pause introduced by the current point's explicit
+    /// clarity response. A later "Clear" choice may release this pause, but
+    /// never a pause the wearer set manually or through another interaction.
+    private var familyClarityPauseOwned = false
+    /// Keeps clarity feedback from dismissing a separately placed question.
+    /// The shared visible clarification state is released only when this
+    /// point-level response was the action that introduced it.
+    private var familyClarityClarificationOwned = false
     @Published var familyBrainAtlasVisible = false
     @Published private(set) var familyBrainAtlasChapter: StrokeFamilyBrainAtlasChapter = .cortex
     @Published private(set) var familyBrainAtlasDetailIndex = 0
@@ -2865,6 +2873,9 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func togglePause() {
+        // A deliberate rail action takes ownership away from the point-level
+        // clarity response. Choosing "Clear" later must not undo this choice.
+        familyClarityPauseOwned = false
         requestedPause.toggle()
     }
 
@@ -2988,6 +2999,24 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = true
     }
 
+    /// Clarity is part of one selected anatomy conversation, not a global
+    /// learner profile. Moving to another point starts with unanswered clarity
+    /// choices and releases only state that the previous clarity response
+    /// introduced. No gaze, face, voice, or physiology is interpreted.
+    private func resetFamilyPointConversation() {
+        if familyClarityPauseOwned {
+            requestedPause = false
+        }
+        if familyClarityClarificationOwned {
+            clarificationRequested = false
+        }
+        familyClarityPauseOwned = false
+        familyClarityClarificationOwned = false
+        familyClarityCheck = 1
+        familyClarityWasSet = false
+        selectedFamilyQuestion = nil
+    }
+
     /// A family member explicitly reports how clear the current explanation
     /// feels. This is not an anxiety score and is never inferred from gaze,
     /// voice, face, physiology, diagnosis, or patient data.
@@ -2998,8 +3027,26 @@ final class StrokeExperienceState: ObservableObject {
            !familyQuestionSuggestions.contains(selectedFamilyQuestion) {
             self.selectedFamilyQuestion = nil
         }
-        if familyClarityCheck < 0.5 {
-            requestClarification()
+        guard audienceLens == .family else { return }
+
+        if familyClarityCheck < 1.5 {
+            if !clarificationRequested {
+                clarificationRequested = true
+                familyClarityClarificationOwned = true
+            }
+            if !requestedPause {
+                requestedPause = true
+                familyClarityPauseOwned = true
+            }
+        } else {
+            if familyClarityClarificationOwned {
+                clarificationRequested = false
+            }
+            if familyClarityPauseOwned {
+                requestedPause = false
+            }
+            familyClarityClarificationOwned = false
+            familyClarityPauseOwned = false
         }
     }
 
@@ -3745,6 +3792,10 @@ final class StrokeExperienceState: ObservableObject {
         // any helper copy. Retire the transient cue before revealing the local
         // explanation and its matching full 3D teaching reference.
         dismissFamilyDiscoveryHint()
+        if audienceLens == .family,
+           selectedPointEntityName != entityName {
+            resetFamilyPointConversation()
+        }
         if pointField == .craniotomy {
             // The access point opens the six-checkpoint clinician story rather
             // than the generic vessel miniature. The point stays attached to
@@ -3897,6 +3948,9 @@ final class StrokeExperienceState: ObservableObject {
 
     func clearPointSelection() {
         endAccessLayerStudy()
+        if audienceLens == .family {
+            resetFamilyPointConversation()
+        }
         familyBrainAtlasDirectSurfaceSelectionActive = false
         selectedPointEntityName = nil
         selectedPointLabel = nil
@@ -4920,6 +4974,21 @@ final class StrokeExperienceState: ObservableObject {
     func prepareFamilyNeuronUnsureProof() {
         prepareFamilyNeuronPlainWordsProof()
         setFamilyClarityCheck(1)
+    }
+
+    /// Regression receipt for point-owned family clarity. It deliberately
+    /// chooses "Unsure" on the neuron, then moves to the affected-area lesson.
+    /// The new point must begin unanswered and running rather than inheriting
+    /// the neuron's response or its clarity-owned pause.
+    func prepareFamilyPointConversationResetProof() {
+        prepareFamilyNeuronUnsureProof()
+        pointField = .regions
+        guard let affectedPoint = StrokePointField.regions.lessonPoints.first(where: {
+            $0.index == 0
+        }) else { return }
+        selectLessonPoint(affectedPoint)
+        setNarrationSetupAvailable(false)
+        showFamilyNarrationTranscript()
     }
 
     /// Receipt for a vascular point that owns the complete registered arterial

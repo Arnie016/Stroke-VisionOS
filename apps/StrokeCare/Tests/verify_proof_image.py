@@ -140,6 +140,12 @@ ROUTE_TEXT_TOKENS = {
         "still unsure",
         "teal branches",
     ),
+    "--proof-family-point-conversation-reset": (
+        "example affected area",
+        "plain words",
+        "did this make sense",
+        "pause",
+    ),
     "--proof-family-nearby-reference": ("nearby brain tissue", "teaching view"),
     "--proof-family-explore-nearby": ("nearby brain tissue", "teaching view"),
     "--proof-family-opposite-reference": ("opposite side context", "teaching view"),
@@ -195,6 +201,17 @@ ROUTE_TEXT_TOKENS = {
     "--proof-integrated-neural-gradient": ("ion gradient stores potential", "sodium and potassium"),
     "--proof-integrated-neural": ("neural signalling", "synaptic gaps"),
     "--proof-integrated-loading": ("building the brain around you", "generic teaching anatomy"),
+}
+
+# This regression route is valuable only if the previous point's answer and
+# clarity-owned pause are absent. Positive OCR tokens alone could otherwise
+# accept a screenshot that still carries stale state into the new lesson.
+ROUTE_FORBIDDEN_TEXT_TOKENS = {
+    "--proof-family-point-conversation-reset": (
+        "still unsure",
+        "please explain again",
+        "resume",
+    ),
 }
 
 OCR_SWIFT_SOURCE = r"""
@@ -388,6 +405,15 @@ def missing_route_tokens(route: str, recognized_text: str) -> list[str]:
     return [token for token in ROUTE_TEXT_TOKENS[route] if token not in normalized]
 
 
+def present_forbidden_route_tokens(route: str, recognized_text: str) -> list[str]:
+    normalized = normalize_text(recognized_text)
+    return [
+        token
+        for token in ROUTE_FORBIDDEN_TEXT_TOKENS.get(route, ())
+        if token in normalized
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("image", type=Path)
@@ -423,7 +449,9 @@ def main() -> int:
     if args.route:
         expected_tokens = ROUTE_TEXT_TOKENS[args.route]
         try:
-            missing_tokens = missing_route_tokens(args.route, recognize_text(args.image))
+            recognized_text = recognize_text(args.image)
+            missing_tokens = missing_route_tokens(args.route, recognized_text)
+            forbidden_tokens = present_forbidden_route_tokens(args.route, recognized_text)
         except RuntimeError as error:
             failures.append("route-ocr-unavailable")
             route_summary = f" route={args.route} route_ocr_error={error}"
@@ -436,6 +464,11 @@ def main() -> int:
                 failures.append("wrong-route-content")
                 route_summary += " missing_route_tokens=" + "+".join(
                     token.replace(" ", "_") for token in missing_tokens
+                )
+            if forbidden_tokens:
+                failures.append("stale-route-content")
+                route_summary += " forbidden_route_tokens=" + "+".join(
+                    token.replace(" ", "_") for token in forbidden_tokens
                 )
 
     digest = hashlib.sha256(args.image.read_bytes()).hexdigest()
