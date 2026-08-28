@@ -2307,10 +2307,18 @@ enum StrokeSceneFactory {
 
     private static func updateAccessStudySubset(in entity: Entity, active: Bool) {
         // Retain the authored parietal aperture and flap, not the teeth, face,
-        // or skull base. The inner study shows the local dural flap only.
+        // or skull base. During direct manipulation, the aperture remainder is
+        // only a faint orientation boundary: an opaque shell would hide the
+        // registered brain and make this focused relationship read as a skull
+        // demo. The independently movable bone and dural flaps stay fully
+        // rendered with their authored RealityKit materials.
         if entity.name.hasPrefix("RegisteredSkull_") ||
             entity.name == "Registered_Conceptual_Dura_Remainder_With_Opening" {
             entity.isEnabled = !active
+        }
+        if entity.name == "Registered_Parietal_Skull_Remainder_With_Aperture" {
+            entity.isEnabled = true
+            entity.components.set(OpacityComponent(opacity: active ? 0.14 : 1))
         }
         for child in entity.children { updateAccessStudySubset(in: child, active: active) }
     }

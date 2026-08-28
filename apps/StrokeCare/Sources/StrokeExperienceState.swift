@@ -3646,6 +3646,15 @@ final class StrokeExperienceState: ObservableObject {
             selectedPointReferenceExpanded = careViewPermissionGranted
             teachingImagingLens = .makingRoomPurpose
             teachingImagingDrawerVisible = careViewPermissionGranted
+            if audienceLens == .clinician {
+                // The access invitation is spatial, so its first deliberate
+                // pinch should reveal the authored bone/dura relationship
+                // rather than stop at another floating text card. The study
+                // retains its existing asset, permission, role, Back, and
+                // Reset gates; when either movable asset is unavailable the
+                // compact point note remains as a truthful fallback.
+                startAccessLayerStudy()
+            }
             return
         }
 
@@ -4505,6 +4514,10 @@ final class StrokeExperienceState: ObservableObject {
         cortexOpacity = 0.58
         setAnatomyViewpoint(.lateralA, reduceMotion: true)
         spatialZoom = 1.12
+        // Exercise the same direct spatial disclosure as a clinician pinching
+        // the access invitation. The actual model opens only after both
+        // movable assets report availability from the loaded RealityKit root.
+        pendingAccessLayerStudyProofOpen = true
     }
 
     func prepareAccessLayerStudyProof(opened: Bool) {

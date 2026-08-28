@@ -45,7 +45,7 @@ ROUTE_TEXT_TOKENS = {
     "--proof-clinician-toolkit": ("catheter set", "microcatheter"),
     "--proof-clinician-toolkit-full": ("microcatheter", "full geometry"),
     "--proof-clinician-toolkit-motion": ("microcatheter", "approach concept"),
-    "--proof-clinician-craniotomy": ("generic craniotomy", "anatomy"),
+    "--proof-clinician-craniotomy": ("craniotomy layers", "dura model", "back"),
     "--proof-access-layer-open": ("craniotomy layers", "dura model", "lifted", "back"),
     "--proof-access-layer-closed": ("craniotomy layers", "bone model", "in place", "back"),
     "--proof-imaging-gallery": ("imaging gallery", "add scans", "research atlas", "back"),

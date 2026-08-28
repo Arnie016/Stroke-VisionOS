@@ -11,11 +11,13 @@ recommendation, consent flow, patient scan, or surgical-training SOP.
 
 ## Interactive layer study, 26 August 2026
 
-Doctor presenter → Access → the access point → **Move the layers** opens an
-explicitly separate, non-operative model study. The existing permission prompt
-still precedes the first reveal. Only the source-derived parietal aperture,
-bone flap, and conceptual dural flap join the registered brain. The face,
-teeth, skull base, full dural shell, and pressure decorations stay hidden.
+Doctor presenter → Access → the access point opens an explicitly separate,
+non-operative model study. The existing permission prompt still precedes the
+first reveal. The source-derived bone flap and conceptual dural flap join the
+registered brain directly; the parietal aperture remains only as a faint
+orientation boundary. The face, teeth, skull base, full dural shell, pressure
+decorations, and detached point note stay hidden. If either movable asset is
+unavailable, the compact point note and disabled fallback action remain instead.
 
 The app equips the generic forceps prop and holds the brain's view still.
 Selecting **Bone** or **Dura**, then pinching its mint handle, lifts or returns

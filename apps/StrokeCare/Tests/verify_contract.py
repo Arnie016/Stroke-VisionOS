@@ -1142,6 +1142,8 @@ require(all(token in state for token in (
     "guard careViewPermissionGranted else", "accessLayerStudyEntryPending",
     "selectedClinicianTool == .forceps", "accessStudyReturnState",
     "guard !accessLayerStudy.isActive else { return }",
+    "if audienceLens == .clinician {\n                // The access invitation is spatial",
+    "pendingAccessLayerStudyProofOpen = true",
 )), "interactive access model bypasses role/assets/permission or lets the anatomy drift")
 require(all(token in immersive for token in (
     'Button("Move the layers"', "StrokeAccessLayerStudyControls()",
@@ -1155,6 +1157,8 @@ require(all(token in scene for token in (
     "experience.accessLayerStudy.boneProgress", "experience.accessLayerStudy.duraProgress",
     "updateAccessStudySubset", "RegisteredSkull_",
     "Registered_Conceptual_Dura_Remainder_With_Opening",
+    "Registered_Parietal_Skull_Remainder_With_Aperture",
+    "OpacityComponent(opacity: active ? 0.14 : 1)",
 )), "access model is not driving the actual registered flaps or reintroduces the face")
 require(all(token in state for token in (
     "pendingPresenterTeachingBeat",
