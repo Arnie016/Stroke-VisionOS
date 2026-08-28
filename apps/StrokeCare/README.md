@@ -53,6 +53,11 @@ made from actual visionOS Simulator captures of the current experience.
 
 ### Open one focused reference workspace
 
+| Image-first imaging gallery |
+| --- |
+| ![Two loaded research scans fill the imaging gallery](Proof/115-image-first-imaging-gallery-simulator.png) |
+| Loaded scans own the comparison surface. Empty grid slots and one-page navigation stay hidden; 2 × 2, 3 × 3 and 4 × 4 remain available as maximum densities when more de-identified images are added. |
+
 | Spatial medication exhibit | Single Guides workspace |
 | --- | --- |
 | ![One selected medication teaching prop with recessed alternatives](Proof/109-spatial-medication-carousel-simulator.png) | ![One centred Guides workspace](Proof/104-singleton-guides-workspace-simulator.png) |
@@ -80,6 +85,13 @@ physical-device targetability, wearer comprehension, registration accuracy, or
 clinical validity.
 
 ## Latest verified Simulator composition
+
+Build `0.6 (29)` gives the two bundled research-atlas scans the full imaging
+comparison surface instead of surrounding them with empty placeholders. The
+gallery retains density, modality, import and image-specific annotation routes,
+but hides pagination until another page actually exists.
+
+![Image-first imaging gallery in visionOS Simulator](Proof/115-image-first-imaging-gallery-simulator.png)
 
 Build `0.6 (29)` aligns the clinician point family with the active teaching act.
 **Pressure** owns five qualitative vessel-story relationships. The first

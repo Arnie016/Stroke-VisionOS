@@ -2471,6 +2471,11 @@ require(all(token in gallery_view for token in (
     "experience.focusedReferenceWorkspace == .imagingGallery", 'Button("Gallery", systemImage: "chevron.left")',
     "experience.imagingGallery.pendingImport == request", "currentStroke.count < 1_000",
 )), "gallery import or annotation cannot recover safely")
+require(all(token in gallery_view for token in (
+    "let sparseHero = experience.imagingGallery.layout == .two && images.count <= 2",
+    "ForEach(images)", "if experience.imagingGallery.pageCount > 1",
+)) and "Empty comparison slot" not in gallery_view,
+        "gallery regressed to empty comparison tiles or one-page navigation instead of image-first plates")
 require(all(token in state for token in (
     "func placeImagingGalleryImage(_ id: UUID) -> Bool", "spatialImagingGalleryImage = source",
     "spatialImagingInkStrokes = image.strokes.map", "func prepareImagingGalleryPlacementProof",

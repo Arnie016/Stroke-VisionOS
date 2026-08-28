@@ -74,38 +74,52 @@ struct StrokeImagingGalleryView: View {
                     .disabled(requestID != nil)
             }
             GeometryReader { geometry in
-                let columns = experience.imagingGallery.layout.rawValue
-                let gap: CGFloat = 12
-                let height = (geometry.size.height - CGFloat(columns - 1) * gap) / CGFloat(columns)
                 let images = experience.imagingGallery.visibleImages
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: gap), count: columns), spacing: gap) {
-                    ForEach(0..<experience.imagingGallery.layout.capacity, id: \.self) { index in
-                        if index < images.count {
-                            tile(images[index], height: height)
-                        } else {
-                            Button { beginImport() } label: {
-                                Image(systemName: "plus")
-                                    .font(.title3).foregroundStyle(.white.opacity(0.35))
-                                    .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
-                                    .background(.white.opacity(0.025), in: RoundedRectangle(cornerRadius: 14))
-                                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.12), style: StrokeStyle(lineWidth: 1, dash: [5, 6])))
-                            }.buttonStyle(.plain).hoverEffect(.highlight)
-                                .accessibilityLabel("Empty comparison slot. Add de-identified images")
-                                .disabled(requestID != nil)
+                let sparseHero = experience.imagingGallery.layout == .two && images.count <= 2
+                let columns = sparseHero ? max(1, images.count) : experience.imagingGallery.layout.rawValue
+                let gap: CGFloat = 12
+                if images.isEmpty {
+                    Button { beginImport() } label: {
+                        VStack(spacing: 12) {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.largeTitle)
+                            Text("Add de-identified teaching images")
+                                .font(.headline)
+                            Text("PNG, JPEG or HEIC · memory only · no uploads")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.58))
+                        }
+                        .foregroundStyle(.white.opacity(0.78))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(.white.opacity(0.025), in: RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(.white.opacity(0.12), style: StrokeStyle(lineWidth: 1, dash: [5, 6])))
+                    }
+                    .buttonStyle(.plain)
+                    .hoverEffect(.highlight)
+                    .accessibilityLabel("Add de-identified teaching images")
+                    .disabled(requestID != nil)
+                } else {
+                    let rows = max(1, Int(ceil(Double(images.count) / Double(columns))))
+                    let height = (geometry.size.height - CGFloat(rows - 1) * gap) / CGFloat(rows)
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: gap), count: columns), spacing: gap) {
+                        ForEach(images) { image in
+                            tile(image, height: height)
                         }
                     }
                 }
             }.frame(height: 480)
-            HStack {
-                Button("Previous", systemImage: "chevron.left") { experience.imagingGallery.page -= 1 }
-                    .disabled(experience.imagingGallery.page == 0)
-                Spacer()
-                Text("Page \(experience.imagingGallery.page + 1) of \(experience.imagingGallery.pageCount)")
-                    .font(.callout.monospacedDigit())
-                Spacer()
-                Button("Next", systemImage: "chevron.right") { experience.imagingGallery.page += 1 }
-                    .disabled(experience.imagingGallery.page + 1 >= experience.imagingGallery.pageCount)
-            }.buttonStyle(.bordered)
+            if experience.imagingGallery.pageCount > 1 {
+                HStack {
+                    Button("Previous", systemImage: "chevron.left") { experience.imagingGallery.page -= 1 }
+                        .disabled(experience.imagingGallery.page == 0)
+                    Spacer()
+                    Text("Page \(experience.imagingGallery.page + 1) of \(experience.imagingGallery.pageCount)")
+                        .font(.callout.monospacedDigit())
+                    Spacer()
+                    Button("Next", systemImage: "chevron.right") { experience.imagingGallery.page += 1 }
+                        .disabled(experience.imagingGallery.page + 1 >= experience.imagingGallery.pageCount)
+                }.buttonStyle(.bordered)
+            }
         }
     }
 
