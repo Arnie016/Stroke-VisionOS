@@ -1250,6 +1250,10 @@ struct StrokeImmersiveView: View {
 
     @MainActor
     private func restoreProofRouteIfNeeded() {
+        if CommandLine.arguments.contains("--proof-family-neuron-unsure") {
+            experience.prepareFamilyNeuronUnsureProof()
+            return
+        }
         if CommandLine.arguments.contains("--proof-family-neuron-plain-words") {
             experience.prepareFamilyNeuronPlainWordsProof()
             return
@@ -6648,14 +6652,35 @@ private struct StrokeIntentionAnnotation: View {
                 clarityButton("Unsure", value: 1)
                 clarityButton("Clear", value: 2)
             }
+
+            if let response = experience.familyPointClarityResponse {
+                HStack(alignment: .top, spacing: 7) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(annotationTint)
+                        .frame(width: 3, height: 34)
+                    Text(response)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.82))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 7)
+                .background(annotationTint.opacity(0.09), in: RoundedRectangle(cornerRadius: 10))
+                .transition(.opacity.combined(with: .move(edge: .top)))
+                .accessibilityLabel("Clarity response: \(response)")
+            }
         }
         .padding(.top, 2)
+        .animation(.easeInOut(duration: 0.20), value: experience.familyClarityCheck)
+        .animation(.easeInOut(duration: 0.20), value: experience.familyClarityWasSet)
     }
 
     private func clarityButton(_ title: String, value: Double) -> some View {
         let isSelected = experience.familyClarityWasSet && experience.familyClarityCheck == value
         return Button {
-            experience.setFamilyClarityCheck(value)
+            withAnimation(.easeInOut(duration: 0.20)) {
+                experience.setFamilyClarityCheck(value)
+            }
         } label: {
             Text(title)
                 .font(.caption2.weight(.bold))

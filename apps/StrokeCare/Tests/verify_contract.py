@@ -1021,6 +1021,12 @@ require(all(token in state for token in (
     'lowercasedQuestion.contains("teaching colors")',
     "They are a teaching key, not recorded electrical activity or a patient measurement.",
 )), "the neuron lesson lacks authored, bounded family follow-up answers")
+require(all(token in state for token in (
+    "var familyPointClarityResponse: String?",
+    'return "Still unsure? Follow the teal branches inward',
+    'return "Again: branches receive messages;',
+    'return "Clear enough. Ask another question',
+)), "explicit family clarity does not visibly adapt the selected point explanation")
 require(all(token in immersive for token in (
     "familyFollowUpControls",
     'Text("ASK NEXT")',
@@ -1029,6 +1035,8 @@ require(all(token in immersive for token in (
     'clarityButton("Unsure", value: 1)',
     'clarityButton("Clear", value: 2)',
     '.frame(maxWidth: .infinity, minHeight: 44',
+    "experience.familyPointClarityResponse",
+    'accessibilityLabel("Clarity response:',
 )), "selected family lessons do not keep authored follow-ups and explicit clarity inside one gaze-sized card")
 require(all(token in immersive for token in (
     '"BEGIN HERE"',
@@ -1418,6 +1426,15 @@ require(
     and '"ask next"' in proof_image_check
     and '"did this make sense"' in proof_image_check,
     "deterministic plain-words neuron proof route is missing",
+)
+require(
+    "--proof-family-neuron-unsure" in launch
+    and "prepareFamilyNeuronUnsureProof" in launch
+    and "--proof-family-neuron-unsure" in simulator_proof
+    and '"--proof-family-neuron-unsure": (' in proof_image_check
+    and '"still unsure"' in proof_image_check
+    and '"teal branches"' in proof_image_check,
+    "deterministic visible family clarity-response route is missing",
 )
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
 require(".frame(width: 720)" in immersive and "atlas.scale = [1.10, 1.10, 1.10]" in immersive and "OF \\(StrokeFamilyBrainAtlasChapter.detailCount) · \\(detailTitle)" in immersive, "family Brain Atlas is not sized or labelled for one-at-a-time readability")

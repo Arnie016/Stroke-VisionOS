@@ -1005,3 +1005,31 @@ XCAT was unavailable. The exact guarded receipt is
 `Proof/xcat/20260828-195020/BLOCKED.md`. This remains Simulator composition and
 interaction-state evidence only; it does not prove physical targetability,
 stereo placement, wearer comprehension, clinical acceptance, or device audio.
+
+## 2026-08-28 20:29 SGT — explicit family clarity response
+
+Build `0.6 (29)` now gives each explicit **Again**, **Unsure**, or **Clear**
+choice a short authored response inside the already-selected anatomy card. The
+deterministic neuron route selects **Unsure** and displays: `Still unsure?
+Follow the teal branches inward, then the violet fiber outward.` No second
+window, inferred anxiety score, or patient measurement is introduced.
+
+`python3 Tests/verify_contract.py`, `git diff --check`, shell syntax checking,
+and Python compilation pass. The visionOS Simulator build for
+`F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777` exits successfully. The locally signed
+bundle passes `codesign --verify --deep --strict`; its debug implementation
+dylib has SHA-256
+`8beb1c17c0d261caea9bd3ca3050c3dd0276eee6af55c8b323c0efd13d2f13ca`.
+
+`Proof/119-selected-point-unsure-response-simulator.png`, 3840×2160, passes
+the unchanged image-quality gate and route OCR 4/4 for `one neuron`, `ask
+next`, `still unsure`, and `teal branches`; SHA-256
+`4e92bf21f18251e4408b53a738b0f924f651d2e465fada596279de98b4371ecf`.
+Visual inspection confirms one dominant central brain, one point-owned card,
+one separate neuron reference, one family rail and one three-act timeline.
+
+The guarded XCAT deploy stopped because paired device
+`613CC48C-A6AD-5170-A238-D518B6012491` was unavailable. Receipt:
+`Proof/xcat/20260828-201854/BLOCKED.md`. Simulator proof does not establish
+headset targetability, stereo placement, device audio, comprehension,
+specialist acceptance or clinical validity.

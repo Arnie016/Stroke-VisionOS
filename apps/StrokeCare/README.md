@@ -91,6 +91,16 @@ clinical validity.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (29)` makes the family learner's explicit clarity choice visibly
+useful at the selected teaching point. Choosing **Again**, **Unsure**, or
+**Clear** now replaces the prior response with one short, authored next cue in
+the same card. The captured **Unsure** state points back to the teal branches
+and violet fiber without adding another floating surface. This remains an
+explicit session-local response, not inferred anxiety or measured
+comprehension.
+
+![Selected neuron with explicit unsure response in the same card](Proof/119-selected-point-unsure-response-simulator.png)
+
 Build `0.6 (29)` keeps the family learner's next questions inside the selected
 teaching point. After **Plain words** opens, the repeated technical summary
 steps aside, two authored follow-ups appear in the same card, and the learner

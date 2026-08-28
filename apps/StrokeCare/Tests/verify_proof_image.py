@@ -134,6 +134,12 @@ ROUTE_TEXT_TOKENS = {
         "ask next",
         "did this make sense",
     ),
+    "--proof-family-neuron-unsure": (
+        "one neuron",
+        "ask next",
+        "still unsure",
+        "teal branches",
+    ),
     "--proof-family-nearby-reference": ("nearby brain tissue", "teaching view"),
     "--proof-family-explore-nearby": ("nearby brain tissue", "teaching view"),
     "--proof-family-opposite-reference": ("opposite side context", "teaching view"),

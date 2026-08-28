@@ -3320,6 +3320,33 @@ final class StrokeExperienceState: ObservableObject {
         return "Clear enough to continue"
     }
 
+    /// A clarity choice has to change the explanation where the learner made
+    /// it. This short authored response stays inside the selected point card;
+    /// it never infers emotion, diagnoses a person, or creates another panel.
+    var familyPointClarityResponse: String? {
+        guard audienceLens == .family,
+              familyClarityWasSet,
+              selectedPointLabel != nil else { return nil }
+
+        if selectedPointLabel == "Single neuron · schematic reference" {
+            if familyClarityCheck < 0.5 {
+                return "Again: branches receive messages; the long fiber carries one signal onward."
+            }
+            if familyClarityCheck < 1.5 {
+                return "Still unsure? Follow the teal branches inward, then the violet fiber outward."
+            }
+            return "Clear enough. Ask another question or continue when you are ready."
+        }
+
+        if familyClarityCheck < 0.5 {
+            return "Again: stay with the highlighted relationship. This model explains one idea, not a diagnosis."
+        }
+        if familyClarityCheck < 1.5 {
+            return "Still unsure? Choose one question above before moving to another point."
+        }
+        return "Clear enough. Choose another point or continue when you are ready."
+    }
+
     /// The left presenter field follows all six authored checkpoints. It is a
     /// speaking aid, not a second navigation system: the lower timeline owns
     /// checkpoint changes, and each technical phrase reveals one short set of
@@ -4885,6 +4912,14 @@ final class StrokeExperienceState: ObservableObject {
         prepareFamilyNeuronReferenceProof()
         setNarrationSetupAvailable(false)
         showFamilyNarrationTranscript()
+    }
+
+    /// Receipt for the visible result of an explicit family clarity choice.
+    /// The response is authored and local; no gaze, face, voice, or patient
+    /// signal is interpreted.
+    func prepareFamilyNeuronUnsureProof() {
+        prepareFamilyNeuronPlainWordsProof()
+        setFamilyClarityCheck(1)
     }
 
     /// Receipt for a vascular point that owns the complete registered arterial

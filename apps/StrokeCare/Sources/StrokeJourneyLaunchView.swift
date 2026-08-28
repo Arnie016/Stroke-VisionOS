@@ -859,6 +859,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-surface-reference") {
             experience.prepareFamilySurfaceReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-neuron-unsure") {
+            experience.prepareFamilyNeuronUnsureProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-neuron-plain-words") {
             experience.prepareFamilyNeuronPlainWordsProof()
             Task { await openProofSpace() }
