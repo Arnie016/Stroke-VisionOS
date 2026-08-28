@@ -40,6 +40,10 @@ ROUTE_TEXT_TOKENS = {
         "explain this",
         "act 2 of 3",
     ),
+    "--proof-clinician-protective-covering": (
+        "explain this",
+        "act 3 of 3",
+    ),
     "--proof-presenter-controls": ("resume", "black"),
     "--proof-presentation-settings": ("settings", "visual detail"),
     "--proof-clinician-toolkit": ("catheter set", "microcatheter"),

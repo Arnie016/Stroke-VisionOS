@@ -51,6 +51,8 @@ spatial_prelude = (ROOT / "Sources" / "StrokeSpatialPreludeView.swift").read_tex
 imaging_workspace = (ROOT / "Sources" / "StrokeTeachingImagingWorkspaceView.swift").read_text()
 reference_workspace = (ROOT / "Sources" / "StrokeReferenceWorkspaceView.swift").read_text()
 imaging_import_session = (ROOT / "Sources" / "StrokeImagingImportSession.swift").read_text()
+capture_script = (ROOT / "Scripts" / "capture_simulator_route_proof.zsh").read_text()
+proof_verifier = (ROOT / "Tests" / "verify_proof_image.py").read_text()
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("enum StrokePresenterTeachingBeat", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
@@ -727,11 +729,11 @@ require(all(token in scene for token in (
     "imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&",
     "let showsConceptualDura = !showsOpenCranialReview && !isolateScholarSkull && showsPurpose",
     "let showsClinicianSkullContext = isAccessStory",
-    "[StrokePresenterTeachingBeat.discussAccess, .explainClosure]",
+    "[StrokePresenterTeachingBeat.protectiveCovering, .explainClosure]",
     "importedSkull?.isEnabled = !showsOpenCranialReview &&",
     "(isolateScholarSkull || showsClinicianSkullContext)",
     "showsClinicianSkullContext ? skullOffset : .zero",
-    "experience.presenterTeachingBeat == .discussAccess ? 0.32 : 0.16",
+    "experience.presenterTeachingBeat == .protectiveCovering ? 0.32 : 0.16",
     "no transform or exact",
 )), "Scholar skull isolation does not restore the registered assembly or preserve the authored frame")
 require(all(token in immersive for token in (
@@ -1112,7 +1114,14 @@ require(all(token in scene for token in (
 )), "lesson invitations must float clear of anatomy without connector lines")
 require("maximumDistance: Float = 0.036" in scene, "nearest visible lesson-point fallback was not enlarged by twenty percent")
 require("let revealAll = experience.pointField != .craniotomy" in scene, "region or flow point families still hide unselected selectable markers")
-require("activatePresenterAccessStory" in state and "pointField = .craniotomy" in state and "selectDetailLevel(.scholar)" in state, "top Access checkpoint does not enter the craniotomy teaching family")
+require(all(token in state for token in (
+    "activatePresenterPressureStory()",
+    "pointField = .procedure",
+    "case .protectiveCovering:",
+    "activatePresenterAccessStory(preserving: selection)",
+    "pointField = .craniotomy",
+    "selectDetailLevel(.scholar)",
+)), "presenter acts do not map Orient, Pressure, and Make Space to their relevant lesson families")
 require("experience.detailLevel == .scholar &&\n            experience.pointField == .craniotomy" not in scene, "craniotomy reference disappears when visual detail leaves Full")
 require(all(token in scene for token in (
     "let showsAccessScalp: Bool",
@@ -1491,7 +1500,10 @@ require(all(token in state for token in (
     "configurePresenterPointField(",
     "case .confirmContext:",
     "case .discussAccess:",
-    "case .protectiveCovering, .explainPurpose, .teamChecks, .explainClosure:",
+    "activatePresenterPressureStory()",
+    "case .protectiveCovering:",
+    "activatePresenterAccessStory(preserving: selection)",
+    "case .explainPurpose, .teamChecks, .explainClosure:",
     "lessonPointsVisible = false",
 )), "presenter checkpoints do not own their point-field visibility")
 require("StrokeTeachingImagingDrawer" in immersive and 'teachingImagingDrawerID = "spatial-teaching-imaging-drawer"' in immersive and "SpatialVisualField.secondaryCaseDrawer" in immersive, "peripheral teaching imaging drawer is missing")
@@ -2076,6 +2088,7 @@ require(all(token in scene for token in (
     'contourPoint.name = "registered-pressure-swelling-contour-point-\\(index)"',
     "contourPoint.position = [cos(angle) * 0.038, 0.0026, sin(angle) * 0.030]",
     "experience.procedureStep != .chooseCase",
+    "(!isClinicianExplanation || experience.presenterTeachingBeat == .discussAccess)",
     "pressureStory?.isEnabled = showsPressureFocus",
 )), "registered-frame blockage, affected-tissue, and constrained-swelling Pressure cues are incomplete")
 require("registered-pressure-swelling-dash" not in scene, "the detached radial swelling bars remain in the pressure story")
@@ -2089,12 +2102,18 @@ require(all(token in state for token in (
     "prepareFamilyPressureStoryProof",
     "prepareClinicianPressureStoryProof",
     "pointField = .regions",
+    "selectPresenterTeachingBeat(.discussAccess, reduceMotion: true)",
     "clearPointSelection()",
-)), "family and clinician Pressure-story proof states are missing")
+)), "family or presenter Pressure-story proof state is missing its audience-appropriate lesson family")
 require(all(token in launch for token in (
     '"--proof-family-pressure-story"',
     '"--proof-clinician-pressure-story"',
 )), "deterministic family/clinician Pressure-story routes are missing")
+require(
+    "--proof-clinician-protective-covering" in capture_script
+    and '"--proof-clinician-protective-covering"' in proof_verifier,
+    "the Make Space access-point composition is not accepted by the deterministic proof harness",
+)
 require(all(token in state for token in (
     "familyDiscoveryHintVisible",
     "showFamilyDiscoveryHint(autoDismiss: false)",
@@ -2111,8 +2130,8 @@ require(all(token in state for token in (
     "toggleSelectedPointReference()",
 )), "point selection does not keep one consent-aware, act-matched reference available")
 require(
-    "experience.presenterTeachingBeat == .discussAccess &&\n            experience.selectedPointEntityName == nil" in scene,
-    "selected-point reference competes with the large access-skull composition",
+    "experience.presenterTeachingBeat == .discussAccess &&\n            experience.selectedPointEntityName == nil" not in scene,
+    "the Pressure checkpoint still owns a detached access-skull composition",
 )
 require(all(token in immersive for token in (
     "private var selectedPointMeaning: String?",
@@ -2402,17 +2421,16 @@ require(all(token in scene for token in (
     'importedAccessEdemaName = "cerebral_edema_registered_conceptual_v1"',
 )), "registered conceptual access-layer assets are not loaded into one review-gated hierarchy")
 require(all(token in scene for token in (
-    "let showsAccessReference",
     "let showsProtectiveCovering",
     "let showsPurposeReference",
     "let showsClosureReference",
-    "experience.presenterTeachingBeat == .discussAccess",
+    "experience.presenterTeachingBeat == .protectiveCovering",
     "? [0.16, 0, 0]",
     "showsProtectiveCovering\n            ? [0.055, 0, 0.012]",
     "carePurposeStory?.isEnabled = showsPurposeReference",
 )), "six presenter beats still change labels without distinct skull, dura, purpose, and closure compositions")
 require(all(copy in immersive for copy in (
-    'case .discussAccess: "SKULL REFERENCE"',
+    'case .discussAccess: "PRESSURE STORY"',
     'case .protectiveCovering: "PROTECTIVE COVERING"',
     'case .explainPurpose: "MAKING ROOM"',
     'case .teamChecks: "WHAT THE TEAM REASSESSES"',

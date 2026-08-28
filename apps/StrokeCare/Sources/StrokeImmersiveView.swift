@@ -6595,7 +6595,7 @@ private struct StrokeIntentionAnnotation: View {
         if experience.audienceLens == .clinician {
             return switch experience.presenterTeachingBeat {
             case .confirmContext: "GENERIC TEACHING ANATOMY"
-            case .discussAccess: "SKULL REFERENCE"
+            case .discussAccess: "PRESSURE STORY"
             case .protectiveCovering: "PROTECTIVE COVERING"
             case .explainPurpose: "MAKING ROOM"
             case .teamChecks: "WHAT THE TEAM REASSESSES"
@@ -6653,7 +6653,7 @@ private struct StrokeIntentionAnnotation: View {
             return switch experience.presenterTeachingBeat {
             case .confirmContext:
                 "The selected fictional file records \(experience.selectedFictionalCase.lead.lowercased()) and \(experience.selectedFictionalCase.context.lowercased()). This anatomy remains generic—not this person's scan."
-            case .discussAccess: "A separated skull reference shows the fixed boundary; it does not plan an opening."
+            case .discussAccess: "Follow supply to the example blockage, then distinguish affected tissue from swelling."
             case .protectiveCovering: "The conceptual dura is offset only to explain its protective role."
             case .explainPurpose: "The reversible aperture shows room, not repaired tissue."
             case .teamChecks: "Discuss pressure, bleeding, imaging, and monitoring—no result is inferred."

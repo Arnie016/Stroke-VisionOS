@@ -2837,9 +2837,6 @@ enum StrokeSceneFactory {
         // teaching reference for the presenter's current explanation.
         let isClinicianExplanation = experience.audienceLens == .clinician &&
             experience.spatialPhase == .explanation
-        let showsAccessReference = isClinicianExplanation &&
-            experience.presenterTeachingBeat == .discussAccess &&
-            experience.selectedPointEntityName == nil
         let showsProtectiveCovering = isClinicianExplanation &&
             experience.presenterTeachingBeat == .protectiveCovering &&
             experience.careViewPermissionGranted
@@ -3030,6 +3027,7 @@ enum StrokeSceneFactory {
         accessHematomaLayer?.isEnabled = false
         let showsPressureStory = experience.spatialPhase == .explanation &&
             experience.procedureStep != .chooseCase &&
+            (!isClinicianExplanation || experience.presenterTeachingBeat == .discussAccess) &&
             !interactiveAccessStudy &&
             !isolateScholarSkull
         // The skull is no longer part of the normal whole-brain composition.
@@ -3041,10 +3039,10 @@ enum StrokeSceneFactory {
         let showsClinicianSkullContext = isAccessStory &&
             !interactiveAccessStudy &&
             anatomyFocus == .whole &&
-            [StrokePresenterTeachingBeat.discussAccess, .explainClosure]
+            [StrokePresenterTeachingBeat.protectiveCovering, .explainClosure]
                 .contains(experience.presenterTeachingBeat) &&
             !isolateScholarSkull
-        let skullOffset: SIMD3<Float> = experience.presenterTeachingBeat == .discussAccess
+        let skullOffset: SIMD3<Float> = experience.presenterTeachingBeat == .protectiveCovering
             ? [0.16, 0, 0]
             : .zero
         approach(fixedSpaceLayer, showsClinicianSkullContext ? skullOffset : .zero)
@@ -3163,7 +3161,7 @@ enum StrokeSceneFactory {
             opacity: isolateScholarSkull
                 ? 1
                 : (showsClinicianSkullContext
-                    ? (experience.presenterTeachingBeat == .discussAccess ? 0.32 : 0.16)
+                    ? (experience.presenterTeachingBeat == .protectiveCovering ? 0.32 : 0.16)
                     : 0)
         ))
 

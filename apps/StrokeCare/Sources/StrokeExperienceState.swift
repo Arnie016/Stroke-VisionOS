@@ -622,7 +622,7 @@ enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .confirmContext: "Orient the case"
-        case .discussAccess: "Discuss access"
+        case .discussAccess: "Trace the pressure story"
         case .protectiveCovering: "Protective layer"
         case .explainPurpose: "Explain making room"
         case .teamChecks: "What the team checks"
@@ -633,7 +633,7 @@ enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
     var shortTitle: String {
         switch self {
         case .confirmContext: "Orient"
-        case .discussAccess: "Access"
+        case .discussAccess: "Pressure"
         case .protectiveCovering: "Covering"
         case .explainPurpose: "Make room"
         case .teamChecks: "Checks"
@@ -647,7 +647,7 @@ enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
     var summary: String {
         switch self {
         case .confirmContext: "Start with the whole teaching model."
-        case .discussAccess: "Show where access may be discussed."
+        case .discussAccess: "Follow supply to the example blockage."
         case .protectiveCovering: "Reveal the protective covering gently."
         case .explainPurpose: "Explain why the team may make more room."
         case .teamChecks: "Name what the team continues to watch."
@@ -3091,10 +3091,10 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
-    /// Each presenter checkpoint owns its own discovery state. In particular,
-    /// the single generic access invitation appears only at Access; it never
-    /// persists as a misleading skull dot through the covering, purpose,
-    /// checks, or closure discussions.
+    /// Each presenter checkpoint owns its own discovery state. Orient uses
+    /// broad regions, Pressure uses the five authored vessel relationships,
+    /// and the single generic access invitation appears only when Make Space
+    /// begins. No lesson family persists as an unrelated dot in a later act.
     private func configurePresenterPointField(
         for beat: StrokePresenterTeachingBeat,
         preserving selection: (entityName: String, label: String)?
@@ -3105,16 +3105,28 @@ final class StrokeExperienceState: ObservableObject {
             lessonPointsVisible = true
             clearPointSelection()
         case .discussAccess:
+            activatePresenterPressureStory()
+        case .protectiveCovering:
             activatePresenterAccessStory(preserving: selection)
-        case .protectiveCovering, .explainPurpose, .teamChecks, .explainClosure:
+        case .explainPurpose, .teamChecks, .explainClosure:
             lessonPointsVisible = false
             clearPointSelection()
         }
     }
 
-    /// The top Access checkpoint is the authoritative way into the bounded
-    /// craniotomy teaching story. It reveals one quiet, anatomy-referenced
-    /// invitation; only a deliberate pinch opens its local explanation.
+    /// Pressure owns the route from supply to blockage and tissue territory.
+    /// The five points are all reviewed generic relationships, not measured
+    /// flow, perfusion, injury extent, or prognosis.
+    private func activatePresenterPressureStory() {
+        pointField = .procedure
+        lessonPointsVisible = true
+        clearPointSelection()
+    }
+
+    /// The first Make Space checkpoint is the authoritative way into the
+    /// bounded craniotomy teaching story. It reveals one quiet,
+    /// anatomy-referenced invitation; only a deliberate pinch opens its local
+    /// explanation after the existing permission boundary.
     private func activatePresenterAccessStory(
         preserving selection: (entityName: String, label: String)?
     ) {
@@ -3624,8 +3636,9 @@ final class StrokeExperienceState: ObservableObject {
             // reversible presentation states.
             requestedPause = false
             if audienceLens == .clinician {
-                if presenterTeachingBeat == .confirmContext {
-                    selectPresenterTeachingBeat(.discussAccess)
+                if presenterTeachingBeat.rawValue < StrokePresenterTeachingBeat.protectiveCovering.rawValue {
+                    selectPresenterTeachingBeat(.protectiveCovering)
+                    guard careViewPermissionGranted else { return }
                 }
                 clinicianToolKitVisible = true
             }
@@ -4461,8 +4474,7 @@ final class StrokeExperienceState: ObservableObject {
         environmentMode = .surroundings
         anatomyPresentation = .transparent
         cortexOpacity = 0.58
-        pointField = .regions
-        lessonPointsVisible = true
+        selectPresenterTeachingBeat(.discussAccess, reduceMotion: true)
         spatialZoom = 1.24
         clearPointSelection()
     }

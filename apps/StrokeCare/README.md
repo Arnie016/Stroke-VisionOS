@@ -46,6 +46,11 @@ made from actual visionOS Simulator captures of the current experience.
 | ![Clinician internal layer study](Proof/65-layer-study-internal-anatomy-simulator.png) | ![Registered flow overlay](Proof/75-registered-flow-overlay-simulator.png) |
 | Deep structures are a clinician teaching layer, not a diagnostic result. | Arterial context stays tied to the registered teaching assembly. |
 
+| Pressure owns the flow relationships | Make Space owns the access invitation |
+| --- | --- |
+| ![Pressure act with five vessel-story points](Proof/113-pressure-owned-flow-points-simulator.png) | ![Make Space act with one access point](Proof/114-make-space-owned-access-point-simulator.png) |
+| Five relevant anchors trace supply, blockage, affected tissue, swelling and nearby context. | One orange point opens the bounded access-layer lesson; Pressure's mint contour no longer leaks into this act. |
+
 ### Open one focused reference workspace
 
 | Spatial medication exhibit | Single Guides workspace |
@@ -75,6 +80,24 @@ physical-device targetability, wearer comprehension, registration accuracy, or
 clinical validity.
 
 ## Latest verified Simulator composition
+
+Build `0.6 (29)` aligns the clinician point family with the active teaching act.
+**Pressure** owns five qualitative vessel-story relationships. The first
+**Make Space** checkpoint owns one separated access invitation and no longer
+inherits Pressure's dotted swelling contour. Pinching that invitation remains
+the explicit route into the non-graphic, reversible access-layer study. Family
+mode keeps its quieter broad-region opening rather than receiving the technical
+clinician mapping.
+
+![Pressure-owned flow points in visionOS Simulator](Proof/113-pressure-owned-flow-points-simulator.png)
+
+![Make-Space-owned access point in visionOS Simulator](Proof/114-make-space-owned-access-point-simulator.png)
+
+These frames prove the deterministic Simulator composition and running process
+only. They do not prove physical targetability, gaze-and-pinch quality, stereo
+placement, wearer understanding, anatomical registration, operative accuracy,
+or clinical validity. The points and pressure contour are qualitative teaching
+cues, not patient measurements, access plans, CFD, diagnoses or predictions.
 
 Build `0.6 (26)` gives a selected anatomy point one clear teaching lane. The
 central registered brain, attached region points, direct viewpoints, reference
@@ -140,8 +163,9 @@ The Pressure story stays visually explicit without adding a diagnostic overlay.
 The registered clot keeps a compact pulse; a filled amber surface cue marks
 affected tissue; and a quiet dotted mint boundary represents constrained
 swelling. All three cues are derived from the loaded registered-v2 brain/clot
-bounds, remain qualitative, and disappear outside Pressure / Make space. The
-prototype-v1 edema, flap, and patch meshes remain quarantined.
+bounds and remain qualitative. In clinician mode they disappear when the
+presenter leaves Pressure, so Make Space can own one clear access invitation.
+The prototype-v1 edema, flap, and patch meshes remain quarantined.
 
 The family Pressure entry now combines location and first action in one
 brain-adjacent cue. `OUTSIDE THE BRAIN` identifies the generic whole-brain
@@ -150,7 +174,7 @@ ceiling-height orientation card has been removed.
 
 ![Single family Pressure entry cue in visionOS Simulator](Proof/112-single-family-entry-cue-simulator.png)
 
-![Quiet doctor-presenter Pressure story in visionOS Simulator](Proof/111-quiet-clinician-pressure-story-simulator.png)
+![Act-specific doctor-presenter Pressure story in visionOS Simulator](Proof/113-pressure-owned-flow-points-simulator.png)
 
 The two Pressure captures prove Simulator render/process state only. They do
 not prove anatomical meaning, clinical correctness, gaze-and-pinch quality,
