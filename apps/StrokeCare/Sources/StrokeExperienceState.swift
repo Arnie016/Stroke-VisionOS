@@ -1,5 +1,61 @@
 import Foundation
+import OSLog
 import SwiftUI
+import UIKit
+
+/// Opt-in Simulator diagnostics for control delivery, not user telemetry.
+/// Fixed event names only: no image data, filenames, gaze or hand positions.
+@MainActor
+enum StrokeImagingInteractionTrace {
+    enum Event: String {
+        case ready = "READY"
+        case focusButton = "BUTTON_FOCUS"
+        case backButton = "BUTTON_BACK"
+        case focusRejected = "STATE_FOCUS_REJECTED"
+        case focused = "STATE_FOCUSED"
+        case placed = "STATE_PLACED"
+        case returned = "STATE_RETURNED"
+        case sceneFocused = "SCENE_FOCUSED"
+        case scenePlaced = "SCENE_PLACED"
+        case sceneHidden = "SCENE_HIDDEN"
+    }
+
+#if DEBUG && targetEnvironment(simulator)
+    private static let logger = Logger(subsystem: "com.arnav.StrokeTime", category: "ImagingInteraction")
+    private static var lastSceneEvent: Event?
+#endif
+
+    static func record(_ event: Event) {
+#if DEBUG && targetEnvironment(simulator)
+        guard ProcessInfo.processInfo.environment["STROKE_TRACE_IMAGING"] == "1" else { return }
+        logger.notice("IMAGING_INTERACTION=\(event.rawValue, privacy: .public)")
+#endif
+    }
+
+    static func sceneApplied(focused: Bool, visible: Bool) {
+#if DEBUG && targetEnvironment(simulator)
+        let event: Event = !visible ? .sceneHidden : (focused ? .sceneFocused : .scenePlaced)
+        guard event != lastSceneEvent else { return }
+        lastSceneEvent = event
+        record(event)
+#endif
+    }
+}
+
+extension View {
+    /// Applies system-managed semantic feedback where visionOS exposes it.
+    /// The app's visible labels, selected state, and motion remain the full
+    /// interaction contract on the visionOS 2 baseline and on any system that
+    /// disables feedback, so this never becomes the sole source of meaning.
+    @ViewBuilder
+    func strokeSemanticSelectionFeedback(trigger: Int) -> some View {
+        if #available(visionOS 26.0, *) {
+            sensoryFeedback(.selection, trigger: trigger)
+        } else {
+            self
+        }
+    }
+}
 
 enum StrokeAudienceLens: String, CaseIterable, Identifiable {
     case family = "Curious learner"
@@ -14,10 +70,84 @@ enum StrokeSpatialPhase: String {
     case explanation
 }
 
+/// A presenter-declared description of a local raster. The app never derives
+/// this value from pixels, filenames, anatomy, or patient information.
+enum StrokeImagingModality: String, CaseIterable, Identifiable {
+    case unspecified = "Unspecified"
+    case ct = "CT"
+    case cta = "CTA"
+    case mri = "MRI"
+    case mra = "MRA"
+    case pet = "PET"
+    case radiograph = "X-ray"
+    case other = "Other"
+
+    var id: String { rawValue }
+
+    var systemImage: String {
+        switch self {
+        case .unspecified: "questionmark.square.dashed"
+        case .ct: "circle.grid.cross"
+        case .cta: "point.3.connected.trianglepath.dotted"
+        case .mri: "waveform.path.ecg.rectangle"
+        case .mra: "waveform.path.ecg.rectangle"
+        case .pet: "atom"
+        case .radiograph: "rays"
+        case .other: "photo"
+        }
+    }
+}
+
+/// Authored, fictional intake records for learning and presentation rehearsal.
+/// They contain no patient data and do not infer a diagnosis or treatment.
+struct StrokeFictionalCase: Identifiable, Equatable {
+    let id: String
+    let displayName: String
+    let ageBand: String
+    let lead: String
+    let context: String
+    let elapsed: String
+    let systemImage: String
+
+    /// Original, generated fictional portrait art. The mapping is deliberately
+    /// authored rather than inferred from a name, age, symptom, or identity.
+    var portraitAssetName: String {
+        switch id {
+        case "F-078": "FictionalCasePortrait06"
+        case "F-104": "FictionalCasePortrait05"
+        case "F-116": "FictionalCasePortrait07"
+        case "F-121": "FictionalCasePortrait04"
+        case "F-133": "FictionalCasePortrait01"
+        case "F-147": "FictionalCasePortrait02"
+        case "F-152": "FictionalCasePortrait10"
+        case "F-168": "FictionalCasePortrait08"
+        case "F-174": "FictionalCasePortrait12"
+        case "F-181": "FictionalCasePortrait11"
+        case "F-196": "FictionalCasePortrait03"
+        default: "FictionalCasePortrait09"
+        }
+    }
+
+    static let library: [StrokeFictionalCase] = [
+        .init(id: "F-078", displayName: "Aisha K.", ageBand: "Adult", lead: "Speech changed", context: "Arm felt weak", elapsed: "70 min", systemImage: "waveform"),
+        .init(id: "F-104", displayName: "Michael T.", ageBand: "Older adult", lead: "Face felt uneven", context: "Speech less clear", elapsed: "35 min", systemImage: "face.smiling"),
+        .init(id: "F-116", displayName: "David L.", ageBand: "Adult", lead: "Vision changed", context: "Balance felt different", elapsed: "50 min", systemImage: "eye"),
+        .init(id: "F-121", displayName: "Mei R.", ageBand: "Older adult", lead: "One hand felt weak", context: "Family noticed change", elapsed: "25 min", systemImage: "hand.raised"),
+        .init(id: "F-133", displayName: "Jonah P.", ageBand: "Adult", lead: "Sudden confusion", context: "Words were difficult", elapsed: "45 min", systemImage: "text.bubble"),
+        .init(id: "F-147", displayName: "Sofia N.", ageBand: "Adult", lead: "Severe head pain", context: "Nausea was reported", elapsed: "30 min", systemImage: "bolt.head.profile"),
+        .init(id: "F-152", displayName: "Harun S.", ageBand: "Older adult", lead: "Walking changed", context: "Dizziness was reported", elapsed: "60 min", systemImage: "figure.walk"),
+        .init(id: "F-168", displayName: "Elena V.", ageBand: "Adult", lead: "One side felt numb", context: "Symptoms were sudden", elapsed: "40 min", systemImage: "hand.point.up.left"),
+        .init(id: "F-174", displayName: "Noah C.", ageBand: "Young adult", lead: "Vision briefly dimmed", context: "Headache followed", elapsed: "55 min", systemImage: "eye.trianglebadge.exclamationmark"),
+        .init(id: "F-181", displayName: "Priya M.", ageBand: "Adult", lead: "Speech slowed", context: "Grip felt different", elapsed: "20 min", systemImage: "quote.bubble"),
+        .init(id: "F-196", displayName: "Omar J.", ageBand: "Older adult", lead: "Balance changed", context: "Double vision reported", elapsed: "65 min", systemImage: "scope"),
+        .init(id: "F-205", displayName: "Lina G.", ageBand: "Adult", lead: "Sudden weakness", context: "Family requested clarity", elapsed: "15 min", systemImage: "person.2")
+    ]
+}
+
 enum StrokeEnvironmentMode: String, CaseIterable, Identifiable {
     case surroundings = "Surroundings"
-    case warmHorizon = "Warm horizon"
-    case focusField = "Focus field"
+    case warmHorizon = "Warm glow"
+    case focusField = "Black focus"
 
     var id: String { rawValue }
 
@@ -25,7 +155,7 @@ enum StrokeEnvironmentMode: String, CaseIterable, Identifiable {
         switch self {
         case .surroundings: "Room"
         case .warmHorizon: "Warm"
-        case .focusField: "Focus"
+        case .focusField: "Black"
         }
     }
 
@@ -36,6 +166,20 @@ enum StrokeEnvironmentMode: String, CaseIterable, Identifiable {
         case .focusField: "circle.fill"
         }
     }
+}
+
+/// One explicit selection for the clinician's peripheral reference ring.
+/// This prevents unrelated lesson state from making two categories appear
+/// active at once and gives every non-imaging category the same cleanup path.
+enum StrokeScholarReferenceCategory: String, CaseIterable, Identifiable {
+    case anatomy
+    case imaging
+    case interventions
+    case medications
+    case guidelines
+    case teachingModel
+
+    var id: String { rawValue }
 }
 
 enum StrokePointField: String, CaseIterable, Identifiable {
@@ -60,7 +204,12 @@ enum StrokePointField: String, CaseIterable, Identifiable {
                 StrokeLessonPoint(index: 0, shortTitle: "Affected", fullTitle: "Example affected area"),
                 StrokeLessonPoint(index: 1, shortTitle: "Nearby", fullTitle: "Nearby brain tissue"),
                 StrokeLessonPoint(index: 2, shortTitle: "Surface", fullTitle: "Brain surface"),
-                StrokeLessonPoint(index: 3, shortTitle: "Context", fullTitle: "Opposite-side context")
+                StrokeLessonPoint(index: 3, shortTitle: "Context", fullTitle: "Opposite-side context"),
+                StrokeLessonPoint(
+                    index: 4,
+                    shortTitle: "Neuron",
+                    fullTitle: "Single neuron · schematic reference"
+                )
             ]
         case .procedure:
             [
@@ -106,6 +255,25 @@ struct StrokeLessonPoint: Identifiable, Equatable {
     var id: Int { index }
 }
 
+/// A clinician-authored arrangement of existing, reviewed teaching copy.
+/// Notes are deliberately finite and source-bound: this prototype does not
+/// collect patient data, transcribe speech, or invent free-form clinical text.
+struct StrokeSpatialAnnotation: Identifiable, Equatable {
+    let id: String
+    let sourceEntityName: String
+    let title: String
+    let body: String
+    var position: SIMD3<Float>
+}
+
+/// One clinician-created mark on the temporary, view-facing teaching overlay.
+/// Points are normalized to the overlay bounds so the drawing is independent
+/// of Simulator pixels and never becomes anatomy geometry or patient data.
+struct StrokeSpatialInkStroke: Identifiable, Equatable {
+    let id: UUID
+    var points: [CGPoint]
+}
+
 /// A family-controlled discovery sequence. These are general orientation
 /// concepts, not point-local diagnoses or a labelled patient scan. The current
 /// room-scale teaching model remains the spatial hero; the atlas tells the
@@ -126,6 +294,21 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
 
     var id: Int { rawValue }
     var ordinal: Int { rawValue + 1 }
+
+    /// The outer teaching model only provides five broad, reviewed surface
+    /// orientation contexts. Keep this mapping explicit so a direct pinch on
+    /// that generic surface cannot be misread as a free-form lobe picker or a
+    /// patient-specific anatomical label.
+    static func surfaceChapter(for atlasPointIndex: Int) -> StrokeFamilyBrainAtlasChapter? {
+        switch atlasPointIndex {
+        case 0: return .cortex
+        case 1: return .frontalLobe
+        case 2: return .parietalLobe
+        case 3: return .temporalLobe
+        case 4: return .occipitalLobe
+        default: return nil
+        }
+    }
 
     var title: String {
         switch self {
@@ -212,6 +395,18 @@ enum StrokeFamilyBrainAtlasChapter: Int, CaseIterable, Identifiable {
 
     var pointField: StrokePointField {
         self == .arterialRoutes ? .procedure : .regions
+    }
+
+    /// These chapters teach a deep-brain topic using the one reviewed combined
+    /// internal mesh that is actually available. They are deliberately not
+    /// presented as individually segmented 3D structures.
+    var usesCombinedInternalReference: Bool {
+        switch self {
+        case .corpusCallosum, .thalamus, .hippocampus, .brainstemAndCerebellum:
+            true
+        default:
+            false
+        }
     }
 
     /// Surface Atlas chapters reuse one reviewed whole-brain teaching object,
@@ -559,6 +754,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
     case layerReveal = "Layers"
     case forceps = "Forceps"
     case cranialDrill = "Drill"
+    case endovascularSet = "Catheter set"
 
     var id: String { rawValue }
 
@@ -569,6 +765,7 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
         case .layerReveal: "square.3.layers.3d"
         case .forceps: "move.3d"
         case .cranialDrill: "gearshape.2.fill"
+        case .endovascularSet: "point.topleft.down.to.point.bottomright.curvepath"
         }
     }
 
@@ -579,6 +776,113 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
         case .layerReveal: "Permission-gated layer explanation"
         case .forceps: "Generic concept asset · specialist review pending"
         case .cranialDrill: "Generic concept asset · specialist review pending"
+        case .endovascularSet:
+            "Generic educational device comparison · no sizing or deployment guidance"
+        }
+    }
+}
+
+enum StrokeEndovascularConcept: String, CaseIterable, Identifiable {
+    case guidewire = "Guidewire"
+    case microcatheter = "Microcatheter"
+    case aspirationCatheter = "Aspiration"
+    case stentRetriever = "Retriever"
+
+    var id: String { rawValue }
+
+    var systemImage: String {
+        switch self {
+        case .guidewire: "scribble.variable"
+        case .microcatheter: "point.topleft.down.to.point.bottomright.curvepath"
+        case .aspirationCatheter: "arrow.up.to.line.compact"
+        case .stentRetriever: "mesh"
+        }
+    }
+
+    var boundary: String {
+        switch self {
+        case .guidewire:
+            "Generic guidewire concept · navigation shape only"
+        case .microcatheter:
+            "Generic microcatheter concept · no sizing reference"
+        case .aspirationCatheter:
+            "Generic aspiration-path concept · no treatment guidance"
+        case .stentRetriever:
+            "Conceptual deployed lattice · no device mechanics"
+        }
+    }
+
+    /// Short, inspectable structure copy derived from the bundled v2 device
+    /// manifest. These are visual parts, not procedural instructions.
+    var inspectionSummary: String {
+        switch self {
+        case .guidewire:
+            "Curved distal tip · highlighted distal section"
+        case .microcatheter:
+            "Hollow shaft · transition · distal marker"
+        case .aspirationCatheter:
+            "Hollow lumen · reinforcement · two distal markers"
+        case .stentRetriever:
+            "Deployed lattice · end crowns · abbreviated pusher"
+        }
+    }
+
+    func geometryDisclosure(for detailLevel: StrokeDetailLevel) -> String {
+        switch (self, detailLevel) {
+        case (.guidewire, .calm):
+            "Core wire"
+        case (.guidewire, .guided):
+            "Core wire + distal coil"
+        case (.guidewire, .scholar):
+            "Complete authored guidewire hierarchy"
+        case (.microcatheter, .calm):
+            "Hollow shaft"
+        case (.microcatheter, .guided):
+            "Hollow shaft + transition"
+        case (.microcatheter, .scholar):
+            "Shaft + transition + distal marker"
+        case (.aspirationCatheter, .calm):
+            "Hollow lumen"
+        case (.aspirationCatheter, .guided):
+            "Hollow lumen + distal markers"
+        case (.aspirationCatheter, .scholar):
+            "Lumen + markers + reinforcement braid"
+        case (.stentRetriever, .calm):
+            "Pusher + crowns + sparse lattice"
+        case (.stentRetriever, .guided):
+            "Pusher + markers + alternating lattice"
+        case (.stentRetriever, .scholar):
+            "Complete authored lattice hierarchy"
+        }
+    }
+}
+
+/// A reversible, non-procedural inspection loop for the authored device
+/// models. These beats teach form and spatial relationship only; they do not
+/// represent navigation, deployment, treatment, or a patient-specific path.
+enum StrokeClinicianDeviceStudyBeat: Int, CaseIterable, Identifiable {
+    case overview
+    case approach
+    case structure
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .overview: "Overview"
+        case .approach: "Approach concept"
+        case .structure: "Structure turn"
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .overview:
+            "Inspect the authored silhouette at teaching scale."
+        case .approach:
+            "A calm near-and-away motion shows direction only; it stops before the anatomy."
+        case .structure:
+            "A slow turn exposes markers, transitions, braid, or lattice when present."
         }
     }
 }
@@ -587,6 +891,16 @@ enum StrokeClinicianTool: String, CaseIterable, Identifiable {
 final class StrokeExperienceState: ObservableObject {
     static let scholarSkullCatalogID = "skull_semantic_realistic_v2"
     static let authoredCaseHistoryMilestone: StrokeCaseHistoryMilestone = .reportedChange
+    nonisolated static let spatialImagingImportByteLimit = 24 * 1_024 * 1_024
+    /// Keep the complete image and its Back/Focus targets in the forward-right
+    /// field. The old near-peripheral pose clipped half the plate at launch.
+    /// Focus remains the deliberate large reading view; placement stays movable.
+    static let spatialImagingDefaultPlatePosition = SIMD3<Float>(0.34, 1.55, -0.96)
+    /// The exterior reading pose for the one selected blockage lesson. The
+    /// interior threshold is deliberately larger, but it is not a readable
+    /// exterior composition to return a family learner to.
+    static let selectedBlockageExteriorZoom: Double = 2.05
+    static let selectedBlockageExteriorOrbit = SIMD2<Float>(0.12, 0.06)
 
     let teachingCase = TeachingStrokeCase.case78
 
@@ -599,12 +913,17 @@ final class StrokeExperienceState: ObservableObject {
     }
     @Published var audienceLens: StrokeAudienceLens = .family {
         didSet {
+            endAccessLayerStudy()
+            closeReferenceWorkspace()
             if audienceLens == .clinician {
                 // The presenter speaks for themself. Changing role revokes
                 // synthesized-narration eligibility at the state boundary.
+                familyAtlasCerebellumJourneyRequested = false
+                dismissFamilyDiscoveryHint()
                 narrationEnabled = false
                 familyNarrationPromptVisible = false
                 activeFamilyNarrationText = nil
+                familyNarrationTranscriptVisible = false
                 selectedFamilyQuestion = nil
                 presenterTeachingBeat = .firstBeat(for: procedureStep)
                 return
@@ -613,6 +932,12 @@ final class StrokeExperienceState: ObservableObject {
             anatomyFocus = .whole
             selectedCatalogAssetID = nil
             clinicianToolKitVisible = false
+            spatialImagingPlateVisible = false
+            spatialImagingComparisonEnabled = false
+            spatialImagingDragOrigin = nil
+            spatialImagingScaleOrigin = nil
+            resetSpatialImagingAnnotation()
+            clearSpatialImagingLocalImage()
             selectedClinicianTool = .focus
             selectedPresenterKeyPointIndex = nil
         }
@@ -640,27 +965,120 @@ final class StrokeExperienceState: ObservableObject {
     @Published var questionPlacementArmed = false
     @Published var questionMarkerVisible = false
     @Published private(set) var placedQuestion: PlacedStrokeQuestion?
-    @Published var soundEnabled = true
+    /// Ambient sound is optional by default. A wearer explicitly enables it
+    /// from the doorway or peripheral controls; it never starts on launch.
+    @Published var soundEnabled = false
+    /// A rate-limited, semantic trigger for system-managed visionOS sensory
+    /// feedback. It supplements visible state changes and has no clinical,
+    /// diagnostic, or emotion-reading meaning.
+    @Published private(set) var interactionFeedbackToken = 0
+    private var lastInteractionFeedbackAt = Date.distantPast
     @Published private(set) var narrationEnabled = false
     /// Voice is optional and point-led. Looking at or pinching a point never
     /// starts audio by itself; it only reveals a finite authored invitation.
     @Published private(set) var familyNarrationPromptVisible = false
     @Published private(set) var activeFamilyNarrationText: String?
+    /// When voice setup is unavailable, the same authored point explanation
+    /// remains available as finite on-screen progressive disclosure. This is
+    /// never a transcript of recorded speech and never starts audio.
+    @Published private(set) var familyNarrationTranscriptVisible = false
     @Published private(set) var narrationSetupAvailable = false
+    /// A short first-action cue for the Curious Learner route. It is never a
+    /// permanent label cloud: the first point selection dismisses it, and an
+    /// untouched cue retires after eight seconds.
+    @Published private(set) var familyDiscoveryHintVisible = false
     @Published var closingReflectionVisible = false
     @Published var pointField: StrokePointField = .regions
+    @Published private(set) var selectedScholarReferenceCategory: StrokeScholarReferenceCategory = .anatomy
+    @Published private(set) var focusedReferenceWorkspace: StrokeReferenceWorkspace? {
+        didSet {
+            if focusedReferenceWorkspace != .imagingGallery { imagingGallery.cancelImport() }
+            if oldValue == .imagingGallery && focusedReferenceWorkspace != .imagingGallery {
+                imagingGallery.clearLocalImages()
+            }
+        }
+    }
+    @Published var imagingGallery = StrokeImagingGalleryModel()
+    /// The one explicitly placed gallery image outlives the gallery workspace,
+    /// but is released on Back, study replacement or leaving the teaching view.
+    @Published private(set) var spatialImagingGalleryImage: StrokeGalleryImage?
+    @Published private(set) var selectedMedicineID = "antiplatelets"
+    @Published private(set) var medicineExhibitYaw: Float = 0
+    @Published var presenterPanelScale: Double = 1
     @Published var lessonPointsVisible = true
     @Published var teachingImagingDrawerVisible = false
     @Published var teachingImagingLens: StrokeTeachingImagingLens = .affectedVessel
+    @Published var spatialImagingPlateVisible = false {
+        didSet {
+            if !spatialImagingPlateVisible { spatialImagingImportSession.cancel() }
+        }
+    }
+    private var spatialImagingImportSession = StrokeImagingImportSession()
+    @Published var spatialImagingReference: StrokeTeachingImageReference = .ctGuide
+    @Published private(set) var spatialImagingComparisonEnabled = false
+    /// A clinician-selected image lives in memory only for the current
+    /// teaching view. It is never uploaded, persisted, registered to the
+    /// anatomy, interpreted, or presented as a diagnosis.
+    @Published private(set) var spatialImagingLocalImageData: Data?
+    @Published private(set) var spatialImagingLocalImageName: String?
+    @Published private(set) var spatialImagingLocalImageModality: StrokeImagingModality = .unspecified
+    /// An optional second local raster shares the same temporary spatial
+    /// board. It is comparison context only: the app does not register the
+    /// images, infer correspondence, or retain either payload.
+    @Published private(set) var spatialImagingLocalComparisonImageData: Data?
+    @Published private(set) var spatialImagingLocalComparisonImageName: String?
+    @Published private(set) var spatialImagingLocalComparisonImageModality: StrokeImagingModality = .unspecified
+    @Published private(set) var spatialImagingComparisonDetached = false
+    @Published var spatialImagingPlatePosition = StrokeExperienceState.spatialImagingDefaultPlatePosition
+    @Published private(set) var spatialImagingPlateScale: Float = 1
+    @Published private(set) var spatialImagingFocusActive = false
+    private var spatialImagingDragOrigin: SIMD3<Float>?
+    private var spatialImagingScaleOrigin: Float?
+    private var spatialImagingFocusReturnPosition: SIMD3<Float>?
+    private var spatialImagingFocusReturnScale: Float?
+    @Published var spatialImagingComparisonPlatePosition = SIMD3<Float>(-0.42, 1.42, -0.66)
+    @Published private(set) var spatialImagingComparisonPlateScale: Float = 0.84
+    private var spatialImagingComparisonDragOrigin: SIMD3<Float>?
+    private var spatialImagingComparisonScaleOrigin: Float?
+    @Published private(set) var spatialImagingAnnotationEnabled = false
+    @Published private(set) var spatialImagingInkStrokes: [StrokeSpatialInkStroke] = []
+    private var activeSpatialImagingInkStrokeID: UUID?
+    @Published private(set) var spatialImagingComparisonInkStrokes: [StrokeSpatialInkStroke] = []
+    private var activeSpatialImagingComparisonInkStrokeID: UUID?
+    @Published private(set) var spatialImagingPrimaryContextTitle: String?
+    @Published private(set) var spatialImagingPrimaryContextBody: String?
+    @Published private(set) var spatialImagingPrimaryContextAnchor: CGPoint?
+    @Published private(set) var spatialImagingComparisonContextTitle: String?
+    @Published private(set) var spatialImagingComparisonContextBody: String?
+    @Published private(set) var spatialImagingComparisonContextAnchor: CGPoint?
+    @Published private(set) var spatialAnnotations: [StrokeSpatialAnnotation] = []
+    private var spatialAnnotationDragOrigins: [String: SIMD3<Float>] = [:]
+    @Published private(set) var spatialInkVisible = false
+    @Published private(set) var spatialInkStrokes: [StrokeSpatialInkStroke] = []
+    private var activeSpatialInkStrokeID: UUID?
     @Published var clinicianToolKitVisible = false
     @Published var selectedClinicianTool: StrokeClinicianTool = .focus
+    @Published var selectedEndovascularConcept: StrokeEndovascularConcept = .microcatheter
+    @Published var clinicianDeviceInspectionYaw: Float = 0
+    @Published var clinicianDeviceStudyBeat: StrokeClinicianDeviceStudyBeat = .overview
+    @Published private(set) var accessLayerStudy = StrokeAccessLayerStudy()
+    @Published private(set) var accessLayerStudyAssetsAvailable = false
+    private var accessLayerMotionTask: Task<Void, Never>?
+    private var accessLayerDragOrigin: (position: SIMD3<Float>, progress: Float)?
+    private var accessLayerStudyEntryPending = false
+    private var accessLayerStudyOrbit = StrokeAnatomyViewpoint.lateralB.orbit
+    private var pendingAccessLayerStudyProofOpen: Bool?
+    private var accessStudyReturnState: (
+        presentation: StrokeAnatomyPresentation, opacity: Double, viewpoint: StrokeAnatomyViewpoint,
+        orbit: SIMD2<Float>, zoom: Double, paused: Bool, tool: StrokeClinicianTool, kitVisible: Bool
+    )?
     @Published var anatomyPresentation: StrokeAnatomyPresentation = .assembled
     @Published private(set) var anatomyFocus: StrokeAnatomyFocus = .whole
     @Published private(set) var availableAnatomyFocuses: Set<StrokeAnatomyFocus> = [.whole]
     @Published private(set) var anatomyAvailabilityResolved = false
     @Published private(set) var anatomyAvailabilityNotice: String?
     @Published private(set) var anatomyViewpoint: StrokeAnatomyViewpoint = .threeQuarter
-    @Published var environmentMode: StrokeEnvironmentMode = .warmHorizon
+    @Published var environmentMode: StrokeEnvironmentMode = .focusField
     @Published var cortexOpacity: Double = 0.34
     @Published var regionPortalActive = false
     @Published private(set) var selectedPointEntityName: String?
@@ -668,6 +1086,43 @@ final class StrokeExperienceState: ObservableObject {
     /// Family explanations disclose one idea first. The secondary 3D reference
     /// is an explicit follow-up, never a second competing object on selection.
     @Published private(set) var selectedPointReferenceExpanded = false
+
+    /// Opening the family-safe plain-language explanation is also an explicit
+    /// request to reveal the qualitative cue along this one generic neuron.
+    /// It never represents measured neural activity, a recording, or patient
+    /// data, and it resets as soon as the learner changes or closes a point.
+    var isSelectedNeuronSignalTraceActive: Bool {
+        audienceLens == .family &&
+            selectedPointReferenceExpanded &&
+            familyNarrationTranscriptVisible &&
+            selectedPointLabel == "Single neuron · schematic reference"
+    }
+
+    /// Surface lessons already disclose one complete generic brain in the
+    /// secondary field. When a family learner explicitly opens its plain
+    /// wording, the existing local patch becomes a little more legible. This
+    /// is an orientation cue only: it does not segment tissue, infer a
+    /// functional boundary, or identify a patient finding.
+    var isSelectedSurfacePlainWordsFocusActive: Bool {
+        audienceLens == .family &&
+            selectedPointReferenceExpanded &&
+            familyNarrationTranscriptVisible &&
+            selectedPointLabel != nil &&
+            teachingImagingLens == .brainSurface
+    }
+
+    /// Deep Atlas chapters are intentionally represented by one combined mesh
+    /// plus its ventricular system. When a learner explicitly asks for the
+    /// plain-language explanation, make the named *available* ventricular
+    /// object easier to inspect, without pretending the source mesh separately
+    /// segments the chapter named in the card.
+    var isSelectedInternalPlainWordsFocusActive: Bool {
+        audienceLens == .family &&
+            selectedPointReferenceExpanded &&
+            familyNarrationTranscriptVisible &&
+            selectedPointLabel?.hasSuffix("· combined internal atlas context") == true &&
+            teachingImagingLens == .internalStructures
+    }
     @Published var selectedEvidenceID: String = StrokeEvidenceSource.library[0].id
     @Published private(set) var pinnedEvidenceIDs: [String] = []
     @Published var sourceBoundDraftVisible = false
@@ -675,6 +1130,7 @@ final class StrokeExperienceState: ObservableObject {
     @Published var isConsentPromptVisible = false
     @Published var isImmersivePresented = false
     @Published var spatialPhase: StrokeSpatialPhase = .caseLibrary
+    @Published private(set) var selectedFictionalCaseIndex = 0
     @Published var spatialCaseDocked = false
     @Published var spatialCaseFilePosition = SIMD3<Float>(-0.58, 1.45, -0.82)
     @Published var selectedCaseHistoryMilestone: StrokeCaseHistoryMilestone =
@@ -686,6 +1142,13 @@ final class StrokeExperienceState: ObservableObject {
     /// pattern: the app state owns pose, while RealityKit only renders it.
     @Published var spatialZoom: Double = 1
     @Published var orbit = SIMD2<Float>.zero
+    /// A deliberate mode of the same Stroke Care immersive space. Scaling only
+    /// reveals the threshold; entering and returning always require an action.
+    @Published private(set) var internalBrainModeActive = false
+    /// A narrow, chapter-owned handoff into the existing generic cerebellum
+    /// observatory. This avoids treating the outer combined internal mesh as
+    /// though it were a separately segmented cerebellum.
+    @Published private(set) var familyAtlasCerebellumJourneyRequested = false
 
     /// 0...1 animation channels. They drive a deterministic spatial teaching rig,
     /// not a patient scan, surgical simulation, or physiology calculation.
@@ -695,7 +1158,70 @@ final class StrokeExperienceState: ObservableObject {
     @Published private(set) var layerRevealProgress: Double = 0
     private var layerRevealTask: Task<Void, Never>?
     private var caseReviewRevealTask: Task<Void, Never>?
+    private var familyDiscoveryHintTask: Task<Void, Never>?
     private var pendingAnatomyFocus: StrokeAnatomyFocus?
+
+    var selectedFictionalCase: StrokeFictionalCase {
+        StrokeFictionalCase.library[selectedFictionalCaseIndex]
+    }
+
+    /// Keeps the chosen fictional dossier visible through review without
+    /// turning the generic teaching anatomy into a patient-specific scan.
+    func caseHistoryTimeLabel(for milestone: StrokeCaseHistoryMilestone) -> String {
+        switch milestone {
+        case .everydayContext: "BEFORE TODAY"
+        case .reportedChange: "\(selectedFictionalCase.elapsed.uppercased()) AGO"
+        case .teamReview: "NOW"
+        case .sharedQuestions: "NEXT"
+        }
+    }
+
+    func caseHistoryWebValue(for milestone: StrokeCaseHistoryMilestone) -> String {
+        switch milestone {
+        case .everydayContext:
+            "\(selectedFictionalCase.displayName) · \(selectedFictionalCase.ageBand)"
+        case .reportedChange:
+            "\(selectedFictionalCase.lead) · \(selectedFictionalCase.context)"
+        case .teamReview:
+            "Reviewed pictures · teaching model separate"
+        case .sharedQuestions:
+            "Known · uncertain · next"
+        }
+    }
+
+    func selectFictionalCase(at index: Int) {
+        guard audienceLens == .clinician, spatialPhase == .caseLibrary else { return }
+        selectedFictionalCaseIndex = min(max(index, 0), StrokeFictionalCase.library.count - 1)
+    }
+
+    func stepFictionalCase(by delta: Int) {
+        guard audienceLens == .clinician, spatialPhase == .caseLibrary else { return }
+        let count = StrokeFictionalCase.library.count
+        selectedFictionalCaseIndex = (selectedFictionalCaseIndex + delta + count) % count
+    }
+
+    private func showFamilyDiscoveryHint(autoDismiss: Bool = true) {
+        familyDiscoveryHintTask?.cancel()
+        guard audienceLens == .family else {
+            familyDiscoveryHintVisible = false
+            return
+        }
+        familyDiscoveryHintVisible = true
+        guard autoDismiss else { return }
+        familyDiscoveryHintTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(8))
+            guard !Task.isCancelled, let self else { return }
+            withAnimation(.easeOut(duration: 0.45)) {
+                self.familyDiscoveryHintVisible = false
+            }
+        }
+    }
+
+    private func dismissFamilyDiscoveryHint() {
+        familyDiscoveryHintTask?.cancel()
+        familyDiscoveryHintTask = nil
+        familyDiscoveryHintVisible = false
+    }
 
     func selectTeachingCase(reduceMotion: Bool = false) {
         guard audienceLens == .clinician else { return }
@@ -737,6 +1263,17 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
+    /// A secondary visual preference lives in Settings, not the explanation
+    /// surface. Direct previous/next steps keep the control spatial and
+    /// discoverable without turning the three detail tiers into a slider.
+    func cycleDetailLevel(by offset: Int) {
+        guard audienceLens == .clinician else { return }
+        let levels = StrokeDetailLevel.allCases
+        guard let currentIndex = levels.firstIndex(of: detailLevel) else { return }
+        let nextIndex = (currentIndex + offset + levels.count) % levels.count
+        selectDetailLevel(levels[nextIndex])
+    }
+
     /// The atlas is explicitly opened by a family member; it does not infer an
     /// information need, anxiety level, or diagnosis. Selecting a chapter
     /// simply turns on the closest reviewed discovery-point family.
@@ -751,6 +1288,26 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasDetailIndex = 0
         familyBrainAtlasCueChapter = nil
         selectLessonFamily(chapter.pointField)
+    }
+
+    /// Lets a family learner use the generic outer-brain object itself as an
+    /// alternate entry point. The surface hit resolves only to one of the
+    /// existing broad Atlas contexts and immediately reuses that chapter's
+    /// reviewed point + reference path. It does not inspect raw gaze, segment
+    /// tissue, infer a clinical finding, or place a label on patient anatomy.
+    func selectFamilyAtlasSurfaceContext(atlasPointIndex: Int) {
+        guard audienceLens == .family,
+              spatialPhase == .explanation,
+              let chapter = StrokeFamilyBrainAtlasChapter.surfaceChapter(for: atlasPointIndex)
+        else { return }
+
+        // The confirmed surface pinch is itself an explicit request to
+        // explore. Open the otherwise optional Atlas as the result of that
+        // action, instead of making a family member find a separate control
+        // before the generic brain can be useful.
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(chapter)
+        revealFamilyBrainAtlasModelCue()
     }
 
     /// Every atlas chapter has one deliberate spatial reveal. Surface chapters
@@ -792,6 +1349,7 @@ final class StrokeExperienceState: ObservableObject {
         teachingImagingLens = .internalStructures
         teachingImagingDrawerVisible = true
         activeFamilyNarrationText = nil
+        familyNarrationTranscriptVisible = false
         familyNarrationPromptVisible = true
         familyBrainAtlasCueChapter = chapter
     }
@@ -818,6 +1376,15 @@ final class StrokeExperienceState: ObservableObject {
     func selectAnatomyFocus(_ focus: StrokeAnatomyFocus) {
         guard audienceLens == .clinician, spatialPhase == .explanation else {
             anatomyFocus = .whole
+            return
+        }
+        // The complete registered assembly arrives after the compact opening
+        // placeholder. Whole is always actionable while that load runs; the
+        // optional references below stay pending until their actual USDZ
+        // hierarchy has reported availability.
+        if focus == .whole {
+            pendingAnatomyFocus = nil
+            applyAnatomyFocus(.whole)
             return
         }
         guard !focus.requiresScholar || detailLevel == .scholar else {
@@ -849,6 +1416,27 @@ final class StrokeExperienceState: ObservableObject {
         }
 
         applyAnatomyFocus(focus)
+        // An explicitly selected internal study needs enough starting scale
+        // for its authored geometry to read as a real 3D reference. Preserve
+        // a wearer's larger hand-selected zoom rather than snapping them back
+        // to a smaller generic view.
+        let minimumFocusZoom: Double = focus == .internalStructures ? 1.70 : 1.28
+        spatialZoom = max(spatialZoom, minimumFocusZoom)
+    }
+
+    /// Starts a new asynchronous registered-anatomy availability check. The
+    /// compact opening root deliberately contains only the reliable whole-brain
+    /// fallback, so it must not erase a clinician's requested Internal,
+    /// Vessels, or Surface focus before the detailed root has finished loading.
+    func beginAnatomyAvailabilityCheck() {
+        anatomyAvailabilityResolved = false
+        availableAnatomyFocuses = [.whole]
+        anatomyAvailabilityNotice = nil
+
+        if anatomyFocus != .whole {
+            pendingAnatomyFocus = anatomyFocus
+            anatomyFocus = .whole
+        }
     }
 
     /// Receives the actual RealityKit load result. Optional detail failures
@@ -907,7 +1495,11 @@ final class StrokeExperienceState: ObservableObject {
             cortexOpacity = 0.18
         case .internalStructures:
             anatomyPresentation = .transparent
-            cortexOpacity = 0.12
+            // The internal study should read as authored deep geometry, not a
+            // faded exterior brain. Keep only a very light orientation shell;
+            // the clinician can still select another environment from the
+            // peripheral controls when room context is useful.
+            cortexOpacity = 0.08
         case .surfaceContext:
             anatomyPresentation = .transparent
             cortexOpacity = 0.20
@@ -1045,10 +1637,14 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
         requestedPause = false
         teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        resetSpatialImagingAnnotation()
         familyBrainAtlasVisible = false
         familyBrainAtlasChapter = .cortex
         familyBrainAtlasDetailIndex = 0
         familyBrainAtlasCueChapter = nil
+        showFamilyDiscoveryHint()
         withAnimation(.easeInOut(duration: 0.72)) {
             brainRevealProgress = 0.18
             vesselFocusProgress = 0
@@ -1060,6 +1656,17 @@ final class StrokeExperienceState: ObservableObject {
         cancelCaseReviewReveal()
         spatialPhase = .caseLibrary
         teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        resetSpatialImagingAnnotation()
+        clearSpatialImagingLocalImage()
+        spatialAnnotations = []
+        spatialAnnotationDragOrigins = [:]
+        spatialInkVisible = false
+        spatialInkStrokes = []
+        activeSpatialInkStrokeID = nil
         spatialCaseDocked = false
         isCaseSelected = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
@@ -1072,10 +1679,22 @@ final class StrokeExperienceState: ObservableObject {
         narrationEnabled = false
         familyNarrationPromptVisible = false
         activeFamilyNarrationText = nil
+        familyNarrationTranscriptVisible = false
     }
 
     func selectLessonFamily(_ field: StrokePointField) {
+        endAccessLayerStudy()
         pointField = field
+        if audienceLens == .clinician {
+            switch field {
+            case .regions:
+                selectedScholarReferenceCategory = .anatomy
+            case .craniotomy:
+                selectedScholarReferenceCategory = .interventions
+            case .procedure:
+                break
+            }
+        }
         lessonPointsVisible = true
         // A lesson family begins as quiet anatomy-attached points. The wearer
         // decides which explanation to reveal; switching families never opens
@@ -1104,6 +1723,796 @@ final class StrokeExperienceState: ObservableObject {
         teachingImagingDrawerVisible.toggle()
     }
 
+    /// Makes the Scholar ring exclusive. Moving away from Imaging always
+    /// removes its placed card and point drawer, so the presenter cannot leave
+    /// a stale image floating behind another selected category.
+    func selectScholarReferenceCategory(_ category: StrokeScholarReferenceCategory) {
+        guard audienceLens == .clinician, spatialPhase == .explanation else { return }
+        focusedReferenceWorkspace = nil
+        selectedScholarReferenceCategory = category
+        guard category != .imaging else { return }
+        teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        resetSpatialImagingAnnotation()
+        clearSpatialImagingLocalImage()
+    }
+
+    func openReferenceWorkspace(_ workspace: StrokeReferenceWorkspace) {
+        guard audienceLens == .clinician, spatialPhase == .explanation else { return }
+        endAccessLayerStudy()
+        cancelSpatialImagingFocus(resetTransform: true)
+        teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        spatialImagingAnnotationEnabled = false
+        questionPlacementArmed = false
+        sourceBoundDraftVisible = false
+        focusedReferenceWorkspace = workspace
+        switch workspace {
+        case .imagingGallery: selectedScholarReferenceCategory = .imaging
+        case .settings: selectedScholarReferenceCategory = .teachingModel
+        case .guides: selectedScholarReferenceCategory = .guidelines
+        case .medications: selectedScholarReferenceCategory = .medications
+        }
+    }
+
+    func closeReferenceWorkspace() {
+        if focusedReferenceWorkspace == .imagingGallery { imagingGallery.clearLocalImages() }
+        if focusedReferenceWorkspace != nil {
+            selectedScholarReferenceCategory = pointField == .craniotomy ? .interventions : .anatomy
+        }
+        focusedReferenceWorkspace = nil
+        sourceBoundDraftVisible = false
+    }
+
+    func selectSpatialMedicine(_ id: String) {
+        guard focusedReferenceWorkspace == .medications,
+              StrokeMedicineTopic.library.contains(where: { $0.id == id }) else { return }
+        selectedMedicineID = id
+        medicineExhibitYaw = 0
+    }
+
+    func rotateSpatialMedicine(by delta: Float) {
+        guard focusedReferenceWorkspace == .medications, delta.isFinite else { return }
+        medicineExhibitYaw = (medicineExhibitYaw + delta).truncatingRemainder(dividingBy: .pi * 2)
+    }
+
+    func resetSpatialMedicine() { medicineExhibitYaw = 0 }
+
+    var spatialImagingGalleryRaster: UIImage? {
+        guard let image = spatialImagingGalleryImage else { return nil }
+        if let data = image.data { return UIImage(data: data) }
+        return image.assetName.flatMap { UIImage(named: $0) }
+    }
+
+    /// Snapshot before closing the gallery: closing invalidates imports and
+    /// releases its other images. Only this selected image and its marks travel.
+    @discardableResult
+    func placeImagingGalleryImage(_ id: UUID) -> Bool {
+        guard audienceLens == .clinician, spatialPhase == .explanation,
+              focusedReferenceWorkspace == .imagingGallery,
+              let image = imagingGallery.images.first(where: { $0.id == id }) else { return false }
+        if let data = image.data {
+            guard !data.isEmpty, data.count <= Self.spatialImagingImportByteLimit,
+                  UIImage(data: data) != nil else { return false }
+        } else {
+            guard let name = image.assetName, UIImage(named: name) != nil,
+                  image.modality == .ct || image.modality == .mri else { return false }
+        }
+        cancelSpatialImagingFocus(resetTransform: true)
+        discardSpatialImagingLocalImagePayload()
+        if let data = image.data {
+            guard placeSpatialImagingLocalImage(data: data, displayName: image.name) else { return false }
+            let modality: StrokeImagingModality = switch image.modality {
+            case .ct: .ct
+            case .mri: .mri
+            case .xray: .radiograph
+            case .unspecified: .unspecified
+            }
+            selectSpatialImagingModality(modality, comparison: false)
+        } else {
+            placeSpatialImagingPlate(image.modality == .ct ? .ctGuide : .mriGuide)
+        }
+        resetSpatialImagingAnnotation()
+        spatialImagingInkStrokes = image.strokes.map { StrokeSpatialInkStroke(id: UUID(), points: $0) }
+        var source = image
+        source.strokes = [] // one editable ink owner after placement
+        spatialImagingGalleryImage = source
+        return true
+    }
+
+    /// Places a generic imaging teaching card in the shared spatial scene.
+    /// It is explicitly clinician-controlled and never represents patient
+    /// imaging, a finding, or a diagnostic result.
+    func placeSpatialImagingPlate(_ reference: StrokeTeachingImageReference) {
+        spatialImagingImportSession.cancel()
+        guard audienceLens == .clinician, spatialPhase == .explanation else {
+            spatialImagingPlateVisible = false
+            spatialImagingComparisonEnabled = false
+            resetSpatialImagingAnnotation()
+            return
+        }
+        if spatialImagingReference != reference || spatialImagingLocalImageData != nil || spatialImagingGalleryImage != nil {
+            resetSpatialImagingAnnotation()
+        }
+        closeReferenceWorkspace()
+        // Switching studies keeps the imaging room and its return position.
+        // Clearing an imported payload must not silently navigate back out.
+        discardSpatialImagingLocalImagePayload()
+        spatialImagingReference = reference
+        spatialImagingComparisonEnabled = false
+        selectedScholarReferenceCategory = .imaging
+        // One secondary surface at a time: placing an image replaces the
+        // point drawer and its 3D miniature instead of stacking four panels
+        // in the clinician's right visual field.
+        teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = true
+    }
+
+    func beginSpatialImagingImport(target: StrokeLocalImageImportTarget) -> StrokeImagingImportRequest? {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible,
+              focusedReferenceWorkspace == nil,
+              target != .comparison || spatialImagingLocalImageData != nil else { return nil }
+        return spatialImagingImportSession.begin(target: target)
+    }
+
+    func isCurrentSpatialImagingImport(_ request: StrokeImagingImportRequest) -> Bool {
+        spatialImagingImportSession.isCurrent(request)
+    }
+
+    func cancelSpatialImagingImport(_ request: StrokeImagingImportRequest) {
+        _ = spatialImagingImportSession.consume(request)
+    }
+
+    @discardableResult
+    func completeSpatialImagingImport(
+        _ request: StrokeImagingImportRequest,
+        data: Data,
+        displayName: String
+    ) -> Bool {
+        guard spatialImagingImportSession.consume(request),
+              audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible,
+              focusedReferenceWorkspace == nil else { return false }
+        switch request.target {
+        case .primary:
+            return placeSpatialImagingLocalImage(data: data, displayName: displayName)
+        case .comparison:
+            return placeSpatialImagingLocalComparisonImage(data: data, displayName: displayName)
+        }
+    }
+
+    /// Accepts a local raster image only after a deliberate clinician action.
+    /// The payload is bounded and decoded before it can replace an atlas
+    /// template. No filename, pixels, or markup leave this process.
+    @discardableResult
+    func placeSpatialImagingLocalImage(data: Data, displayName: String) -> Bool {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              !data.isEmpty,
+              data.count <= Self.spatialImagingImportByteLimit,
+              UIImage(data: data) != nil else { return false }
+
+        closeReferenceWorkspace()
+        spatialImagingImportSession.cancel()
+        resetSpatialImagingAnnotation()
+        spatialImagingGalleryImage = nil
+        spatialImagingLocalImageData = data
+        spatialImagingLocalImageName = String(displayName.prefix(72))
+        spatialImagingLocalImageModality = .unspecified
+        spatialImagingComparisonEnabled = spatialImagingLocalComparisonImageData != nil
+        selectedScholarReferenceCategory = .imaging
+        teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = true
+        return true
+    }
+
+    /// Adds one second, independently chosen raster to the local comparison
+    /// board. The primary image must already be present so a dropped file can
+    /// never create a hidden or context-free secondary payload.
+    @discardableResult
+    func placeSpatialImagingLocalComparisonImage(data: Data, displayName: String) -> Bool {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingLocalImageData != nil,
+              !data.isEmpty,
+              data.count <= Self.spatialImagingImportByteLimit,
+              UIImage(data: data) != nil else { return false }
+
+        spatialImagingImportSession.cancel()
+        resetSpatialImagingAnnotation()
+        spatialImagingGalleryImage = nil
+        spatialImagingLocalComparisonImageData = data
+        spatialImagingLocalComparisonImageName = String(displayName.prefix(72))
+        spatialImagingLocalComparisonImageModality = .unspecified
+        spatialImagingComparisonEnabled = true
+        selectedScholarReferenceCategory = .imaging
+        teachingImagingDrawerVisible = false
+        spatialImagingPlateVisible = true
+        return true
+    }
+
+    func clearSpatialImagingLocalImage() {
+        spatialImagingImportSession.cancel()
+        resetSpatialImagingAnnotation()
+        cancelSpatialImagingFocus(resetTransform: true)
+        discardSpatialImagingLocalImagePayload()
+    }
+
+    private func discardSpatialImagingLocalImagePayload() {
+        spatialImagingGalleryImage = nil
+        spatialImagingLocalImageData = nil
+        spatialImagingLocalImageName = nil
+        spatialImagingLocalImageModality = .unspecified
+        clearSpatialImagingPointContext(comparison: false)
+        clearSpatialImagingLocalComparisonImage()
+    }
+
+    func clearSpatialImagingLocalComparisonImage() {
+        spatialImagingImportSession.cancel()
+        spatialImagingLocalComparisonImageData = nil
+        spatialImagingLocalComparisonImageName = nil
+        spatialImagingLocalComparisonImageModality = .unspecified
+        spatialImagingComparisonEnabled = false
+        spatialImagingComparisonDetached = false
+        spatialImagingComparisonDragOrigin = nil
+        spatialImagingComparisonScaleOrigin = nil
+        spatialImagingComparisonInkStrokes = []
+        activeSpatialImagingComparisonInkStrokeID = nil
+        clearSpatialImagingPointContext(comparison: true)
+    }
+
+    /// Names a local image only after an explicit presenter choice. This is
+    /// descriptive session context—not image classification or interpretation.
+    func selectSpatialImagingModality(_ modality: StrokeImagingModality, comparison: Bool) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation else { return }
+        if comparison {
+            guard spatialImagingLocalComparisonImageData != nil else { return }
+            spatialImagingLocalComparisonImageModality = modality
+        } else {
+            guard spatialImagingLocalImageData != nil else { return }
+            spatialImagingLocalImageModality = modality
+        }
+    }
+
+    func cycleSpatialImagingModality(comparison: Bool) {
+        let options: [StrokeImagingModality] = [
+            .ct, .cta, .mri, .mra, .pet, .radiograph, .other, .unspecified
+        ]
+        let current = comparison
+            ? spatialImagingLocalComparisonImageModality
+            : spatialImagingLocalImageModality
+        let nextIndex = ((options.firstIndex(of: current) ?? -1) + 1) % options.count
+        selectSpatialImagingModality(options[nextIndex], comparison: comparison)
+    }
+
+    /// Copies one reviewed point explanation onto a chosen local image as a
+    /// discussion prompt. This is intentionally manual and reversible: the
+    /// app never infers that the point corresponds to pixels in the image.
+    func attachSelectedPointContextToSpatialImaging(comparison: Bool) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              let selectedPointLabel else { return }
+        if comparison {
+            guard spatialImagingLocalComparisonImageData != nil else { return }
+            spatialImagingComparisonContextTitle = selectedPointLabel
+            spatialImagingComparisonContextBody = spatialAnnotationBody(for: selectedPointLabel)
+            spatialImagingComparisonContextAnchor = CGPoint(x: 0.64, y: 0.38)
+        } else {
+            guard spatialImagingLocalImageData != nil else { return }
+            spatialImagingPrimaryContextTitle = selectedPointLabel
+            spatialImagingPrimaryContextBody = spatialAnnotationBody(for: selectedPointLabel)
+            spatialImagingPrimaryContextAnchor = CGPoint(x: 0.68, y: 0.38)
+        }
+    }
+
+    /// Repositions a clinician-placed discussion marker over a local image.
+    /// The normalized point is a presentation aid only; it is not stored as
+    /// image registration, a measurement, or an inferred anatomical finding.
+    func moveSpatialImagingPointContextAnchor(to point: CGPoint, comparison: Bool) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation else { return }
+        let clamped = clampedInkPoint(point)
+        if comparison {
+            guard spatialImagingLocalComparisonImageData != nil,
+                  spatialImagingComparisonContextTitle != nil else { return }
+            spatialImagingComparisonContextAnchor = clamped
+        } else {
+            guard spatialImagingLocalImageData != nil,
+                  spatialImagingPrimaryContextTitle != nil else { return }
+            spatialImagingPrimaryContextAnchor = clamped
+        }
+    }
+
+    func clearSpatialImagingPointContext(comparison: Bool) {
+        if comparison {
+            spatialImagingComparisonContextTitle = nil
+            spatialImagingComparisonContextBody = nil
+            spatialImagingComparisonContextAnchor = nil
+        } else {
+            spatialImagingPrimaryContextTitle = nil
+            spatialImagingPrimaryContextBody = nil
+            spatialImagingPrimaryContextAnchor = nil
+        }
+    }
+
+    /// Lets a clinician compare two local rasters as separate spatial objects
+    /// or return them to a single side-by-side board. Separation never implies
+    /// registration: the two plates remain independently positioned and the
+    /// app computes no correspondence between their pixels.
+    func toggleSpatialImagingComparisonSeparation() {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible,
+              spatialImagingLocalImageData != nil,
+              spatialImagingLocalComparisonImageData != nil else { return }
+        spatialImagingComparisonDetached.toggle()
+        spatialImagingComparisonEnabled = true
+        if spatialImagingComparisonDetached {
+            spatialImagingComparisonPlatePosition = [-0.42, 1.42, -0.66]
+            spatialImagingComparisonPlateScale = 0.84
+        }
+        spatialImagingComparisonDragOrigin = nil
+        spatialImagingComparisonScaleOrigin = nil
+    }
+
+    func beginSpatialImagingComparisonPlateDrag() {
+        guard audienceLens == .clinician,
+              spatialImagingComparisonDetached else { return }
+        spatialImagingComparisonDragOrigin = spatialImagingComparisonPlatePosition
+    }
+
+    func moveSpatialImagingComparisonPlate(translation: CGSize) {
+        guard audienceLens == .clinician,
+              spatialImagingComparisonDetached,
+              let origin = spatialImagingComparisonDragOrigin else { return }
+        spatialImagingComparisonPlatePosition.x = min(
+            0.68,
+            max(-0.68, origin.x + Float(translation.width) * 0.00075)
+        )
+        spatialImagingComparisonPlatePosition.y = min(
+            1.94,
+            max(0.92, origin.y - Float(translation.height) * 0.00075)
+        )
+    }
+
+    func endSpatialImagingComparisonPlateDrag() {
+        spatialImagingComparisonDragOrigin = nil
+    }
+
+    func beginSpatialImagingComparisonPlateScale() {
+        guard audienceLens == .clinician,
+              spatialImagingComparisonDetached else { return }
+        spatialImagingComparisonScaleOrigin = spatialImagingComparisonPlateScale
+    }
+
+    func scaleSpatialImagingComparisonPlate(by magnification: CGFloat) {
+        guard audienceLens == .clinician,
+              spatialImagingComparisonDetached,
+              let origin = spatialImagingComparisonScaleOrigin else { return }
+        spatialImagingComparisonPlateScale = min(
+            2.5,
+            max(0.55, origin * Float(magnification))
+        )
+    }
+
+    func endSpatialImagingComparisonPlateScale() {
+        spatialImagingComparisonScaleOrigin = nil
+    }
+
+    /// Keeps the two openly licensed atlas templates on one coherent spatial
+    /// board. This is a teaching comparison—not multimodal patient imaging or
+    /// registration—and the same temporary ink layer can mark either side.
+    func toggleSpatialImagingComparison() {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible else { return }
+        if spatialImagingGalleryImage != nil {
+            spatialImagingGalleryImage = nil
+            resetSpatialImagingAnnotation()
+        }
+        spatialImagingComparisonEnabled.toggle()
+        if spatialImagingComparisonEnabled {
+            spatialImagingReference = .ctGuide
+        }
+    }
+
+    /// The outermost recovery route for a placed teaching image. Local
+    /// navigation remains explicit: term note → study, focused study → beside
+    /// brain, and this action → the anatomy explanation. Keeping the state
+    /// reset here prevents a hidden focused, comparison, annotation, or local
+    /// image state from surviving after the presenter returns to the brain.
+    func returnToAnatomyFromSpatialImaging() {
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        spatialImagingFocusActive = false
+        spatialImagingFocusReturnPosition = nil
+        spatialImagingFocusReturnScale = nil
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        resetSpatialImagingAnnotation()
+        clearSpatialImagingLocalImage()
+        selectedScholarReferenceCategory = pointField == .craniotomy ? .interventions : .anatomy
+    }
+
+    /// Compatibility entry point for existing callers. New controls should
+    /// name their destination rather than presenting this as an ambiguous
+    /// close action.
+    func hideSpatialImagingPlate() {
+        returnToAnatomyFromSpatialImaging()
+    }
+
+    func beginSpatialImagingPlateDrag() {
+        guard audienceLens == .clinician, spatialImagingPlateVisible else { return }
+        spatialImagingDragOrigin = spatialImagingPlatePosition
+    }
+
+    func moveSpatialImagingPlate(translation: CGSize) {
+        guard audienceLens == .clinician,
+              spatialImagingPlateVisible,
+              let origin = spatialImagingDragOrigin else { return }
+        spatialImagingPlatePosition.x = min(
+            0.68,
+            max(-0.68, origin.x + Float(translation.width) * 0.00075)
+        )
+        spatialImagingPlatePosition.y = min(
+            1.94,
+            max(0.92, origin.y - Float(translation.height) * 0.00075)
+        )
+    }
+
+    func endSpatialImagingPlateDrag() {
+        spatialImagingDragOrigin = nil
+    }
+
+    func beginSpatialImagingPlateScale() {
+        guard audienceLens == .clinician, spatialImagingPlateVisible else { return }
+        spatialImagingScaleOrigin = spatialImagingPlateScale
+    }
+
+    func scaleSpatialImagingPlate(by magnification: CGFloat) {
+        guard audienceLens == .clinician,
+              spatialImagingPlateVisible,
+              let origin = spatialImagingScaleOrigin else { return }
+        spatialImagingPlateScale = min(
+            2.5,
+            max(0.55, origin * Float(magnification))
+        )
+    }
+
+    func endSpatialImagingPlateScale() {
+        spatialImagingScaleOrigin = nil
+    }
+
+    func resetSpatialImagingPlateTransform() {
+        guard audienceLens == .clinician, spatialImagingPlateVisible else { return }
+        spatialImagingPlatePosition = Self.spatialImagingDefaultPlatePosition
+        spatialImagingPlateScale = 1
+        spatialImagingFocusActive = false
+        spatialImagingFocusReturnPosition = nil
+        spatialImagingFocusReturnScale = nil
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+    }
+
+    /// Brings the actual placed plate to a stable reading position in the
+    /// room, then restores the presenter's prior transform. This deliberately
+    /// avoids opening a second generic window that could be mistaken for the
+    /// local image the presenter chose.
+    func toggleSpatialImagingFocus() {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible else {
+            StrokeImagingInteractionTrace.record(.focusRejected)
+            return
+        }
+
+        if spatialImagingFocusActive {
+            spatialImagingPlatePosition = spatialImagingFocusReturnPosition
+                ?? Self.spatialImagingDefaultPlatePosition
+            spatialImagingPlateScale = spatialImagingFocusReturnScale ?? 1
+            spatialImagingFocusActive = false
+            spatialImagingFocusReturnPosition = nil
+            spatialImagingFocusReturnScale = nil
+        } else {
+            spatialImagingFocusReturnPosition = spatialImagingPlatePosition
+            spatialImagingFocusReturnScale = spatialImagingPlateScale
+            spatialImagingPlatePosition = [0, 1.62, -0.90]
+            spatialImagingPlateScale = 1.12
+            spatialImagingFocusActive = true
+        }
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        StrokeImagingInteractionTrace.record(spatialImagingFocusActive ? .focused : .placed)
+    }
+
+    private func cancelSpatialImagingFocus(resetTransform: Bool) {
+        spatialImagingFocusActive = false
+        spatialImagingFocusReturnPosition = nil
+        spatialImagingFocusReturnScale = nil
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        if resetTransform {
+            spatialImagingPlatePosition = Self.spatialImagingDefaultPlatePosition
+            spatialImagingPlateScale = 1
+        }
+    }
+
+    /// Enables temporary markup directly on the placed generic atlas image.
+    /// This uses ordinary targeted pinch-drag input; it records neither gaze
+    /// nor patient data and never writes into the underlying image asset.
+    func toggleSpatialImagingAnnotation() {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible else { return }
+        spatialImagingAnnotationEnabled.toggle()
+        activeSpatialImagingInkStrokeID = nil
+    }
+
+    func beginSpatialImagingInk(at point: CGPoint) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingPlateVisible,
+              spatialImagingAnnotationEnabled else { return }
+        let stroke = StrokeSpatialInkStroke(
+            id: UUID(),
+            points: [clampedInkPoint(point)]
+        )
+        spatialImagingInkStrokes.append(stroke)
+        activeSpatialImagingInkStrokeID = stroke.id
+    }
+
+    func continueSpatialImagingInk(at point: CGPoint) {
+        guard let id = activeSpatialImagingInkStrokeID,
+              let index = spatialImagingInkStrokes.firstIndex(where: { $0.id == id }) else { return }
+        let next = clampedInkPoint(point)
+        if let previous = spatialImagingInkStrokes[index].points.last,
+           hypot(next.x - previous.x, next.y - previous.y) < 0.006 {
+            return
+        }
+        spatialImagingInkStrokes[index].points.append(next)
+    }
+
+    func endSpatialImagingInk(at point: CGPoint) {
+        continueSpatialImagingInk(at: point)
+        activeSpatialImagingInkStrokeID = nil
+    }
+
+    func undoSpatialImagingInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialImagingInkStrokeID = nil
+        if !spatialImagingInkStrokes.isEmpty {
+            spatialImagingInkStrokes.removeLast()
+        }
+    }
+
+    func clearSpatialImagingInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialImagingInkStrokeID = nil
+        spatialImagingInkStrokes = []
+    }
+
+    func beginSpatialImagingComparisonInk(at point: CGPoint) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialImagingComparisonDetached,
+              spatialImagingAnnotationEnabled else { return }
+        let stroke = StrokeSpatialInkStroke(
+            id: UUID(),
+            points: [clampedInkPoint(point)]
+        )
+        spatialImagingComparisonInkStrokes.append(stroke)
+        activeSpatialImagingComparisonInkStrokeID = stroke.id
+    }
+
+    func continueSpatialImagingComparisonInk(at point: CGPoint) {
+        guard let id = activeSpatialImagingComparisonInkStrokeID,
+              let index = spatialImagingComparisonInkStrokes.firstIndex(where: { $0.id == id }) else { return }
+        let next = clampedInkPoint(point)
+        if let previous = spatialImagingComparisonInkStrokes[index].points.last,
+           hypot(next.x - previous.x, next.y - previous.y) < 0.006 {
+            return
+        }
+        spatialImagingComparisonInkStrokes[index].points.append(next)
+    }
+
+    func endSpatialImagingComparisonInk(at point: CGPoint) {
+        continueSpatialImagingComparisonInk(at: point)
+        activeSpatialImagingComparisonInkStrokeID = nil
+    }
+
+    func undoSpatialImagingComparisonInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialImagingComparisonInkStrokeID = nil
+        if !spatialImagingComparisonInkStrokes.isEmpty {
+            spatialImagingComparisonInkStrokes.removeLast()
+        }
+    }
+
+    func clearSpatialImagingComparisonInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialImagingComparisonInkStrokeID = nil
+        spatialImagingComparisonInkStrokes = []
+    }
+
+    private func resetSpatialImagingAnnotation() {
+        spatialImagingAnnotationEnabled = false
+        activeSpatialImagingInkStrokeID = nil
+        spatialImagingInkStrokes = []
+        activeSpatialImagingComparisonInkStrokeID = nil
+        spatialImagingComparisonInkStrokes = []
+        spatialImagingPrimaryContextTitle = nil
+        spatialImagingPrimaryContextBody = nil
+        spatialImagingComparisonContextTitle = nil
+        spatialImagingComparisonContextBody = nil
+    }
+
+    var selectedPointNoteIsPinned: Bool {
+        guard let selectedPointEntityName else { return false }
+        return spatialAnnotations.contains { $0.sourceEntityName == selectedPointEntityName }
+    }
+
+    /// Pins the selected authored point explanation into the clinician's
+    /// shared spatial workspace. Three notes are enough for comparison while
+    /// preventing the room from becoming a wall of floating windows.
+    func pinSelectedPointNote() {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              let sourceEntityName = selectedPointEntityName,
+              let title = selectedPointLabel else { return }
+
+        if spatialAnnotations.contains(where: { $0.sourceEntityName == sourceEntityName }) {
+            return
+        }
+
+        if spatialAnnotations.count == 3 {
+            spatialAnnotations.removeFirst()
+        }
+        let slots: [SIMD3<Float>] = [
+            [-0.66, 1.22, -0.88],
+            [-0.66, 0.96, -0.88],
+            [-0.32, 0.96, -0.88]
+        ]
+        let annotation = StrokeSpatialAnnotation(
+            id: sourceEntityName,
+            sourceEntityName: sourceEntityName,
+            title: title,
+            body: spatialAnnotationBody(for: title),
+            position: slots[spatialAnnotations.count]
+        )
+        spatialAnnotations.append(annotation)
+    }
+
+    func removeSpatialAnnotation(id: String) {
+        spatialAnnotations.removeAll { $0.id == id }
+        spatialAnnotationDragOrigins[id] = nil
+    }
+
+    func beginSpatialAnnotationDrag(id: String) {
+        guard audienceLens == .clinician,
+              let annotation = spatialAnnotations.first(where: { $0.id == id }) else { return }
+        spatialAnnotationDragOrigins[id] = annotation.position
+    }
+
+    func moveSpatialAnnotation(id: String, translation: CGSize) {
+        guard audienceLens == .clinician,
+              let origin = spatialAnnotationDragOrigins[id],
+              let index = spatialAnnotations.firstIndex(where: { $0.id == id }) else { return }
+        spatialAnnotations[index].position.x = min(
+            0.76,
+            max(-0.76, origin.x + Float(translation.width) * 0.00075)
+        )
+        spatialAnnotations[index].position.y = min(
+            1.98,
+            max(0.98, origin.y - Float(translation.height) * 0.00075)
+        )
+    }
+
+    func endSpatialAnnotationDrag(id: String) {
+        spatialAnnotationDragOrigins[id] = nil
+    }
+
+    /// Reopens the anatomy relationship owned by a pinned note. The note is a
+    /// navigation aid, never a new finding or independent medical assertion.
+    func locateSpatialAnnotation(id: String) {
+        guard audienceLens == .clinician,
+              let annotation = spatialAnnotations.first(where: { $0.id == id }) else { return }
+        selectPoint(entityName: annotation.sourceEntityName, label: annotation.title)
+    }
+
+    func toggleSpatialInk() {
+        guard audienceLens == .clinician, spatialPhase == .explanation else { return }
+        spatialInkVisible.toggle()
+        activeSpatialInkStrokeID = nil
+    }
+
+    func finishSpatialInk() {
+        spatialInkVisible = false
+        activeSpatialInkStrokeID = nil
+    }
+
+    func beginSpatialInk(at point: CGPoint) {
+        guard audienceLens == .clinician,
+              spatialPhase == .explanation,
+              spatialInkVisible else { return }
+        let stroke = StrokeSpatialInkStroke(id: UUID(), points: [clampedInkPoint(point)])
+        spatialInkStrokes.append(stroke)
+        activeSpatialInkStrokeID = stroke.id
+    }
+
+    func continueSpatialInk(at point: CGPoint) {
+        guard let id = activeSpatialInkStrokeID,
+              let index = spatialInkStrokes.firstIndex(where: { $0.id == id }) else { return }
+        let next = clampedInkPoint(point)
+        if let previous = spatialInkStrokes[index].points.last,
+           hypot(next.x - previous.x, next.y - previous.y) < 0.006 {
+            return
+        }
+        spatialInkStrokes[index].points.append(next)
+    }
+
+    func endSpatialInk(at point: CGPoint) {
+        continueSpatialInk(at: point)
+        activeSpatialInkStrokeID = nil
+    }
+
+    func undoSpatialInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialInkStrokeID = nil
+        if !spatialInkStrokes.isEmpty {
+            spatialInkStrokes.removeLast()
+        }
+    }
+
+    func clearSpatialInk() {
+        guard audienceLens == .clinician else { return }
+        activeSpatialInkStrokeID = nil
+        spatialInkStrokes = []
+    }
+
+    private func clampedInkPoint(_ point: CGPoint) -> CGPoint {
+        CGPoint(
+            x: min(1, max(0, point.x)),
+            y: min(1, max(0, point.y))
+        )
+    }
+
+    private func spatialAnnotationBody(for label: String) -> String {
+        switch label {
+        case "Example affected area":
+            "Generic example only—not a scan or measured injury."
+        case "Nearby brain tissue":
+            "Nearby tissue stays visible so the explanation keeps context."
+        case "Brain surface":
+            "Surface orientation only; no incision or access site is planned."
+        case "Opposite-side context":
+            "A comparison reference—not a claim of normal function."
+        case "Single neuron · schematic reference":
+            "Generic schematic only. Not patient tissue, a recording, or a measurement."
+        case "Blood supply approaches":
+            "Follow the route toward the brain: direction only, not speed or volume."
+        case "Arteries branch":
+            "Branches distribute supply; this generic map is not patient-specific."
+        case "Example blockage":
+            "A teaching clot interrupts the route; motion is qualitative—not CFD."
+        case "Flow beyond the blockage changes":
+            "Fewer cues continue beyond the example blockage; no perfusion value is inferred."
+        case "Affected territory":
+            "The highlighted territory explains risk—not prognosis or measured damage."
+        case "Generic craniotomy teaching story":
+            "Layer relationship only—not an access site, surgical plan, or rehearsal."
+        default:
+            "Generic teaching reference—not a patient scan or measurement."
+        }
+    }
+
     /// Toggles the already-selected point's related spatial teaching object.
     /// Point selection opens the matching reference; this remains the explicit,
     /// reversible Hide/Show action and never infers a viewer preference.
@@ -1125,9 +2534,17 @@ final class StrokeExperienceState: ObservableObject {
         switch teachingLens(for: label ?? selectedPointLabel) {
         case .affectedVessel: "full arterial tree"
         case .brainSurface: "whole brain surface"
+        case .neuron: "single neuron"
         case .internalStructures: "internal structures"
         case .makingRoomPurpose: "layer view"
         }
+    }
+
+    /// A single-cell schematic is already legible as a self-contained spatial
+    /// object. Keeping a second reference card beside it would repeat the
+    /// selected-point explanation rather than add a new relationship.
+    var selectedTeachingReferenceNeedsDrawer: Bool {
+        teachingImagingLens != .neuron
     }
 
     /// Explains why the selected invitation owns the complete 3D reference.
@@ -1167,10 +2584,43 @@ final class StrokeExperienceState: ObservableObject {
             "TERRITORY · THIS REGION DEPENDS ON THE UPSTREAM ROUTE"
         case "Generic craniotomy teaching story":
             "LAYERS · SKULL, DURA, AND BRAIN — NOT A SITE PLAN"
+        case "Single neuron · schematic reference":
+            "SCHEMATIC NEURON · BRANCHES AND ONE QUALITATIVE SIGNAL PATH"
         case nil:
             "GENERIC TEACHING RELATIONSHIP"
         default:
             "GENERIC TEACHING RELATIONSHIP"
+        }
+    }
+
+    /// A short family-facing explanation of why one quiet point opens a larger
+    /// teaching object. It deliberately describes relationships, not findings.
+    func teachingReferencePlainSummary(for label: String? = nil) -> String {
+        switch label ?? selectedPointLabel {
+        case "Example affected area":
+            "This area relies on the highlighted vessel route."
+        case "Nearby brain tissue":
+            "Nearby tissue stays visible so this point is not viewed alone."
+        case "Brain surface":
+            "The folded outer surface gives this point its whole-brain context."
+        case "Opposite-side context":
+            "The other side helps with orientation; it is not a diagnostic comparison."
+        case "Blood supply approaches":
+            "Follow the larger artery as blood approaches this teaching route."
+        case "Arteries branch":
+            "One larger route divides into smaller arterial paths."
+        case "Example blockage":
+            "The marker introduces a generic interruption in the flow route."
+        case "Flow beyond the blockage changes":
+            "Look beyond the interruption to see how the downstream route changes."
+        case "Affected territory":
+            "This teaching region depends on the upstream vessel route."
+        case "Generic craniotomy teaching story":
+            "See the skull, protective covering, and brain as separate teaching layers."
+        case "Single neuron · schematic reference":
+            "One generic cell makes the branching relationship easier to inspect."
+        default:
+            "The selected point opens its larger teaching context."
         }
     }
 
@@ -1191,6 +2641,8 @@ final class StrokeExperienceState: ObservableObject {
              "Temporal lobe · generic atlas focus",
              "Occipital lobe · generic atlas focus":
             .brainSurface
+        case "Single neuron · schematic reference":
+            .neuron
         case let label? where label.hasSuffix("· combined internal atlas context"):
             .internalStructures
         case "Generic craniotomy teaching story":
@@ -1284,6 +2736,13 @@ final class StrokeExperienceState: ObservableObject {
     func grantNonGraphicCareViewPermission(reduceMotion: Bool = false) {
         careViewPermissionGranted = true
         isConsentPromptVisible = false
+        if accessLayerStudyEntryPending {
+            accessLayerStudyEntryPending = false
+            pendingConsentStep = nil
+            pendingPresenterTeachingBeat = nil
+            startAccessLayerStudy()
+            return
+        }
         let requestedStep = pendingConsentStep
         let requestedBeat = pendingPresenterTeachingBeat
         pendingConsentStep = nil
@@ -1298,6 +2757,7 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func declineCareView() {
+        accessLayerStudyEntryPending = false
         isConsentPromptVisible = false
         pendingConsentStep = nil
         pendingPresenterTeachingBeat = nil
@@ -1341,6 +2801,16 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause.toggle()
     }
 
+    /// System sensory feedback is deliberately reserved for a confirmed,
+    /// visible spatial-control action. Repeated pinches inside this short
+    /// interval remain visually functional but do not stack feedback.
+    func registerInteractionFeedback() {
+        let now = Date()
+        guard now.timeIntervalSince(lastInteractionFeedbackAt) >= 0.22 else { return }
+        lastInteractionFeedbackAt = now
+        interactionFeedbackToken &+= 1
+    }
+
     /// Narration is an opt-in family teaching aid. Doctor-presenter mode has
     /// no synthesized voice because the clinician is already speaking.
     func setNarrationEnabled(_ enabled: Bool) {
@@ -1348,12 +2818,14 @@ final class StrokeExperienceState: ObservableObject {
             narrationEnabled = false
             familyNarrationPromptVisible = false
             activeFamilyNarrationText = nil
+            familyNarrationTranscriptVisible = false
             return
         }
         if !enabled {
             narrationEnabled = false
             familyNarrationPromptVisible = false
             activeFamilyNarrationText = nil
+            familyNarrationTranscriptVisible = false
         } else if selectedPointEntityName != nil {
             // The control arms the explicit point-level invitation. It never
             // speaks the timeline or starts audio by itself.
@@ -1370,8 +2842,9 @@ final class StrokeExperienceState: ObservableObject {
         narrationSetupAvailable = available
     }
 
-    /// A deliberate Yes is the only path from a selected discovery point to
-    /// narrated audio. The line remains authored, generic, and non-diagnostic.
+    /// A deliberate Play audio action is the only path from a selected
+    /// discovery point to narrated audio. The line remains authored, generic,
+    /// and non-diagnostic.
     func acceptFamilyNarrationPrompt() {
         guard audienceLens == .family,
               narrationSetupAvailable,
@@ -1379,16 +2852,32 @@ final class StrokeExperienceState: ObservableObject {
               let selectedPointLabel else { return }
         narrationEnabled = true
         familyNarrationPromptVisible = false
+        familyNarrationTranscriptVisible = false
         activeFamilyNarrationText = familyNarrationText(for: selectedPointLabel)
     }
 
-    /// "Not now" is a real no-op: it dismisses the invitation and stops any
-    /// point narration without changing anatomy, timeline, or lesson state.
+    /// A missing local voice proxy must not turn the point invitation into a
+    /// disabled control. The learner can read the exact same authored line,
+    /// silently and locally, without changing anatomy or starting recording.
+    func showFamilyNarrationTranscript() {
+        guard audienceLens == .family,
+              !narrationSetupAvailable,
+              selectedPointEntityName != nil,
+              let selectedPointLabel else { return }
+        narrationEnabled = false
+        familyNarrationPromptVisible = false
+        activeFamilyNarrationText = familyNarrationText(for: selectedPointLabel)
+        familyNarrationTranscriptVisible = true
+    }
+
+    /// Closing the optional explanation is a real no-op: it stops any point
+    /// narration without changing anatomy, timeline, or lesson state.
     func dismissFamilyNarrationPrompt() {
         guard audienceLens == .family else { return }
         narrationEnabled = false
         familyNarrationPromptVisible = false
         activeFamilyNarrationText = nil
+        familyNarrationTranscriptVisible = false
     }
 
     private func familyNarrationText(for label: String) -> String {
@@ -1413,6 +2902,8 @@ final class StrokeExperienceState: ObservableObject {
             "This territory helps connect a vessel route to the tissue it supplies. It explains a relationship, not measured damage or prognosis."
         case "Generic craniotomy teaching story":
             "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
+        case "Single neuron · schematic reference":
+            "Think of this as a tree-like brain cell: branches take in messages and one long fiber passes a signal on. The colors show a teaching path, not a recording."
         case let label where label.hasSuffix("· generic atlas focus"):
             "This lit focus locates \(label.replacingOccurrences(of: " · generic atlas focus", with: "")) within a complete generic brain. It is an orientation aid, not a patient scan or a precise functional boundary."
         case let label where label.hasSuffix("· combined internal atlas context"):
@@ -1445,14 +2936,58 @@ final class StrokeExperienceState: ObservableObject {
         }
     }
 
-    /// Suggestions are a finite, authored question set. Choosing one merely
-    /// marks it and pauses the current lesson; it never calls a medical model.
+    /// Suggestions are a finite, authored exploration set. Spatial actions
+    /// move to another reviewed teaching point; boundary actions pause and
+    /// explain what the generic model cannot establish. Neither path calls a
+    /// medical model or infers a diagnosis from the wearer's focus.
     func selectFamilyQuestion(_ question: String) {
         guard audienceLens == .family,
               familyQuestionSuggestions.contains(question) else { return }
         selectedFamilyQuestion = question
+
+        if let destination = familyExploreDestination(for: question),
+           let point = destination.field.lessonPoints.first(where: { $0.index == destination.pointIndex }) {
+            clarificationRequested = false
+            requestedPause = false
+            pointField = destination.field
+            selectLessonPoint(point)
+            return
+        }
+
+        if question == "Enter the brain at room scale" {
+            clarificationRequested = false
+            requestedPause = false
+            withAnimation(.easeInOut(duration: 0.58)) {
+                spatialZoom = max(spatialZoom, 3.2)
+            }
+            return
+        }
+
         clarificationRequested = true
         requestedPause = true
+    }
+
+    /// Returns only authored point destinations. This makes the left rail a
+    /// spatial navigation surface instead of a second text-answer feed.
+    func familyExploreDestination(
+        for action: String
+    ) -> (field: StrokePointField, pointIndex: Int)? {
+        switch action {
+        case "Start with one glowing point":
+            (.regions, 0)
+        case "Follow one vessel story", "Follow this vessel route":
+            (.procedure, 0)
+        case "Locate this in the whole brain":
+            (.regions, 2)
+        case "Keep nearby anatomy in view":
+            (.regions, 1)
+        case "Compare before and beyond the blockage":
+            (.procedure, 3)
+        case "Unfold the teaching layers":
+            (.craniotomy, 0)
+        default:
+            nil
+        }
     }
 
     /// Technical prompts expand into one authored plain-language sentence.
@@ -1619,75 +3154,56 @@ final class StrokeExperienceState: ObservableObject {
     var familyTimelineQuestion: String {
         switch procedureStep {
         case .chooseCase:
-            "Which layer is this?"
+            "Explore the protective layers."
         case .inspectOcclusion:
-            "Is this blockage, injury, or swelling?"
+            "Trace supply, blockage, and the tissue beyond."
         case .discussCare:
-            "What can this surgery change—and not change?"
+            "Review what generic access can—and cannot—show."
         }
     }
 
     var familyQuestionSuggestions: [String] {
-        if familyClarityWasSet, familyClarityCheck < 0.5 {
-            return switch procedureStep {
-            case .chooseCase:
-                ["Can we start with the whole brain again?", "Where is the affected area?", "What do we know for sure?"]
-            case .inspectOcclusion:
-                ["Can you show the blockage again?", "Which change is pressure?", "What remains uncertain?"]
-            case .discussCare:
-                ["Can you show the purpose again?", "What can this change?", "What can this not change?"]
-            }
+        guard let selectedPointLabel else {
+            return ["Start with one glowing point"]
         }
-        if familyClarityWasSet, familyClarityCheck < 1.5 {
-            return switch procedureStep {
-            case .chooseCase:
-                ["Can you point to the affected side?", "Which layer am I seeing?", "Is this a teaching model?"]
-            case .inspectOcclusion:
-                ["Can we compare blockage and swelling?", "Why is space limited?", "Can we pause here?"]
-            case .discussCare:
-                ["Where is more room being made?", "What will the team check?", "What remains uncertain?"]
-            }
+
+        if selectedPointLabel == "Generic craniotomy teaching story" {
+            return [
+                "Unfold the teaching layers",
+                "Keep the access view generic",
+                "Review what is not simulated"
+            ]
         }
-        return switch procedureStep {
-        case .chooseCase:
-            [familyTimelineQuestion, "Can you show where this is?", "What do we know for sure?"]
-        case .inspectOcclusion:
-            [familyTimelineQuestion, "Can we pause at the blockage?", "What remains uncertain?"]
-        case .discussCare:
-            [familyTimelineQuestion, "What is the goal?", "What can this not change?"]
+
+        if selectedPointEntityName?.hasPrefix(StrokePointField.procedure.entityPrefix) == true {
+            return [
+                "Follow this vessel route",
+                "Compare before and beyond the blockage",
+                "See what this model cannot measure"
+            ]
         }
+
+        return [
+            "Locate this in the whole brain",
+            "Keep nearby anatomy in view",
+            "See what this model cannot conclude"
+        ]
     }
 
-    /// A selected family question opens one bounded clarification card in the
-    /// shared scene. These sentences are authored teaching language, never a
-    /// generated diagnosis, treatment recommendation, or patient-specific
-    /// prediction.
+    /// Only a boundary action opens a clarification card. Spatial actions
+    /// navigate directly to their point and matching 3D reference, so the
+    /// rail does not duplicate the teaching object with another text answer.
     var selectedFamilyQuestionAnswer: String? {
         guard let question = selectedFamilyQuestion else { return nil }
         let lowercasedQuestion = question.lowercased()
 
-        switch procedureStep {
-        case .chooseCase:
-            if lowercasedQuestion.contains("teaching model") || lowercasedQuestion.contains("know for sure") {
-                return "This is generic teaching anatomy. It helps explain the conversation; it is not a personal scan or a conclusion about one person."
-            }
-            return "We can begin with the whole brain, then use one quiet point to show the area being discussed."
-
-        case .inspectOcclusion:
-            if lowercasedQuestion.contains("pressure") || lowercasedQuestion.contains("space") {
-                return "The skull is a fixed space. This teaching view keeps blocked flow, affected tissue, and pressure as separate ideas."
-            }
-            if lowercasedQuestion.contains("uncertain") {
-                return "This exhibit can explain terms and questions. It does not decide an individual diagnosis or what will happen next."
-            }
-            return "The highlighted vessel is a teaching cue for interrupted flow. We can pause here and compare it with the surrounding brain."
-
-        case .discussCare:
-            if lowercasedQuestion.contains("not change") || lowercasedQuestion.contains("uncertain") {
-                return "The purpose shown is making more room when pressure is a concern. It is not a promise of recovery or a prediction of outcome."
-            }
-            return "This is a non-graphic explanation of why a team may discuss creating more room and what they continue to monitor."
+        if lowercasedQuestion.contains("cannot measure") || lowercasedQuestion.contains("cannot conclude") {
+            return "This generic teaching model shows relationships and direction. It does not measure flow, identify a diagnosis, or predict an outcome."
         }
+        if lowercasedQuestion.contains("access view generic") || lowercasedQuestion.contains("not simulated") {
+            return "The access story separates generic layers to support explanation. It is not a site plan, operative rehearsal, or treatment recommendation."
+        }
+        return nil
     }
 
     var familyClarityLabel: String {
@@ -2041,6 +3557,10 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func selectPoint(entityName: String, label: String) {
+        // The first successful point interaction is stronger orientation than
+        // any helper copy. Retire the transient cue before revealing the local
+        // explanation and its matching full 3D teaching reference.
+        dismissFamilyDiscoveryHint()
         if pointField == .craniotomy {
             // The access point opens the six-checkpoint clinician story rather
             // than the generic vessel miniature. The point stays attached to
@@ -2061,6 +3581,7 @@ final class StrokeExperienceState: ObservableObject {
             selectedPointLabel = label
             if audienceLens == .family {
                 activeFamilyNarrationText = nil
+                familyNarrationTranscriptVisible = false
                 familyNarrationPromptVisible = true
             }
             // The access story shares the same point-first disclosure rule as
@@ -2086,9 +3607,9 @@ final class StrokeExperienceState: ObservableObject {
                 anatomyPresentation = .transparent
                 cortexOpacity = 0.16
                 vesselFocusProgress = 1
-                spatialZoom = max(spatialZoom, isBlockagePoint ? 2.05 : 1.58)
+                spatialZoom = max(spatialZoom, isBlockagePoint ? Self.selectedBlockageExteriorZoom : 1.58)
                 if isBlockagePoint {
-                    orbit = [0.12, 0.06]
+                    orbit = Self.selectedBlockageExteriorOrbit
                 }
             }
         }
@@ -2098,6 +3619,7 @@ final class StrokeExperienceState: ObservableObject {
             // Point selection reveals an invitation, never audio. A separate
             // Yes action is required before the Realtime request can begin.
             activeFamilyNarrationText = nil
+            familyNarrationTranscriptVisible = false
             familyNarrationPromptVisible = true
         }
         // Every anatomy-attached point owns one matching spatial reference.
@@ -2120,6 +3642,49 @@ final class StrokeExperienceState: ObservableObject {
         requestedPause = false
     }
 
+    /// Advances through the five authored vascular relationships while keeping
+    /// the complete arterial teaching reference in the right spatial field.
+    /// This is a route-reading interaction, not a treatment sequence: it never
+    /// removes the example blockage or implies that an intervention succeeded.
+    func traceProcedureRoute(by offset: Int) {
+        guard spatialPhase == .explanation,
+              pointField == .procedure,
+              !StrokePointField.procedure.lessonPoints.isEmpty else { return }
+
+        let points = StrokePointField.procedure.lessonPoints
+        let currentIndex = selectedProcedurePointIndex
+            ?? StrokePointField.procedure.defaultLessonPointIndex
+        let nextIndex = (currentIndex + offset % points.count + points.count) % points.count
+        let point = points[nextIndex]
+        selectPoint(
+            entityName: "\(StrokePointField.procedure.entityPrefix)\(point.index)",
+            label: point.fullTitle
+        )
+
+        // A repeated route step should not repeatedly interrupt discovery with
+        // the optional voice invitation. A fresh direct point pinch may offer
+        // it again; the route trace itself stays visual and quiet.
+        if audienceLens == .family {
+            narrationEnabled = false
+            familyNarrationPromptVisible = false
+            activeFamilyNarrationText = nil
+            familyNarrationTranscriptVisible = false
+        }
+    }
+
+    var selectedProcedurePointIndex: Int? {
+        guard let selectedPointEntityName,
+              selectedPointEntityName.hasPrefix(StrokePointField.procedure.entityPrefix)
+        else { return nil }
+        return Int(selectedPointEntityName.dropFirst(StrokePointField.procedure.entityPrefix.count))
+    }
+
+    var procedureRouteProgressLabel: String {
+        let ordinal = (selectedProcedurePointIndex
+            ?? StrokePointField.procedure.defaultLessonPointIndex) + 1
+        return "\(ordinal) OF \(StrokePointField.procedure.lessonPoints.count)"
+    }
+
     /// A specimen-rail choice locks one authored anatomy marker without
     /// changing scale. Native two-hand magnification remains the only zoom.
     func selectLessonPoint(_ point: StrokeLessonPoint) {
@@ -2137,15 +3702,18 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func clearPointSelection() {
+        endAccessLayerStudy()
         selectedPointEntityName = nil
         selectedPointLabel = nil
         selectedPointReferenceExpanded = false
         teachingImagingDrawerVisible = false
         familyNarrationPromptVisible = false
         activeFamilyNarrationText = nil
+        familyNarrationTranscriptVisible = false
     }
 
     func rotateSpatialView(delta: CGSize) {
+        guard !accessLayerStudy.isActive else { return }
         anatomyViewpoint = .free
         orbit.x += Float(delta.width) * 0.008
         orbit.y = min(max(orbit.y + Float(delta.height) * 0.006, -0.78), 0.78)
@@ -2178,6 +3746,7 @@ final class StrokeExperienceState: ObservableObject {
     }
 
     func magnifySpatialView(ratio: Double) {
+        guard !accessLayerStudy.isActive else { return }
         // A wide but finite numerical envelope supports tabletop, life-size,
         // and room-scale inspection. The app never teleports on scale alone;
         // a future interior-brain experience can use the explicit threshold.
@@ -2186,8 +3755,68 @@ final class StrokeExperienceState: ObservableObject {
 
     var isInteriorPortalAvailable: Bool { spatialZoom >= 3.2 }
 
+    func enterInternalBrainMode() {
+        guard isInteriorPortalAvailable else { return }
+        familyAtlasCerebellumJourneyRequested = false
+        internalBrainModeActive = true
+        requestedPause = false
+        activeFamilyNarrationText = nil
+        familyNarrationTranscriptVisible = false
+        familyNarrationPromptVisible = false
+    }
+
+    /// The selected example blockage is also an explicit spatial doorway.
+    /// Unlike magnification alone, this action is a deliberate wearer choice
+    /// and opens a separate generic lesson; it does not simulate diagnosis,
+    /// vessel cutting, treatment selection, or a treatment outcome.
+    func enterSelectedBlockageLesson() {
+        guard pointField == .procedure,
+              selectedPointEntityName == "\(StrokePointField.procedure.entityPrefix)2"
+        else { return }
+        spatialZoom = max(spatialZoom, 3.2)
+        enterInternalBrainMode()
+    }
+
+    /// The Brainstem + cerebellum Atlas chapter can hand off to the dedicated
+    /// generic cerebellum observatory. It is intentionally a separate scene:
+    /// the outer model remains a combined internal reference, while the
+    /// observatory can show folded form, vessel paths, and qualitative flow
+    /// without claiming patient anatomy, histology, or diagnostic detail.
+    func enterFamilyAtlasCerebellumJourney() {
+        guard audienceLens == .family,
+              spatialPhase == .explanation,
+              familyBrainAtlasChapter == .brainstemAndCerebellum
+        else { return }
+
+        spatialZoom = max(spatialZoom, 3.2)
+        enterInternalBrainMode()
+        familyAtlasCerebellumJourneyRequested = true
+    }
+
+    func leaveInternalBrainMode() {
+        internalBrainModeActive = false
+        familyAtlasCerebellumJourneyRequested = false
+        requestedPause = false
+    }
+
+    /// Returns a point-launched interior lesson to the same generic outer
+    /// explanation, using its intentional reading pose rather than retaining
+    /// the larger portal-entry scale. Other interior entries keep their own
+    /// exterior pose unchanged.
+    func returnToExteriorLessonContext() {
+        if selectedPointEntityName == "\(StrokePointField.procedure.entityPrefix)2" {
+            withAnimation(.easeInOut(duration: 0.42)) {
+                spatialZoom = Self.selectedBlockageExteriorZoom
+                orbit = Self.selectedBlockageExteriorOrbit
+            }
+        }
+        leaveInternalBrainMode()
+    }
+
     func resetSpatialView() {
         spatialZoom = 1
+        internalBrainModeActive = false
+        familyAtlasCerebellumJourneyRequested = false
         anatomyViewpoint = .threeQuarter
         orbit = anatomyViewpoint.orbit
     }
@@ -2283,6 +3912,9 @@ final class StrokeExperienceState: ObservableObject {
 
     func selectCareDiscussion(_ discussion: StrokeCareDiscussion) {
         selectedCareDiscussion = discussion
+        if audienceLens == .clinician, discussion == .medicineReview {
+            selectedScholarReferenceCategory = .medications
+        }
         reportIsVisible = false
         withAnimation(.easeInOut(duration: 0.6)) {
             planPreviewProgress = discussion == .thrombectomyReview ? 1 : 0.45
@@ -2307,7 +3939,9 @@ final class StrokeExperienceState: ObservableObject {
 
     func selectClinicianTool(_ tool: StrokeClinicianTool) {
         guard audienceLens == .clinician else { return }
+        accessLayerMotionTask?.cancel()
         selectedClinicianTool = tool
+        if accessLayerStudy.isActive { return }
         switch tool {
         case .focus:
             break
@@ -2315,22 +3949,185 @@ final class StrokeExperienceState: ObservableObject {
             setAnatomyPresentation(.transparent)
         case .layerReveal:
             present(step: .discussCare)
-        case .forceps, .cranialDrill:
+        case .forceps, .cranialDrill, .endovascularSet:
             // Display-only teaching props until specialist review defines a
             // safe interaction. Selection never cuts or modifies anatomy.
             break
         }
     }
 
+    func selectEndovascularConcept(_ concept: StrokeEndovascularConcept) {
+        guard audienceLens == .clinician else { return }
+        selectedClinicianTool = .endovascularSet
+        selectedEndovascularConcept = concept
+        clinicianDeviceInspectionYaw = 0
+        clinicianDeviceStudyBeat = .overview
+    }
+
+    func advanceEndovascularConcept() {
+        guard audienceLens == .clinician,
+              selectedClinicianTool == .endovascularSet else { return }
+        let concepts = StrokeEndovascularConcept.allCases
+        guard let index = concepts.firstIndex(of: selectedEndovascularConcept) else { return }
+        selectedEndovascularConcept = concepts[(index + 1) % concepts.count]
+        clinicianDeviceInspectionYaw = 0
+        clinicianDeviceStudyBeat = .overview
+    }
+
+    func advanceClinicianDeviceStudyBeat() {
+        guard audienceLens == .clinician,
+              selectedClinicianTool == .endovascularSet else { return }
+        let beats = StrokeClinicianDeviceStudyBeat.allCases
+        guard let index = beats.firstIndex(of: clinicianDeviceStudyBeat) else { return }
+        clinicianDeviceStudyBeat = beats[(index + 1) % beats.count]
+    }
+
+    func rotateClinicianDeviceInspection(delta: CGSize) {
+        guard audienceLens == .clinician,
+              selectedClinicianTool == .endovascularSet else { return }
+        let fullTurn = Float.pi * 2
+        clinicianDeviceInspectionYaw = (
+            clinicianDeviceInspectionYaw + Float(delta.width) * 0.006
+        ).truncatingRemainder(dividingBy: fullTurn)
+    }
+
+    // MARK: - Deliberate, non-operative access-layer interaction
+
+    func resolveAccessLayerStudyAvailability(_ available: Bool, viewingOrbit: SIMD2<Float>? = nil) {
+        accessLayerStudyAssetsAvailable = available
+        if let viewingOrbit { accessLayerStudyOrbit = viewingOrbit }
+        if !available { endAccessLayerStudy() }
+        if available, let opened = pendingAccessLayerStudyProofOpen {
+            pendingAccessLayerStudyProofOpen = nil
+            startAccessLayerStudy()
+            moveAccessStudyLayer(to: 1, reduceMotion: true)
+            selectAccessStudyLayer(.dura)
+            moveAccessStudyLayer(to: 1, reduceMotion: true)
+            if !opened { resetAccessLayerStudy() }
+        }
+    }
+
+    func startAccessLayerStudy() {
+        guard audienceLens == .clinician, spatialPhase == .explanation,
+              accessLayerStudyAssetsAvailable, pointField == .craniotomy else { return }
+        guard careViewPermissionGranted else {
+            accessLayerStudyEntryPending = true
+            isConsentPromptVisible = true
+            return
+        }
+        closeReferenceWorkspace()
+        cancelSpatialImagingFocus(resetTransform: true)
+        spatialImagingPlateVisible = false
+        accessLayerMotionTask?.cancel()
+        accessLayerDragOrigin = nil
+        if !accessLayerStudy.isActive {
+            accessStudyReturnState = (
+                anatomyPresentation, cortexOpacity, anatomyViewpoint, orbit, spatialZoom,
+                requestedPause, selectedClinicianTool, clinicianToolKitVisible
+            )
+        }
+        accessLayerStudy.start()
+        selectedClinicianTool = .forceps
+        clinicianToolKitVisible = true
+        teachingImagingDrawerVisible = false
+        selectedPointReferenceExpanded = false
+        requestedPause = true
+        questionPlacementArmed = false
+        spatialInkVisible = false
+        anatomyPresentation = .assembled
+        cortexOpacity = 0.92
+        anatomyViewpoint = .lateralB
+        orbit = accessLayerStudyOrbit
+        spatialZoom = 0.92
+    }
+
+    func selectAccessStudyLayer(_ layer: StrokeAccessStudyLayer) {
+        accessLayerMotionTask?.cancel()
+        accessLayerDragOrigin = nil
+        accessLayerStudy.select(layer)
+    }
+
+    func dragAccessStudyLayer(at position: SIMD3<Float>, along travel: SIMD3<Float>) {
+        guard audienceLens == .clinician, selectedClinicianTool == .forceps,
+              accessLayerStudy.canMoveSelectedLayer else { return }
+        accessLayerMotionTask?.cancel()
+        let travelSquared = travel.x * travel.x + travel.y * travel.y + travel.z * travel.z
+        guard travelSquared > 0.000_001 else { return }
+        if accessLayerDragOrigin == nil {
+            accessLayerDragOrigin = (position, accessLayerStudy.selectedProgress)
+        }
+        guard let origin = accessLayerDragOrigin else { return }
+        let delta = position - origin.position
+        let along = (delta.x * travel.x + delta.y * travel.y + delta.z * travel.z) / travelSquared
+        accessLayerStudy.move(to: origin.progress + along)
+    }
+
+    func finishAccessStudyDrag() {
+        accessLayerDragOrigin = nil
+    }
+
+    func toggleAccessStudyLayer(reduceMotion: Bool) {
+        moveAccessStudyLayer(to: accessLayerStudy.selectedProgress < 0.5 ? 1 : 0, reduceMotion: reduceMotion)
+    }
+
+    func moveAccessStudyLayer(to target: Float, reduceMotion: Bool) {
+        guard audienceLens == .clinician, selectedClinicianTool == .forceps,
+              accessLayerStudy.canMoveSelectedLayer, target.isFinite else { return }
+        accessLayerMotionTask?.cancel()
+        accessLayerDragOrigin = nil
+        let start = accessLayerStudy.selectedProgress
+        let target = min(1, max(0, target))
+        if reduceMotion {
+            accessLayerStudy.move(to: target)
+            return
+        }
+        accessLayerMotionTask = Task { @MainActor [weak self] in
+            for frame in 1...30 {
+                do { try await Task.sleep(for: .milliseconds(24)) } catch { return }
+                guard let self, !Task.isCancelled, self.accessLayerStudy.isActive else { return }
+                let t = Float(frame) / 30
+                self.accessLayerStudy.move(to: start + (target - start) * t * t * (3 - 2 * t))
+            }
+        }
+    }
+
+    func resetAccessLayerStudy() {
+        accessLayerMotionTask?.cancel()
+        accessLayerDragOrigin = nil
+        accessLayerStudy.reset()
+    }
+
+    func endAccessLayerStudy() {
+        accessLayerMotionTask?.cancel()
+        accessLayerMotionTask = nil
+        accessLayerDragOrigin = nil
+        accessLayerStudyEntryPending = false
+        accessLayerStudy.end()
+        if let previous = accessStudyReturnState {
+            accessStudyReturnState = nil
+            anatomyPresentation = previous.presentation
+            cortexOpacity = previous.opacity
+            anatomyViewpoint = previous.viewpoint
+            orbit = previous.orbit
+            spatialZoom = previous.zoom
+            requestedPause = previous.paused
+            selectedClinicianTool = previous.tool
+            clinicianToolKitVisible = previous.kitVisible
+        }
+    }
+
     func reset() {
+        closeReferenceWorkspace()
         cancelLayerReveal()
         cancelCaseReviewReveal()
+        dismissFamilyDiscoveryHint()
         procedureStep = .chooseCase
         audienceLens = .family
         presenterTeachingBeat = .confirmContext
         resetCatalogPresentation()
         isCaseSelected = false
         spatialPhase = .caseLibrary
+        selectedFictionalCaseIndex = 0
         spatialCaseDocked = false
         spatialCaseFilePosition = [-0.58, 1.45, -0.82]
         selectedCaseHistoryMilestone = .reportedChange
@@ -2351,17 +4148,37 @@ final class StrokeExperienceState: ObservableObject {
         selectedPresenterKeyPointIndex = nil
         clearQuestionMarker()
         pointField = .regions
+        selectedScholarReferenceCategory = .anatomy
         lessonPointsVisible = true
         teachingImagingDrawerVisible = false
         teachingImagingLens = .affectedVessel
+        spatialImagingPlateVisible = false
+        spatialImagingComparisonEnabled = false
+        spatialImagingReference = .ctGuide
+        spatialImagingPlatePosition = Self.spatialImagingDefaultPlatePosition
+        spatialImagingPlateScale = 1
+        spatialImagingDragOrigin = nil
+        spatialImagingScaleOrigin = nil
+        resetSpatialImagingAnnotation()
+        clearSpatialImagingLocalImage()
+        spatialAnnotations = []
+        spatialAnnotationDragOrigins = [:]
+        spatialInkVisible = false
+        spatialInkStrokes = []
+        activeSpatialInkStrokeID = nil
         clinicianToolKitVisible = false
         selectedClinicianTool = .focus
+        selectedEndovascularConcept = .microcatheter
+        clinicianDeviceInspectionYaw = 0
+        clinicianDeviceStudyBeat = .overview
         anatomyPresentation = .assembled
         anatomyFocus = .whole
+        availableAnatomyFocuses = [.whole]
+        anatomyAvailabilityResolved = false
         pendingAnatomyFocus = nil
         anatomyAvailabilityNotice = nil
         anatomyViewpoint = .threeQuarter
-        environmentMode = .warmHorizon
+        environmentMode = .focusField
         cortexOpacity = 0.34
         regionPortalActive = false
         clearPointSelection()
@@ -2436,6 +4253,14 @@ final class StrokeExperienceState: ObservableObject {
         clearPointSelection()
     }
 
+    /// Deterministic receipt for the first-action cue. Normal use dismisses it
+    /// after eight seconds; proof mode holds it so route OCR can verify the
+    /// instruction without turning the hint into permanent product UI.
+    func prepareFamilyEntryHintProof() {
+        prepareFamilyPressureStoryProof()
+        showFamilyDiscoveryHint(autoDismiss: false)
+    }
+
     func prepareFamilyBrainAtlasProof() {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
@@ -2496,6 +4321,30 @@ final class StrokeExperienceState: ObservableObject {
         revealFamilyBrainAtlasModelCue()
     }
 
+    /// Deterministic receipt for the object-first plain-language follow-up on
+    /// a combined deep Atlas chapter. The focused ventricular system is a
+    /// named source object; it is not a label or segmentation of the chapter
+    /// named in the teaching card.
+    func prepareFamilyAtlasInternalPlainWordsProof() {
+        prepareFamilyAtlasInternalReferenceProof()
+        setNarrationSetupAvailable(false)
+        showFamilyNarrationTranscript()
+    }
+
+    /// Deterministic receipt for the one deep chapter with a dedicated
+    /// cerebellum observatory. The route preserves the generic-model boundary
+    /// and deliberately begins on a quiet orientation view before the learner
+    /// chooses any optional fold or flow reading.
+    func prepareFamilyAtlasCerebellumJourneyProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        environmentMode = .focusField
+        familyBrainAtlasVisible = true
+        selectFamilyBrainAtlasChapter(.brainstemAndCerebellum)
+        revealFamilyBrainAtlasModelCue()
+        enterFamilyAtlasCerebellumJourney()
+    }
+
     /// Deterministic receipt for the Atlas's 3D surface-context handoff. It
     /// starts on the frontal chapter because the selected point has a visible
     /// tether to the outer teaching model rather than implying a deep or
@@ -2522,6 +4371,23 @@ final class StrokeExperienceState: ObservableObject {
         selectFamilyBrainAtlasChapter(.temporalLobe)
         advanceFamilyBrainAtlasDetail(by: 1)
         revealFamilyBrainAtlasModelCue()
+    }
+
+    /// Deterministic receipt for the alternate direct-brain entry point. The
+    /// state matches a temporal surface hit only after that hit has been
+    /// resolved to one reviewed generic Atlas context; it is not a substitute
+    /// for physical focus-and-pinch validation.
+    func prepareFamilyAtlasDirectSurfacePickProof() {
+        prepareProof(step: .inspectOcclusion)
+        audienceLens = .family
+        // The normal teaching experience opens in Black focus. Keep this
+        // receipt in that honest default so it verifies the direct surface
+        // pinch against the same high-contrast material presentation a new
+        // family learner receives.
+        environmentMode = .focusField
+        spatialZoom = 1.22
+        familyBrainAtlasVisible = true
+        selectFamilyAtlasSurfaceContext(atlasPointIndex: 3)
     }
 
     func prepareClinicianPressureStoryProof() {
@@ -2584,6 +4450,12 @@ final class StrokeExperienceState: ObservableObject {
         spatialZoom = 1.12
     }
 
+    func prepareAccessLayerStudyProof(opened: Bool) {
+        prepareClinicianCraniotomyStoryProof()
+        environmentMode = .focusField
+        pendingAccessLayerStudyProofOpen = opened
+    }
+
     func prepareClinicianLayerHierarchyProof() {
         prepareMainOverviewProof()
         // Scholar keeps the generic registered-v2 venous reference visible and
@@ -2596,7 +4468,10 @@ final class StrokeExperienceState: ObservableObject {
         prepareMainOverviewProof()
         selectDetailLevel(.scholar)
         selectAnatomyFocus(.internalStructures)
-        spatialZoom = 1.30
+        // The clinician explicitly selects a neutral field for this proof.
+        // `selectAnatomyFocus` itself supplies the live Internal minimum scale,
+        // so the route does not depend on a proof-only zoom correction.
+        environmentMode = .focusField
     }
 
     func prepareAnatomyVesselsFocusProof() {
@@ -2615,39 +4490,230 @@ final class StrokeExperienceState: ObservableObject {
 
     func prepareTeachingImagingProof() {
         prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
         selectPoint(
             entityName: "clinician-region-point-field-point-0",
             label: "Example affected area"
         )
+        placeSpatialImagingPlate(.ctGuide)
+        spatialImagingPlatePosition = [0.30, 1.43, -0.82]
+        spatialImagingPlateScale = 1.06
+        spatialImagingComparisonEnabled = true
+        spatialImagingAnnotationEnabled = true
+        let ring: (CGFloat, CGFloat) -> StrokeSpatialInkStroke = { centerX, radiusX in
+            let points = (0...28).map { step -> CGPoint in
+                let angle = (Double(step) / 28) * Double.pi * 2
+                return CGPoint(
+                    x: centerX + cos(angle) * radiusX,
+                    y: 0.48 + sin(angle) * 0.15
+                )
+            }
+            return StrokeSpatialInkStroke(id: UUID(), points: points)
+        }
+        spatialImagingInkStrokes = [
+            ring(0.27, 0.10),
+            ring(0.73, 0.10),
+        ]
+    }
+
+    /// A compact, source-aware vascular-study proof. The CTA card remains a
+    /// generic teaching schematic and the selected point remains a discussion
+    /// cue, not a claim that this image belongs to the fictional case.
+    func prepareImagingModalityReferenceProof() {
+        prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
+        selectPoint(
+            entityName: "clinician-procedure-point-field-point-2",
+            label: "Example blockage"
+        )
+        placeSpatialImagingPlate(.ctaGuide)
+        spatialImagingPlatePosition = [0.54, 1.43, -0.82]
+        spatialImagingPlateScale = 1.04
+        spatialImagingComparisonEnabled = false
+    }
+
+    /// A functional-imaging source-note receipt. PET remains a generic
+    /// teaching concept with an explicit public-science source; it is never
+    /// presented as a stroke study choice, patient scan, or result.
+    func prepareImagingPETTermNoteProof() {
+        prepareImagingModalityReferenceProof()
+        placeSpatialImagingPlate(.petOverview)
+        spatialImagingPlatePosition = [0.54, 1.43, -0.82]
+        spatialImagingPlateScale = 1.04
+    }
+
+    /// Shows the existing in-space study deck as a compact, vertical index of
+    /// structural, vascular, and functional teaching references. It remains
+    /// a generic reference picker rather than a patient-imaging workflow.
+    func prepareImagingStudyDeckProof() {
+        prepareImagingModalityReferenceProof()
+    }
+
+    /// Exercises the same state-clearing route as the visible Back control.
+    /// The proof intentionally enters an annotated, focused study first so a
+    /// clean returned anatomy state cannot be mistaken for a route that never
+    /// had a placed study to recover from.
+    func prepareImagingReturnToAnatomyProof() {
+        prepareImagingModalityReferenceProof()
+        spatialImagingAnnotationEnabled = true
+        toggleSpatialImagingFocus()
+        returnToAnatomyFromSpatialImaging()
+    }
+
+    /// Prepares the same placed generic reference used by the automated
+    /// deck-to-Back-to-reopen receipt. The attachment performs the timed
+    /// sequence only under its proof argument so shipping behavior remains
+    /// wholly presenter-driven.
+    func prepareImagingReturnReopenProof() {
+        prepareImagingModalityReferenceProof()
+    }
+
+    /// Prepares the same CTA teaching reference for a source-note-to-Back
+    /// recovery receipt. The attachment alone performs the timed transition
+    /// under its proof argument; normal source-note navigation stays manual.
+    func prepareImagingTermReturnReopenProof() {
+        prepareImagingModalityReferenceProof()
+    }
+
+    /// Exercises the same memory-only payload used by Files and drag import
+    /// with the bundled de-identified CT atlas image. This proves composition,
+    /// not access to or handling of a real clinical record.
+    func prepareLocalImagingImportProof() {
+        prepareMainOverviewProof()
+        selectDetailLevel(.scholar)
+        guard let ctData = UIImage(named: "StrokeCTTemplate")?.pngData(),
+              let mriData = UIImage(named: "StrokeMRITemplate")?.pngData() else { return }
+        _ = placeSpatialImagingLocalImage(
+            data: ctData,
+            displayName: "De-identified CT teaching image.png"
+        )
+        _ = placeSpatialImagingLocalComparisonImage(
+            data: mriData,
+            displayName: "De-identified MRI teaching image.png"
+        )
+        selectSpatialImagingModality(.ct, comparison: false)
+        selectSpatialImagingModality(.mri, comparison: true)
+        spatialImagingPlatePosition = [0.42, 1.40, -0.68]
+        spatialImagingPlateScale = 0.90
+        toggleSpatialImagingComparisonSeparation()
+        toggleSpatialImagingFocus()
+        selectedPointEntityName = "clinician-region-point-field-point-0"
+        selectedPointLabel = "Example affected area"
+        attachSelectedPointContextToSpatialImaging(comparison: false)
+        attachSelectedPointContextToSpatialImaging(comparison: true)
+        clearPointSelection()
+    }
+
+    /// Deterministic proof of the spatial document layer: one authored note
+    /// and one generic image can coexist, move independently, and retain their
+    /// point provenance without becoming patient data.
+    func prepareSpatialAnnotationProof() {
+        prepareMainOverviewProof()
+        selectLessonFamily(.procedure)
+        selectPoint(
+            entityName: "clinician-procedure-point-field-point-2",
+            label: "Example blockage"
+        )
+        pinSelectedPointNote()
+        placeSpatialImagingPlate(.ctGuide)
+        spatialImagingPlatePosition = [0.46, 1.48, -0.82]
+    }
+
+    /// Deterministic composition receipt for the clinician-only spatial ink
+    /// overlay. The seeded loop is generic markup around a teaching point, not
+    /// an access plan, measurement, or patient-specific contour.
+    func prepareSpatialInkProof() {
+        prepareMainOverviewProof()
+        selectLessonFamily(.procedure)
+        selectPoint(
+            entityName: "clinician-procedure-point-field-point-2",
+            label: "Example blockage"
+        )
+        spatialInkVisible = true
+        let points = (0...36).map { step -> CGPoint in
+            let angle = (Double(step) / 36) * Double.pi * 2
+            return CGPoint(
+                x: 0.61 + cos(angle) * 0.09,
+                y: 0.48 + sin(angle) * 0.14
+            )
+        }
+        spatialInkStrokes = [StrokeSpatialInkStroke(id: UUID(), points: points)]
     }
 
     /// Family-specific receipt for the same point -> spatial teaching object
     /// relationship. This deliberately avoids clinician rails and makes no
     /// claim that the point or the vessel map is a patient image.
     func prepareFamilyTeachingReferenceProof() {
-        prepareProof(step: .inspectOcclusion)
-        audienceLens = .family
-        environmentMode = .surroundings
-        pointField = .regions
-        lessonPointsVisible = true
-        selectPoint(
-            entityName: "clinician-region-point-field-point-0",
-            label: "Example affected area"
-        )
+        prepareFamilyAffectedReferenceProof()
+    }
+
+    /// The affected-area invitation deliberately opens the complete arterial
+    /// dependency reference rather than implying that the tissue cue itself
+    /// is a segmented lesion or patient scan.
+    func prepareFamilyAffectedReferenceProof() {
+        prepareFamilyRegionalReferenceProof(pointIndex: 0, label: "Example affected area")
     }
 
     /// Receipt for a surface/context point that owns a distinct full 3D
     /// brain-surface object after the Family wearer asks for it.
     func prepareFamilySurfaceReferenceProof() {
+        prepareFamilyRegionalReferenceProof(pointIndex: 2, label: "Brain surface")
+    }
+
+    /// Deterministic receipt for the no-proxy fallback. It proves that a
+    /// selected family point remains useful without starting voice, recording,
+    /// or silently accepting narration consent.
+    func prepareFamilyReadMoreProof() {
+        prepareFamilySurfaceReferenceProof()
+        setNarrationSetupAvailable(false)
+        showFamilyNarrationTranscript()
+    }
+
+    func prepareFamilyNearbyReferenceProof() {
+        prepareFamilyRegionalReferenceProof(pointIndex: 1, label: "Nearby brain tissue")
+    }
+
+    /// Interaction receipt: the left exploration rail, not a direct proof
+    /// setter, changes the active anatomy point and its right-side reference.
+    func prepareFamilyExploreNearbyProof() {
+        prepareFamilyAffectedReferenceProof()
+        selectFamilyQuestion("Keep nearby anatomy in view")
+    }
+
+    func prepareFamilyOppositeReferenceProof() {
+        prepareFamilyRegionalReferenceProof(pointIndex: 3, label: "Opposite-side context")
+    }
+
+    private func prepareFamilyRegionalReferenceProof(pointIndex: Int, label: String) {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
         environmentMode = .surroundings
         pointField = .regions
         lessonPointsVisible = true
         selectPoint(
-            entityName: "clinician-region-point-field-point-2",
-            label: "Brain surface"
+            entityName: "clinician-region-point-field-point-\(pointIndex)",
+            label: label
         )
+    }
+
+    /// Deterministic receipt for a point-led 3D teaching object. The neuron is
+    /// a generic schematic in the secondary field, never patient tissue or a
+    /// claim about an individual person's neural activity.
+    func prepareFamilyNeuronReferenceProof() {
+        prepareFamilyRegionalReferenceProof(
+            pointIndex: 4,
+            label: "Single neuron · schematic reference"
+        )
+        spatialZoom = 1.18
+    }
+
+    /// Deterministic family receipt for the local written fallback. It keeps
+    /// the selected schematic neuron in place and shows a shorter, authored
+    /// explanation without starting audio, recording, or inferring a need.
+    func prepareFamilyNeuronPlainWordsProof() {
+        prepareFamilyNeuronReferenceProof()
+        setNarrationSetupAvailable(false)
+        showFamilyNarrationTranscript()
     }
 
     /// Receipt for a vascular point that owns the complete registered arterial
@@ -2668,6 +4734,14 @@ final class StrokeExperienceState: ObservableObject {
         )
     }
 
+    /// Comparison receipt for the branch point's one-to-many route trace.
+    func prepareFamilyArterialBranchReferenceProof() {
+        prepareFamilyArterialReferenceProof(
+            pointIndex: 1,
+            label: "Arteries branch"
+        )
+    }
+
     /// Comparison receipt: the same complete arterial tree must visibly
     /// localise the downstream relationship beyond the teaching blockage.
     func prepareFamilyArterialBeyondReferenceProof() {
@@ -2675,6 +4749,45 @@ final class StrokeExperienceState: ObservableObject {
             pointIndex: 3,
             label: "Flow beyond the blockage changes"
         )
+    }
+
+    /// Interaction receipt for a second rail-driven reference transition.
+    func prepareFamilyExploreBeyondProof() {
+        prepareFamilyArterialReferenceProof()
+        selectFamilyQuestion("Compare before and beyond the blockage")
+    }
+
+    /// Comparison receipt for the quiet dependency-area cue at the end of the
+    /// selected generic route. This is not an infarct or perfusion boundary.
+    func prepareFamilyArterialTerritoryReferenceProof() {
+        prepareFamilyArterialReferenceProof(
+            pointIndex: 4,
+            label: "Affected territory"
+        )
+    }
+
+    /// Deterministic receipt for the second-click route interaction in the
+    /// right teaching field: blockage advances to downstream context while the
+    /// example blockage remains part of the same generic arterial reference.
+    func prepareFamilyVesselRouteTraceProof() {
+        prepareFamilyArterialReferenceProof()
+        traceProcedureRoute(by: 1)
+    }
+
+    /// Deterministic end state for the contextual second scene launched from
+    /// the example blockage reference. The internal model owns the rendered
+    /// blockage lesson; this state only proves the exterior selection and the
+    /// explicit handoff into that scene.
+    func prepareFamilyBlockageInteriorProof() {
+        prepareFamilyArterialReferenceProof()
+        spatialZoom = 3.2
+        enterSelectedBlockageLesson()
+    }
+
+    /// Uses the same selected example blockage state as the interior proof,
+    /// then lets the immersive view exercise its real return handler.
+    func prepareFamilyBlockageReturnProof() {
+        prepareFamilyBlockageInteriorProof()
     }
 
     private func prepareFamilyArterialReferenceProof(
@@ -2766,10 +4879,271 @@ final class StrokeExperienceState: ObservableObject {
         selectedPointLabel = "Illustrative blockage focus"
     }
 
+    func prepareIntegratedInteriorProof() {
+        prepareInteriorHandoffProof()
+        enterInternalBrainMode()
+    }
+
     func prepareClinicianToolKitProof() {
         prepareClinicianProof(step: .inspectOcclusion)
         clinicianToolKitVisible = true
-        selectedClinicianTool = .forceps
+        selectedClinicianTool = .endovascularSet
+        selectedEndovascularConcept = .microcatheter
+        clinicianDeviceInspectionYaw = 0
+        clinicianDeviceStudyBeat = .overview
+    }
+
+    func prepareClinicianToolKitFullProof() {
+        prepareClinicianToolKitProof()
+        selectDetailLevel(.scholar)
+    }
+
+    func prepareClinicianToolKitMotionProof() {
+        prepareClinicianToolKitProof()
+        selectDetailLevel(.scholar)
+        clinicianDeviceStudyBeat = .approach
+    }
+
+    /// Holds the presenter scene in its paused, distraction-reduced state so
+    /// the control surface proves both an explicit Resume action and the clean
+    /// black environment. This is state/render proof, not wearer reach proof.
+    func preparePresenterControlsProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        selectDetailLevel(.scholar)
+        environmentMode = .focusField
+        requestedPause = true
+        anatomyPresentation = .assembled
+        pointField = .regions
+        lessonPointsVisible = true
+        clearPointSelection()
+    }
+
+    /// Deterministic receipt for the secondary presentation controls. The
+    /// presenter checklist stays language-led while supporting-anatomy choices
+    /// remain in the right-side Settings tab.
+    func preparePresentationSettingsProof() {
+        prepareClinicianProof(step: .inspectOcclusion)
+        selectDetailLevel(.scholar)
+        environmentMode = .focusField
+        anatomyPresentation = .transparent
+        cortexOpacity = 0.58
+        pointField = .regions
+        lessonPointsVisible = true
+        clearPointSelection()
+        selectScholarReferenceCategory(.teachingModel)
+        openReferenceWorkspace(.settings)
+        spatialZoom = 1.18
+    }
+
+    func prepareReferenceWorkspaceProof(_ workspace: StrokeReferenceWorkspace) {
+        preparePresenterControlsProof()
+        openReferenceWorkspace(workspace)
+    }
+
+    func prepareImagingGalleryProof(layout: StrokeGalleryLayout = .two, returns: Bool = false) {
+        preparePresenterControlsProof()
+        imagingGallery = StrokeImagingGalleryModel()
+        imagingGallery.layout = layout
+        openReferenceWorkspace(.imagingGallery)
+        if returns {
+            let request = imagingGallery.beginImport()
+            closeReferenceWorkspace()
+            precondition(imagingGallery.pendingImport == nil)
+            precondition(imagingGallery.completeImport(request, images: []) == 0)
+            precondition(focusedReferenceWorkspace == nil && !spatialImagingFocusActive)
+        }
+    }
+
+    /// Runtime state proof, not a Files-picker or wearer gesture test. Uses
+    /// only bundled research rasters, including an explicitly named local fixture.
+    func prepareImagingGalleryPlacementProof(local: Bool = false, returns: Bool = false) {
+        prepareImagingGalleryProof()
+        var checks = 0
+        func check(_ value: Bool) { precondition(value); checks += 1 }
+        let step = procedureStep
+        let zoom = spatialZoom
+        let originalOrbit = orbit
+        let points = [CGPoint(x: 0.35, y: 0.45), CGPoint(x: 0.50, y: 0.38), CGPoint(x: 0.65, y: 0.45)]
+        let atlasID = imagingGallery.images[0].id
+        imagingGallery.appendStroke(points, to: atlasID)
+        let pending = imagingGallery.beginImport()
+        check(!placeImagingGalleryImage(UUID()))
+        check(imagingGallery.pendingImport == pending)
+        check(placeImagingGalleryImage(atlasID))
+        check(focusedReferenceWorkspace == nil && spatialImagingPlateVisible)
+        check(!spatialImagingFocusActive && !teachingImagingDrawerVisible)
+        check(spatialImagingGalleryImage?.id == atlasID && spatialImagingLocalImageData == nil)
+        check(spatialImagingReference == .ctGuide && spatialImagingGalleryRaster != nil)
+        check(spatialImagingInkStrokes.map(\.points) == [points])
+        check(imagingGallery.pendingImport == nil && imagingGallery.images.allSatisfy { $0.strokes.isEmpty })
+        check(imagingGallery.completeImport(pending, images: []) == 0)
+        let placement = spatialImagingPlatePosition
+        toggleSpatialImagingFocus()
+        toggleSpatialImagingFocus()
+        check(spatialImagingPlatePosition == placement && spatialImagingInkStrokes.map(\.points) == [points])
+        toggleSpatialImagingAnnotation()
+        beginSpatialImagingInk(at: CGPoint(x: 0.1, y: 0.1))
+        endSpatialImagingInk(at: CGPoint(x: 0.2, y: 0.2))
+        check(spatialImagingInkStrokes.count == 2)
+        undoSpatialImagingInk()
+        check(spatialImagingInkStrokes.map(\.points) == [points])
+        returnToAnatomyFromSpatialImaging()
+        check(spatialImagingGalleryImage == nil && spatialImagingInkStrokes.isEmpty && !spatialImagingPlateVisible)
+        check(procedureStep == step && spatialZoom == zoom && orbit == originalOrbit)
+
+        openReferenceWorkspace(.imagingGallery)
+        let invalid = StrokeGalleryImage(name: "Invalid test fixture", modality: .unspecified, data: Data([1]))
+        let invalidRequest = imagingGallery.beginImport()
+        check(imagingGallery.completeImport(invalidRequest, images: [invalid]) == 1)
+        check(!placeImagingGalleryImage(invalid.id) && focusedReferenceWorkspace == .imagingGallery)
+        imagingGallery.remove(invalid.id)
+        guard let data = UIImage(named: "StrokeMRITemplate")?.pngData() else { preconditionFailure("Missing MRI research atlas") }
+        let fixture = StrokeGalleryImage(name: "MRI atlas local test copy", modality: .unspecified, data: data)
+        let request = imagingGallery.beginImport()
+        check(imagingGallery.completeImport(request, images: [fixture]) == 1)
+        imagingGallery.setModality(.mri, for: fixture.id)
+        imagingGallery.appendStroke(points, to: fixture.id)
+        check(placeImagingGalleryImage(fixture.id))
+        check(spatialImagingLocalImageData == data && spatialImagingLocalImageModality == .mri)
+        check(spatialImagingGalleryImage?.name == fixture.name && spatialImagingGalleryImage?.isLocal == true)
+        check(spatialImagingInkStrokes.map(\.points) == [points] && imagingGallery.localBytes == 0)
+        check(spatialImagingLocalComparisonImageData == nil && !spatialImagingComparisonEnabled)
+        if returns || !local {
+            returnToAnatomyFromSpatialImaging()
+            check(spatialImagingLocalImageData == nil && spatialImagingGalleryImage == nil && spatialImagingInkStrokes.isEmpty)
+        }
+        if !returns && !local {
+            openReferenceWorkspace(.imagingGallery)
+            imagingGallery.appendStroke(points, to: atlasID)
+            check(placeImagingGalleryImage(atlasID))
+        }
+        check(returns ? !spatialImagingPlateVisible : spatialImagingPlateVisible)
+        check(returns ? spatialImagingGalleryImage == nil : spatialImagingGalleryImage != nil)
+        print("IMAGING_GALLERY_PLACEMENT=PASS checks=\(checks) visible=\(spatialImagingPlateVisible)")
+    }
+
+    /// Exercise the same exclusive destinations and Back actions as the UI.
+    /// The final frame must restore the original anatomy, point and timeline.
+    func prepareReferenceReturnProof() {
+        preparePresenterControlsProof()
+        let originalStep = procedureStep
+        let originalOrbit = orbit
+        let originalZoom = spatialZoom
+        placeSpatialImagingPlate(.ctGuide)
+        toggleSpatialImagingFocus()
+        openReferenceWorkspace(.medications)
+        openReferenceWorkspace(.guides)
+        openReferenceWorkspace(.settings)
+        // A visual preference must not remove the menu needed to change it.
+        selectDetailLevel(.calm)
+        closeReferenceWorkspace()
+        assert(focusedReferenceWorkspace == nil && !spatialImagingFocusActive)
+        assert(!spatialImagingPlateVisible && !teachingImagingDrawerVisible)
+        assert(detailLevel == .calm)
+        assert(procedureStep == originalStep && orbit == originalOrbit && spatialZoom == originalZoom)
+    }
+
+    func prepareImagingRoomProof() {
+        preparePresenterControlsProof()
+        placeSpatialImagingPlate(.ctGuide)
+        toggleSpatialImagingFocus()
+        // Study switching must remain inside the focused imaging workspace.
+        placeSpatialImagingPlate(.mriGuide)
+        placeSpatialImagingPlate(.ctGuide)
+        assert(spatialImagingFocusActive && spatialImagingPlateVisible)
+    }
+
+    /// Runs the real import/markup/navigation state handlers with a bundled
+    /// licensed atlas raster. This does not exercise Files UI or a pinch.
+    func prepareImagingImportLifecycleProof(returnToAnatomy: Bool = false) {
+        prepareImagingRoomProof()
+        guard let imageData = UIImage(named: "StrokeCTTemplate")?.pngData() else {
+            preconditionFailure("Import proof needs the bundled licensed CT raster")
+        }
+        var checks = 0
+        func check(_ condition: Bool, _ message: String) {
+            precondition(condition, message)
+            checks += 1
+        }
+        func request(_ target: StrokeLocalImageImportTarget = .primary) -> StrokeImagingImportRequest {
+            guard let result = beginSpatialImagingImport(target: target) else {
+                preconditionFailure("Expected an active imaging import destination")
+            }
+            return result
+        }
+        func finish(_ request: StrokeImagingImportRequest, data: Data? = nil) -> Bool {
+            completeSpatialImagingImport(request, data: data ?? imageData, displayName: "Open atlas CT.png")
+        }
+
+        let beforeBack = request()
+        returnToAnatomyFromSpatialImaging()
+        check(!finish(beforeBack), "Late import after Back must be rejected")
+        check(!spatialImagingPlateVisible && !spatialImagingFocusActive, "Back must stay on anatomy")
+        check(spatialImagingLocalImageData == nil, "Back releases the local payload")
+
+        placeSpatialImagingPlate(.ctGuide)
+        toggleSpatialImagingFocus()
+        let beforeSettings = request()
+        openReferenceWorkspace(.settings)
+        check(!finish(beforeSettings), "Late import cannot close Settings")
+        check(focusedReferenceWorkspace == .settings && !spatialImagingPlateVisible, "Settings keeps sole focus")
+        closeReferenceWorkspace()
+
+        placeSpatialImagingPlate(.ctGuide)
+        toggleSpatialImagingFocus()
+        let beforeStudyChange = request()
+        placeSpatialImagingPlate(.mriGuide)
+        check(!finish(beforeStudyChange), "Changing studies cancels the earlier import")
+        check(spatialImagingReference == .mriGuide && spatialImagingFocusActive, "New study retains focus")
+
+        let older = request()
+        let newest = request()
+        check(!finish(older), "Older reads cannot replace the newest choice")
+        check(finish(newest), "The newest request imports successfully")
+        check(!finish(newest), "Duplicate completion cannot replace an image")
+        selectSpatialImagingModality(.ct, comparison: false)
+        toggleSpatialImagingAnnotation()
+        beginSpatialImagingInk(at: CGPoint(x: 0.42, y: 0.48))
+        continueSpatialImagingInk(at: CGPoint(x: 0.49, y: 0.43))
+        endSpatialImagingInk(at: CGPoint(x: 0.57, y: 0.49))
+        toggleSpatialImagingAnnotation()
+        let originalInk = spatialImagingInkStrokes
+        check(originalInk.count == 1, "Imported image accepts a surface mark")
+
+        let unreadable = request()
+        check(!finish(unreadable, data: Data([0, 1, 2])), "Unreadable image is rejected")
+        check(spatialImagingInkStrokes == originalInk, "Rejected import preserves the current markup")
+        check(spatialImagingLocalImageData == imageData, "Rejected import preserves the current image")
+        toggleSpatialImagingFocus()
+        toggleSpatialImagingFocus()
+        check(spatialImagingInkStrokes == originalInk, "Placing and refocusing preserves markup")
+
+        clearSpatialImagingLocalImage()
+        check(spatialImagingInkStrokes.isEmpty, "Removing an image removes its marks")
+        check(finish(request()), "A new import still works after removing a local image")
+        toggleSpatialImagingAnnotation()
+        beginSpatialImagingInk(at: CGPoint(x: 0.45, y: 0.47))
+        endSpatialImagingInk(at: CGPoint(x: 0.55, y: 0.47))
+        placeSpatialImagingPlate(.mriGuide)
+        check(spatialImagingInkStrokes.isEmpty, "Atlas template cannot inherit local-image marks")
+
+        check(finish(request()), "Import recovers after a study change")
+        selectSpatialImagingModality(.ct, comparison: false)
+        toggleSpatialImagingAnnotation()
+        beginSpatialImagingInk(at: CGPoint(x: 0.40, y: 0.53))
+        continueSpatialImagingInk(at: CGPoint(x: 0.45, y: 0.43))
+        continueSpatialImagingInk(at: CGPoint(x: 0.52, y: 0.42))
+        endSpatialImagingInk(at: CGPoint(x: 0.58, y: 0.52))
+        toggleSpatialImagingAnnotation()
+        if !spatialImagingFocusActive { toggleSpatialImagingFocus() }
+        if returnToAnatomy {
+            let pending = request()
+            returnToAnatomyFromSpatialImaging()
+            check(!finish(pending), "Final Back rejects an in-flight import")
+            check(spatialImagingLocalImageData == nil && spatialImagingInkStrokes.isEmpty,
+                  "Final Back releases temporary images and markup")
+        }
+        print("IMAGING_IMPORT_LIFECYCLE=PASS checks=\(checks) returned=\(returnToAnatomy)")
     }
 
     func prepareTransparentLayerProof() {
@@ -2817,6 +5191,15 @@ final class StrokeExperienceState: ObservableObject {
         pointField = .regions
     }
 
+    /// Proves that a non-default dossier survives selection, review, and the
+    /// explicit threshold into the generic anatomy explanation.
+    func prepareSelectedCaseHandoffProof() {
+        prepareSpatialDockedCaseProof()
+        selectedFictionalCaseIndex = 7
+        selectedCaseHistoryMilestone = .reportedChange
+        caseReviewRevealProgress = 1
+    }
+
     /// Current deterministic case-unfold proof. Unlike the retired window
     /// mock, this state drives the room-scale dossier-to-history composition.
     func prepareCaseHistoryWebProof() {
@@ -2840,10 +5223,8 @@ final class StrokeExperienceState: ObservableObject {
     func prepareFamilyClarityProof() {
         prepareProof(step: .inspectOcclusion)
         audienceLens = .family
+        selectFamilyQuestion("Start with one glowing point")
         setFamilyClarityCheck(1)
-        if familyQuestionSuggestions.indices.contains(1) {
-            selectFamilyQuestion(familyQuestionSuggestions[1])
-        }
     }
 
     func preparePresenterPlainLanguageProof() {
@@ -2855,7 +5236,7 @@ final class StrokeExperienceState: ObservableObject {
     var discussionReport: String {
         let plan = selectedCareDiscussion?.title ?? "No pathway selected"
         return """
-        \(teachingCase.id) · FICTIONAL
+        \(selectedFictionalCase.id) · FICTIONAL
         Seen: schematic blockage + tissue at risk.
         Open: \(plan).
         Ask: What did imaging show? Which options now? What happens next?

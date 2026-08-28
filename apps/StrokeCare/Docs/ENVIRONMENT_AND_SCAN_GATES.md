@@ -37,8 +37,13 @@ Sources:
 
 ## Audio contract
 
-- Prelude: the local `FlowBed.wav` starts quietly before role selection.
+- Prelude: the local `FlowBed.wav` remains silent until the wearer explicitly
+  selects **Sound on**. It can be muted at the doorway or inside the experience.
 - Anatomy: flow and pressure beds remain entity-anchored and manually mutable.
+- Control confirmation: on visionOS 26 or later, confirmed spatial-control
+  actions can use SwiftUI's system-managed semantic feedback. The visionOS 2
+  baseline retains the same visible selected state without promising tactile
+  output.
 - Narration: the optional `gpt-realtime-2.1` route reads only the exact reviewed
   caption for the current act through a developer-controlled proxy. There is no
   system-speech fallback, improvisation, diagnosis, anxiety inference, or

@@ -72,13 +72,16 @@ struct StrokeJourneyLaunchView: View {
     @State private var fileDrag = CGSize.zero
     @State private var proofRouteHasRun = false
     @State private var introBeat = 0
+    @State private var introLineReveal = 0
     @State private var introSequenceWasSkipped = false
     @StateObject private var prelude = StrokePreludeAudio()
 
     var body: some View {
+        let usesAsymmetricHeroLayout = introBeat == 0
         ZStack {
             if introBeat < 4 {
                 StrokeSpatialPreludeView(beat: introBeat, reduceMotion: reduceMotion)
+                    .id(introBeat)
                     .transition(.opacity)
             } else {
                 LinearGradient(
@@ -96,6 +99,20 @@ struct StrokeJourneyLaunchView: View {
                         .tracking(2.0)
                         .foregroundStyle(.orange)
                     Spacer()
+                    Button {
+                        experience.soundEnabled.toggle()
+                        experience.registerInteractionFeedback()
+                    } label: {
+                        Label(
+                            experience.soundEnabled ? "Sound on" : "Sound off",
+                            systemImage: experience.soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill"
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(experience.soundEnabled ? .cyan : .secondary)
+                    .accessibilityLabel(experience.soundEnabled ? "Mute optional ambient sound" : "Enable optional ambient sound")
+                    .accessibilityHint("Ambient sound is optional and does not change the lesson")
                     if introBeat < 4 {
                         Button("Skip story") {
                             introSequenceWasSkipped = true
@@ -113,11 +130,11 @@ struct StrokeJourneyLaunchView: View {
                 Spacer(minLength: 0)
 
                 if introBeat >= 4 {
-                    Text("How would you like to explore?")
+                    Text("Choose your way in.")
                         .font(.system(size: 38, weight: .semibold, design: .rounded))
                         .multilineTextAlignment(.center)
 
-                    Text("Follow your curiosity, or prepare a guided clinical conversation.")
+                    Text("Explore freely, or prepare a guided explanation.")
                         .font(.headline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -125,8 +142,8 @@ struct StrokeJourneyLaunchView: View {
                     HStack(spacing: 16) {
                         roleChoiceCard(
                             title: "Curious learner",
-                            subtitle: "Wander through a guided anatomy exhibit",
-                            detail: "Ask aloud, discover structures, and hear plain-language explanations",
+                            subtitle: "Discover the brain at your own pace",
+                            detail: "Follow spatial stories, enter internal systems, and ask for plain-language guidance",
                             systemImage: "sparkles",
                             tint: .orange,
                             prominent: true
@@ -137,8 +154,8 @@ struct StrokeJourneyLaunchView: View {
 
                         roleChoiceCard(
                             title: "Doctor presenter",
-                            subtitle: "Review a fictional case, then guide the story",
-                            detail: "Presenter timeline, teaching references, and evidence",
+                            subtitle: "Guide a careful family conversation",
+                            detail: "Use a fictional case, presentation timeline, teaching references, and evidence",
                             systemImage: "stethoscope",
                             tint: .cyan,
                             prominent: false
@@ -148,17 +165,26 @@ struct StrokeJourneyLaunchView: View {
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else {
-                    VStack(spacing: 12) {
+                    VStack(alignment: usesAsymmetricHeroLayout ? .leading : .center, spacing: 14) {
+                        Text(String(format: "%02d / 04", introBeat + 1))
+                            .font(.caption2.monospaced().weight(.bold))
+                            .tracking(2.2)
+                            .foregroundStyle(.cyan.opacity(0.72))
+
                         Text(introTitle)
-                            .font(.system(size: 34, weight: .semibold, design: .rounded))
-                            .multilineTextAlignment(.center)
-                            .contentTransition(.opacity)
+                            .font(.system(size: 38, weight: .semibold, design: .rounded))
+                            .multilineTextAlignment(usesAsymmetricHeroLayout ? .leading : .center)
+                            .frame(maxWidth: .infinity, alignment: usesAsymmetricHeroLayout ? .leading : .center)
+                            .opacity(introLineReveal >= 1 ? 1 : 0)
+                            .offset(y: introLineReveal >= 1 ? 0 : 8)
 
                         Text(introSubtitle)
                             .font(.headline)
                             .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .contentTransition(.opacity)
+                            .multilineTextAlignment(usesAsymmetricHeroLayout ? .leading : .center)
+                            .frame(maxWidth: .infinity, alignment: usesAsymmetricHeroLayout ? .leading : .center)
+                            .opacity(introLineReveal >= 2 ? 1 : 0)
+                            .offset(y: introLineReveal >= 2 ? 0 : 8)
 
                         HStack(spacing: 10) {
                             ForEach(0..<4, id: \.self) { index in
@@ -169,15 +195,16 @@ struct StrokeJourneyLaunchView: View {
                         }
                         .animation(.easeInOut(duration: 0.35), value: introBeat)
 
-                        Button("Continue", systemImage: "arrow.right") {
+                        Button(introActionTitle, systemImage: "arrow.right") {
                             advanceIntroBeat()
                         }
                         .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .accessibilityHint(introActionHint)
                     }
+                    .frame(maxWidth: usesAsymmetricHeroLayout ? 310 : 610, alignment: usesAsymmetricHeroLayout ? .leading : .center)
+                    .offset(x: usesAsymmetricHeroLayout ? -205 : 0)
                     .padding(.horizontal, 24)
-                    .padding(.vertical, 18)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24))
-                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.12)))
                 }
 
                 Spacer(minLength: 0)
@@ -196,34 +223,88 @@ struct StrokeJourneyLaunchView: View {
         .padding(26)
         .frame(width: 820, height: 520)
         .onAppear {
-            prelude.play()
+            if experience.soundEnabled {
+                prelude.play()
+            }
             routeProofIfNeeded()
         }
+        .onChange(of: experience.soundEnabled) { _, enabled in
+            if enabled {
+                prelude.play()
+            } else {
+                prelude.stop()
+            }
+        }
         .onDisappear { prelude.stop() }
+        .strokeSemanticSelectionFeedback(trigger: experience.interactionFeedbackToken)
         .task { await playIntroSequence() }
+        .task(id: introBeat) { await revealIntroCopy() }
     }
 
     private var introTitle: String {
         switch introBeat {
-        case 0: "Begin with the whole brain."
-        case 1: "Zoom in: structure becomes story."
+        case 0: "The brain is not one object."
+        case 1: "A surface becomes a world."
         case 2: "Signals become networks."
-        default: "Curiosity is the way in."
+        default: "There is always another scale."
         }
     }
 
     private var introSubtitle: String {
         switch introBeat {
-        case 0: "Its folds and vessel pathways form one connected living system."
-        case 1: "Cortical columns organise local circuits in this conceptual teaching view."
-        case 2: "Neurons pass electrochemical signals across changing connections."
-        default: "Choose a guided discovery, or prepare a clinical conversation."
+        case 0: "Folds, vessels, fluid spaces, deep structures, and signalling networks share one volume."
+        case 1: "Move closer and broad folds resolve into layered cortical architecture."
+        case 2: "Cells hand activity from branch to branch while vessels support the surrounding tissue."
+        default: "Explore with curiosity, or guide a family through a careful clinical explanation."
+        }
+    }
+
+    /// The prelude is a short spatial sequence, not a slideshow. Naming the
+    /// next scale on the control lets a learner understand the consequence of
+    /// a pinch before they take it, without adding another explanatory panel.
+    private var introActionTitle: String {
+        switch introBeat {
+        case 0: "See cortical columns"
+        case 1: "See signalling networks"
+        case 2: "See another scale"
+        default: "Choose a path"
+        }
+    }
+
+    private var introActionHint: String {
+        switch introBeat {
+        case 0: "Moves from the whole brain to a conceptual cortical-column view"
+        case 1: "Moves from cortical columns to a conceptual signalling-network view"
+        case 2: "Moves to the final invitation before choosing how to explore"
+        default: "Opens the Curious learner and Doctor presenter choices"
         }
     }
 
     private func advanceIntroBeat() {
+        introLineReveal = 0
         withAnimation(.easeInOut(duration: 0.55)) {
             introBeat = min(introBeat + 1, 4)
+        }
+    }
+
+    @MainActor
+    private func revealIntroCopy() async {
+        guard introBeat < 4 else {
+            introLineReveal = 2
+            return
+        }
+        if reduceMotion {
+            introLineReveal = 2
+            return
+        }
+        introLineReveal = 0
+        withAnimation(.easeOut(duration: 0.42)) {
+            introLineReveal = 1
+        }
+        try? await Task.sleep(for: .milliseconds(620))
+        guard !Task.isCancelled else { return }
+        withAnimation(.easeOut(duration: 0.48)) {
+            introLineReveal = 2
         }
     }
 
@@ -580,6 +661,8 @@ struct StrokeJourneyLaunchView: View {
         proofRouteHasRun = true
         if CommandLine.arguments.contains("--proof-role-choice") {
             introBeat = 4
+        } else if CommandLine.arguments.contains("--proof-spatial-prelude-hero") {
+            introBeat = 0
         } else if CommandLine.arguments.contains("--proof-spatial-prelude") {
             introBeat = 2
         } else if CommandLine.arguments.contains("--proof-case-unfold") ||
@@ -601,14 +684,32 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-interior-handoff") {
             experience.prepareInteriorHandoffProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-integrated-interior")
+            || CommandLine.arguments.contains("--proof-integrated-ventricles")
+            || CommandLine.arguments.contains("--proof-integrated-cortex")
+            || CommandLine.arguments.contains("--proof-integrated-cortex-flow")
+            || CommandLine.arguments.contains("--proof-integrated-neural-gradient")
+            || CommandLine.arguments.contains("--proof-integrated-neural")
+            || CommandLine.arguments.contains("--proof-integrated-loading") {
+            experience.prepareIntegratedInteriorProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-atlas-surface-cue") {
             experience.prepareFamilyAtlasSurfaceCueProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-direct-surface-pick") {
+            experience.prepareFamilyAtlasDirectSurfacePickProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-atlas-temporal-cue") {
             experience.prepareFamilyAtlasTemporalCueProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-internal-plain-words") {
+            experience.prepareFamilyAtlasInternalPlainWordsProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-atlas-internal-reference") {
             experience.prepareFamilyAtlasInternalReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-atlas-cerebellum-journey") {
+            experience.prepareFamilyAtlasCerebellumJourneyProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-transparent-layer") {
             experience.prepareTransparentLayerProof()
@@ -637,8 +738,59 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-environment-focus") {
             experience.prepareEnvironmentProof(.focusField)
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-presenter-controls") {
+            experience.preparePresenterControlsProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-presentation-settings") {
+            experience.preparePresentationSettingsProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-placement-return") {
+            experience.prepareImagingGalleryPlacementProof(returns: true)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-placed-local") {
+            experience.prepareImagingGalleryPlacementProof(local: true)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-placed") {
+            experience.prepareImagingGalleryPlacementProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-return") {
+            experience.prepareImagingGalleryProof(returns: true)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-sixteen") {
+            experience.prepareImagingGalleryProof(layout: .four)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery-nine") {
+            experience.prepareImagingGalleryProof(layout: .three)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-gallery") || CommandLine.arguments.contains("--proof-imaging-gallery-detail") {
+            experience.prepareImagingGalleryProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-reference-medications") {
+            experience.prepareReferenceWorkspaceProof(.medications)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-reference-guides") {
+            experience.prepareReferenceWorkspaceProof(.guides)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-reference-return") {
+            experience.prepareReferenceReturnProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-room") {
+            experience.prepareImagingRoomProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-import-lifecycle") {
+            experience.prepareImagingImportLifecycleProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-imaging-import-return") {
+            experience.prepareImagingImportLifecycleProof(returnToAnatomy: true)
+            Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-clinician-toolkit") {
             experience.prepareClinicianToolKitProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-toolkit-full") {
+            experience.prepareClinicianToolKitFullProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-clinician-toolkit-motion") {
+            experience.prepareClinicianToolKitMotionProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-scholar-skull") {
             experience.prepareScholarSkullProof()
@@ -649,6 +801,9 @@ struct StrokeJourneyLaunchView: View {
             Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-spatial-docked-case") {
             experience.prepareSpatialDockedCaseProof()
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-selected-case-handoff") {
+            experience.prepareSelectedCaseHandoffProof()
             Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-clinician-pressure") {
             experience.prepareClinicianProof(step: .inspectOcclusion)
@@ -662,6 +817,12 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-clinician-craniotomy") {
             experience.prepareClinicianCraniotomyStoryProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-access-layer-open") {
+            experience.prepareAccessLayerStudyProof(opened: true)
+            Task { await openProofSpace(opensCompanion: false) }
+        } else if CommandLine.arguments.contains("--proof-access-layer-closed") {
+            experience.prepareAccessLayerStudyProof(opened: false)
+            Task { await openProofSpace(opensCompanion: false) }
         } else if CommandLine.arguments.contains("--proof-main-overview") {
             experience.prepareMainOverviewProof()
             Task { await openProofSpace() }
@@ -686,11 +847,35 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-main-selected-point") {
             experience.prepareTeachingImagingProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-spatial-annotation") {
+            experience.prepareSpatialAnnotationProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-spatial-ink") {
+            experience.prepareSpatialInkProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-selected-point") {
             experience.prepareFamilyTeachingReferenceProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-surface-reference") {
             experience.prepareFamilySurfaceReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-neuron-plain-words") {
+            experience.prepareFamilyNeuronPlainWordsProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-neuron-reference") {
+            experience.prepareFamilyNeuronReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-affected-reference") {
+            experience.prepareFamilyAffectedReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-nearby-reference") {
+            experience.prepareFamilyNearbyReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-explore-nearby") {
+            experience.prepareFamilyExploreNearbyProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-opposite-reference") {
+            experience.prepareFamilyOppositeReferenceProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-arterial-reference") {
             experience.prepareFamilyArterialReferenceProof()
@@ -698,14 +883,53 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-arterial-supply-reference") {
             experience.prepareFamilyArterialSupplyReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-arterial-branch-reference") {
+            experience.prepareFamilyArterialBranchReferenceProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-arterial-beyond-reference") {
             experience.prepareFamilyArterialBeyondReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-explore-beyond") {
+            experience.prepareFamilyExploreBeyondProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-arterial-territory-reference") {
+            experience.prepareFamilyArterialTerritoryReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-vessel-route-trace") {
+            experience.prepareFamilyVesselRouteTraceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-blockage-interior") {
+            experience.prepareFamilyBlockageInteriorProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-blockage-return") {
+            experience.prepareFamilyBlockageReturnProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-layer-reference") {
             experience.prepareFamilyLayerReferenceProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-teaching-imaging") {
             experience.prepareTeachingImagingProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-modality-reference") {
+            experience.prepareImagingModalityReferenceProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-pet-term-note") {
+            experience.prepareImagingPETTermNoteProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-study-deck") {
+            experience.prepareImagingStudyDeckProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-return-to-anatomy") {
+            experience.prepareImagingReturnToAnatomyProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-return-reopen") {
+            experience.prepareImagingReturnReopenProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-term-return-reopen") {
+            experience.prepareImagingTermReturnReopenProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-imaging-local-import") {
+            experience.prepareLocalImagingImportProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-question") {
             experience.prepareFamilyQuestionProof()
@@ -733,11 +957,17 @@ struct StrokeJourneyLaunchView: View {
             // It never auto-accepts or starts audio on the learner's behalf.
             experience.prepareFamilySurfaceReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-read-more") {
+            experience.prepareFamilyReadMoreProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-pressure") {
             experience.prepareProof(step: .inspectOcclusion)
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-pressure-story") {
             experience.prepareFamilyPressureStoryProof()
+            Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-entry-hint") {
+            experience.prepareFamilyEntryHintProof()
             Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-clinician-pressure-story") {
             experience.prepareClinicianPressureStoryProof()
@@ -764,14 +994,15 @@ struct StrokeJourneyLaunchView: View {
         guard result == .opened else { return }
         experience.isImmersivePresented = true
         if opensCompanion {
-            openWindow(id: experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family)
+            let companionID = experience.audienceLens == .clinician ? StrokeSpace.presenter : StrokeSpace.family
+            openWindow(id: companionID, value: companionID)
         }
         if opensEvidence {
             // In normal use the presenter taps the evidence button after this
             // window exists. The deterministic proof waits for the same
             // hierarchy so the evidence space can resolve `.above(presenter)`.
             try? await Task.sleep(for: .milliseconds(650))
-            openWindow(id: StrokeSpace.evidence)
+            openWindow(id: StrokeSpace.evidence, value: StrokeSpace.evidence)
         }
         dismissWindow(id: StrokeSpace.window)
     }
@@ -779,7 +1010,7 @@ struct StrokeJourneyLaunchView: View {
     @MainActor
     private func openEvidenceProofWindow() async {
         try? await Task.sleep(for: .milliseconds(500))
-        openWindow(id: StrokeSpace.evidence)
+        openWindow(id: StrokeSpace.evidence, value: StrokeSpace.evidence)
         dismissWindow(id: StrokeSpace.window)
     }
 }

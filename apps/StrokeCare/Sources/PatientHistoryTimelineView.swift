@@ -114,13 +114,14 @@ struct PatientHistoryTimelineView: View {
                         } label: {
                             PatientHistoryMilestoneNode(
                                 milestone: milestone,
+                                timeLabel: experience.caseHistoryTimeLabel(for: milestone),
                                 isSelected: milestone == experience.selectedCaseHistoryMilestone,
                                 accent: accent
                             )
                         }
                         .buttonStyle(.plain)
                         .hoverEffect(.highlight)
-                        .accessibilityLabel("\(milestone.timeLabel), \(milestone.shortTitle)")
+                        .accessibilityLabel("\(experience.caseHistoryTimeLabel(for: milestone)), \(milestone.shortTitle)")
                         .accessibilityValue(
                             milestone == experience.selectedCaseHistoryMilestone
                                 ? "Selected case-history milestone"
@@ -134,7 +135,7 @@ struct PatientHistoryTimelineView: View {
                 .animation(.easeInOut(duration: 0.24), value: experience.audienceLens)
                 .animation(.easeInOut(duration: 0.24), value: experience.selectedCaseHistoryMilestone)
 
-            Text("CASE-078 · FICTIONAL TEACHING HISTORY · NOT A MEDICAL RECORD")
+            Text("\(experience.selectedFictionalCase.id) · FICTIONAL TEACHING HISTORY · NOT A MEDICAL RECORD")
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.42))
         }
@@ -192,6 +193,7 @@ struct PatientHistoryTimelineView: View {
 
 private struct PatientHistoryMilestoneNode: View {
     let milestone: StrokeCaseHistoryMilestone
+    let timeLabel: String
     let isSelected: Bool
     let accent: Color
 
@@ -207,7 +209,7 @@ private struct PatientHistoryMilestoneNode: View {
             .frame(width: isSelected ? 38 : 30, height: isSelected ? 38 : 30)
             .overlay(Circle().stroke(Color.white.opacity(isSelected ? 0.30 : 0.10)))
 
-            Text(milestone.timeLabel)
+            Text(timeLabel)
                 .font(.caption2.monospacedDigit().weight(.black))
                 .foregroundStyle(isSelected ? accent : Color.white.opacity(0.48))
 

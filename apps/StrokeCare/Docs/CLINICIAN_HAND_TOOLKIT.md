@@ -17,8 +17,12 @@ at the right palm.
    not raw eye coordinates.
 4. **Focus**, **Lens**, and **Layers** operate the presentation state. The layer
    action still passes through the family-permission gate.
-5. **Forceps** and **Drill** appear at the right palm as display-only teaching
-   concepts. They cannot cut, drill, collide with, or modify anatomy.
+5. **Forceps** and **Drill** appear at the right palm as generic teaching
+   concepts. Drill remains display-only. In the separate **Move the layers**
+   study, selecting Forceps enables a deliberate pinch/drag of the bone or dura
+   model handle. The actual authored flap changes pose, with Lift/Return as a
+   visible fallback. This is not physical tool-contact detection, cutting,
+   drilling, tissue mechanics, or an operative technique.
 6. Closing the wheel hides the held tool. Switching to the family lens removes
    both hand anchors.
 
@@ -39,7 +43,7 @@ accidental-selection testing; it is not implemented or claimed.
 | Focus | A teaching pointer | Only the highlighted anatomy |
 | Lens | Reversible transparent cortex | The same calm transparency, if the clinician chooses to share it |
 | Layers | Precise layer control and boundary text | A permission-gated, non-graphic fade; no cutting animation |
-| Forceps | Generic held concept asset | Nothing |
+| Forceps | Generic held concept; explicit access-layer model manipulation | Nothing |
 | Drill | Generic held concept asset | Nothing |
 
 The family presentation is a semantic translation, not a second simulated

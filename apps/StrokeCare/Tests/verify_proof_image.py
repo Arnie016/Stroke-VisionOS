@@ -23,31 +23,157 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 ROUTE_TEXT_TOKENS = {
     "--proof-role-choice": ("curious learner", "doctor presenter"),
     "--proof-spatial-prelude": ("signals become networks", "conceptual teaching anatomy"),
+    "--proof-spatial-prelude-hero": ("the brain is not one object", "conceptual teaching anatomy"),
     "--proof-print-request": ("prepare a teaching model", "generic teaching anatomy only"),
     "--proof-realtime-narration": ("want to hear one layer deeper", "brain surface"),
+    "--proof-family-read-more": ("plain words", "folded outer surface"),
     "--proof-spatial-intake": ("patient files",),
+    "--proof-selected-case-handoff": ("f 168", "elena"),
     "--proof-pressure": ("pressure", "questions to as"),
-    "--proof-family-pressure-story": ("pressure", "questions to as"),
+    "--proof-family-pressure-story": ("outside the brain", "explore next"),
+    # The first-action cue is deliberately small and peripheral, so whole-frame
+    # OCR anchors this route to the one direct family entry action. Contract
+    # checks preserve the transient cue; human screenshot inspection confirms
+    # its visual placement.
+    "--proof-family-entry-hint": ("begin here", "start with one glowing point"),
     "--proof-clinician-pressure-story": (
-        "presentation checklist",
-        "clinician lens",
+        "explain this",
+        "act 2 of 3",
     ),
-    "--proof-clinician-craniotomy": ("generic craniotomy", "scholar references"),
-    "--proof-family-make-space-purpose": ("make space", "questions to as"),
+    "--proof-presenter-controls": ("resume", "black"),
+    "--proof-presentation-settings": ("settings", "visual detail"),
+    "--proof-clinician-toolkit": ("catheter set", "microcatheter"),
+    "--proof-clinician-toolkit-full": ("microcatheter", "full geometry"),
+    "--proof-clinician-toolkit-motion": ("microcatheter", "approach concept"),
+    "--proof-clinician-craniotomy": ("generic craniotomy", "anatomy"),
+    "--proof-access-layer-open": ("craniotomy layers", "dura model", "lifted", "back"),
+    "--proof-access-layer-closed": ("craniotomy layers", "bone model", "in place", "back"),
+    "--proof-imaging-gallery": ("imaging gallery", "add scans", "research atlas", "back"),
+    "--proof-imaging-gallery-nine": ("imaging gallery", "add scans", "research atlas", "back"),
+    "--proof-imaging-gallery-sixteen": ("imaging gallery", "add scans", "research atlas", "back"),
+    "--proof-imaging-gallery-detail": ("imaging gallery", "ct research atlas", "annotate", "back"),
+    "--proof-imaging-gallery-return": ("explain this", "anatomy", "imaging"),
+    "--proof-imaging-gallery-placed": ("ct research atlas", "annotate scan", "back"),
+    "--proof-imaging-gallery-placed-local": ("mri atlas local test copy", "memory only", "back"),
+    "--proof-imaging-gallery-placement-return": ("explain this", "anatomy", "imaging"),
+    "--proof-reference-medications": ("medications", "antiplatelets", "nhs medicine reference", "back"),
+    "--proof-reference-guides": ("guides", "what it supports", "read source", "back"),
+    "--proof-reference-return": ("explain this", "anatomy", "imaging"),
+    # The default image-first toolbar keeps import/comparison in Study tools.
+    # Verify the focused image actions, not those deliberately hidden controls.
+    "--proof-imaging-room": (
+        "imaging", "study tools", "studies", "gallery",
+        "annotate scan", "place beside brain", "back",
+    ),
+    "--proof-imaging-import-lifecycle": ("focused local image", "local image", "memory only", "back"),
+    "--proof-imaging-import-return": ("explain this", "anatomy", "imaging"),
+    "--proof-teaching-imaging": ("mri template", "done"),
+    "--proof-imaging-window": ("2d teaching reference", "vessel map"),
+    "--proof-imaging-window-term-note": (
+        "term note",
+        "ct angiography",
+        "back to study",
+        "cerebrovascular diseases",
+    ),
+    "--proof-imaging-modality-reference": (
+        "cta",
+        "term note",
+        "ct angiography",
+        "back to study",
+        "generic teaching reference",
+    ),
+    "--proof-imaging-pet-term-note": (
+        "term note",
+        "positron emission tomography",
+        "read science overview",
+        "back to study",
+        "generic teaching reference",
+    ),
+    "--proof-imaging-study-deck": (
+        "study deck",
+        "structure",
+        "vessel",
+        "functional",
+        "close study deck",
+    ),
+    "--proof-imaging-return-to-anatomy": (
+        "presentation checklist",
+        "act 2 of 3",
+    ),
+    "--proof-imaging-return-reopen": (
+        "placed teaching image",
+        "study",
+        "back",
+    ),
+    "--proof-imaging-term-return-reopen": (
+        "placed teaching image",
+        "ct angiography",
+        "study",
+        "back",
+    ),
+    "--proof-imaging-local-import": ("focused local image", "discussion prompt", "manual marker", "return beside brain"),
+    "--proof-spatial-annotation": ("pinned note", "example blockage", "ct template"),
+    "--proof-spatial-ink": ("ink overlay", "pinch drag over the teaching model", "undo", "clear"),
+    "--proof-family-make-space-purpose": ("make space", "explore next"),
+    "--proof-family-affected-reference": ("what this opens", "full arterial tree"),
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
-    "--proof-family-arterial-reference": ("arterial tree", "example blockage", "hear more"),
+    "--proof-family-neuron-reference": ("one neuron", "3d teaching model"),
+    "--proof-family-neuron-plain-words": ("plain words", "one neuron"),
+    "--proof-family-nearby-reference": ("nearby brain tissue", "teaching view"),
+    "--proof-family-explore-nearby": ("nearby brain tissue", "teaching view"),
+    "--proof-family-opposite-reference": ("opposite side context", "teaching view"),
+    "--proof-family-arterial-reference": (
+        "arterial tree",
+        "example blockage",
+    ),
     "--proof-family-arterial-supply-reference": (
         "blood supply approaches",
-        "hear more",
+        "full arterial tree",
+    ),
+    "--proof-family-arterial-branch-reference": (
+        "arteries branch",
+        "full arterial tree",
     ),
     "--proof-family-arterial-beyond-reference": (
         "flow beyond the blockage",
-        "hear more",
+        "full arterial tree",
+    ),
+    "--proof-family-explore-beyond": (
+        "flow beyond the blockage",
+        "full arterial tree",
+    ),
+    "--proof-family-arterial-territory-reference": (
+        "affected territory",
+        "full arterial tree",
+    ),
+    "--proof-family-vessel-route-trace": (
+        "route",
+        "flow beyond the blockage",
+        "4 of 5",
+    ),
+    "--proof-family-blockage-interior": (
+        "you are inside a cerebral artery",
+        "arterial fork",
+    ),
+    "--proof-family-blockage-return": (
+        "arterial tree",
+        "example blockage",
     ),
     "--proof-family-layer-reference": ("generic craniotomy", "hide layer view"),
     "--proof-family-atlas-surface-cue": ("frontal lobe", "whole brain surface"),
+    "--proof-family-atlas-direct-surface-pick": ("temporal lobe", "whole brain surface"),
     "--proof-family-atlas-temporal-cue": ("temporal lobe", "whole brain surface"),
     "--proof-family-atlas-internal-reference": ("thalamus", "internal structures"),
+    "--proof-family-atlas-internal-plain-words": ("thalamus", "plain words"),
+    "--proof-family-atlas-cerebellum-journey": ("inside", "cerebellum"),
+    "--proof-anatomy-internal": ("internal", "anatomy"),
+    "--proof-integrated-interior": ("supply network", "choose a region below"),
+    "--proof-integrated-ventricles": ("ventricular system", "fluid filled"),
+    "--proof-integrated-cortex": ("cortical microarchitecture", "six layers many variations"),
+    "--proof-integrated-cortex-flow": ("cortical microarchitecture", "surface route turns inward"),
+    "--proof-integrated-neural-gradient": ("ion gradient stores potential", "sodium and potassium"),
+    "--proof-integrated-neural": ("neural signalling", "synaptic gaps"),
+    "--proof-integrated-loading": ("building the brain around you", "generic teaching anatomy"),
 }
 
 OCR_SWIFT_SOURCE = r"""
@@ -61,15 +187,28 @@ guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
     exit(2)
 }
 
-let request = VNRecognizeTextRequest()
-request.recognitionLevel = .accurate
-request.recognitionLanguages = ["en-US"]
-request.usesLanguageCorrection = false
-try VNImageRequestHandler(cgImage: image).perform([request])
+let width = CGFloat(image.width)
+let height = CGFloat(image.height)
+let cropRects = [
+    CGRect(x: 0, y: 0, width: width, height: height),
+    CGRect(x: 0, y: 0, width: width * 0.58, height: height * 0.58),
+    CGRect(x: width * 0.42, y: 0, width: width * 0.58, height: height * 0.58),
+    CGRect(x: 0, y: height * 0.42, width: width * 0.58, height: height * 0.58),
+    CGRect(x: width * 0.42, y: height * 0.42, width: width * 0.58, height: height * 0.58),
+]
 
-for observation in request.results ?? [] {
-    if let candidate = observation.topCandidates(1).first {
-        print(candidate.string)
+for rect in cropRects {
+    guard let crop = image.cropping(to: rect) else { continue }
+    let request = VNRecognizeTextRequest()
+    request.recognitionLevel = .accurate
+    request.recognitionLanguages = ["en-US"]
+    request.usesLanguageCorrection = false
+    try VNImageRequestHandler(cgImage: crop).perform([request])
+
+    for observation in request.results ?? [] {
+        if let candidate = observation.topCandidates(1).first {
+            print(candidate.string)
+        }
     }
 }
 """

@@ -361,8 +361,10 @@ enum StrokeAssetCatalog {
         )
     ]
 
-    /// These twenty-two resources are explicitly listed in project.yml. The
-    /// static catalog itself still adds no implicit bundle membership.
+    /// These are the twenty-two catalogued exterior resources explicitly
+    /// listed in project.yml. Seven additional authored internal-journey
+    /// resources are bundled by the integrated experience but remain owned by
+    /// its separate provenance manifest rather than this exterior catalog.
     private static let existingProjectBundleIDs: Set<String> = [
         "brain_anatomy_realistic_v2",
         "cerebral_arteries_realistic_v2",

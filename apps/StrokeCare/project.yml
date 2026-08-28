@@ -21,6 +21,12 @@ targets:
       - path: Resources/THIRD_PARTY_NOTICES.txt
         buildPhase: resources
       - path: Sources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCJourneyModel.swift
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCJourneyScene.swift
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCJourneyHUD.swift
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCJourneyImmersiveView.swift
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCFamilyNarrationEngine.swift
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources/RBCPortalGestureController.swift
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/brain_anatomy_realistic_v2.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_arteries_realistic_v2.usdz
@@ -55,6 +61,16 @@ targets:
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz/suction_and_forceps.usdz
         buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/thrombectomy_device_set_educational_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/guidewire_educational_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/microcatheter_educational_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/aspiration_catheter_educational_v2.usdz
+        buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/stent_retriever_educational_v2.usdz
+        buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/scalp_access_closure_registered_conceptual_v1.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cranial_bone_access_closure_registered_conceptual_v1.usdz
@@ -64,6 +80,20 @@ targets:
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/intracerebral_hematoma_registered_conceptual_v1.usdz
         buildPhase: resources
       - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/cerebral_edema_registered_conceptual_v1.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/cranial_vascular_registered_assembly_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/artery_wall_cutaway_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/artery_interior_bloodflow_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/artery_cutaway_complete_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/red_blood_cells_closeup_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/microcirculation_arterial_venous_v2.usdz
+        buildPhase: resources
+      - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/cerebral_bloodflow_teaching_set_v2.usdz
         buildPhase: resources
     settings:
       base:

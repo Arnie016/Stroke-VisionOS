@@ -1,3 +1,4 @@
+import RealityKit
 import SwiftUI
 
 /// A quiet, windowless-feeling threshold for the curious learner. The artwork
@@ -6,6 +7,7 @@ import SwiftUI
 struct StrokeSpatialPreludeView: View {
     let beat: Int
     let reduceMotion: Bool
+    @State private var beatStartedAt = Date()
 
     var body: some View {
         TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 30.0)) { timeline in
@@ -22,7 +24,7 @@ struct StrokeSpatialPreludeView: View {
                     case 1:
                         corticalColumns(time: time)
                     case 2:
-                        neuronNetwork(time: time)
+                        neuronNetwork(time: time, elapsed: max(0, timeline.date.timeIntervalSince(beatStartedAt)))
                     default:
                         invitationField(time: time)
                     }
@@ -32,6 +34,7 @@ struct StrokeSpatialPreludeView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilityDescription)
+            .onAppear { beatStartedAt = timeline.date }
         }
     }
 
@@ -59,7 +62,37 @@ struct StrokeSpatialPreludeView: View {
             ? CGFloat(1)
             : CGFloat(0.74 + 0.20 * ((sin(time * 0.7) + 1) / 2))
         let yaw = reduceMotion ? Double(-5) : -5 + sin(time * 0.24) * 2
-        return ZStack {
+        return Model3D(named: "brain_anatomy_realistic_v2") { resolved in
+            // Keep the opening honest: this is the same bundled generic
+            // teaching anatomy used by the main experience, not an inferred
+            // patient scan. Model3D supplies a real three-dimensional hero
+            // while the surrounding story introduces the next abstractions.
+            resolved
+                .resizable()
+                // Keep the launch surface available on the app's visionOS 2
+                // deployment target. The newer `scaledToFit3D` modifier would
+                // unnecessarily raise that floor to visionOS 26.
+                .scaledToFit()
+        } placeholder: {
+            conceptualWholeBrain(vesselExtent: vesselExtent)
+        }
+        .frame(width: 400, height: 300)
+        .frame(depth: 210)
+        // The opening fact has its own quiet reading field on the left. Place
+        // this larger, inspected teaching object beside it instead of making
+        // the viewer read through the anatomy.
+        .offset(x: 200, y: 4)
+        // The hero stays spatially present without crossing the launch copy;
+        // the first fact must remain readable on top of the anatomy.
+        .offset(z: -34)
+        .shadow(color: .cyan.opacity(0.16), radius: 30)
+        .rotation3DEffect(.degrees(yaw), axis: (x: 0, y: 1, z: 0))
+    }
+
+    /// Keeps the opening legible while the high-detail USDZ resolves, and is
+    /// also the safe visual fallback if a future build omits that resource.
+    private func conceptualWholeBrain(vesselExtent: CGFloat) -> some View {
+        ZStack {
             PreludeBrainShape()
                 .fill(
                     LinearGradient(
@@ -83,7 +116,7 @@ struct StrokeSpatialPreludeView: View {
                 .offset(x: 12, y: 18)
                 .offset(z: 55)
         }
-        .rotation3DEffect(.degrees(yaw), axis: (x: 0, y: 1, z: 0))
+        .frame(width: 380, height: 270)
     }
 
     private func corticalColumns(time: TimeInterval) -> some View {
@@ -103,17 +136,21 @@ struct StrokeSpatialPreludeView: View {
         .offset(z: 42)
     }
 
-    private func neuronNetwork(time: TimeInterval) -> some View {
-        Canvas { context, size in
+    private func neuronNetwork(time: TimeInterval, elapsed: TimeInterval) -> some View {
+        let stage = reduceMotion ? 3 : min(Int(elapsed / 1.15), 3)
+        let visibleCount = [1, 2, 4, 9][stage]
+        return Canvas { context, size in
             let points = neuronPoints(in: size)
             var paths = Path()
             for edge in neuronEdges {
-                paths.move(to: points[edge.0])
-                paths.addLine(to: points[edge.1])
+                if edge.0 < visibleCount && edge.1 < visibleCount {
+                    paths.move(to: points[edge.0])
+                    paths.addLine(to: points[edge.1])
+                }
             }
             context.stroke(paths, with: .color(.cyan.opacity(0.27)), lineWidth: 1.4)
 
-            for (index, point) in points.enumerated() {
+            for (index, point) in points.prefix(visibleCount).enumerated() {
                 let pulse = reduceMotion ? 0 : (sin(time * 1.55 + Double(index) * 0.72) + 1) / 2
                 let radius = 5.5 + pulse * 3.2
                 let rect = CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2)
@@ -123,9 +160,28 @@ struct StrokeSpatialPreludeView: View {
                 )
                 context.stroke(Path(ellipseIn: rect.insetBy(dx: -5, dy: -5)), with: .color(.white.opacity(0.10 + pulse * 0.12)), lineWidth: 1)
             }
+
+            // Once the principal network is legible, a quiet field of small
+            // signals suggests scale without pretending to count neurons.
+            if stage == 3 {
+                for index in 0..<48 {
+                    let angle = Double(index) * 2.39996 + time * (reduceMotion ? 0 : 0.045)
+                    let ring = 58.0 + Double(index % 9) * 18.0
+                    let point = CGPoint(
+                        x: size.width / 2 + cos(angle) * ring,
+                        y: size.height / 2 + sin(angle) * ring * 0.62
+                    )
+                    let radius = CGFloat(1.2 + Double(index % 4) * 0.35)
+                    context.fill(
+                        Path(ellipseIn: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2)),
+                        with: .color(index.isMultiple(of: 7) ? .orange.opacity(0.44) : .cyan.opacity(0.36))
+                    )
+                }
+            }
         }
         .frame(width: 470, height: 280)
         .offset(z: 48)
+        .scaleEffect(reduceMotion ? 1 : 0.96 + min(CGFloat(elapsed / 6.0), 1) * 0.08)
         .shadow(color: .cyan.opacity(0.18), radius: 18)
     }
 

@@ -44,3 +44,23 @@ The project-authored Circle-of-Willis overlay is conceptual teaching geometry.
 Its coral/gold route lines, arrows, brightness, and spacing are qualitative—not
 CFD, a patient measurement, or evidence of flow speed, pressure, perfusion,
 collateral circulation, treatment response, or outcome.
+
+Audio provenance gate
+---------------------
+
+`FlowBed.wav` and `PressureBed.wav` are locally bundled prototype ambience
+resources. Their original authorship and redistribution terms have not yet
+been recorded in a source manifest. They are therefore optional, muted by
+default, and must not be represented as cleared for public release,
+redistribution, commercial use, or App Store submission until their provenance
+is independently documented. No third-party audio was added in this pass.
+
+The CT and MRI teaching-reference images are cropped from Figure 2 of
+Kaffenberger T, et al., "Stroke population-specific neuroanatomical CT-MRI
+brain atlas," Neuroradiology 64 (2022), DOI 10.1007/s00234-021-02875-9,
+PMCID PMC9271109, distributed under Creative Commons Attribution 4.0
+International: https://creativecommons.org/licenses/by/4.0/
+
+The images are de-identified research templates, cropped into modality-specific
+panels. They are generic educational references—not a patient scan, finding,
+diagnostic result, measurement, or treatment-planning image.

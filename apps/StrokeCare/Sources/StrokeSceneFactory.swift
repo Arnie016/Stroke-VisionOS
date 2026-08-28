@@ -8,6 +8,16 @@ import SwiftUI
 /// proxy that otherwise wins the indirect hit test in front of these points.
 struct StrokeLessonPointTargetComponent: Component {}
 
+/// Marks the enlarged authored catheter study as a separate spatial target.
+/// This prevents inspection gestures from rotating the much larger anatomy
+/// behind it while preserving the system gaze-and-pinch interaction model.
+struct StrokeClinicianDeviceInspectionTargetComponent: Component {}
+
+/// A separate input target prevents a layer gesture from orbiting the brain.
+struct StrokeAccessLayerTargetComponent: Component {
+    var layer: StrokeAccessStudyLayer
+}
+
 /// Procedural, deliberately schematic geometry. No patient scan, no licensed
 /// anatomical specimen, and no claim of clinical accuracy.
 ///
@@ -22,6 +32,8 @@ enum StrokeSceneFactory {
 
     static func registerCustomComponents() {
         StrokeLessonPointTargetComponent.registerComponent()
+        StrokeClinicianDeviceInspectionTargetComponent.registerComponent()
+        StrokeAccessLayerTargetComponent.registerComponent()
     }
 
     static let rootName = "stroke-time-root"
@@ -61,6 +73,7 @@ enum StrokeSceneFactory {
     static let spatialCaseDockName = "spatial-case-dock"
     static let spatialCaseFigureName = "spatial-case-review-figure"
     static let clinicianHeldToolRootName = "clinician-held-tool-root"
+    static let clinicianToolInspectionRootName = "clinician-device-inspection-root"
     static let registeredTeachingImagingRootName = TeachingImagingMiniatureFactory.rootName
     static let registeredTeachingImagingAffectedName = TeachingImagingMiniatureFactory.affectedRootName
     static let registeredTeachingImagingPurposeName = TeachingImagingMiniatureFactory.purposeRootName
@@ -171,7 +184,8 @@ enum StrokeSceneFactory {
 
     private static let regionPointDirections: [SIMD3<Float>] = [
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
-        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
+        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54],
+        [0.31, -0.66, 0.70]
     ]
 
     /// Five distinct, generic surface-orientation anchors for the Family
@@ -193,7 +207,8 @@ enum StrokeSceneFactory {
 
     private static let regionPointLabels = [
         "Example affected area", "Nearby brain tissue",
-        "Brain surface", "Opposite-side context"
+        "Brain surface", "Opposite-side context",
+        "Single neuron · schematic reference"
     ]
 
     /// Exact registered-v2 arterial-mesh surface samples for technical marker
@@ -230,6 +245,18 @@ enum StrokeSceneFactory {
         fallback.addChild(makeFlowArrows())
         fallback.addChild(makeCarePreview(compact: compact))
         root.addChild(fallback)
+
+        // The immersive room opens on a compact assembly so it never starts
+        // empty while the complete reference set decodes. That compact stage
+        // still needs to look like the product it is introducing: use the
+        // actual registered-v2 cortex, arterial tree, and illustrative clot
+        // as its hero rather than leaving the low-detail procedural stand-in
+        // in view. The complete assembly below remains the only source of
+        // interaction targets, point fields, and optional clinician layers.
+        if compact, let fastHero = await makeCompactRegisteredHero() {
+            fallback.isEnabled = false
+            root.addChild(fastHero)
+        }
 
         var importedForMiniature: Entity?
         if !compact {
@@ -276,6 +303,51 @@ enum StrokeSceneFactory {
         return root
     }
 
+    /// Loads only the three visually essential registered-v2 assets for the
+    /// initial immersive frame. This is a temporary, generic teaching hero,
+    /// not a second anatomy source: it keeps the authored transforms and is
+    /// atomically replaced by `makeImportedAnatomy()` once the complete,
+    /// review-bounded assembly is ready.
+    private static func makeCompactRegisteredHero() async -> Entity? {
+        guard let brain = await loadBundledUSDZ(named: importedBrainName) else {
+            return nil
+        }
+        calibrateRegisteredBrainMaterials(brain)
+
+        let imported = Entity()
+        imported.name = importedRootName
+
+        let registered = Entity()
+        registered.name = "registered-v2-fast-hero-root"
+        registered.position = [0, 0.018, 0]
+        registered.scale = [0.88, 0.88, 0.88]
+        registered.orientation = simd_quatf(angle: -0.42, axis: [0, 1, 0])
+        imported.addChild(registered)
+
+        func addLayer(_ entity: Entity, assetName: String) {
+            entity.name = assetName
+            let layer = Entity()
+            layer.name = semanticLayerName(for: assetName)
+            layer.addChild(entity)
+            registered.addChild(layer)
+        }
+
+        addLayer(brain, assetName: importedBrainName)
+
+        // These two small companions preserve the initial story's "brain,
+        // vessel path, and affected target" relationship. They carry no
+        // point targets or procedural claims until the complete root arrives.
+        if let arteries = await loadBundledUSDZ(named: importedArteriesName) {
+            calibrateRegisteredVesselMaterials(arteries)
+            addLayer(arteries, assetName: importedArteriesName)
+        }
+        if let clot = await loadBundledUSDZ(named: importedClotName) {
+            addLayer(clot, assetName: importedClotName)
+        }
+
+        return imported
+    }
+
     /// Reports only subsystems that actually loaded into the live scene. This
     /// keeps optional USDZ failures from becoming a silent empty selection in
     /// the presenter controls.
@@ -305,6 +377,9 @@ enum StrokeSceneFactory {
         isVisible: Bool,
         lens: StrokeTeachingImagingLens,
         selectedPointLabel: String?,
+        emphasizeNeuronSignalPath: Bool = false,
+        emphasizeSurfacePoint: Bool = false,
+        emphasizeInternalVentricles: Bool = false,
         time: TimeInterval = 0,
         isPaused: Bool = false
     ) {
@@ -313,6 +388,9 @@ enum StrokeSceneFactory {
             isVisible: isVisible,
             lens: lens,
             selectedPointLabel: selectedPointLabel,
+            emphasizeNeuronSignalPath: emphasizeNeuronSignalPath,
+            emphasizeSurfacePoint: emphasizeSurfacePoint,
+            emphasizeInternalVentricles: emphasizeInternalVentricles,
             time: time,
             isPaused: isPaused
         )
@@ -361,15 +439,38 @@ enum StrokeSceneFactory {
         if let drill = await loadBundledUSDZ(named: "cranial_drill_generic") {
             root.addChild(normalizedHeldTool(drill, name: "clinician-tool-drill", targetSize: 0.15))
         }
+        let endovascularRoot = Entity()
+        endovascularRoot.name = "clinician-tool-endovascular-set"
+        let educationalConcepts: [(String, String, Float)] = [
+            ("guidewire_educational_v2", "clinician-endovascular-guidewire", 0.18),
+            ("microcatheter_educational_v2", "clinician-endovascular-microcatheter", 0.17),
+            ("aspiration_catheter_educational_v2", "clinician-endovascular-aspiration", 0.17),
+            ("stent_retriever_educational_v2", "clinician-endovascular-retriever", 0.15),
+        ]
+        for (assetName, entityName, targetSize) in educationalConcepts {
+            if let asset = await loadBundledUSDZ(named: assetName) {
+                let concept = normalizedHeldTool(asset, name: entityName, targetSize: targetSize)
+                concept.position = [0, 0.04, 0.07]
+                endovascularRoot.addChild(concept)
+            }
+        }
+        root.addChild(endovascularRoot)
 
-        updateClinicianHeldTools(root, selected: .focus, enabled: false)
+        updateClinicianHeldTools(
+            root,
+            selected: .focus,
+            endovascularConcept: .microcatheter,
+            enabled: false
+        )
         return root
     }
 
     static func updateClinicianHeldTools(
         _ root: Entity,
         selected: StrokeClinicianTool,
-        enabled: Bool
+        endovascularConcept: StrokeEndovascularConcept,
+        enabled: Bool,
+        detailLevel: StrokeDetailLevel = .scholar
     ) {
         let selectedName: String
         switch selected {
@@ -378,9 +479,111 @@ enum StrokeSceneFactory {
         case .layerReveal: selectedName = "clinician-tool-layer-reveal"
         case .forceps: selectedName = "clinician-tool-forceps"
         case .cranialDrill: selectedName = "clinician-tool-drill"
+        case .endovascularSet: selectedName = "clinician-tool-endovascular-set"
         }
         for child in root.children {
             child.isEnabled = enabled && child.name == selectedName
+        }
+        if let set = root.findEntity(named: "clinician-tool-endovascular-set") {
+            let conceptName: String
+            switch endovascularConcept {
+            case .guidewire: conceptName = "clinician-endovascular-guidewire"
+            case .microcatheter: conceptName = "clinician-endovascular-microcatheter"
+            case .aspirationCatheter: conceptName = "clinician-endovascular-aspiration"
+            case .stentRetriever: conceptName = "clinician-endovascular-retriever"
+            }
+            for child in set.children {
+                child.isEnabled = enabled && selected == .endovascularSet && child.name == conceptName
+            }
+            applyClinicianDeviceDetail(
+                to: set,
+                concept: endovascularConcept,
+                detailLevel: detailLevel
+            )
+        }
+    }
+
+    /// Changes actual authored submesh disclosure for the three explicit
+    /// visual-detail levels. It never substitutes a different device, changes
+    /// dimensions, or synthesizes geometry. Simplified retains the primary
+    /// silhouette, Standard adds named structural cues, and Full exposes the
+    /// complete bundled hierarchy.
+    private static func applyClinicianDeviceDetail(
+        to set: Entity,
+        concept: StrokeEndovascularConcept,
+        detailLevel: StrokeDetailLevel
+    ) {
+        let conceptName: String = switch concept {
+        case .guidewire: "clinician-endovascular-guidewire"
+        case .microcatheter: "clinician-endovascular-microcatheter"
+        case .aspirationCatheter: "clinician-endovascular-aspiration"
+        case .stentRetriever: "clinician-endovascular-retriever"
+        }
+        guard let conceptRoot = set.findEntity(named: conceptName) else { return }
+
+        func isVisiblePart(_ loweredName: String) -> Bool {
+            if detailLevel == .scholar { return true }
+            switch concept {
+            case .guidewire:
+                return detailLevel == .guided || !loweredName.contains("coil")
+            case .microcatheter:
+                if loweredName.contains("marker") { return false }
+                return detailLevel == .guided || loweredName.contains("shaft")
+            case .aspirationCatheter:
+                if loweredName.contains("braid") { return false }
+                return detailLevel == .guided || loweredName.contains("lumen")
+            case .stentRetriever:
+                if detailLevel == .calm && loweredName.contains("marker") {
+                    return false
+                }
+                guard loweredName.contains("lattice") else { return true }
+                let simplifiedStrands = ["_01", "_05"]
+                let standardStrands = ["_01", "_03", "_05", "_07"]
+                let visibleStrands = detailLevel == .calm
+                    ? simplifiedStrands
+                    : standardStrands
+                return visibleStrands.contains { loweredName.contains($0) }
+            }
+        }
+
+        func updateHierarchy(_ entity: Entity) {
+            let loweredName = entity.name.lowercased()
+            let isAuthoredPart = switch concept {
+            case .guidewire: loweredName.contains("guidewire_")
+            case .microcatheter: loweredName.contains("microcatheter_")
+            case .aspirationCatheter: loweredName.contains("aspiration_")
+            case .stentRetriever: loweredName.contains("stent_")
+            }
+            if isAuthoredPart {
+                entity.isEnabled = isVisiblePart(loweredName)
+            }
+            for child in entity.children {
+                updateHierarchy(child)
+            }
+        }
+        updateHierarchy(conceptRoot)
+    }
+
+    /// Keeps the imported, multi-part USDZ geometry and authored hierarchy,
+    /// but gives the separate magnified copy a high-contrast teaching palette.
+    /// The hand-held copy retains its source materials. Marker and crown nodes
+    /// stay visually distinct so the study exposes real named subcomponents
+    /// instead of tracing a generic line over the device.
+    static func enhanceClinicianToolInspection(_ root: Entity) {
+        let loweredName = root.name.lowercased()
+        let isMarker = loweredName.contains("marker") || loweredName.contains("crown")
+        if var model = root.components[ModelComponent.self] {
+            let material = isMarker
+                ? warningMaterial(opacity: 0.98)
+                : careMaterial(opacity: 0.98)
+            model.materials = Array(
+                repeating: material,
+                count: max(model.materials.count, 1)
+            )
+            root.components.set(model)
+        }
+        for child in root.children {
+            enhanceClinicianToolInspection(child)
         }
     }
 
@@ -407,7 +610,7 @@ enum StrokeSceneFactory {
     /// A room-scale intake object: the file starts in a physical cabinet at
     /// the wearer's left and must be carried to the central dock. This is the
     /// product's spatial threshold, not a floating notes window.
-    static func makeSpatialCaseIntake() -> Entity {
+    static func makeSpatialCaseIntake() async -> Entity {
         let room = Entity()
         room.name = spatialCaseRoomName
 
@@ -436,14 +639,14 @@ enum StrokeSceneFactory {
         let cabinet = Entity()
         cabinet.name = "case-cabinet"
         let bay = ModelEntity(
-            mesh: .generateBox(size: [0.40, 0.30, 0.026], cornerRadius: 0.024),
+            mesh: .generateBox(size: [0.58, 0.43, 0.026], cornerRadius: 0.024),
             materials: [rail]
         )
         bay.name = "archive-dossier-bay"
         cabinet.addChild(bay)
 
         let cradle = ModelEntity(
-            mesh: .generateBox(size: [0.42, 0.020, 0.078], cornerRadius: 0.010),
+            mesh: .generateBox(size: [0.60, 0.020, 0.078], cornerRadius: 0.010),
             materials: [rail]
         )
         cradle.name = "archive-dossier-cradle"
@@ -457,27 +660,47 @@ enum StrokeSceneFactory {
             UIColor(red: 0.39, green: 0.28, blue: 0.19, alpha: 1),
             UIColor(red: 0.25, green: 0.20, blue: 0.18, alpha: 1)
         ]
-        let dossierPositions: [SIMD3<Float>] = [
-            [-0.055, -0.022, 0.030], [-0.034, -0.014, 0.043],
-            [-0.012, -0.006, 0.056], [0.012, 0.002, 0.069],
-            [0.036, 0.010, 0.082]
-        ]
-        for index in dossierPositions.indices {
+        for index in StrokeFictionalCase.library.indices {
+            let column = index % 4
+            let row = index / 4
+            let dossierPosition = SIMD3<Float>(
+                -0.205 + Float(column) * 0.137,
+                0.118 - Float(row) * 0.128,
+                0.030 + Float(row) * 0.010
+            )
             let material = SimpleMaterial(
-                color: dossierColors[index],
+                color: dossierColors[index % dossierColors.count],
                 roughness: 0.80,
                 isMetallic: false
             )
             let dossier = ModelEntity(
-                mesh: .generateBox(size: [0.23, 0.17, 0.012], cornerRadius: 0.014),
+                mesh: .generateBox(size: [0.116, 0.104, 0.012], cornerRadius: 0.012),
                 materials: [material]
             )
             dossier.name = "archived-case-\(index + 1)"
-            dossier.position = dossierPositions[index]
+            dossier.position = dossierPosition
             dossier.orientation = simd_quatf(
-                angle: -0.10 + Float(index) * 0.050,
+                angle: -0.025 + Float(column) * 0.016,
                 axis: [0, 0, 1]
             )
+            dossier.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
+            dossier.components.set(CollisionComponent(shapes: [.generateBox(size: [0.126, 0.114, 0.032])]))
+            dossier.components.set(HoverEffectComponent())
+
+            // The selectable world-space dossier carries the same authored
+            // fictional identity as its expanded briefing. This is a real
+            // textured RealityKit surface, not a symbol/avatar placeholder.
+            if let portraitMaterial = await fictionalCasePortraitMaterial(
+                for: StrokeFictionalCase.library[index]
+            ) {
+                let portrait = ModelEntity(
+                    mesh: .generateBox(size: [0.078, 0.072, 0.0012], cornerRadius: 0.006),
+                    materials: [portraitMaterial]
+                )
+                portrait.name = "fictional-case-portrait-\(index + 1)"
+                portrait.position = [-0.010, 0.004, 0.0067]
+                dossier.addChild(portrait)
+            }
             cabinet.addChild(dossier)
         }
         archive.addChild(cabinet)
@@ -582,13 +805,62 @@ enum StrokeSceneFactory {
         return room
     }
 
+    /// Builds a RealityKit texture from the app's original fictional portrait
+    /// atlas slices. Missing art degrades to the dossier's authored material;
+    /// it never substitutes a camera frame or external patient image.
+    private static func fictionalCasePortraitMaterial(
+        for record: StrokeFictionalCase
+    ) async -> PhysicallyBasedMaterial? {
+        guard let image = UIImage(named: record.portraitAssetName)?.cgImage,
+              let texture = try? await TextureResource(
+                  image: image,
+                  withName: record.portraitAssetName,
+                  options: .init(
+                      semantic: .color,
+                      mipmapsMode: .allocateAndGenerateAll
+                  )
+              ) else {
+            return nil
+        }
+
+        var sampler = PhysicallyBasedMaterial.Texture.Sampler()
+        sampler.modify { descriptor in
+            descriptor.sAddressMode = .clampToEdge
+            descriptor.tAddressMode = .clampToEdge
+            descriptor.minFilter = .linear
+            descriptor.magFilter = .linear
+            descriptor.mipFilter = .linear
+        }
+
+        var material = PhysicallyBasedMaterial()
+        material.baseColor = .init(
+            tint: .white,
+            texture: .init(texture, sampler: sampler)
+        )
+        material.roughness = .init(floatLiteral: 0.64)
+        material.metallic = .init(floatLiteral: 0.02)
+        return material
+    }
+
     static func isSpatialCaseFileTarget(_ entity: Entity) -> Bool {
         var candidate: Entity? = entity
         while let current = candidate {
-            if current.name == spatialCaseFileName { return true }
+            if current.name == spatialCaseFileName || current.name.hasPrefix("archived-case-") { return true }
             candidate = current.parent
         }
         return false
+    }
+
+    static func spatialCaseIndex(for entity: Entity) -> Int? {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.name.hasPrefix("archived-case-"),
+               let ordinal = Int(current.name.replacingOccurrences(of: "archived-case-", with: "")) {
+                return ordinal - 1
+            }
+            candidate = current.parent
+        }
+        return nil
     }
 
     /// Animates the current fictional dossier into a central case anchor and
@@ -598,6 +870,15 @@ enum StrokeSceneFactory {
         root: Entity,
         experience: StrokeExperienceState
     ) {
+        if let archive = root.findEntity(named: spatialCaseArchiveName) {
+            for index in StrokeFictionalCase.library.indices {
+                guard let dossier = archive.findEntity(named: "archived-case-\(index + 1)") else { continue }
+                let selected = index == experience.selectedFictionalCaseIndex
+                let scale: Float = selected ? 1.10 : 1
+                dossier.scale = [scale, scale, scale]
+                dossier.components.set(OpacityComponent(opacity: selected ? 1 : 0.64))
+            }
+        }
         guard let constellation = root.findEntity(named: spatialCaseConstellationName) else { return }
         let progress = Float(experience.caseReviewRevealProgress)
         let figureProgress = smoothSegment(progress, from: 0.28, to: 0.68)
@@ -691,6 +972,12 @@ enum StrokeSceneFactory {
         ] {
             if let entity = await loadBundledUSDZ(named: name) {
                 entity.name = name
+                if name == importedBrainName {
+                    calibrateRegisteredBrainMaterials(entity)
+                }
+                if name == importedArteriesName || name == importedVenousName {
+                    calibrateRegisteredVesselMaterials(entity)
+                }
                 if name == importedBloodflowName {
                     startAuthoredBloodflowAnimations(in: entity)
                 }
@@ -763,6 +1050,13 @@ enum StrokeSceneFactory {
                 accessMarker = [centre.x, centre.y, bounds.max.z + 0.004]
                 movable.transform = openTransform
             }
+            if movableName == accessBoneFlapName || movableName == accessDuraFlapName {
+                addAccessLayerStudyHandle(
+                    to: movable,
+                    layer: movableName == accessBoneFlapName ? .bone : .dura,
+                    travel: openTransform.translation
+                )
+            }
         }
 
         for name in [importedEdemaName, importedFlapName, importedPatchName] {
@@ -795,10 +1089,10 @@ enum StrokeSceneFactory {
         // point cannot drift into unrelated world space when staging changes.
         let brainBounds = importedBrain.visualBounds(relativeTo: registered)
         let brainCenter = (brainBounds.min + brainBounds.max) / 2
-        // Keep the landmarks approximately 2.5 mm beyond a 10 cm cortical
-        // radius. They remain anatomy-attached rather than becoming a room-
-        // space halo, while staying readable in both opaque and transparent
-        // presentations.
+        // Keep the landmarks just outside the loaded cortical envelope. They
+        // remain anatomy-related rather than becoming a room-space halo, but
+        // the extra clearance prevents the visible orb and its gaze target
+        // from looking embedded in the brain surface.
         let brainRadii = (brainBounds.max - brainBounds.min) / 2 * 1.025
         let registeredRegionSourcePoints = regionPointDirections.map { direction in
             brainCenter + brainRadii * simd_normalize(direction)
@@ -807,10 +1101,10 @@ enum StrokeSceneFactory {
             registeredRegionSourcePoints,
             regionPointDirections
         ).map { source, direction in
-            // Lift the invitation 12 mm off the cortex. A thin tether below
-            // preserves the authored relationship while keeping the gaze and
-            // pinch target clear of the dense brain collision proxy.
-            source + simd_normalize(direction) * 0.012
+            // Float the invitation 18 mm beyond the source point. No connector
+            // line is drawn across the anatomy; selection and the opposite-side
+            // reference explain the relationship.
+            source + simd_normalize(direction) * 0.018
         }
         let cortexLayer = registered.findEntity(named: cortexLayerName) ?? registered
         let arteriesLayer = registered.findEntity(named: arteriesLayerName) ?? registered
@@ -844,7 +1138,7 @@ enum StrokeSceneFactory {
             let direction = simd_length_squared(radial) > 0.000_000_1
                 ? simd_normalize(radial)
                 : SIMD3<Float>(0, 0, 1)
-            return source + direction * 0.012
+            return source + direction * 0.018
         }
 
         let regionPointAnchor = Entity()
@@ -857,15 +1151,6 @@ enum StrokeSceneFactory {
             material: careMaterial(opacity: 0.92)
         )
         regionPointAnchor.addChild(regionPointField)
-        for index in registeredRegionPoints.indices {
-            guard let point = regionPointField.findEntity(
-                named: "\(regionPointFieldName)-point-\(index)"
-            ) else { continue }
-            addPointInvitationTether(
-                to: point,
-                sourceOffset: registeredRegionSourcePoints[index] - registeredRegionPoints[index]
-            )
-        }
         let registeredAtlasSourcePoints = atlasPointDirections.map { direction in
             brainCenter + brainRadii * simd_normalize(direction)
         }
@@ -882,15 +1167,6 @@ enum StrokeSceneFactory {
             material: careMaterial(opacity: 0.92)
         )
         regionPointAnchor.addChild(atlasPointField)
-        for index in registeredAtlasPoints.indices {
-            guard let point = atlasPointField.findEntity(
-                named: "\(atlasPointFieldName)-point-\(index)"
-            ) else { continue }
-            addPointInvitationTether(
-                to: point,
-                sourceOffset: registeredAtlasSourcePoints[index] - registeredAtlasPoints[index]
-            )
-        }
         let procedurePointField = makePointField(
             name: procedurePointFieldName,
             points: registeredFlowPoints,
@@ -898,24 +1174,15 @@ enum StrokeSceneFactory {
             material: warningMaterial(opacity: 0.92)
         )
         arteriesLayer.addChild(procedurePointField)
-        for index in registeredFlowPoints.indices {
-            guard let point = procedurePointField.findEntity(
-                named: "\(procedurePointFieldName)-point-\(index)"
-            ) else { continue }
-            addPointInvitationTether(
-                to: point,
-                sourceOffset: registeredFlowSourcePoints[index] - registeredFlowPoints[index]
-            )
-        }
         arteriesLayer.addChild(makeRegisteredFlowArrows(points: registeredFlowPoints))
 
         let accessPointAnchor = Entity()
         accessPointAnchor.name = accessPointAnchorName
         registered.addChild(accessPointAnchor)
         // Keep the source anchor on the authored bone-flap surface, then place
-        // the interactive invitation 22 mm outward. A short tether retains the
-        // anatomical relationship without making the orb look embedded in the
-        // brain or implying a precise patient-specific access site.
+        // the interactive invitation 22 mm outward. The halo identifies it
+        // without drawing a line across the anatomy or implying a precise
+        // patient-specific access site.
         let accessSourceMarker = accessMarker ?? affectedSurfaceMarker
         let accessInvitationMarker = accessSourceMarker + SIMD3<Float>(0, 0, 0.022)
         let accessPointField = makePointField(
@@ -926,7 +1193,7 @@ enum StrokeSceneFactory {
         )
         accessPointAnchor.addChild(accessPointField)
         if let accessPoint = accessPointField.findEntity(named: "\(accessPointFieldName)-point-0") {
-            addAccessTargetHighlight(to: accessPoint, sourceOffset: [0, 0, -0.022])
+            addAccessTargetHighlight(to: accessPoint)
         }
 
         // Stable semantic gaze/hand targets without generating collisions from
@@ -1210,6 +1477,61 @@ enum StrokeSceneFactory {
                 "Bundled anatomy resource failed to load: \(name, privacy: .public); \(error.localizedDescription, privacy: .public)"
             )
             return nil
+        }
+    }
+
+    /// Retains the registered-v2 cortex geometry and its authored albedo while
+    /// making the generic teaching surface read as a solid, non-metal tissue
+    /// study under the app's presentation lights. This is material calibration,
+    /// not a substitute for a higher-resolution scan, an anatomy claim, or a
+    /// patient-specific rendering.
+    private static func calibrateRegisteredBrainMaterials(_ root: Entity) {
+        if var model = root.components[ModelComponent.self] {
+            model.materials = model.materials.map { material in
+                guard var pbr = material as? PhysicallyBasedMaterial else {
+                    return material
+                }
+                // Preserve the authored texture and geometry, then use a
+                // moderate roughness so the presentation light can reveal
+                // sulcal relief without turning this generic teaching model
+                // into a wet or metallic material study.
+                pbr.metallic = .init(floatLiteral: 0)
+                pbr.roughness = .init(floatLiteral: 0.52)
+                pbr.blending = .opaque
+                pbr.readsDepth = true
+                pbr.writesDepth = true
+                return pbr
+            }
+            root.components.set(model)
+        }
+        for child in root.children {
+            calibrateRegisteredBrainMaterials(child)
+        }
+    }
+
+    /// Retains the authored generic vessel geometry and colours while taking
+    /// the sharp plastic-like clearcoat out of the registered PBR materials.
+    /// This is a lighting/material finish only: it neither invents vessel
+    /// detail nor represents blood flow, tissue condition, or patient anatomy.
+    private static func calibrateRegisteredVesselMaterials(_ root: Entity) {
+        if var model = root.components[ModelComponent.self] {
+            model.materials = model.materials.map { material in
+                guard var pbr = material as? PhysicallyBasedMaterial else {
+                    return material
+                }
+                pbr.metallic = .init(floatLiteral: 0)
+                pbr.roughness = .init(floatLiteral: 0.48)
+                pbr.clearcoat = .init(floatLiteral: 0.06)
+                pbr.clearcoatRoughness = .init(floatLiteral: 0.52)
+                pbr.blending = .opaque
+                pbr.readsDepth = true
+                pbr.writesDepth = true
+                return pbr
+            }
+            root.components.set(model)
+        }
+        for child in root.children {
+            calibrateRegisteredVesselMaterials(child)
         }
     }
 
@@ -1922,6 +2244,80 @@ enum StrokeSceneFactory {
         return false
     }
 
+    static func accessLayerStudyAvailable(in root: Entity) -> Bool {
+        root.findEntity(named: "access-study-handle-Bone") != nil &&
+            root.findEntity(named: "access-study-handle-Dura") != nil
+    }
+
+    static func accessLayerStudyViewingOrbit(in root: Entity) -> SIMD2<Float>? {
+        guard let brain = root.findEntity(named: importedBrainName),
+              let flap = root.findEntity(named: accessBoneFlapName) else { return nil }
+        let openPose = flap.transform
+        flap.transform = .identity
+        let brainBounds = brain.visualBounds(relativeTo: root)
+        let flapBounds = flap.visualBounds(relativeTo: root)
+        flap.transform = openPose
+        let direction = (flapBounds.min + flapBounds.max - brainBounds.min - brainBounds.max) * 0.5
+        guard simd_length_squared(direction) > 0.000_001 else { return nil }
+        // Face the loaded aperture, not a hard-coded left/right assumption.
+        return [-atan2(direction.x, direction.z), 0]
+    }
+
+    static func accessLayerDragContext(
+        for entity: Entity, scenePosition: SIMD3<Float>
+    ) -> (position: SIMD3<Float>, travel: SIMD3<Float>)? {
+        guard entity.components[StrokeAccessLayerTargetComponent.self] != nil,
+              let movable = entity.parent, let referenceFrame = movable.parent,
+              let pose = authoredAccessOpenTransforms[movable.name] else { return nil }
+        return (referenceFrame.convert(position: scenePosition, from: nil), pose.translation)
+    }
+
+    private static func addAccessLayerStudyHandle(
+        to movable: Entity, layer: StrokeAccessStudyLayer, travel: SIMD3<Float>
+    ) {
+        let bounds = movable.visualBounds(relativeTo: movable)
+        let direction = simd_length_squared(travel) > 0.000_001
+            ? simd_normalize(travel) : SIMD3<Float>(0, 0, 1)
+        let handle = ModelEntity(
+            mesh: .generateSphere(radius: 0.0048),
+            materials: [UnlitMaterial(color: .systemMint)]
+        )
+        handle.name = "access-study-handle-\(layer.rawValue)"
+        handle.position = (bounds.min + bounds.max) * 0.5 + direction * 0.014
+        handle.components.set(StrokeAccessLayerTargetComponent(layer: layer))
+        handle.components.set(InputTargetComponent(allowedInputTypes: [.direct, .indirect]))
+        handle.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.012)]))
+        handle.components.set(HoverEffectComponent())
+        var accessibility = AccessibilityComponent()
+        accessibility.isAccessibilityElement = true
+        accessibility.label = "Move \(layer.rawValue.lowercased()) teaching layer"
+        accessibility.systemActions = [.activate]
+        handle.components.set(accessibility)
+        handle.isEnabled = false
+        movable.addChild(handle)
+    }
+
+    private static func updateAccessStudySubset(in entity: Entity, active: Bool) {
+        // Retain the authored parietal aperture and flap, not the teeth, face,
+        // or skull base. The inner study shows the local dural flap only.
+        if entity.name.hasPrefix("RegisteredSkull_") ||
+            entity.name == "Registered_Conceptual_Dura_Remainder_With_Opening" {
+            entity.isEnabled = !active
+        }
+        for child in entity.children { updateAccessStudySubset(in: child, active: active) }
+    }
+
+    static func isClinicianDeviceInspectionTarget(_ entity: Entity) -> Bool {
+        var candidate: Entity? = entity
+        while let current = candidate {
+            if current.components[StrokeClinicianDeviceInspectionTargetComponent.self] != nil {
+                return true
+            }
+            candidate = current.parent
+        }
+        return false
+    }
+
     static func isPointFieldInteractionTarget(_ entity: Entity) -> Bool {
         entity.name.hasPrefix("\(regionPointFieldName)-point-") ||
             entity.name.hasPrefix("\(atlasPointFieldName)-point-") ||
@@ -1966,12 +2362,14 @@ enum StrokeSceneFactory {
         in root: Entity,
         maximumDistance: Float = 0.036
     ) -> (entityName: String, label: String)? {
-        var nearest: (distance: Float, entity: Entity)?
-        // Keep the reviewed 36 mm call-site contract while accepting a wider
-        // miss only after RealityKit has already returned the anatomy proxy.
-        // This is important for a see-through far-side cue: its rendered orb
-        // may be visible even though the opaque proxy wins the ray hit first.
-        let effectiveMaximumDistance = max(maximumDistance, 0.085)
+        var candidates: [(distance: Float, entity: Entity)] = []
+        // The first 36 mm is the normal near-miss allowance. A farther
+        // anatomy-proxy hit is accepted only when one point is clearly closer;
+        // otherwise the pinch does nothing instead of opening the wrong cue.
+        // This preserves a generous far-side allowance without collapsing
+        // neighbouring procedure points into one ambiguous target.
+        let extendedMaximumDistance = max(maximumDistance, 0.085)
+        let minimumUnambiguousGap: Float = 0.024
 
         for fieldName in [regionPointFieldName, atlasPointFieldName, procedurePointFieldName, accessPointFieldName] {
             guard let field = root.findEntity(named: fieldName), field.isEnabled else { continue }
@@ -1979,15 +2377,66 @@ enum StrokeSceneFactory {
                 guard isPointFieldInteractionTarget(point) else { continue }
                 let pointScenePosition = point.convert(position: .zero, to: nil)
                 let distance = simd_distance(pointScenePosition, scenePosition)
-                if distance <= effectiveMaximumDistance,
-                   distance < (nearest?.distance ?? .greatestFiniteMagnitude) {
-                    nearest = (distance, point)
+                if distance <= extendedMaximumDistance {
+                    candidates.append((distance, point))
                 }
             }
         }
 
-        guard let entity = nearest?.entity else { return nil }
-        return pointFieldSelection(for: entity)
+        candidates.sort { $0.distance < $1.distance }
+        guard let nearest = candidates.first else { return nil }
+
+        if nearest.distance > maximumDistance {
+            let isSingleAccessPoint = nearest.entity.name.hasPrefix("\(accessPointFieldName)-point-")
+            let hasClearLead = candidates.dropFirst().first.map {
+                $0.distance - nearest.distance >= minimumUnambiguousGap
+            } ?? true
+            guard isSingleAccessPoint || hasClearLead else { return nil }
+        }
+
+        return pointFieldSelection(for: nearest.entity)
+    }
+
+    /// Resolves a confirmed pinch on the generic brain proxy into the closest
+    /// of the five pre-authored Family Atlas surface contexts. This uses the
+    /// 3D hit RealityKit has already supplied after standard system focus; it
+    /// neither reads raw eye coordinates nor claims that the imported mesh is
+    /// segmented into lobes. The deliberately broad allowance makes the
+    /// object itself usable beside the small optional dots.
+    static func nearestFamilyAtlasSurfaceSelection(
+        to scenePosition: SIMD3<Float>,
+        in root: Entity,
+        maximumDistance: Float = 0.16
+    ) -> (atlasPointIndex: Int, entityName: String, label: String)? {
+        guard let atlasField = root.findEntity(named: atlasPointFieldName) else {
+            return nil
+        }
+
+        var candidates: [(distance: Float, atlasPointIndex: Int, entityName: String, label: String)] = []
+        for point in atlasField.children {
+            let prefix = "\(atlasPointFieldName)-point-"
+            guard point.name.hasPrefix(prefix),
+                  let atlasPointIndex = Int(point.name.dropFirst(prefix.count)),
+                  atlasPointLabels.indices.contains(atlasPointIndex)
+            else { continue }
+
+            candidates.append((
+                distance: simd_distance(point.convert(position: .zero, to: nil), scenePosition),
+                atlasPointIndex: atlasPointIndex,
+                entityName: point.name,
+                label: atlasPointLabels[atlasPointIndex]
+            ))
+        }
+
+        guard let nearest = candidates.min(by: { $0.distance < $1.distance }),
+              nearest.distance <= maximumDistance
+        else { return nil }
+
+        return (
+            atlasPointIndex: nearest.atlasPointIndex,
+            entityName: nearest.entityName,
+            label: nearest.label
+        )
     }
 
     static func semanticTarget(for entity: Entity) -> String {
@@ -2021,7 +2470,9 @@ enum StrokeSceneFactory {
     ) -> Entity {
         let field = Entity()
         field.name = name
-        let mesh = MeshResource.generateSphere(radius: 0.0041)
+        // Keep the visible invitation quiet. The independent collision parent
+        // remains generous, so reducing the orb does not reduce pinchability.
+        let mesh = MeshResource.generateSphere(radius: 0.0036)
 
         for (index, position) in points.enumerated() {
             // The interaction root never pulses or scales. Keeping the collider
@@ -2046,7 +2497,24 @@ enum StrokeSceneFactory {
                 ? .generateSphere(radius: 0.0074)
                 : .generateSphere(radius: max(0.0058, nearestSpacing * 0.42))
             point.components.set(CollisionComponent(shapes: [collisionShape]))
-            point.components.set(HoverEffectComponent())
+
+            // Use the platform's gaze-safe highlight rather than reading raw
+            // eye position. The stronger blend makes the intended target
+            // identifiable before pinch while preserving a quiet idle orb.
+            var hoverStyle = HoverEffectComponent.HighlightHoverEffectStyle.default
+            hoverStyle.strength = 1.35
+            hoverStyle.opacityFunction = .blend
+            point.components.set(HoverEffectComponent(.highlight(hoverStyle)))
+
+            // VoiceOver can announce the same authored identity that the
+            // selected-point card uses; the entity remains a single Activate
+            // target instead of exposing its decorative orb as another item.
+            var accessibility = AccessibilityComponent()
+            accessibility.isAccessibilityElement = true
+            accessibility.label = LocalizedStringResource(stringLiteral: labels[index])
+            accessibility.value = "Teaching point. Pinch to explore."
+            accessibility.systemActions = [.activate]
+            point.components.set(accessibility)
 
             let orb = ModelEntity(mesh: mesh, materials: [material])
             orb.name = lessonPointOrbName
@@ -2058,78 +2526,20 @@ enum StrokeSceneFactory {
         return field
     }
 
-    /// Keeps a lifted invitation visually registered to its authored source
-    /// without adding another collision or label surface. This makes all
-    /// lesson points reachable while the brain remains the dominant object.
-    private static func addPointInvitationTether(
-        to point: Entity,
-        sourceOffset: SIMD3<Float>
-    ) {
-        let distance = simd_length(sourceOffset)
-        guard distance > 0.000_1 else { return }
-
-        let tether = ModelEntity(
-            mesh: .generateCylinder(height: distance, radius: 0.00045),
-            materials: [selectedLessonPointMaterial(opacity: 0.30)]
-        )
-        tether.name = "lesson-point-invitation-tether"
-        tether.position = sourceOffset * 0.5
-        tether.orientation = orientation(from: .zero, to: sourceOffset)
-        point.addChild(tether)
-
-        let sourcePin = ModelEntity(
-            mesh: .generateSphere(radius: 0.0018),
-            materials: [selectedLessonPointMaterial(opacity: 0.44)]
-        )
-        sourcePin.name = "lesson-point-invitation-source"
-        sourcePin.position = sourceOffset
-        point.addChild(sourcePin)
-    }
-
     /// The single access-story point needs to read as a deliberate invitation
-    /// during a three-minute demo. A soft halo plus four short registration
-    /// marks stays non-graphic, inherits the authored access anchor, and adds
-    /// no collision surface that could steal the point's gaze-and-pinch target.
-    private static func addAccessTargetHighlight(
-        to point: Entity,
-        sourceOffset: SIMD3<Float>
-    ) {
+    /// without becoming a radial graphic over the skull. A restrained halo
+    /// inherits the authored access anchor and adds no collision surface that
+    /// could steal the point's gaze-and-pinch target.
+    private static func addAccessTargetHighlight(to point: Entity) {
         let highlight = Entity()
         highlight.name = "clinician-access-target-highlight"
 
         let halo = ModelEntity(
-            mesh: .generateSphere(radius: 0.0084),
-            materials: [warningMaterial(opacity: 0.16)]
+            mesh: .generateSphere(radius: 0.0068),
+            materials: [warningMaterial(opacity: 0.13)]
         )
         halo.name = "clinician-access-target-halo"
         highlight.addChild(halo)
-
-        let tickMesh = MeshResource.generateBox(size: [0.0048, 0.0009, 0.0009])
-        let tickMaterial = selectedLessonPointMaterial(opacity: 0.92)
-        for index in 0..<4 {
-            let angle = Float(index) * (.pi / 2)
-            let tick = ModelEntity(mesh: tickMesh, materials: [tickMaterial])
-            tick.name = "clinician-access-target-mark-\(index)"
-            tick.position = [cos(angle) * 0.0115, sin(angle) * 0.0115, 0]
-            tick.orientation = simd_quatf(angle: angle, axis: [0, 0, 1])
-            highlight.addChild(tick)
-        }
-
-        let tether = ModelEntity(
-            mesh: .generateBox(size: [0.0011, 0.0011, abs(sourceOffset.z)]),
-            materials: [selectedLessonPointMaterial(opacity: 0.38)]
-        )
-        tether.name = "clinician-access-target-tether"
-        tether.position = sourceOffset * 0.5
-        highlight.addChild(tether)
-
-        let sourcePin = ModelEntity(
-            mesh: .generateSphere(radius: 0.0032),
-            materials: [selectedLessonPointMaterial(opacity: 0.72)]
-        )
-        sourcePin.name = "clinician-access-target-source"
-        sourcePin.position = sourceOffset
-        highlight.addChild(sourcePin)
 
         point.addChild(highlight)
     }
@@ -2245,9 +2655,16 @@ enum StrokeSceneFactory {
         let procedureField = root.findEntity(named: procedurePointFieldName)
         let accessField = root.findEntity(named: accessPointFieldName)
 
+        // A placed image owns the presenter's working field. Keep its selected
+        // brain context visible, but remove the surrounding point cloud until
+        // the explicit Back route restores the anatomy presentation.
+        let clinicianImagingStudyOpen = experience.audienceLens == .clinician &&
+            experience.spatialImagingPlateVisible
         let showLessons = experience.spatialPhase == .explanation &&
+            !experience.accessLayerStudy.isActive &&
             experience.lessonPointsVisible &&
-            !experience.isClinicianScholarSkullInspectionActive
+            !experience.isClinicianScholarSkullInspectionActive &&
+            !clinicianImagingStudyOpen
         let atlasOwnsSurfacePoints = experience.audienceLens == .family && experience.familyBrainAtlasVisible
         regionField?.isEnabled = showLessons && experience.pointField == .regions && !atlasOwnsSurfacePoints
         atlasField?.isEnabled = showLessons && atlasOwnsSurfacePoints && experience.familyBrainAtlasCueChapter != nil
@@ -2267,7 +2684,18 @@ enum StrokeSceneFactory {
             // hidden until a deliberate pinch. The single Access invitation is
             // handled separately so it can open one bounded teaching story.
             // These remain generic teaching anchors pending specialist review.
-            let revealAll = experience.pointField != .craniotomy
+            // The Curious Learner opening promises one glowing invitation.
+            // Honour that promise literally: before the first deliberate
+            // point selection, every other region point is disabled rather
+            // than merely made faint or left able to steal a pinch. Once the
+            // learner opens that first idea, the normal reviewed lesson family
+            // becomes discoverable again.
+            let familyFirstDiscovery = experience.audienceLens == .family &&
+                experience.familyDiscoveryHintVisible &&
+                experience.selectedPointEntityName == nil &&
+                !experience.familyBrainAtlasVisible
+            let guidedPointIndex = experience.pointField.defaultLessonPointIndex
+            let revealAll = experience.pointField != .craniotomy && !familyFirstDiscovery
             for (index, child) in active.children.enumerated() {
                 guard isPointFieldInteractionTarget(child),
                       let orb = child.findEntity(named: lessonPointOrbName) as? ModelEntity else {
@@ -2276,14 +2704,15 @@ enum StrokeSceneFactory {
                 let phase = Float(time) * experience.detailLevel.motionRate + Float(index) * 0.42
                 let pulse = 0.96 + sin(phase) * 0.045
                 let isSelected = child.name == experience.selectedPointEntityName
+                let isGuidedFirstPoint = familyFirstDiscovery && index == guidedPointIndex
                 // Opaque anatomy keeps one precise focus. See-through anatomy
                 // reveals the complete lesson family while retaining one
                 // dominant selected marker for gaze + pinch control agency.
-                child.isEnabled = revealAll || isSelected || (
+                child.isEnabled = isGuidedFirstPoint || revealAll || isSelected || (
                     experience.selectedPointEntityName == nil &&
                     index == experience.pointField.defaultLessonPointIndex
                 )
-                let emphasis: Float = isSelected
+                let emphasis: Float = (isSelected || isGuidedFirstPoint)
                     ? 1.58
                     : (revealAll ? experience.detailLevel.pointScale : 1)
                 // Animate only the visible orb. The parent collision shape is
@@ -2292,7 +2721,7 @@ enum StrokeSceneFactory {
                 child.scale = .one
                 orb.scale = [pulse * emphasis, pulse * emphasis, pulse * emphasis]
                 orb.model?.materials = [
-                    isSelected
+                    (isSelected || isGuidedFirstPoint)
                         ? selectedLessonPointMaterial(opacity: 1)
                         : (experience.pointField == .regions
                             ? lessonPointMaterial(opacity: revealAll ? CGFloat(experience.detailLevel.pointOpacity) : 1)
@@ -2409,10 +2838,25 @@ enum StrokeSceneFactory {
         case .internalStructures: min(cortexOpacity, 0.12)
         case .surfaceContext: min(cortexOpacity, 0.20)
         }
-        cortexLayer?.components.set(OpacityComponent(opacity: focusedCortexOpacity))
-        arteriesLayer?.components.set(OpacityComponent(opacity: presentation == .assembled ? 0.90 : 1))
-        venousLayer?.components.set(OpacityComponent(opacity: 0.88))
-        blockageLayer?.components.set(OpacityComponent(opacity: 1))
+        // A generic teaching image is a temporary reading surface, not an
+        // imaging-derived overlay on this fictional case. Keep the brain in
+        // view for orientation, but demote its layers into quiet spatial
+        // context so vessel detail cannot visually compete with the deck.
+        // The selected target stays distinct from the image and is never an
+        // image finding or diagnostic assertion.
+        let isImagingStudyContext = isClinicianExplanation && experience.spatialImagingPlateVisible
+        let imagingCortexOpacity: Float = isImagingStudyContext
+            ? min(focusedCortexOpacity, 0.30)
+            : focusedCortexOpacity
+        let imagingArteriesOpacity: Float = isImagingStudyContext
+            ? 0.38
+            : (presentation == .assembled ? 0.90 : 1)
+        let imagingVenousOpacity: Float = isImagingStudyContext ? 0.28 : 0.88
+        let imagingBlockageOpacity: Float = isImagingStudyContext ? 0.82 : 1
+        cortexLayer?.components.set(OpacityComponent(opacity: imagingCortexOpacity))
+        arteriesLayer?.components.set(OpacityComponent(opacity: imagingArteriesOpacity))
+        venousLayer?.components.set(OpacityComponent(opacity: imagingVenousOpacity))
+        blockageLayer?.components.set(OpacityComponent(opacity: imagingBlockageOpacity))
         let duraOpacity: Float = showsProtectiveCovering
             ? 0.34
             : (showsClosureReference ? 0.18 : (presentation == .exploded ? 0.20 : 0.14))
@@ -2439,8 +2883,9 @@ enum StrokeSceneFactory {
         ) == true
         let isAccessStory = isClinicianExplanation &&
             experience.pointField == .craniotomy &&
-            selectedAccessPoint &&
+            (selectedAccessPoint || experience.accessLayerStudy.isActive) &&
             !isolateScholarSkull
+        let interactiveAccessStudy = isAccessStory && experience.accessLayerStudy.isActive
         let accessNeedsPermission = experience.presenterTeachingBeat.rawValue >=
             StrokePresenterTeachingBeat.protectiveCovering.rawValue
         let showsOpenCranialReview = isAccessStory &&
@@ -2471,12 +2916,12 @@ enum StrokeSceneFactory {
         let scalpOpen: Float = showsOpenCranialReview &&
             experience.presenterTeachingBeat.rawValue >= StrokePresenterTeachingBeat.protectiveCovering.rawValue &&
             experience.presenterTeachingBeat != .explainClosure ? 1 : 0
-        let boneOpen: Float = showsOpenCranialReview &&
+        let boneOpen: Float = interactiveAccessStudy ? experience.accessLayerStudy.boneProgress : (showsOpenCranialReview &&
             experience.presenterTeachingBeat.rawValue >= StrokePresenterTeachingBeat.discussAccess.rawValue &&
-            experience.presenterTeachingBeat != .explainClosure ? 1 : 0
-        let duraOpen: Float = showsOpenCranialReview &&
+            experience.presenterTeachingBeat != .explainClosure ? 1 : 0)
+        let duraOpen: Float = interactiveAccessStudy ? experience.accessLayerStudy.duraProgress : (showsOpenCranialReview &&
             experience.presenterTeachingBeat.rawValue >= StrokePresenterTeachingBeat.explainPurpose.rawValue &&
-            experience.presenterTeachingBeat != .explainClosure ? 1 : 0
+            experience.presenterTeachingBeat != .explainClosure ? 1 : 0)
         setAccessPose(accessScalpFlapName, openness: scalpOpen)
         setAccessPose(accessBoneFlapName, openness: boneOpen)
         setAccessPose(accessDuraFlapName, openness: duraOpen)
@@ -2490,30 +2935,43 @@ enum StrokeSceneFactory {
         let showsAccessScalp: Bool
         let showsAccessBone: Bool
         let showsAccessDura: Bool
-        switch accessBeat {
-        case .discussAccess:
+        if interactiveAccessStudy {
             showsAccessScalp = false
             showsAccessBone = true
+            showsAccessDura = true
+        } else { switch accessBeat {
+        case .discussAccess:
+            showsAccessScalp = false
+            // A full cranial shell makes the normal lesson read as a skull
+            // model. Keep it reserved for the explicit Scholar registration
+            // inspection; the access story stays anchored on the brain and
+            // its protective layer relationship.
+            showsAccessBone = false
             showsAccessDura = false
         case .protectiveCovering:
             showsAccessScalp = false
-            showsAccessBone = experience.detailLevel != .calm
+            showsAccessBone = false
             showsAccessDura = true
         case .explainPurpose, .teamChecks:
-            showsAccessScalp = experience.detailLevel == .scholar
-            showsAccessBone = experience.detailLevel != .calm
+            // The authored scalp closure mesh carries a full head/face
+            // silhouette. It makes the access explanation read as an
+            // unrelated person-shaped model, instead of a focused generic
+            // brain-and-layer relationship, so it stays out of the normal
+            // teaching composition at every visual-detail level.
+            showsAccessScalp = false
+            showsAccessBone = false
             showsAccessDura = true
         case .explainClosure:
-            // Closure returns to one readable exterior boundary. Hidden
-            // internal layers remain in the authored closed pose beneath it.
-            showsAccessScalp = true
+            // Closure returns the bone/dura relationship to its authored
+            // closed pose. Do not reintroduce the face-shaped scalp shell.
+            showsAccessScalp = false
             showsAccessBone = false
             showsAccessDura = false
         case .confirmContext:
             showsAccessScalp = false
             showsAccessBone = false
             showsAccessDura = false
-        }
+        } }
         accessScalpLayer?.isEnabled = showsOpenCranialReview && showsAccessScalp
         accessBoneLayer?.isEnabled = showsOpenCranialReview && showsAccessBone
         accessDuraLayer?.isEnabled = showsOpenCranialReview && showsAccessDura
@@ -2521,6 +2979,7 @@ enum StrokeSceneFactory {
             StrokePresenterTeachingBeat.explainPurpose,
             .teamChecks
         ].contains(experience.presenterTeachingBeat) && experience.detailLevel == .scholar
+            && !interactiveAccessStudy
 
         // Preserve each asset's authored RealityKit material. Wrapper opacity
         // stays opaque so cutaway depth is stable on device; detail changes
@@ -2528,27 +2987,50 @@ enum StrokeSceneFactory {
         accessScalpLayer?.components.set(OpacityComponent(opacity: 1))
         accessBoneLayer?.components.set(OpacityComponent(opacity: 1))
         accessDuraLayer?.components.set(OpacityComponent(opacity: 1))
+        if let openCranialReview {
+            updateAccessStudySubset(in: openCranialReview, active: interactiveAccessStudy)
+            for layer in StrokeAccessStudyLayer.allCases {
+                let handle = openCranialReview.findEntity(named: "access-study-handle-\(layer.rawValue)")
+                handle?.isEnabled = interactiveAccessStudy &&
+                    experience.accessLayerStudy.selectedLayer == layer &&
+                    experience.accessLayerStudy.canMoveSelectedLayer &&
+                    experience.selectedClinicianTool == .forceps
+            }
+        }
         // This app's fictional case is ischemic. The hemorrhage reference stays
         // load-auditable but cannot appear in this story.
         accessHematomaLayer?.isEnabled = false
         let showsPressureStory = experience.spatialPhase == .explanation &&
             experience.procedureStep != .chooseCase &&
+            !interactiveAccessStudy &&
             !isolateScholarSkull
-        // The normal clinician explanation may reveal the already-bundled skull
-        // as a separated spatial reference while the cortex remains central.
-        // A direct transparent overlap produced depth-sorting that hid cortical
-        // detail, so this reversible offset is both clearer and more honest about
-        // the cross-source fit. It reuses the existing layer control instead of
-        // adding another panel or loading the entire catalog into the hero.
-        // Family mode never receives it, and the exact Scholar inspection stays
-        // a separate, isolated review state.
-        let showsClinicianSkullContext = isClinicianExplanation &&
+        // The skull is no longer part of the normal whole-brain composition.
+        // It appears only after the presenter deliberately selects the single
+        // access-story point (or isolates the Scholar registration review).
+        // This keeps the cortex and vessels dominant while preserving a
+        // reversible, explicitly requested layer relationship for the access
+        // and closure beats.
+        let showsClinicianSkullContext = isAccessStory &&
+            !interactiveAccessStudy &&
             anatomyFocus == .whole &&
-            (showsAccessReference || showsClosureReference) &&
+            [StrokePresenterTeachingBeat.discussAccess, .explainClosure]
+                .contains(experience.presenterTeachingBeat) &&
             !isolateScholarSkull
-        let skullOffset: SIMD3<Float> = showsAccessReference ? [0.16, 0, 0] : .zero
+        let skullOffset: SIMD3<Float> = experience.presenterTeachingBeat == .discussAccess
+            ? [0.16, 0, 0]
+            : .zero
         approach(fixedSpaceLayer, showsClinicianSkullContext ? skullOffset : .zero)
-        imported.findEntity(named: importedBrainName)?.isEnabled = !isolateScholarSkull
+        // The Internal selection is an explicit clinician study-apart state.
+        // Hide the exterior cortical shell rather than merely reducing alpha:
+        // opaque PBR fragments otherwise visually bury the loaded deep and
+        // ventricular geometry. The normal Whole view keeps the full authored
+        // cortex exactly as supplied by the registered-v2 asset.
+        let showsInternalStudy = experience.audienceLens == .clinician &&
+            experience.detailLevel == .scholar &&
+            anatomyFocus == .internalStructures &&
+            !isolateScholarSkull
+        imported.findEntity(named: importedBrainName)?.isEnabled =
+            !isolateScholarSkull && !showsInternalStudy
         imported.findEntity(named: importedArteriesName)?.isEnabled = !isolateScholarSkull &&
             anatomyFocus != .internalStructures
         // Blue/purple is an educational convention, not the colour of venous
@@ -2564,6 +3046,7 @@ enum StrokeSceneFactory {
             !isolateScholarSkull
         venousLayer?.isEnabled = showsVenousReference
         imported.findEntity(named: importedClotName)?.isEnabled = !isolateScholarSkull &&
+            !interactiveAccessStudy &&
             anatomyFocus != .internalStructures &&
             (experience.procedureStep != .chooseCase || presentation == .exploded)
         let showsConceptualDura = !showsOpenCranialReview && !isolateScholarSkull && showsPurpose &&
@@ -2573,11 +3056,6 @@ enum StrokeSceneFactory {
         // Deep structures and ventricles are real registered-v2 geometry, but
         // remain a clinician-only, explicit Study-apart reference. They do not
         // appear in the family explanation or imply a patient scan.
-        let showsInternalStudy = experience.audienceLens == .clinician &&
-            experience.detailLevel == .scholar &&
-            anatomyFocus == .internalStructures &&
-            experience.pointField == .regions &&
-            !isolateScholarSkull
         deepStructuresLayer?.isEnabled = showsInternalStudy
         ventriclesLayer?.isEnabled = showsInternalStudy
         deepStructuresLayer?.components.set(OpacityComponent(opacity: showsInternalStudy ? 0.96 : 0))
@@ -2614,6 +3092,7 @@ enum StrokeSceneFactory {
         let showsAuthoredBloodflow = experience.spatialPhase == .explanation &&
             anatomyFocus != .internalStructures &&
             experience.lessonPointsVisible &&
+            !experience.spatialImagingPlateVisible &&
             experience.pointField == .procedure &&
             experience.selectedPointEntityName?.hasPrefix(
                 "clinician-procedure-point-field-point-"
@@ -2655,7 +3134,9 @@ enum StrokeSceneFactory {
         fixedSpaceLayer?.components.set(OpacityComponent(
             opacity: isolateScholarSkull
                 ? 1
-                : (showsAccessReference ? 0.42 : (showsClosureReference ? 0.18 : 0))
+                : (showsClinicianSkullContext
+                    ? (experience.presenterTeachingBeat == .discussAccess ? 0.32 : 0.16)
+                    : 0)
         ))
 
         // This small beacon marks the exact registered clot-derived target. It
@@ -2686,7 +3167,7 @@ enum StrokeSceneFactory {
         // dashed boundary communicates additional room. All motion is derived
         // from the permission-controlled reveal state; no cut, result, or
         // patient-specific access site is shown.
-        carePurposeStory?.isEnabled = showsPurposeReference && !isolateScholarSkull
+        carePurposeStory?.isEnabled = showsPurposeReference && !isolateScholarSkull && !interactiveAccessStudy
         if showsPurposeReference, let carePurposeStory {
             let reveal = Float(experience.layerRevealProgress)
             let breath = Float(1 + sin(motionTime * 0.72) * 0.010)
@@ -2758,8 +3239,8 @@ enum StrokeSceneFactory {
             // cue. In the Family explainer it competes with the brain and can
             // read as a detached radial graph, so discovery stays with the
             // anatomy-attached points and one selected local explanation.
-            boundary.isEnabled = experience.audienceLens == .clinician &&
-                experience.procedureStep != .chooseCase
+            boundary.isEnabled = !hasImportedBrain && experience.audienceLens == .clinician &&
+                experience.procedureStep != .chooseCase && !experience.accessLayerStudy.isActive
             let pulse = Float(1 + sin(time * 0.72) * 0.012)
             boundary.scale = [pulse, pulse, pulse]
         }
@@ -2856,6 +3337,7 @@ enum StrokeSceneFactory {
         guard let arrows = root.findEntity(named: flowArrowName) else { return }
         let shouldShow = experience.spatialPhase == .explanation
             && experience.lessonPointsVisible
+            && !experience.spatialImagingPlateVisible
             && experience.pointField == .procedure
         let hasRegisteredAnatomy = root.findEntity(named: importedRootName) != nil
         arrows.isEnabled = shouldShow && !hasRegisteredAnatomy
@@ -3060,6 +3542,7 @@ enum StrokeSceneFactory {
 enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
     case affectedVessel
     case brainSurface
+    case neuron
     case internalStructures
     case makingRoomPurpose
 
@@ -3069,6 +3552,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
         switch self {
         case .affectedVessel: "Stroke effect"
         case .brainSurface: "Brain surface"
+        case .neuron: "Single neuron"
         case .internalStructures: "Internal structures"
         case .makingRoomPurpose: "Making-room purpose"
         }
@@ -3087,6 +3571,9 @@ enum TeachingImagingMiniatureFactory {
     static let rootName = "registered-teaching-imaging-root"
     static let affectedRootName = "registered-teaching-imaging-affected-vessel"
     static let surfaceRootName = "registered-teaching-imaging-brain-surface"
+    static let neuronRootName = "registered-teaching-imaging-single-neuron-schematic"
+    static let neuronPulseRootName = "registered-teaching-imaging-neuron-signal-cue"
+    static let neuronSignalGuideRootName = "registered-teaching-imaging-neuron-signal-guide"
     static let internalRootName = "registered-teaching-imaging-internal-structures"
     static let purposeRootName = "registered-teaching-imaging-making-room-purpose"
     static let purposeCueName = "registered-teaching-imaging-purpose-boundary-cue"
@@ -3101,11 +3588,10 @@ enum TeachingImagingMiniatureFactory {
     // Keep the secondary 3D vessel/object reference outside the hero brain's
     // foveal volume. It stays world-locked on the right so the wearer reads a
     // second spatial object, rather than a flattened overlay on the anatomy.
-    // Keep the secondary vessel object inside the comfortable right reading
-    // field, clear of room furniture but still distinctly separate from the
-    // hero anatomy. It is a second 3D teaching object, not a flattened image.
-    static let suggestedStagePosition: SIMD3<Float> = [0.43, 1.60, -0.78]
-    static let suggestedStageScale: Float = 1.22
+    // It is inset and a little deeper than the old edge-biased placement so
+    // the entire teaching object remains in the comfortable reading field.
+    static let suggestedStagePosition: SIMD3<Float> = [0.48, 1.62, -0.84]
+    static let suggestedStageScale: Float = 1.04
 
     private static let arteriesAssetName = "cerebral_arteries_realistic_v2"
     private static let brainAssetName = "brain_anatomy_realistic_v2"
@@ -3116,7 +3602,8 @@ enum TeachingImagingMiniatureFactory {
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
     private static let referenceRegionDirections: [SIMD3<Float>] = [
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
-        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54]
+        [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54],
+        [0.31, -0.66, 0.70]
     ]
     private static let atlasSurfaceDirections: [String: SIMD3<Float>] = [
         "Cerebral cortex · generic atlas focus": [-0.58, 0.58, 0.61],
@@ -3150,6 +3637,14 @@ enum TeachingImagingMiniatureFactory {
         surface.scale = [0.72, 0.72, 0.72]
         surface.isEnabled = false
         root.addChild(surface)
+
+        // A point-led atlas reference can disclose one simple 3D teaching
+        // object rather than adding another paragraph to the surface lesson.
+        // This is deliberately schematic: it is not a microscopy image,
+        // cellular recording, patient tissue, or quantitative signal model.
+        let neuron = makeSchematicNeuronReference()
+        neuron.isEnabled = false
+        root.addChild(neuron)
 
         let internalStructures = Entity()
         internalStructures.name = internalRootName
@@ -3304,18 +3799,23 @@ enum TeachingImagingMiniatureFactory {
         isVisible: Bool,
         lens: StrokeTeachingImagingLens,
         selectedPointLabel: String?,
+        emphasizeNeuronSignalPath: Bool,
+        emphasizeSurfacePoint: Bool,
+        emphasizeInternalVentricles: Bool,
         time: TimeInterval,
         isPaused: Bool
     ) {
         guard let root = sceneRoot.findEntity(named: rootName) else { return }
         let affected = root.findEntity(named: affectedRootName)
         let surface = root.findEntity(named: surfaceRootName)
+        let neuron = root.findEntity(named: neuronRootName)
         let internalStructures = root.findEntity(named: internalRootName)
         let purpose = root.findEntity(named: purposeRootName)
 
         root.isEnabled = isVisible
         affected?.isEnabled = isVisible && lens == .affectedVessel
         surface?.isEnabled = isVisible && lens == .brainSurface
+        neuron?.isEnabled = isVisible && lens == .neuron
         internalStructures?.isEnabled = isVisible && lens == .internalStructures
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
 
@@ -3325,6 +3825,29 @@ enum TeachingImagingMiniatureFactory {
         updateQualitativeFlowMarkers(
             in: affected,
             isVisible: showsFlow,
+            selectedPointLabel: selectedPointLabel,
+            time: time,
+            isPaused: isPaused
+        )
+        updateSchematicNeuronReference(
+            neuron,
+            isVisible: isVisible && lens == .neuron,
+            emphasizeNeuronSignalPath: emphasizeNeuronSignalPath,
+            time: time,
+            isPaused: isPaused
+        )
+        updateSurfaceReferenceHighlight(
+            in: surface,
+            isVisible: isVisible && lens == .brainSurface,
+            selectedPointLabel: selectedPointLabel,
+            emphasizeSurfacePoint: emphasizeSurfacePoint,
+            time: time,
+            isPaused: isPaused
+        )
+        updateInternalReferenceFocus(
+            in: internalStructures,
+            isVisible: isVisible && lens == .internalStructures,
+            emphasizeInternalVentricles: emphasizeInternalVentricles,
             time: time,
             isPaused: isPaused
         )
@@ -3365,6 +3888,7 @@ enum TeachingImagingMiniatureFactory {
     private static func updateQualitativeFlowMarkers(
         in affected: Entity?,
         isVisible: Bool,
+        selectedPointLabel: String?,
         time: TimeInterval,
         isPaused: Bool
     ) {
@@ -3382,27 +3906,338 @@ enum TeachingImagingMiniatureFactory {
         let phase = isPaused
             ? Float(0.34)
             : Float((time * 0.18).truncatingRemainder(dividingBy: 1))
-        let upstream = Array(referenceProcedurePositions[0...2])
-        let downstreamA = [referenceProcedurePositions[2], referenceProcedurePositions[3]]
-        let downstreamB = [referenceProcedurePositions[2], referenceProcedurePositions[4]]
+        let supply = referenceProcedurePositions[0]
+        let branch = referenceProcedurePositions[1]
+        let blockage = referenceProcedurePositions[2]
+        let beyondA = referenceProcedurePositions[3]
+        let beyondB = referenceProcedurePositions[4]
 
+        // Each invitation owns one spatial motion sentence. Reusing the full
+        // upstream/downstream loop for every point made distinct concepts look
+        // interchangeable. These paths are qualitative teaching samples only:
+        // they are not vessel centre-lines, speed, perfusion, or patient flow.
         for (index, marker) in markers.children.enumerated() {
-            if index < 7 {
-                let offset = Float(index) / 7
-                marker.position = samplePolyline(
-                    upstream,
-                    phase: (phase + offset).truncatingRemainder(dividingBy: 1)
-                )
-                let pulse = 0.90 + sin((phase + offset) * 2 * .pi) * 0.12
-                marker.scale = [pulse, pulse, pulse]
-            } else {
-                let branch = index == 7 ? downstreamA : downstreamB
-                let branchPhase = (phase * 0.58 + Float(index - 7) * 0.36)
+            let route: [SIMD3<Float>]?
+            let routePhase: Float
+            let scale: Float
+            switch selectedPointLabel {
+            case "Blood supply approaches":
+                route = index < 7 ? [supply, branch] : nil
+                routePhase = (phase + Float(index) / 7)
                     .truncatingRemainder(dividingBy: 1)
-                marker.position = samplePolyline(branch, phase: branchPhase)
-                marker.scale = [0.72, 0.72, 0.72]
+                scale = 0.92
+            case "Arteries branch":
+                if index < 5 {
+                    route = [branch, blockage]
+                    routePhase = (phase + Float(index) / 5)
+                        .truncatingRemainder(dividingBy: 1)
+                    scale = 0.92
+                } else if index < 7 {
+                    route = [blockage, beyondA]
+                    routePhase = (phase * 0.72 + Float(index - 5) / 2)
+                        .truncatingRemainder(dividingBy: 1)
+                    scale = 0.82
+                } else {
+                    route = [blockage, beyondB]
+                    routePhase = (phase * 0.58 + Float(index - 7) / 2)
+                        .truncatingRemainder(dividingBy: 1)
+                    scale = 0.72
+                }
+            case "Example blockage":
+                route = index < 7 ? [supply, branch, blockage] : nil
+                routePhase = (phase * 0.78 + Float(index) / 7)
+                    .truncatingRemainder(dividingBy: 1)
+                let arrival = max(0, routePhase - 0.72) / 0.28
+                scale = 0.90 + arrival * 0.34
+            case "Flow beyond the blockage changes":
+                route = index >= 7 ? [blockage, beyondA] : nil
+                routePhase = (phase * 0.46 + Float(index - 7) * 0.42)
+                    .truncatingRemainder(dividingBy: 1)
+                scale = 0.68
+            case "Affected territory":
+                route = index >= 7 ? [blockage, beyondB] : nil
+                routePhase = (phase * 0.40 + Float(index - 7) * 0.46)
+                    .truncatingRemainder(dividingBy: 1)
+                scale = 0.64
+            default:
+                route = nil
+                routePhase = 0
+                scale = 1
             }
+
+            marker.isEnabled = route != nil
+            guard let route else { continue }
+            marker.position = samplePolyline(route, phase: routePhase)
+            let pulse = scale + sin((routePhase + Float(index) * 0.11) * 2 * .pi) * 0.08
+            marker.scale = [pulse, pulse, pulse]
         }
+    }
+
+    /// One deliberately generic neuron is a spatial teaching object, not a
+    /// biological reconstruction. Its branches and travelling light are a
+    /// qualitative way to inspect connection direction without claiming
+    /// membrane voltage, synaptic timing, neurotransmitter chemistry, or a
+    /// patient's cellular activity.
+    private static func makeSchematicNeuronReference() -> Entity {
+        let root = Entity()
+        root.name = neuronRootName
+        root.orientation = wearerFacingTilt
+        // Keep the isolated cell completely inside the right-secondary field:
+        // it should read as a standalone reference beside the brain rather
+        // than run off the edge like a decorative background pattern.
+        root.position = [-0.06, 0.02, 0]
+        root.scale = [0.90, 0.90, 0.90]
+
+        let soma = ModelEntity(
+            mesh: .generateSphere(radius: 0.031),
+            materials: [UnlitMaterial(color: UIColor(
+                red: 0.32,
+                green: 0.93,
+                blue: 0.84,
+                alpha: 0.94
+            ))]
+        )
+        soma.name = "single-neuron-schematic-soma"
+        soma.scale = [1.04, 0.96, 0.92]
+        root.addChild(soma)
+
+        let branchMaterial = UnlitMaterial(color: UIColor(
+            red: 0.34,
+            green: 0.76,
+            blue: 0.95,
+            alpha: 0.84
+        ))
+        let axonMaterial = UnlitMaterial(color: UIColor(
+            red: 0.70,
+            green: 0.46,
+            blue: 0.94,
+            alpha: 0.92
+        ))
+        let dendritePaths: [[SIMD3<Float>]] = [
+            [[-0.014, 0.012, 0.004], [-0.064, 0.060, 0.028], [-0.124, 0.092, 0.040]],
+            [[-0.016, -0.004, 0.010], [-0.078, -0.042, 0.040], [-0.140, -0.082, 0.056]],
+            [[-0.012, 0.003, -0.011], [-0.060, 0.002, -0.060], [-0.126, 0.040, -0.094]],
+            [[-0.006, 0.016, -0.006], [-0.030, 0.096, -0.034], [-0.074, 0.140, -0.052]]
+        ]
+        for (index, path) in dendritePaths.enumerated() {
+            addSchematicNeuronBranch(
+                path,
+                radius: 0.0044,
+                material: branchMaterial,
+                name: "single-neuron-schematic-dendrite-\(index)",
+                to: root
+            )
+        }
+
+        addSchematicNeuronBranch(
+            neuronSignalPath,
+            radius: 0.0052,
+            material: axonMaterial,
+            name: "single-neuron-schematic-axon",
+            to: root
+        )
+
+        // The full purple fiber remains visible as anatomy. This thinner amber
+        // overlay is normally hidden and appears only after a learner opens
+        // the matching plain-language explanation, making the authored motion
+        // sentence inspectable without turning the reference into a label cloud.
+        let signalGuide = Entity()
+        signalGuide.name = neuronSignalGuideRootName
+        signalGuide.isEnabled = false
+        let signalGuideMaterial = UnlitMaterial(color: UIColor(
+            red: 1.00,
+            green: 0.68,
+            blue: 0.20,
+            alpha: 0.96
+        ))
+        addSchematicNeuronBranch(
+            neuronSignalPath,
+            radius: 0.0018,
+            material: signalGuideMaterial,
+            name: "single-neuron-schematic-signal-guide",
+            to: signalGuide
+        )
+        root.addChild(signalGuide)
+
+        let contacts = Entity()
+        contacts.name = "single-neuron-schematic-contacts"
+        let contactPositions: [SIMD3<Float>] = [
+            [-0.126, 0.092, 0.040], [-0.140, -0.082, 0.056],
+            [-0.126, 0.040, -0.094], [-0.074, 0.140, -0.052],
+            neuronSignalPath.last ?? .zero
+        ]
+        for (index, position) in contactPositions.enumerated() {
+            let contact = ModelEntity(
+                mesh: .generateSphere(radius: 0.007),
+                materials: [UnlitMaterial(color: UIColor(
+                    red: 0.95,
+                    green: 0.78,
+                    blue: 0.34,
+                    alpha: 0.90
+                ))]
+            )
+            contact.name = "single-neuron-schematic-contact-\(index)"
+            contact.position = position
+            contacts.addChild(contact)
+        }
+        root.addChild(contacts)
+
+        let pulses = Entity()
+        pulses.name = neuronPulseRootName
+        for index in 0..<5 {
+            let pulse = ModelEntity(
+                mesh: .generateSphere(radius: 0.0052),
+                materials: [UnlitMaterial(color: UIColor(
+                    red: 1.0,
+                    green: 0.67,
+                    blue: 0.20,
+                    alpha: 0.96
+                ))]
+            )
+            pulse.name = "single-neuron-schematic-signal-\(index)"
+            pulses.addChild(pulse)
+        }
+        root.addChild(pulses)
+        return root
+    }
+
+    private static let neuronSignalPath: [SIMD3<Float>] = [
+        [0.018, -0.004, 0.002], [0.082, 0.012, 0.018],
+        [0.152, 0.004, 0.052], [0.224, 0.030, 0.078]
+    ]
+
+    private static func addSchematicNeuronBranch(
+        _ path: [SIMD3<Float>],
+        radius: Float,
+        material: UnlitMaterial,
+        name: String,
+        to parent: Entity
+    ) {
+        guard path.count > 1 else { return }
+        let branch = Entity()
+        branch.name = name
+        for index in 1..<path.count {
+            let start = path[index - 1]
+            let end = path[index]
+            let delta = end - start
+            let length = simd_length(delta)
+            guard length > 0.000_001 else { continue }
+            let segment = ModelEntity(
+                mesh: .generateCylinder(height: length, radius: radius),
+                materials: [material]
+            )
+            segment.name = "\(name)-segment-\(index - 1)"
+            segment.position = (start + end) / 2
+            segment.orientation = simd_quatf(from: [0, 1, 0], to: simd_normalize(delta))
+            branch.addChild(segment)
+        }
+        parent.addChild(branch)
+    }
+
+    private static func updateSchematicNeuronReference(
+        _ neuron: Entity?,
+        isVisible: Bool,
+        emphasizeNeuronSignalPath: Bool,
+        time: TimeInterval,
+        isPaused: Bool
+    ) {
+        guard let neuron else { return }
+        neuron.isEnabled = isVisible
+        guard isVisible else { return }
+
+        let phase = isPaused
+            ? Float(0.34)
+            : Float((time * 0.22).truncatingRemainder(dividingBy: 1))
+        let breath = 1 + sin(phase * 2 * .pi) * 0.035
+        neuron.findEntity(named: "single-neuron-schematic-soma")?.scale = [
+            1.04 * breath,
+            0.96 * breath,
+            0.92 * breath
+        ]
+
+        guard let pulses = neuron.findEntity(named: neuronPulseRootName) else { return }
+        neuron.findEntity(named: neuronSignalGuideRootName)?.isEnabled = emphasizeNeuronSignalPath
+        for (index, pulse) in pulses.children.enumerated() {
+            let signalPhase = (phase + Float(index) / Float(max(pulses.children.count, 1)))
+                .truncatingRemainder(dividingBy: 1)
+            pulse.position = samplePolyline(neuronSignalPath, phase: signalPhase)
+            let baseScale: Float = emphasizeNeuronSignalPath ? 1.14 : 0.80
+            let amplitude: Float = emphasizeNeuronSignalPath ? 0.22 : 0.16
+            let scale = baseScale + sin(signalPhase * 2 * .pi) * amplitude
+            pulse.scale = [scale, scale, scale]
+        }
+    }
+
+    /// A selected surface point already owns a small, tangential patch on the
+    /// complete generic brain. Use the learner's explicit Plain words action
+    /// to make that *existing* patch breathe slightly. No new label, line, or
+    /// anatomy claim is introduced: the cue remains an authored orientation
+    /// aid, not a lobe segmentation, functional map, or patient finding.
+    private static func updateSurfaceReferenceHighlight(
+        in surface: Entity?,
+        isVisible: Bool,
+        selectedPointLabel: String?,
+        emphasizeSurfacePoint: Bool,
+        time: TimeInterval,
+        isPaused: Bool
+    ) {
+        guard let surface else { return }
+
+        let surfaceLabels = StrokePointField.regions.lessonPoints.map(\.fullTitle)
+            + Array(atlasSurfaceDirections.keys)
+        let phase = isPaused
+            ? Float(0.34)
+            : Float((time * 0.54).truncatingRemainder(dividingBy: 1))
+
+        for label in surfaceLabels {
+            guard let highlight = surface.findEntity(named: highlightName(for: label)) else {
+                continue
+            }
+            let selected = isVisible && label == selectedPointLabel
+            let scale: Float
+            if selected && emphasizeSurfacePoint {
+                // The small size range keeps this a local orientation pulse,
+                // rather than turning the outer brain into a competing beacon.
+                scale = 1.18 + sin(phase * 2 * .pi) * 0.07
+            } else {
+                scale = 1
+            }
+            highlight.scale = SIMD3<Float>(repeating: scale)
+        }
+    }
+
+    /// The registered internal reference only exposes a combined deep mesh and
+    /// one named ventricular-system object. A plain-language request can make
+    /// that real object a little clearer without inventing a thalamus,
+    /// hippocampus, functional map, or patient-specific landmark.
+    private static func updateInternalReferenceFocus(
+        in internalStructures: Entity?,
+        isVisible: Bool,
+        emphasizeInternalVentricles: Bool,
+        time: TimeInterval,
+        isPaused: Bool
+    ) {
+        guard let internalStructures else { return }
+        let ventricles = internalStructures.findEntity(named: "internal-ventricular-system")
+        let brainContext = internalStructures.findEntity(named: "internal-brain-context")
+        guard let ventricles else { return }
+
+        guard isVisible && emphasizeInternalVentricles else {
+            ventricles.scale = SIMD3<Float>(repeating: 1)
+            ventricles.components.set(OpacityComponent(opacity: 0.88))
+            brainContext?.components.set(OpacityComponent(opacity: 0.10))
+            return
+        }
+
+        let phase = isPaused
+            ? Float(0.34)
+            : Float((time * 0.40).truncatingRemainder(dividingBy: 1))
+        // This is a deliberately small "look here" response, not simulated
+        // cerebrospinal-fluid motion or a claim about ventricular pressure.
+        let scale = 1.07 + sin(phase * 2 * .pi) * 0.025
+        ventricles.scale = SIMD3<Float>(repeating: scale)
+        ventricles.components.set(OpacityComponent(opacity: 0.98))
+        brainContext?.components.set(OpacityComponent(opacity: 0.055))
     }
 
     private static func samplePolyline(_ points: [SIMD3<Float>], phase: Float) -> SIMD3<Float> {
@@ -3456,9 +4291,10 @@ enum TeachingImagingMiniatureFactory {
         let regionLabels = StrokePointField.regions.lessonPoints.map(\.fullTitle)
         for (index, label) in regionLabels.enumerated() where index > 0 {
             let direction = simd_normalize(referenceRegionDirections[index])
-            addHighlight(
+            addSurfaceRegionHighlight(
                 label: label,
                 position: brainCenter + brainRadii * direction * 1.035,
+                outwardNormal: direction,
                 tint: UIColor(red: 0.32, green: 0.93, blue: 0.84, alpha: 1),
                 to: surface
             )
@@ -3466,9 +4302,10 @@ enum TeachingImagingMiniatureFactory {
 
         for (label, rawDirection) in atlasSurfaceDirections {
             let direction = simd_normalize(rawDirection)
-            addHighlight(
+            addSurfaceRegionHighlight(
                 label: label,
                 position: brainCenter + brainRadii * direction * 1.04,
+                outwardNormal: direction,
                 tint: UIColor(red: 0.32, green: 0.93, blue: 0.84, alpha: 1),
                 to: surface
             )
@@ -3525,6 +4362,44 @@ enum TeachingImagingMiniatureFactory {
         )
         core.name = "\(highlight.name)-core"
         highlight.addChild(core)
+        parent.addChild(highlight)
+    }
+
+    /// A surface/context invitation should reveal an area on the complete
+    /// brain—not another detached dot. This quiet, tangential patch remains
+    /// outside the registered mesh and is purely an app-authored orientation
+    /// cue. It is not a segmented lobe, measured boundary, or patient finding.
+    private static func addSurfaceRegionHighlight(
+        label: String,
+        position: SIMD3<Float>,
+        outwardNormal: SIMD3<Float>,
+        tint: UIColor,
+        to parent: Entity
+    ) {
+        let highlight = Entity()
+        highlight.name = highlightName(for: label)
+        highlight.position = position
+        highlight.orientation = simd_quatf(
+            from: SIMD3<Float>(0, 0, 1),
+            to: simd_normalize(outwardNormal)
+        )
+        highlight.isEnabled = false
+
+        let patch = ModelEntity(
+            mesh: .generateSphere(radius: 0.0135),
+            materials: [UnlitMaterial(color: tint.withAlphaComponent(0.18))]
+        )
+        patch.name = "\(highlight.name)-surface-patch"
+        patch.scale = [1.65, 1.20, 0.26]
+        highlight.addChild(patch)
+
+        let focus = ModelEntity(
+            mesh: .generateSphere(radius: 0.0032),
+            materials: [UnlitMaterial(color: tint.withAlphaComponent(0.96))]
+        )
+        focus.name = "\(highlight.name)-focus"
+        focus.position.z = 0.0044
+        highlight.addChild(focus)
         parent.addChild(highlight)
     }
 

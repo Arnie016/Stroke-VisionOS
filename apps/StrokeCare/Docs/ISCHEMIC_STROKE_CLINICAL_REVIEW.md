@@ -1,6 +1,6 @@
 # Stroke Care clinical review packet
 
-- Content version: `SC-AIS-001.12`
+- Content version: `SC-AIS-001.13`
 - App version: `0.6 (29)` review candidate
 - Scenario: `CASE-078` (fictional; no patient data)
 - Scenario frame: severe large-territory ischemic stroke with swelling; a
@@ -30,6 +30,17 @@ two dim markers beyond it. The counts are a legibility choice, not blood-cell
 count, flow velocity, perfusion, CFD, or patient physiology. Pause and Reduce
 Motion retain a fixed directional composition. This animation and its wording
 remain pending specialist review.
+
+Content version `SC-AIS-001.13` adds a separate clinician-only **Move the layers**
+study. A generic forceps selection enables a deliberate pinch or drag of an
+authored bone/dura model handle; a button offers the same reversible action.
+The outer brain view stays fixed. No cutting, tissue forces, bleeding,
+tool-contact detection, operative trajectory, pressure change, or treatment
+result is simulated. Reset returns model pieces only. It must not imply that
+a decompressive craniectomy ends with immediate bone replacement. Naming,
+layer registration, proportions, motion, gesture ergonomics, and all related
+teaching claims are **Pending clinician and neuroanatomy review**. See
+`CRANIOTOMY_TEACHING_SEQUENCE.md` for the source basis and verification routes.
 
 The Pressure scene uses three deliberately
 different qualitative forms: a compact clot pulse, a filled amber
@@ -75,6 +86,15 @@ pre-stroke function, wishes and preferences, local protocol, and the person's
 full situation.
 
 ## Claim and annotation review matrix
+
+Version `SC-AIS-001.13` also adds a separate educational Medications workspace
+with antiplatelet, anticoagulant, thrombolysis and longer-term prevention topics.
+It is not tied to the fictional patient's eligibility or treatment plan. Copy
+is based on NHS medicine and stroke-treatment pages listed in
+`REFERENCE_WORKSPACE_HIERARCHY.md`, checked 26 August 2026. No dose, automated
+selection or outcome claim is provided. The new topic-specific plain-language
+Anatomy, Flow and Access prompts and the medicine distinctions remain pending
+clinician review.
 
 | App surface | Draft wording or visual intent | Source basis | Reviewer decision |
 | --- | --- | --- | --- |

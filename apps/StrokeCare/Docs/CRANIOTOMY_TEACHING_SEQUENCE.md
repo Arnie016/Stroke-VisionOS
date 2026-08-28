@@ -1,7 +1,7 @@
 # Craniotomy teaching sequence
 
 Status: **PENDING CLINICIAN AND NEUROANATOMY REVIEW**
-Content version: `SC-AIS-001.9`
+Content version: `SC-AIS-001.13`
 Audience: clinician-led discussion with a patient or family; generic teaching
 anatomy only.
 
@@ -9,12 +9,44 @@ This sequence translates the six Page 2 Figma frames into one non-graphic,
 reversible spatial explanation. It is not a procedural simulator, treatment
 recommendation, consent flow, patient scan, or surgical-training SOP.
 
+## Interactive layer study, 26 August 2026
+
+Doctor presenter → Access → the access point → **Move the layers** opens an
+explicitly separate, non-operative model study. The existing permission prompt
+still precedes the first reveal. Only the source-derived parietal aperture,
+bone flap, and conceptual dural flap join the registered brain. The face,
+teeth, skull base, full dural shell, and pressure decorations stay hidden.
+
+The app equips the generic forceps prop and holds the brain's view still.
+Selecting **Bone** or **Dura**, then pinching its mint handle, lifts or returns
+that authored mesh. Pinch-and-drag allows intermediate positions along the
+authored closed-to-separated pose. A large Lift/Return control provides the
+same action without a spatial drag. This does not detect tool-tip contact or
+simulate force, cutting, bleeding, drilling, or tissue deformation.
+
+The model prevents the inner cover moving through the outer one and explains
+how to return them in reverse order. **Reset** restores both model poses;
+**Back** restores the preceding view and tool selection. Reset is not a
+portrayal of clinical closure or treatment success. In particular, this is
+not an immediate bone-replacement step for decompressive craniectomy.
+
+The anatomical distinction is supported by [Johns Hopkins Medicine's
+craniotomy overview](https://www.hopkinsmedicine.org/health/treatment-tests-and-therapies/craniotomy)
+(checked 26 August 2026): craniotomy and craniectomy differ in whether/when the
+bone flap is replaced. That source is context, not validation of this app's
+geometry, tool behavior, or timing. The complete interaction remains pending
+specialist and physical-headset review.
+
+`--proof-access-layer-open` and `--proof-access-layer-closed` launch only after
+both actual movable assets load. They exercise the same state actions as the
+controls. The pure state verifier is `Tests/verify_access_layer_study.swift`.
+
 ## Implemented role contract
 
 - **Patient / family** retains the original three calm acts: `Orient`,
   `Pressure`, and `Make space`.
-- **Doctor presenter** sees six compact, directly revisitable checkpoints at
-  the top of the spatial scene. `Next` and `Back` traverse those checkpoints,
+- **Doctor presenter** sees six compact, directly revisitable checkpoints
+  below the anatomy. `Next` and `Back` traverse those checkpoints,
   while a direct pinch returns to any earlier checkpoint.
 - Checkpoints 3–6 reuse the existing explicit permission prompt before any
   layer separation. Refusal pauses the explanation without advancing.
@@ -44,7 +76,7 @@ assembled teaching view. These remain explanation states, not operative steps.
 | 5. What the team checks | A static authored checklist names pressure, bleeding, imaging, and monitoring as discussion topics. | Do not show pass/fail, automated escalation, outcome prediction, or a “controlled” animation. |
 | 6. Explain closure | The same teaching layers return to the assembled state. | Explain the concept of returning layers; do not animate suturing, fixation, wound closure, or success. |
 
-The top `Orient → Pressure → Make space` timeline remains the patient/family
+The `Orient → Pressure → Make space` timeline remains the patient/family
 story. In doctor-presenter mode it becomes the six nested checkpoints above,
 not six additional permanent tabs. A selected anatomy point may reveal one
 depth-linked teaching reference; all other labels remain quiet.

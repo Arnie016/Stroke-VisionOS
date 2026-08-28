@@ -1,1 +1,5 @@
 .DS_Store
+apps/StrokeCare/.derivedData/
+apps/StrokeCare/.derivedDataRuntime/
+apps/StrokeCare/.derivedData-xcat-preflight/
+apps/StrokeCare/Tests/__pycache__/

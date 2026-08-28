@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		0646F063013DC866D19343A9 /* StrokeSceneFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */; };
+		0BE2F9D1C8B75690557BECC8 /* RBCJourneyHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32904D6A828BA62CE60EAFA3 /* RBCJourneyHUD.swift */; };
 		12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 860445E33FD0C59397A922AA /* cranial_drill_generic.usdz */; };
 		13635B58AAEC109DF6D39307 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70A581FC5A619BE9E342C7BD /* Assets.xcassets */; };
 		15300A4344F0DD9247F8C250 /* StrokeSpatialPreludeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E74E9383887A5FBB0969BEF /* StrokeSpatialPreludeView.swift */; };
 		16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = F64750DC74A14E49DFEDF063 /* FlowBed.wav */; };
+		17624041D8B4F9016A90CD94 /* RBCJourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9DC6434CD316CD58CF0DFA /* RBCJourneyModel.swift */; };
 		1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C144C17AB279CA643242E29B /* StrokeControlDeck.swift */; };
 		20371A9349F1E4107A5026E8 /* brain_ventricles_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 0CE81704BF9499FA5FEBCA60 /* brain_ventricles_v2.usdz */; };
 		2123AE673EDD66EB6548837A /* PatientHistoryTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */; };
@@ -20,13 +22,19 @@
 		28DACDA93C76C4E685F0C0FC /* cerebral_edema_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 04D5BCA6AE16371C657F5AC8 /* cerebral_edema_registered_conceptual_v1.usdz */; };
 		2C2C4ED17C38C6DA4163B85F /* external_head_scalp_cutaway_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */; };
 		2CAE80C6C151693B52630EF5 /* StrokeTeachingModelPrintRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D6B81CA1D186C2406849E6 /* StrokeTeachingModelPrintRequestView.swift */; };
+		2D1A2B7CC4E9EA85B5E00660 /* RBCPortalGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B49ED59CE69FC3472FE2867 /* RBCPortalGestureController.swift */; };
+		356CEF594FD5A2AC9B7872A8 /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 08DB2AEDECA8F5A616239B9A /* cerebral_bloodflow_teaching_set_v2.usdz */; };
 		37197CFAF2FB1FC6199D9F23 /* StrokeTimeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */; };
 		3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */; };
 		44DD9315D7655FD2CD86D1D2 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4DCA91CA49F7E270C5C9AD1B /* cerebral_bloodflow_animation_v2.usdz */; };
+		4646FC7D9BF1266C096DD20A /* aspiration_catheter_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 353A11204F48AF711E42472C /* aspiration_catheter_educational_v2.usdz */; };
 		46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */; };
 		4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */; };
+		5354330DE1B5AEF7CC08CB4F /* artery_cutaway_complete_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 815A0DBBA54832AE1D36496D /* artery_cutaway_complete_v2.usdz */; };
+		67FD00636C67FC3AC3E54C47 /* microcirculation_arterial_venous_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CF69EB31F88DBE1232462614 /* microcirculation_arterial_venous_v2.usdz */; };
 		6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */; };
 		74B29CCB7E4546879D77D3F4 /* StrokeEvidenceWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */; };
+		74EF6E4505CE14F74A04E298 /* red_blood_cells_closeup_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 22D9B8E37EFEE534EA222747 /* red_blood_cells_closeup_v2.usdz */; };
 		76025BADBB32B2CB466971B8 /* dural_access_closure_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A3391ECF7C246FCD230C1805 /* dural_access_closure_registered_conceptual_v1.usdz */; };
 		76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */; };
 		7956B547FB3FA32B7EB88F5E /* dural_patch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 38684AD7663E54E8E55A7C3F /* dural_patch.usdz */; };
@@ -34,35 +42,64 @@
 		828357211E0E36424403ECC5 /* intracerebral_hematoma_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = E0CFDA0D8690E556271C71A5 /* intracerebral_hematoma_registered_conceptual_v1.usdz */; };
 		858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */; };
 		8FCFEBBD5DE4FF59CB0042E2 /* scalp_access_closure_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 25E74DE33C0CCF24338CFCCE /* scalp_access_closure_registered_conceptual_v1.usdz */; };
+		90929FBBD2C44C4DF9A71111 /* artery_wall_cutaway_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C919A89C91F9B80E84F64DFF /* artery_wall_cutaway_v2.usdz */; };
+		999DA74C87615A0F84C60280 /* stent_retriever_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1B2E5D28BA86B8800DDA26C9 /* stent_retriever_educational_v2.usdz */; };
+		9A16D0A254CED965A5EA4614 /* RBCJourneyImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A5CF0CA0344B6D88AEFF78 /* RBCJourneyImmersiveView.swift */; };
 		9A3017927B6F685AC3386F83 /* dural_sinuses_jugulars_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3173F69C23E7838AD8B6FF4C /* dural_sinuses_jugulars_realistic_v2.usdz */; };
 		9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */; };
+		A219C62A2E23FA4DE4226479 /* RBCFamilyNarrationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353689758AE1CD8068D7AE39 /* RBCFamilyNarrationEngine.swift */; };
+		A21A31319F377C21E9F009DA /* microcatheter_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C3D9F75C925FD700E3F51422 /* microcatheter_educational_v2.usdz */; };
 		B082C5DFC240F4CE817288FA /* StrokeAssetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */; };
+		A826ACCE5500000000000001 /* StrokeAccessLayerStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A826ACCE5500000000000002 /* StrokeAccessLayerStudy.swift */; };
+		A826ACCE5500000000000003 /* StrokeReferenceWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A826ACCE5500000000000004 /* StrokeReferenceWorkspaceView.swift */; };
+		A826ACCE5500000000000005 /* StrokeImagingImportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A826ACCE5500000000000006 /* StrokeImagingImportSession.swift */; };
+		B82600000000000000000001 /* StrokeImagingGalleryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82600000000000000000002 /* StrokeImagingGalleryModel.swift */; };
+		B82600000000000000000003 /* StrokeImagingGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82600000000000000000004 /* StrokeImagingGalleryView.swift */; };
+		B82600000000000000000005 /* StrokeMedicationExhibit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82600000000000000000006 /* StrokeMedicationExhibit.swift */; };
 		B972D5C93397992ADA0C5082 /* StrokeModelBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BB5F4D0A91DA08D41D1BA9 /* StrokeModelBoardView.swift */; };
+		B9BD13D6CD0717412363C357 /* cranial_vascular_registered_assembly_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = FDF7251C3CD50BE75FEE2909 /* cranial_vascular_registered_assembly_v2.usdz */; };
+		BFBC033A555FD3FF481D89AF /* RBCJourneyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA1BCEF9E568DBE8064A458 /* RBCJourneyScene.swift */; };
 		C1B24B4B1F460FFEC4F3DD15 /* eyes_context_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */; };
 		CECA5EDE58ADB678673F208A /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6E2573F23F677A6A203F5EFA /* THIRD_PARTY_NOTICES.txt */; };
+		D7339A85B35E2F84CC16325E /* thrombectomy_device_set_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C7EC8220BD6BDB29C75CA3D5 /* thrombectomy_device_set_educational_v2.usdz */; };
 		D73EA98CE7A85F6C358913E4 /* cranial_bone_access_closure_registered_conceptual_v1.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 753516AA5DB20D25E5D7DC28 /* cranial_bone_access_closure_registered_conceptual_v1.usdz */; };
 		DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */; };
 		DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */; };
 		DF877245DD47CB22F5DA9F5A /* StrokeTeachingImagingWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BD204EF309B42B35A4951E3 /* StrokeTeachingImagingWorkspaceView.swift */; };
+		E1F5C5A4E4195B20C6D611D6 /* artery_interior_bloodflow_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4612BED5CC377758C81A0D05 /* artery_interior_bloodflow_v2.usdz */; };
 		E27697BF4448281573658419 /* circle_of_willis_flow_overlay_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */; };
+		EA202EAAEC5D6D14E7603797 /* guidewire_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C8296D8ECDCC518BF4B3780A /* guidewire_educational_v2.usdz */; };
 		F35080EB0A3184483D874359 /* PressureBed.wav in Resources */ = {isa = PBXBuildFile; fileRef = AD36F9CDA16675FE73F438E6 /* PressureBed.wav */; };
 		F629449C94C1D86F737B036E /* StrokeJourneyLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		04D5BCA6AE16371C657F5AC8 /* cerebral_edema_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_edema_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
+		08DB2AEDECA8F5A616239B9A /* cerebral_bloodflow_teaching_set_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_teaching_set_v2.usdz; sourceTree = "<group>"; };
 		0CE81704BF9499FA5FEBCA60 /* brain_ventricles_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_ventricles_v2.usdz; sourceTree = "<group>"; };
 		1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = ischemic_mca_clot_v2.usdz; sourceTree = "<group>"; };
+		1B2E5D28BA86B8800DDA26C9 /* stent_retriever_educational_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = stent_retriever_educational_v2.usdz; sourceTree = "<group>"; };
 		1E74E9383887A5FBB0969BEF /* StrokeSpatialPreludeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeSpatialPreludeView.swift; sourceTree = "<group>"; };
+		22D9B8E37EFEE534EA222747 /* red_blood_cells_closeup_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = red_blood_cells_closeup_v2.usdz; sourceTree = "<group>"; };
 		25E74DE33C0CCF24338CFCCE /* scalp_access_closure_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = scalp_access_closure_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
 		3173F69C23E7838AD8B6FF4C /* dural_sinuses_jugulars_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_sinuses_jugulars_realistic_v2.usdz; sourceTree = "<group>"; };
+		32904D6A828BA62CE60EAFA3 /* RBCJourneyHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyHUD.swift; sourceTree = "<group>"; };
+		353689758AE1CD8068D7AE39 /* RBCFamilyNarrationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCFamilyNarrationEngine.swift; sourceTree = "<group>"; };
+		353A11204F48AF711E42472C /* aspiration_catheter_educational_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = aspiration_catheter_educational_v2.usdz; sourceTree = "<group>"; };
 		38684AD7663E54E8E55A7C3F /* dural_patch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_patch.usdz; sourceTree = "<group>"; };
+		4612BED5CC377758C81A0D05 /* artery_interior_bloodflow_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_interior_bloodflow_v2.usdz; sourceTree = "<group>"; };
 		4A041E46C7A54D62C4A5D704 /* dura_mater_cutaway_conceptual_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dura_mater_cutaway_conceptual_v2.usdz; sourceTree = "<group>"; };
 		4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalmPaperFlowView.swift; sourceTree = "<group>"; };
 		4DCA91CA49F7E270C5C9AD1B /* cerebral_bloodflow_animation_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_animation_v2.usdz; sourceTree = "<group>"; };
 		50FB13284B6CE9AA9A9BF303 /* edema_swelling.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = edema_swelling.usdz; sourceTree = "<group>"; };
 		5C1BD66A0B96A0FFED9F0935 /* StrokeSceneFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeSceneFactory.swift; sourceTree = "<group>"; };
 		5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeExperienceState.swift; sourceTree = "<group>"; };
+		A826ACCE5500000000000002 /* StrokeAccessLayerStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeAccessLayerStudy.swift; sourceTree = "<group>"; };
+		A826ACCE5500000000000004 /* StrokeReferenceWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeReferenceWorkspaceView.swift; sourceTree = "<group>"; };
+		A826ACCE5500000000000006 /* StrokeImagingImportSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImagingImportSession.swift; sourceTree = "<group>"; };
+		B82600000000000000000002 /* StrokeImagingGalleryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImagingGalleryModel.swift; sourceTree = "<group>"; };
+		B82600000000000000000004 /* StrokeImagingGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImagingGalleryView.swift; sourceTree = "<group>"; };
+		B82600000000000000000006 /* StrokeMedicationExhibit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeMedicationExhibit.swift; sourceTree = "<group>"; };
 		61FC44E51C2EC58E8E04E60E /* StrokeTime.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StrokeTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65C1BEF741A21F4471319776 /* StrokeTimeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTimeApp.swift; sourceTree = "<group>"; };
 		6E2573F23F677A6A203F5EFA /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = THIRD_PARTY_NOTICES.txt; sourceTree = "<group>"; };
@@ -70,10 +107,14 @@
 		7516C5121C5D3319F93644A9 /* cerebral_arteries_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_arteries_realistic_v2.usdz; sourceTree = "<group>"; };
 		753516AA5DB20D25E5D7DC28 /* cranial_bone_access_closure_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_bone_access_closure_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
 		75D6B81CA1D186C2406849E6 /* StrokeTeachingModelPrintRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTeachingModelPrintRequestView.swift; sourceTree = "<group>"; };
+		7B49ED59CE69FC3472FE2867 /* RBCPortalGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCPortalGestureController.swift; sourceTree = "<group>"; };
+		815A0DBBA54832AE1D36496D /* artery_cutaway_complete_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_cutaway_complete_v2.usdz; sourceTree = "<group>"; };
 		860445E33FD0C59397A922AA /* cranial_drill_generic.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_drill_generic.usdz; sourceTree = "<group>"; };
 		8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_anatomy_realistic_v2.usdz; sourceTree = "<group>"; };
+		8D9DC6434CD316CD58CF0DFA /* RBCJourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyModel.swift; sourceTree = "<group>"; };
 		8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = suction_and_forceps.usdz; sourceTree = "<group>"; };
 		9281899E9337C7D21F94E6F1 /* craniotomy_bone_flap.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = craniotomy_bone_flap.usdz; sourceTree = "<group>"; };
+		97A5CF0CA0344B6D88AEFF78 /* RBCJourneyImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyImmersiveView.swift; sourceTree = "<group>"; };
 		9BD204EF309B42B35A4951E3 /* StrokeTeachingImagingWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeTeachingImagingWorkspaceView.swift; sourceTree = "<group>"; };
 		A3391ECF7C246FCD230C1805 /* dural_access_closure_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = dural_access_closure_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
 		AD36F9CDA16675FE73F438E6 /* PressureBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PressureBed.wav; sourceTree = "<group>"; };
@@ -82,15 +123,22 @@
 		C144C17AB279CA643242E29B /* StrokeControlDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeControlDeck.swift; sourceTree = "<group>"; };
 		C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = external_head_scalp_cutaway_v2.usdz; sourceTree = "<group>"; };
 		C2FDDBFCFF8305703E9A4ECC /* circle_of_willis_flow_overlay_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = circle_of_willis_flow_overlay_v2.usdz; sourceTree = "<group>"; };
+		C3D9F75C925FD700E3F51422 /* microcatheter_educational_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = microcatheter_educational_v2.usdz; sourceTree = "<group>"; };
+		C7EC8220BD6BDB29C75CA3D5 /* thrombectomy_device_set_educational_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = thrombectomy_device_set_educational_v2.usdz; sourceTree = "<group>"; };
+		C8296D8ECDCC518BF4B3780A /* guidewire_educational_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = guidewire_educational_v2.usdz; sourceTree = "<group>"; };
+		C919A89C91F9B80E84F64DFF /* artery_wall_cutaway_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = artery_wall_cutaway_v2.usdz; sourceTree = "<group>"; };
 		CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = skull_semantic_realistic_v2.usdz; sourceTree = "<group>"; };
+		CF69EB31F88DBE1232462614 /* microcirculation_arterial_venous_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = microcirculation_arterial_venous_v2.usdz; sourceTree = "<group>"; };
 		D5E887E8F32F0F370CCDE7D3 /* StrokeImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImmersiveView.swift; sourceTree = "<group>"; };
 		D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeEvidenceWorkspaceView.swift; sourceTree = "<group>"; };
 		E0CFDA0D8690E556271C71A5 /* intracerebral_hematoma_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = intracerebral_hematoma_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
 		E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeAssetCatalog.swift; sourceTree = "<group>"; };
 		EA6B9087680C1CF6BA949590 /* StrokeJourneyLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeJourneyLaunchView.swift; sourceTree = "<group>"; };
+		EAA1BCEF9E568DBE8064A458 /* RBCJourneyScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCJourneyScene.swift; sourceTree = "<group>"; };
 		ED879D21EF18EF183C3B9DA4 /* brain_deep_structures_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_deep_structures_v2.usdz; sourceTree = "<group>"; };
 		F64750DC74A14E49DFEDF063 /* FlowBed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = FlowBed.wav; sourceTree = "<group>"; };
 		FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = eyes_context_realistic_v2.usdz; sourceTree = "<group>"; };
+		FDF7251C3CD50BE75FEE2909 /* cranial_vascular_registered_assembly_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cranial_vascular_registered_assembly_v2.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -107,6 +155,21 @@
 			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit/exports/usdz;
 			sourceTree = "<group>";
 		};
+		454DCE578D1CDBD0814B3938 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				815A0DBBA54832AE1D36496D /* artery_cutaway_complete_v2.usdz */,
+				4612BED5CC377758C81A0D05 /* artery_interior_bloodflow_v2.usdz */,
+				C919A89C91F9B80E84F64DFF /* artery_wall_cutaway_v2.usdz */,
+				08DB2AEDECA8F5A616239B9A /* cerebral_bloodflow_teaching_set_v2.usdz */,
+				FDF7251C3CD50BE75FEE2909 /* cranial_vascular_registered_assembly_v2.usdz */,
+				CF69EB31F88DBE1232462614 /* microcirculation_arterial_venous_v2.usdz */,
+				22D9B8E37EFEE534EA222747 /* red_blood_cells_closeup_v2.usdz */,
+			);
+			name = Models;
+			path = "../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models";
+			sourceTree = "<group>";
+		};
 		93BD8CC6E16F4FD9D1D28BE9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -119,8 +182,10 @@
 			isa = PBXGroup;
 			children = (
 				B6A8B1824ABF106BD38149C0 /* Audio */,
+				454DCE578D1CDBD0814B3938 /* Models */,
 				AE09F0E5E7835807FA968CB8 /* Resources */,
 				9DD278786D9ADEFB4C872605 /* Sources */,
+				B9A7A60DD44178A11772BE7D /* Sources */,
 				F232DE35F4303E0EB1034FBA /* usdz */,
 				017A53FCF13A4D2EB0D4CF83 /* usdz */,
 				93BD8CC6E16F4FD9D1D28BE9 /* Products */,
@@ -133,6 +198,12 @@
 				4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */,
 				B33600CE18F6BF60CCE03E20 /* PatientHistoryTimelineView.swift */,
 				E1ED4B210562C066908871AC /* StrokeAssetCatalog.swift */,
+				A826ACCE5500000000000002 /* StrokeAccessLayerStudy.swift */,
+				A826ACCE5500000000000004 /* StrokeReferenceWorkspaceView.swift */,
+				A826ACCE5500000000000006 /* StrokeImagingImportSession.swift */,
+				B82600000000000000000002 /* StrokeImagingGalleryModel.swift */,
+				B82600000000000000000004 /* StrokeImagingGalleryView.swift */,
+				B82600000000000000000006 /* StrokeMedicationExhibit.swift */,
 				C144C17AB279CA643242E29B /* StrokeControlDeck.swift */,
 				D7EC870813D9E9115A87D2C5 /* StrokeEvidenceWorkspaceView.swift */,
 				5E12BC462ADD8A140B6FFF54 /* StrokeExperienceState.swift */,
@@ -167,9 +238,24 @@
 			path = Resources/Audio;
 			sourceTree = "<group>";
 		};
+		B9A7A60DD44178A11772BE7D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				353689758AE1CD8068D7AE39 /* RBCFamilyNarrationEngine.swift */,
+				32904D6A828BA62CE60EAFA3 /* RBCJourneyHUD.swift */,
+				97A5CF0CA0344B6D88AEFF78 /* RBCJourneyImmersiveView.swift */,
+				8D9DC6434CD316CD58CF0DFA /* RBCJourneyModel.swift */,
+				EAA1BCEF9E568DBE8064A458 /* RBCJourneyScene.swift */,
+				7B49ED59CE69FC3472FE2867 /* RBCPortalGestureController.swift */,
+			);
+			name = Sources;
+			path = "../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Sources";
+			sourceTree = "<group>";
+		};
 		F232DE35F4303E0EB1034FBA /* usdz */ = {
 			isa = PBXGroup;
 			children = (
+				353A11204F48AF711E42472C /* aspiration_catheter_educational_v2.usdz */,
 				8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */,
 				ED879D21EF18EF183C3B9DA4 /* brain_deep_structures_v2.usdz */,
 				0CE81704BF9499FA5FEBCA60 /* brain_ventricles_v2.usdz */,
@@ -183,10 +269,14 @@
 				3173F69C23E7838AD8B6FF4C /* dural_sinuses_jugulars_realistic_v2.usdz */,
 				C2E56F56AD8470A819C99445 /* external_head_scalp_cutaway_v2.usdz */,
 				FC8E9705A7B213E5B3302678 /* eyes_context_realistic_v2.usdz */,
+				C8296D8ECDCC518BF4B3780A /* guidewire_educational_v2.usdz */,
 				E0CFDA0D8690E556271C71A5 /* intracerebral_hematoma_registered_conceptual_v1.usdz */,
 				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
+				C3D9F75C925FD700E3F51422 /* microcatheter_educational_v2.usdz */,
 				25E74DE33C0CCF24338CFCCE /* scalp_access_closure_registered_conceptual_v1.usdz */,
 				CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */,
+				1B2E5D28BA86B8800DDA26C9 /* stent_retriever_educational_v2.usdz */,
+				C7EC8220BD6BDB29C75CA3D5 /* thrombectomy_device_set_educational_v2.usdz */,
 			);
 			name = usdz;
 			path = ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz;
@@ -256,15 +346,21 @@
 				16FF08CEF76067CCA31AFC58 /* FlowBed.wav in Resources */,
 				F35080EB0A3184483D874359 /* PressureBed.wav in Resources */,
 				CECA5EDE58ADB678673F208A /* THIRD_PARTY_NOTICES.txt in Resources */,
+				5354330DE1B5AEF7CC08CB4F /* artery_cutaway_complete_v2.usdz in Resources */,
+				E1F5C5A4E4195B20C6D611D6 /* artery_interior_bloodflow_v2.usdz in Resources */,
+				90929FBBD2C44C4DF9A71111 /* artery_wall_cutaway_v2.usdz in Resources */,
+				4646FC7D9BF1266C096DD20A /* aspiration_catheter_educational_v2.usdz in Resources */,
 				4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */,
 				23EC9E6A57D4A0B27EC1F000 /* brain_deep_structures_v2.usdz in Resources */,
 				20371A9349F1E4107A5026E8 /* brain_ventricles_v2.usdz in Resources */,
 				76607D17A77AD1B7BE0E57A9 /* cerebral_arteries_realistic_v2.usdz in Resources */,
 				44DD9315D7655FD2CD86D1D2 /* cerebral_bloodflow_animation_v2.usdz in Resources */,
+				356CEF594FD5A2AC9B7872A8 /* cerebral_bloodflow_teaching_set_v2.usdz in Resources */,
 				28DACDA93C76C4E685F0C0FC /* cerebral_edema_registered_conceptual_v1.usdz in Resources */,
 				E27697BF4448281573658419 /* circle_of_willis_flow_overlay_v2.usdz in Resources */,
 				D73EA98CE7A85F6C358913E4 /* cranial_bone_access_closure_registered_conceptual_v1.usdz in Resources */,
 				12A027CBEFE04AFF49267CE4 /* cranial_drill_generic.usdz in Resources */,
+				B9BD13D6CD0717412363C357 /* cranial_vascular_registered_assembly_v2.usdz in Resources */,
 				DF0ED8A55A11CE21A010A2B6 /* craniotomy_bone_flap.usdz in Resources */,
 				858814E56DD0BF87BA5A0DD9 /* dura_mater_cutaway_conceptual_v2.usdz in Resources */,
 				76025BADBB32B2CB466971B8 /* dural_access_closure_registered_conceptual_v1.usdz in Resources */,
@@ -273,11 +369,17 @@
 				6A782F42AC3635CC9184D5BA /* edema_swelling.usdz in Resources */,
 				2C2C4ED17C38C6DA4163B85F /* external_head_scalp_cutaway_v2.usdz in Resources */,
 				C1B24B4B1F460FFEC4F3DD15 /* eyes_context_realistic_v2.usdz in Resources */,
+				EA202EAAEC5D6D14E7603797 /* guidewire_educational_v2.usdz in Resources */,
 				828357211E0E36424403ECC5 /* intracerebral_hematoma_registered_conceptual_v1.usdz in Resources */,
 				9F0FB9BD44E3C302036894B7 /* ischemic_mca_clot_v2.usdz in Resources */,
+				A21A31319F377C21E9F009DA /* microcatheter_educational_v2.usdz in Resources */,
+				67FD00636C67FC3AC3E54C47 /* microcirculation_arterial_venous_v2.usdz in Resources */,
+				74EF6E4505CE14F74A04E298 /* red_blood_cells_closeup_v2.usdz in Resources */,
 				8FCFEBBD5DE4FF59CB0042E2 /* scalp_access_closure_registered_conceptual_v1.usdz in Resources */,
 				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,
+				999DA74C87615A0F84C60280 /* stent_retriever_educational_v2.usdz in Resources */,
 				3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */,
+				D7339A85B35E2F84CC16325E /* thrombectomy_device_set_educational_v2.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,7 +392,19 @@
 			files = (
 				46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */,
 				2123AE673EDD66EB6548837A /* PatientHistoryTimelineView.swift in Sources */,
+				A219C62A2E23FA4DE4226479 /* RBCFamilyNarrationEngine.swift in Sources */,
+				0BE2F9D1C8B75690557BECC8 /* RBCJourneyHUD.swift in Sources */,
+				9A16D0A254CED965A5EA4614 /* RBCJourneyImmersiveView.swift in Sources */,
+				17624041D8B4F9016A90CD94 /* RBCJourneyModel.swift in Sources */,
+				BFBC033A555FD3FF481D89AF /* RBCJourneyScene.swift in Sources */,
+				2D1A2B7CC4E9EA85B5E00660 /* RBCPortalGestureController.swift in Sources */,
 				B082C5DFC240F4CE817288FA /* StrokeAssetCatalog.swift in Sources */,
+				A826ACCE5500000000000001 /* StrokeAccessLayerStudy.swift in Sources */,
+				A826ACCE5500000000000003 /* StrokeReferenceWorkspaceView.swift in Sources */,
+				A826ACCE5500000000000005 /* StrokeImagingImportSession.swift in Sources */,
+				B82600000000000000000001 /* StrokeImagingGalleryModel.swift in Sources */,
+				B82600000000000000000003 /* StrokeImagingGalleryView.swift in Sources */,
+				B82600000000000000000005 /* StrokeMedicationExhibit.swift in Sources */,
 				1EC0593553F694D42B6842BA /* StrokeControlDeck.swift in Sources */,
 				74B29CCB7E4546879D77D3F4 /* StrokeEvidenceWorkspaceView.swift in Sources */,
 				DC2E72CD289D47E36BB30896 /* StrokeExperienceState.swift in Sources */,

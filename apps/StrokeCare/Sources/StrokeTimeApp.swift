@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct StrokeTimeApp: App {
     @StateObject private var experience = StrokeExperienceState()
+    @State private var internalJourney = RBCJourneyModel()
     @State private var immersionStyle: ImmersionStyle = .progressive
 
     init() {
@@ -15,6 +16,7 @@ struct StrokeTimeApp: App {
                 StrokeEvidenceWorkspaceView()
                     .environmentObject(experience)
             } else if CommandLine.arguments.contains("--proof-imaging-window")
+                        || CommandLine.arguments.contains("--proof-imaging-window-term-note")
                         || CommandLine.arguments.contains("--proof-imaging-ct")
                         || CommandLine.arguments.contains("--proof-imaging-mri") {
                 StrokeTeachingImagingWorkspaceView()
@@ -32,11 +34,16 @@ struct StrokeTimeApp: App {
             height: CommandLine.arguments.contains("--proof-print-request") ? 680 : 520
         )
         .windowResizability(.contentSize)
+        .windowStyle(.plain)
 
-        WindowGroup(id: StrokeSpace.family) {
+        // Auxiliary workspaces are keyed to one stable value. Reopening one
+        // brings the same window forward instead of leaving duplicate panels
+        // around the room, while retaining the visionOS 2 deployment target.
+        // They reflect the role already chosen at the launch threshold and
+        // must not rewrite it during scene restoration.
+        WindowGroup(id: StrokeSpace.family, for: String.self) { _ in
             StrokeJourneyCompanionView()
                 .environmentObject(experience)
-                .onAppear { experience.audienceLens = .family }
         }
         .defaultSize(width: 460, height: 310)
         .windowResizability(.contentSize)
@@ -48,10 +55,9 @@ struct StrokeTimeApp: App {
             }
         }
 
-        WindowGroup(id: StrokeSpace.presenter) {
+        WindowGroup(id: StrokeSpace.presenter, for: String.self) { _ in
             StrokeJourneyCompanionView()
                 .environmentObject(experience)
-                .onAppear { experience.audienceLens = .clinician }
         }
         .defaultSize(width: 460, height: 560)
         .windowResizability(.contentSize)
@@ -63,7 +69,7 @@ struct StrokeTimeApp: App {
             }
         }
 
-        WindowGroup(id: StrokeSpace.evidence) {
+        WindowGroup(id: StrokeSpace.evidence, for: String.self) { _ in
             StrokeEvidenceWorkspaceView()
                 .environmentObject(experience)
         }
@@ -77,17 +83,16 @@ struct StrokeTimeApp: App {
             }
         }
 
-        // A standard visionOS window is deliberately used here: the clinician
-        // can place this generic 2D reference anywhere in the room without
-        // moving the anatomy-attached explanation or central teaching model.
-        WindowGroup(id: StrokeSpace.imaging) {
+        // This generic 2D reference remains independently placeable without
+        // multiplying every time the clinician reopens it.
+        WindowGroup(id: StrokeSpace.imaging, for: String.self) { _ in
             StrokeTeachingImagingWorkspaceView()
                 .environmentObject(experience)
         }
         .defaultSize(width: 600, height: 470)
         .windowResizability(.contentSize)
 
-        WindowGroup(id: StrokeSpace.printRequest) {
+        WindowGroup(id: StrokeSpace.printRequest, for: String.self) { _ in
             StrokeTeachingModelPrintRequestView(closeWindowID: StrokeSpace.printRequest)
         }
         .defaultSize(width: 900, height: 680)
@@ -96,6 +101,7 @@ struct StrokeTimeApp: App {
         ImmersiveSpace(id: StrokeSpace.immersive) {
             StrokeImmersiveView(immersionStyle: $immersionStyle)
                 .environmentObject(experience)
+                .environment(internalJourney)
         }
         .immersionStyle(selection: $immersionStyle, in: .mixed, .progressive, .full)
     }
