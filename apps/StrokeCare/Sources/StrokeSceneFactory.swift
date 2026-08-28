@@ -51,6 +51,7 @@ enum StrokeSceneFactory {
     private static let importedFlowOverlayName = "circle_of_willis_flow_overlay_v2"
     private static let importedScalpCutawayName = "external_head_scalp_cutaway_v2"
     private static let importedEyesName = "eyes_context_realistic_v2"
+    private static let importedNeuronTeachingName = "multipolar_neuron_detailed_conceptual_v3"
     private static let importedAccessScalpName = "scalp_access_closure_registered_conceptual_v1"
     private static let importedAccessBoneName = "cranial_bone_access_closure_registered_conceptual_v1"
     private static let importedAccessDuraName = "dural_access_closure_registered_conceptual_v1"
@@ -208,7 +209,7 @@ enum StrokeSceneFactory {
     private static let regionPointLabels = [
         "Example affected area", "Nearby brain tissue",
         "Brain surface", "Opposite-side context",
-        "Single neuron · schematic reference"
+        "Neuron anatomy · detailed teaching model"
     ]
 
     /// Exact registered-v2 arterial-mesh surface samples for technical marker
@@ -297,7 +298,11 @@ enum StrokeSceneFactory {
             // The registered teaching miniature is a dormant secondary object.
             // The parent view decides when to present one mutually exclusive
             // lens; it never competes with the central hero anatomy by default.
-            root.addChild(TeachingImagingMiniatureFactory.make(from: importedForMiniature))
+            let detailedNeuron = await loadBundledUSDZ(named: importedNeuronTeachingName)
+            root.addChild(TeachingImagingMiniatureFactory.make(
+                from: importedForMiniature,
+                detailedNeuron: detailedNeuron
+            ))
         }
 
         return root
@@ -3597,7 +3602,7 @@ enum TeachingImagingMiniatureFactory {
     static let rootName = "registered-teaching-imaging-root"
     static let affectedRootName = "registered-teaching-imaging-affected-vessel"
     static let surfaceRootName = "registered-teaching-imaging-brain-surface"
-    static let neuronRootName = "registered-teaching-imaging-single-neuron-schematic"
+    static let neuronRootName = "registered-teaching-imaging-detailed-neuron-reference"
     static let neuronPulseRootName = "registered-teaching-imaging-neuron-signal-cue"
     static let neuronSignalGuideRootName = "registered-teaching-imaging-neuron-signal-guide"
     static let internalRootName = "registered-teaching-imaging-internal-structures"
@@ -3626,6 +3631,7 @@ enum TeachingImagingMiniatureFactory {
     private static let skullAssetName = "skull_semantic_realistic_v2"
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
+    private static let neuronAssetName = "multipolar_neuron_detailed_conceptual_v3"
     private static let referenceRegionDirections: [SIMD3<Float>] = [
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
         [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54],
@@ -3646,7 +3652,7 @@ enum TeachingImagingMiniatureFactory {
         [-0.053607, -0.011508, 0.017754]
     ]
 
-    static func make(from importedAnatomy: Entity?) -> Entity {
+    static func make(from importedAnatomy: Entity?, detailedNeuron: Entity?) -> Entity {
         let root = Entity()
         root.name = rootName
         root.isEnabled = false
@@ -3664,11 +3670,13 @@ enum TeachingImagingMiniatureFactory {
         surface.isEnabled = false
         root.addChild(surface)
 
-        // A point-led atlas reference can disclose one simple 3D teaching
-        // object rather than adding another paragraph to the surface lesson.
-        // This is deliberately schematic: it is not a microscopy image,
-        // cellular recording, patient tissue, or quantitative signal model.
-        let neuron = makeSchematicNeuronReference()
+        // A point-led atlas reference discloses one authored, named-component
+        // USDZ rather than another paragraph. The bundled model is original
+        // generic teaching morphology: it is not microscopy, patient tissue,
+        // a cellular recording, or a quantitative electrophysiology model.
+        // If decoding fails, a visibly simpler procedural object preserves the
+        // route without pretending that detailed geometry loaded.
+        let neuron = makeDetailedNeuronReference(from: detailedNeuron)
         neuron.isEnabled = false
         root.addChild(neuron)
 
@@ -3855,7 +3863,7 @@ enum TeachingImagingMiniatureFactory {
             time: time,
             isPaused: isPaused
         )
-        updateSchematicNeuronReference(
+        updateDetailedNeuronReference(
             neuron,
             isVisible: isVisible && lens == .neuron,
             emphasizeNeuronSignalPath: emphasizeNeuronSignalPath,
@@ -3999,20 +4007,75 @@ enum TeachingImagingMiniatureFactory {
         }
     }
 
-    /// One deliberately generic neuron is a spatial teaching object, not a
-    /// biological reconstruction. Its branches and travelling light are a
-    /// qualitative way to inspect connection direction without claiming
-    /// membrane voltage, synaptic timing, neurotransmitter chemistry, or a
-    /// patient's cellular activity.
-    private static func makeSchematicNeuronReference() -> Entity {
+    /// One magnified generic neuron is a spatial teaching object, not measured
+    /// histology or a patient reconstruction. The preferred geometry is the
+    /// original, component-named USDZ. A simpler procedural fallback preserves
+    /// the lesson route if that file cannot decode. In both states travelling
+    /// light remains qualitative: it does not claim membrane voltage, ion
+    /// exchange, synaptic timing, neurotransmitter chemistry, or patient data.
+    private static func makeDetailedNeuronReference(from detailedNeuron: Entity?) -> Entity {
         let root = Entity()
         root.name = neuronRootName
         root.orientation = wearerFacingTilt
-        // Keep the isolated cell completely inside the right-secondary field:
-        // it should read as a standalone reference beside the brain rather
-        // than run off the edge like a decorative background pattern.
         root.position = [-0.06, 0.02, 0]
-        root.scale = [0.90, 0.90, 0.90]
+        // The USDZ is authored as an 85 cm magnified exhibit. At 47% it fills
+        // the right-secondary field without becoming room-scale clutter. The
+        // smaller fallback keeps its earlier scale and remains visibly lower
+        // fidelity instead of masquerading as the bundled asset.
+        let presentationScale: Float = detailedNeuron == nil ? 0.90 : 0.47
+        root.scale = [presentationScale, presentationScale, presentationScale]
+
+        if let detailedNeuron {
+            detailedNeuron.name = neuronAssetName
+            root.addChild(detailedNeuron)
+        } else {
+            root.addChild(makeProceduralNeuronFallback())
+        }
+
+        // The authored mesh remains anatomy. This thin amber overlay is a
+        // separate runtime explanation cue and appears only after Plain words.
+        let signalGuide = Entity()
+        signalGuide.name = neuronSignalGuideRootName
+        signalGuide.isEnabled = false
+        let signalGuideMaterial = UnlitMaterial(color: UIColor(
+            red: 1.00,
+            green: 0.68,
+            blue: 0.20,
+            alpha: 0.96
+        ))
+        addSchematicNeuronBranch(
+            neuronSignalPath,
+            radius: 0.0022,
+            material: signalGuideMaterial,
+            name: "detailed-neuron-qualitative-signal-guide",
+            to: signalGuide
+        )
+        root.addChild(signalGuide)
+
+        let pulses = Entity()
+        pulses.name = neuronPulseRootName
+        for index in 0..<6 {
+            let pulse = ModelEntity(
+                mesh: .generateSphere(radius: 0.0062),
+                materials: [UnlitMaterial(color: UIColor(
+                    red: 1.0,
+                    green: 0.67,
+                    blue: 0.20,
+                    alpha: 0.96
+                ))]
+            )
+            pulse.name = "detailed-neuron-qualitative-signal-\(index)"
+            pulses.addChild(pulse)
+        }
+        root.addChild(pulses)
+        return root
+    }
+
+    /// Deliberately lower-fidelity route continuity for a missing USDZ. Its
+    /// semantic name makes the degraded state inspectable in machine proof.
+    private static func makeProceduralNeuronFallback() -> Entity {
+        let root = Entity()
+        root.name = "procedural-neuron-fallback-missing-detailed-usdz"
 
         let soma = ModelEntity(
             mesh: .generateSphere(radius: 0.031),
@@ -4063,28 +4126,6 @@ enum TeachingImagingMiniatureFactory {
             to: root
         )
 
-        // The full purple fiber remains visible as anatomy. This thinner amber
-        // overlay is normally hidden and appears only after a learner opens
-        // the matching plain-language explanation, making the authored motion
-        // sentence inspectable without turning the reference into a label cloud.
-        let signalGuide = Entity()
-        signalGuide.name = neuronSignalGuideRootName
-        signalGuide.isEnabled = false
-        let signalGuideMaterial = UnlitMaterial(color: UIColor(
-            red: 1.00,
-            green: 0.68,
-            blue: 0.20,
-            alpha: 0.96
-        ))
-        addSchematicNeuronBranch(
-            neuronSignalPath,
-            radius: 0.0018,
-            material: signalGuideMaterial,
-            name: "single-neuron-schematic-signal-guide",
-            to: signalGuide
-        )
-        root.addChild(signalGuide)
-
         let contacts = Entity()
         contacts.name = "single-neuron-schematic-contacts"
         let contactPositions: [SIMD3<Float>] = [
@@ -4107,29 +4148,13 @@ enum TeachingImagingMiniatureFactory {
             contacts.addChild(contact)
         }
         root.addChild(contacts)
-
-        let pulses = Entity()
-        pulses.name = neuronPulseRootName
-        for index in 0..<5 {
-            let pulse = ModelEntity(
-                mesh: .generateSphere(radius: 0.0052),
-                materials: [UnlitMaterial(color: UIColor(
-                    red: 1.0,
-                    green: 0.67,
-                    blue: 0.20,
-                    alpha: 0.96
-                ))]
-            )
-            pulse.name = "single-neuron-schematic-signal-\(index)"
-            pulses.addChild(pulse)
-        }
-        root.addChild(pulses)
         return root
     }
 
     private static let neuronSignalPath: [SIMD3<Float>] = [
-        [0.018, -0.004, 0.002], [0.082, 0.012, 0.018],
-        [0.152, 0.004, 0.052], [0.224, 0.030, 0.078]
+        [0.030, -0.006, 0.002], [0.090, 0.004, 0.006],
+        [0.170, -0.010, 0.000], [0.250, 0.008, -0.004],
+        [0.335, -0.003, 0.004], [0.415, 0.010, 0.010]
     ]
 
     private static func addSchematicNeuronBranch(
@@ -4160,7 +4185,7 @@ enum TeachingImagingMiniatureFactory {
         parent.addChild(branch)
     }
 
-    private static func updateSchematicNeuronReference(
+    private static func updateDetailedNeuronReference(
         _ neuron: Entity?,
         isVisible: Bool,
         emphasizeNeuronSignalPath: Bool,
@@ -4175,11 +4200,15 @@ enum TeachingImagingMiniatureFactory {
             ? Float(0.34)
             : Float((time * 0.22).truncatingRemainder(dividingBy: 1))
         let breath = 1 + sin(phase * 2 * .pi) * 0.035
-        neuron.findEntity(named: "single-neuron-schematic-soma")?.scale = [
-            1.04 * breath,
-            0.96 * breath,
-            0.92 * breath
-        ]
+        if let detailedSoma = neuron.findEntity(named: "Soma") {
+            detailedSoma.scale = [breath, breath, breath]
+        } else {
+            neuron.findEntity(named: "single-neuron-schematic-soma")?.scale = [
+                1.04 * breath,
+                0.96 * breath,
+                0.92 * breath
+            ]
+        }
 
         guard let pulses = neuron.findEntity(named: neuronPulseRootName) else { return }
         neuron.findEntity(named: neuronSignalGuideRootName)?.isEnabled = emphasizeNeuronSignalPath

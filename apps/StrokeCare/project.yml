@@ -95,6 +95,8 @@ targets:
         buildPhase: resources
       - path: ../../../Stroke-VisionOS-inside-brain-rd/Experiments/RBCJourneyVision/Resources/Models/cerebral_bloodflow_teaching_set_v2.usdz
         buildPhase: resources
+      - path: ../../RealityKitContent/Assets/vision_pro_stroke_kit_v2/exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.arnav.StrokeTime

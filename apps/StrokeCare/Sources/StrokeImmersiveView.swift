@@ -4808,7 +4808,7 @@ private struct StrokeTeachingImagingDrawer: View {
         switch (experience.audienceLens, experience.teachingImagingLens) {
         case (.family, .affectedVessel): return "FULL ARTERIAL TREE · TEACHING VIEW"
         case (.family, .brainSurface): return "WHOLE BRAIN SURFACE · TEACHING VIEW"
-        case (.family, .neuron): return "ONE NEURON · SCHEMATIC TEACHING VIEW"
+        case (.family, .neuron): return "ONE NEURON · DETAILED TEACHING MODEL"
         case (.family, .internalStructures): return "INTERNAL STRUCTURES + VENTRICLES · TEACHING VIEW"
         case (.family, .makingRoomPurpose): return "MAKING-ROOM PURPOSE · TEACHING VIEW"
         case (.clinician, .affectedVessel): return "AFFECTED-VESSEL REFERENCE"
@@ -4833,7 +4833,7 @@ private struct StrokeTeachingImagingDrawer: View {
 
     private var referenceBoundary: String {
         if experience.teachingImagingLens == .neuron {
-            return "Generic schematic · not to scale, patient tissue, or a recording"
+            return "Magnified generic morphology · not patient tissue, histology, or a recording"
         }
         if experience.audienceLens == .clinician {
             return "Registered-v2 teaching asset · review pending"
@@ -4844,7 +4844,7 @@ private struct StrokeTeachingImagingDrawer: View {
         case .brainSurface:
             return "Complete generic brain surface · not a patient scan"
         case .neuron:
-            return "Generic schematic · not to scale, patient tissue, or a recording"
+            return "Magnified generic morphology · not patient tissue, histology, or a recording"
         case .internalStructures:
             return "Combined generic internal mesh · labels and registration under specialist review"
         case .makingRoomPurpose:
@@ -6701,7 +6701,7 @@ private struct StrokeIntentionAnnotation: View {
     private var annotationTitle: String {
         if experience.closingReflectionVisible { return "YOU DO NOT HAVE TO HOLD EVERY ANSWER AT ONCE" }
         if experience.isClinicianScholarSkullInspectionActive { return "SKULL · REGISTRATION REVIEW" }
-        if experience.selectedPointLabel == "Single neuron · schematic reference" {
+        if experience.selectedPointLabel == "Neuron anatomy · detailed teaching model" {
             return "ONE NEURON"
         }
         if let selected = experience.selectedPointLabel { return selected.uppercased() }
@@ -6726,7 +6726,7 @@ private struct StrokeIntentionAnnotation: View {
     }
 
     private var annotationEyebrow: String {
-        if experience.selectedPointLabel == "Single neuron · schematic reference" {
+        if experience.selectedPointLabel == "Neuron anatomy · detailed teaching model" {
             return "BRAIN ATLAS · 3D TEACHING MODEL"
         }
         let lesson = experience.pointField == .procedure ? "VESSEL STORY" : "BRAIN ATLAS"
@@ -6744,7 +6744,7 @@ private struct StrokeIntentionAnnotation: View {
     /// that object directly instead of repeating the point's internal label.
     /// Other references preserve their existing, relationship-led wording.
     private var selectedReferenceActionTitle: String {
-        if experience.selectedPointLabel == "Single neuron · schematic reference" {
+        if experience.selectedPointLabel == "Neuron anatomy · detailed teaching model" {
             return experience.selectedPointReferenceExpanded ? "Hide 3D neuron" : "Show 3D neuron"
         }
         return experience.selectedPointReferenceExpanded
@@ -6798,8 +6798,8 @@ private struct StrokeIntentionAnnotation: View {
             "Surface orientation only; no incision or access site is planned."
         case "Opposite-side context":
             "A comparison reference—not a claim of normal function."
-        case "Single neuron · schematic reference":
-            "A generic 3D model of one branching nerve cell, not patient tissue or a recording."
+        case "Neuron anatomy · detailed teaching model":
+            "A magnified 3D nerve-cell model with named biological parts, not patient tissue, histology, or a recording."
         case "Blood supply approaches":
             "Follow the cues toward the brain: direction only, not speed or volume."
         case "Arteries branch":

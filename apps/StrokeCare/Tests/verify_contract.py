@@ -53,6 +53,13 @@ reference_workspace = (ROOT / "Sources" / "StrokeReferenceWorkspaceView.swift").
 imaging_import_session = (ROOT / "Sources" / "StrokeImagingImportSession.swift").read_text()
 capture_script = (ROOT / "Scripts" / "capture_simulator_route_proof.zsh").read_text()
 proof_verifier = (ROOT / "Tests" / "verify_proof_image.py").read_text()
+neuron_builder = (ROOT / "TechnicalArt" / "build_neuron_teaching_reference.py").read_text()
+neuron_asset_root = (
+    ROOT / "../../RealityKitContent/Assets/vision_pro_stroke_kit_v2"
+).resolve()
+neuron_manifest = (neuron_asset_root / "asset_manifest_intracranial_micro_v3.json").read_text()
+neuron_provenance = (neuron_asset_root / "NEURON_TEACHING_REFERENCE_PROVENANCE_V3.md").read_text()
+neuron_usdz = neuron_asset_root / "exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz"
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("enum StrokePresenterTeachingBeat", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
@@ -247,9 +254,9 @@ require(all(token in immersive for token in (
     'not a patient image',
 )), "clinician imaging handoff is incomplete")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
-require(len(declared_usdz_paths) == 34 and len(set(declared_usdz_paths)) == 34 and "asset_manifest" not in project_yml, "runtime asset slice must contain exactly thirty-four unique explicit USDZ resources")
+require(len(declared_usdz_paths) == 35 and len(set(declared_usdz_paths)) == 35 and "asset_manifest" not in project_yml, "runtime asset slice must contain exactly thirty-five unique explicit USDZ resources")
 require(
-    len({Path(path).name for path in declared_usdz_paths}) == 34
+    len({Path(path).name for path in declared_usdz_paths}) == 35
     and all((ROOT / path).resolve().exists() for path in declared_usdz_paths),
     "every explicit USDZ resource must exist and have a unique bundle basename",
 )
@@ -267,13 +274,15 @@ require(all(name in project_yml for name in (
     "intracerebral_hematoma_registered_conceptual_v1.usdz",
     "cerebral_edema_registered_conceptual_v1.usdz",
     "thrombectomy_device_set_educational_v2.usdz",
+    "multipolar_neuron_detailed_conceptual_v3.usdz",
 )), "required detail/context, registered conceptual access, and educational device assets are not declared in the app bundle")
 require(all(token in catalog for token in (
     "dural_sinuses_jugulars_realistic_v2",
     "circle_of_willis_flow_overlay_v2",
     "external_head_scalp_cutaway_v2",
     "eyes_context_realistic_v2",
-    "twenty-two catalogued exterior resources",
+    "multipolar_neuron_detailed_conceptual_v3",
+    "twenty-three catalogued exterior resources",
 )), "registered-v2 detail/context references are not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
 require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices and "HRA Skin" in third_party_notices and "Visible Human eye context" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
@@ -581,31 +590,59 @@ require("PRESENTER ONLY" in immersive and "clinicianPresenter" in immersive, "pr
 require("StrokePointField" in state and "Brain regions" in state and "Blood flow" in state, "lesson point-field flavors are missing")
 require(
     all(token in state for token in (
-        '"Single neuron · schematic reference"',
+        '"Neuron anatomy · detailed teaching model"',
         "prepareFamilyNeuronReferenceProof",
         "prepareFamilyNeuronPlainWordsProof",
-        "Think of this as a tree-like brain cell",
-        'case .neuron: return "single neuron"',
+        "A neuron has receiving branches",
+        'case .neuron: return "detailed neuron"',
         "selectedTeachingReferenceNeedsDrawer",
         "isSelectedNeuronSignalTraceActive",
     ))
     and all(token in scene for token in (
         "case neuron",
-        'neuronRootName = "registered-teaching-imaging-single-neuron-schematic"',
-        "makeSchematicNeuronReference()",
-        "updateSchematicNeuronReference(",
+        'neuronRootName = "registered-teaching-imaging-detailed-neuron-reference"',
+        'importedNeuronTeachingName = "multipolar_neuron_detailed_conceptual_v3"',
+        "makeDetailedNeuronReference(from: detailedNeuron)",
+        "makeProceduralNeuronFallback()",
+        "updateDetailedNeuronReference(",
         "neuronSignalPath",
         "neuronSignalGuideRootName",
         "emphasizeNeuronSignalPath",
-        "single-neuron-schematic-signal-guide",
+        "detailed-neuron-qualitative-signal-guide",
+        'findEntity(named: "Soma")',
     ))
     and all(token in immersive for token in (
-        "ONE NEURON · SCHEMATIC TEACHING VIEW",
-        "Generic schematic · not to scale, patient tissue, or a recording",
+        "ONE NEURON · DETAILED TEACHING MODEL",
+        "Magnified generic morphology · not patient tissue, histology, or a recording",
         "experience.selectedTeachingReferenceNeedsDrawer",
         "experience.isSelectedNeuronSignalTraceActive",
-    )),
-    "point-led schematic neuron reference is missing its bounded spatial object",
+    ))
+    and neuron_usdz.exists()
+    and hashlib.sha256(neuron_usdz.read_bytes()).hexdigest()
+        == "0d4a34b45f3cc94c5c04bb344c5fdd4c050dd9010d6822f3941ebc3f855f8459"
+    and all(token in neuron_manifest for token in (
+        '"mesh_objects": 9',
+        '"vertices": 10808',
+        '"polygons": 11804',
+        '"Soma"',
+        '"Nucleus"',
+        '"DendriteMorphology"',
+        '"DendriticSpineField"',
+        '"AxonCoreAndHillock"',
+        '"MyelinSegments"',
+        '"NodesOfRanvierMesh"',
+        '"AxonTerminalArbor"',
+        '"histology_derived": false',
+        '"quantitative_electrophysiology": false',
+    ))
+    and all(token in neuron_builder for token in (
+        'random.seed(240828)',
+        'consolidate_for_runtime()',
+        'root_prim_path="/NeuronTeachingReference"',
+        'NEURON_ASSET_STATS=',
+    ))
+    and "No third-party source asset is incorporated" in neuron_provenance,
+    "point-led detailed neuron USDZ is missing its named biological parts, fallback, or evidence boundary",
 )
 require("StrokeAnatomyPresentation" in state and all(mode in state for mode in ('case assembled', 'case transparent', 'case exploded')), "reversible anatomy presentation modes are missing")
 require("cortexOpacity" in state and "selectedPointEntityName" in state and "selectedPointLabel" in state, "transparent anatomy or point selection state is missing")
@@ -2669,7 +2706,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=THIRTY_FOUR_ASSET_INTEGRATED_SLICE")
+print("github_asset_runtime=THIRTY_FIVE_ASSET_INTEGRATED_SLICE")
 print("required_asset_failure=VISIBLE_COMPLETE_PROCEDURAL_FALLBACK")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")

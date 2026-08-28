@@ -361,7 +361,7 @@ enum StrokeAssetCatalog {
         )
     ]
 
-    /// These are the twenty-two catalogued exterior resources explicitly
+    /// These are the twenty-three catalogued exterior resources explicitly
     /// listed in project.yml. Seven additional authored internal-journey
     /// resources are bundled by the integrated experience but remain owned by
     /// its separate provenance manifest rather than this exterior catalog.
@@ -387,7 +387,8 @@ enum StrokeAssetCatalog {
         "craniotomy_bone_flap",
         "dural_patch",
         "cranial_drill_generic",
-        "suction_and_forceps"
+        "suction_and_forceps",
+        "multipolar_neuron_detailed_conceptual_v3"
     ]
 
     private static let v1PrototypeIDs: [String] = [

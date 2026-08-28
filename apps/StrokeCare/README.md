@@ -91,6 +91,17 @@ clinical validity.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (29)` replaces the earlier runtime-built neuron symbol with an
+original bundled RealityKit teaching asset. The USDZ has nine consolidated
+mesh objects, 10,808 vertices, 11,804 polygons, eight PBR materials, and named
+soma, nucleus, dendrite, spine, axon, myelin, node, and terminal components.
+The selected neuron still opens beside the dominant brain rather than covering
+it, and the procedural version remains only as a visible load-failure fallback.
+This is a magnified generic morphology, not patient tissue, histology,
+microscopy, recorded neural activity, or a quantitative physiology model.
+
+![Detailed bundled neuron teaching USDZ in visionOS Simulator](Proof/121-family-detailed-neuron-usdz-simulator.png)
+
 Build `0.6 (29)` now treats the family learner's clarity response as part of
 one selected anatomy conversation. Moving from a neuron marked **Unsure** to
 the affected-area lesson begins with unanswered **Again**, **Unsure**, and

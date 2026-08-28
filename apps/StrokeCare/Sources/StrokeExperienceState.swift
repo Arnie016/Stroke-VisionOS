@@ -208,7 +208,7 @@ enum StrokePointField: String, CaseIterable, Identifiable {
                 StrokeLessonPoint(
                     index: 4,
                     shortTitle: "Neuron",
-                    fullTitle: "Single neuron · schematic reference"
+                    fullTitle: "Neuron anatomy · detailed teaching model"
                 )
             ]
         case .procedure:
@@ -1119,7 +1119,7 @@ final class StrokeExperienceState: ObservableObject {
         audienceLens == .family &&
             selectedPointReferenceExpanded &&
             familyNarrationTranscriptVisible &&
-            selectedPointLabel == "Single neuron · schematic reference"
+            selectedPointLabel == "Neuron anatomy · detailed teaching model"
     }
 
     /// Surface lessons already disclose one complete generic brain in the
@@ -2549,8 +2549,8 @@ final class StrokeExperienceState: ObservableObject {
             "Surface orientation only; no incision or access site is planned."
         case "Opposite-side context":
             "A comparison reference—not a claim of normal function."
-        case "Single neuron · schematic reference":
-            "Generic schematic only. Not patient tissue, a recording, or a measurement."
+        case "Neuron anatomy · detailed teaching model":
+            "Magnified generic morphology. Not patient tissue, histology, a recording, or a measurement."
         case "Blood supply approaches":
             "Follow the route toward the brain: direction only, not speed or volume."
         case "Arteries branch":
@@ -2598,7 +2598,7 @@ final class StrokeExperienceState: ObservableObject {
         switch teachingLens(for: resolvedLabel) {
         case .affectedVessel: return "full arterial tree"
         case .brainSurface: return "whole brain surface"
-        case .neuron: return "single neuron"
+        case .neuron: return "detailed neuron"
         case .internalStructures: return "internal structures"
         case .makingRoomPurpose: return "layer view"
         }
@@ -2649,8 +2649,8 @@ final class StrokeExperienceState: ObservableObject {
             "TERRITORY · THIS REGION DEPENDS ON THE UPSTREAM ROUTE"
         case "Generic craniotomy teaching story":
             "LAYERS · SKULL, DURA, AND BRAIN — NOT A SITE PLAN"
-        case "Single neuron · schematic reference":
-            "SCHEMATIC NEURON · BRANCHES AND ONE QUALITATIVE SIGNAL PATH"
+        case "Neuron anatomy · detailed teaching model":
+            "NEURON ANATOMY · NAMED CELL PARTS AND ONE QUALITATIVE SIGNAL PATH"
         case nil:
             "GENERIC TEACHING RELATIONSHIP"
         default:
@@ -2692,8 +2692,8 @@ final class StrokeExperienceState: ObservableObject {
             "This teaching region depends on the upstream vessel route."
         case "Generic craniotomy teaching story":
             "See the skull, protective covering, and brain as separate teaching layers."
-        case "Single neuron · schematic reference":
-            "One generic cell makes the branching relationship easier to inspect."
+        case "Neuron anatomy · detailed teaching model":
+            "Inspect the soma, nucleus, dendrites, spines, axon, myelin, nodes, and terminals."
         default:
             "The selected point opens its larger teaching context."
         }
@@ -2716,7 +2716,7 @@ final class StrokeExperienceState: ObservableObject {
              "Temporal lobe · generic atlas focus",
              "Occipital lobe · generic atlas focus":
             .brainSurface
-        case "Single neuron · schematic reference":
+        case "Neuron anatomy · detailed teaching model":
             .neuron
         case let label? where label.hasSuffix("· combined internal atlas context"):
             .internalStructures
@@ -2980,8 +2980,8 @@ final class StrokeExperienceState: ObservableObject {
             "This territory helps connect a vessel route to the tissue it supplies. It explains a relationship, not measured damage or prognosis."
         case "Generic craniotomy teaching story":
             "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
-        case "Single neuron · schematic reference":
-            "Think of this as a tree-like brain cell: branches take in messages and one long fiber passes a signal on. The colors show a teaching path, not a recording."
+        case "Neuron anatomy · detailed teaching model":
+            "A neuron has receiving branches, a cell body, and a long axon. The amber motion traces one teaching path. It is not a recording or voltage simulation."
         case let label where label.hasSuffix("· generic atlas focus"):
             "This lit focus locates \(label.replacingOccurrences(of: " · generic atlas focus", with: "")) within a complete generic brain. It is an orientation aid, not a patient scan or a precise functional boundary."
         case let label where label.hasSuffix("· combined internal atlas context"):
@@ -3307,7 +3307,7 @@ final class StrokeExperienceState: ObservableObject {
             return ["Start with one glowing point"]
         }
 
-        if selectedPointLabel == "Single neuron · schematic reference" {
+        if selectedPointLabel == "Neuron anatomy · detailed teaching model" {
             return [
                 "How can one cell connect with many others?",
                 "What do the teaching colors mean?",
@@ -3375,7 +3375,7 @@ final class StrokeExperienceState: ObservableObject {
               familyClarityWasSet,
               selectedPointLabel != nil else { return nil }
 
-        if selectedPointLabel == "Single neuron · schematic reference" {
+        if selectedPointLabel == "Neuron anatomy · detailed teaching model" {
             if familyClarityCheck < 0.5 {
                 return "Again: branches receive messages; the long fiber carries one signal onward."
             }
@@ -4954,7 +4954,7 @@ final class StrokeExperienceState: ObservableObject {
     func prepareFamilyNeuronReferenceProof() {
         prepareFamilyRegionalReferenceProof(
             pointIndex: 4,
-            label: "Single neuron · schematic reference"
+            label: "Neuron anatomy · detailed teaching model"
         )
         spatialZoom = 1.18
     }

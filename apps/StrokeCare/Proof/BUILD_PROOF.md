@@ -1066,3 +1066,41 @@ The guarded XCAT deploy stopped before build/install because
 `Proof/xcat/20260828-203246/BLOCKED.md`. Simulator evidence does not establish
 headset targetability, stereo placement, wearer comprehension, device audio,
 specialist acceptance, anatomical registration, or clinical validity.
+
+## 2026-08-28 21:31 SGT — detailed neuron teaching USDZ
+
+Build `0.6 (29)` replaces the previous procedural neuron as the normal teaching
+reference with an original, deterministic Blender-authored USDZ. The asset is
+one curated RealityKit slice rather than a bulk catalog import: nine semantic
+mesh objects, 10,808 vertices, 11,804 polygons, eight PBR materials, and named
+soma, nucleus, dendritic morphology, dendritic spine field, axon and hillock,
+myelin, nodes of Ranvier, and terminal arbor components. The procedural neuron
+remains a visible fallback if the required bundle resource cannot load.
+
+`usdchecker --arkit` passes for both the source USDC and packaged USDZ. The
+runtime USDZ is 1,022,506 bytes with SHA-256
+`0d4a34b45f3cc94c5c04bb344c5fdd4c050dd9010d6822f3941ebc3f855f8459`.
+`python3 Tests/verify_contract.py` returns `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passes, and the narrow visionOS Simulator build ends
+`** BUILD SUCCEEDED **`. A clean signed build with Derived Data under `/tmp`
+also ends `** BUILD SUCCEEDED **` and passes
+`codesign --verify --deep --strict`; its executable SHA-256 is
+`3b33d7f20e4f66d321331a918372ec7ef77f67deee150a21774b281902b047f5`.
+
+`Proof/121-family-detailed-neuron-usdz-simulator.png`, 3840×2160, passes the
+unchanged image-quality gate and route OCR 2/2 for `one neuron` and `3d
+teaching model`; SHA-256
+`b99557db6370008caaf8a171e8e93d1ef6de39ea67e80d69045887ef719a7eab`.
+Visual inspection confirms the imported rose neuron, spine-rich dendrites,
+soma, segmented myelinated axon, and terminal arbor in the right secondary
+field while the registered brain remains dominant. The captured app
+executable has SHA-256
+`d37808c5713f271e085b70540a0278d221aaf4e662aa62ec40865c76c907ba0c`.
+
+The guarded XCAT attempt stopped before build, install, or launch because the
+paired device was unavailable. Receipt:
+`Proof/xcat/20260828-210419/BLOCKED.md`. This is a magnified author-created
+generic morphology, not microscopy, histology, patient tissue, a neuronal
+recording, membrane-voltage simulation, diagnosis, treatment, or clinical
+validation. Physical depth, reach, readability, morphology acceptance, and
+wearer comprehension remain unproven.

@@ -1,0 +1,68 @@
+{
+  "kit": "Stroke Care original intracranial micro-teaching assets",
+  "module": "Magnified cellular teaching references",
+  "version": "0.1.0-neuron-slice",
+  "generated_with": "Blender 5.1.0 and Apple usdzip",
+  "units": "meters",
+  "usd_up_axis": "Y",
+  "intended_use": "Generic spatial neuroanatomy education prototype only",
+  "patient_specific": false,
+  "histology_derived": false,
+  "quantitative_electrophysiology": false,
+  "clinical_review_status": "REQUIRES_NEUROANATOMY_AND_CLINICAL_SPECIALIST_REVIEW",
+  "assets": [
+    {
+      "id": "multipolar_neuron_detailed_conceptual_v3",
+      "title": "Magnified multipolar neuron teaching morphology",
+      "description": "Original room-scale neuron reference with a soma, nucleus, branched dendritic tree, dendritic spines, axon hillock and core, myelin segments, nodes of Ranvier, and a terminal arbor.",
+      "source": "apps/StrokeCare/TechnicalArt/build_neuron_teaching_reference.py",
+      "usdz": "exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz",
+      "preview": "previews/19_multipolar_neuron_detailed_conceptual_v3.png",
+      "usdz_bytes": 1022506,
+      "usdz_sha256": "0d4a34b45f3cc94c5c04bb344c5fdd4c050dd9010d6822f3941ebc3f855f8459",
+      "mesh_objects": 9,
+      "vertices": 10808,
+      "polygons": 11804,
+      "materials": 8,
+      "dimensions_m": [
+        0.854873,
+        0.589428,
+        0.568206
+      ],
+      "semantic_components": [
+        "Soma",
+        "Nucleus",
+        "DendriteMorphology",
+        "DendriticSpineField",
+        "AxonCoreAndHillock",
+        "MyelinSegments",
+        "NodesOfRanvierMesh",
+        "AxonTerminalArbor"
+      ],
+      "animated": false,
+      "patient_specific": false,
+      "histology_derived": false,
+      "quantitative_electrophysiology": false,
+      "clinical_review_status": "REQUIRES_NEUROANATOMY_AND_CLINICAL_SPECIALIST_REVIEW"
+    }
+  ],
+  "planned_ids_without_bundled_geometry": [
+    "blood_brain_barrier_neurovascular_unit_conceptual_v3",
+    "capillary_endothelium_tight_junctions_conceptual_v3",
+    "formed_blood_elements_magnified_v3",
+    "platelet_fibrin_thrombus_microstructure_conceptual_v3",
+    "astrocyte_capillary_endfeet_conceptual_v3",
+    "oligodendrocyte_myelinated_axons_conceptual_v3",
+    "myelinated_axon_node_of_ranvier_conceptual_v3",
+    "chemical_synapse_closeup_conceptual_v3",
+    "choroid_plexus_csf_interface_conceptual_v3",
+    "ischemic_tissue_zones_conceptual_v3",
+    "intracranial_micro_teaching_set_v3"
+  ],
+  "warnings": [
+    "The model is deliberately magnified and not to biological scale.",
+    "Its morphology is author-created and not derived from microscopy, histology, a patient scan, or patient tissue.",
+    "It does not simulate membrane voltage, ion exchange, synaptic timing, neurotransmitters, disease, treatment, or recorded neural activity.",
+    "Use only as a generic teaching reference pending neuroanatomy and clinical specialist review."
+  ]
+}
