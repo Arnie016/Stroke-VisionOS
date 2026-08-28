@@ -1071,6 +1071,16 @@ require("experience.present(step: step)" in immersive, "presenter-controlled act
 require("SpatialTeachingTimeline" in immersive and 'teachingTimelineID = "spatial-teaching-timeline"' in immersive, "centered world-space teaching timeline is missing")
 require("ForEach(StrokeProcedureStep.allCases)" in immersive and ".hoverEffect(.highlight)" in immersive and "labelsVisible = false" in immersive and "let showsContext = labelsVisible || hoveredStep != nil" in immersive, "three-act gaze timeline lacks quiet nodes or hover/selection context")
 require(all(token in immersive for token in (
+    "SpatialTimelineTrack(tints: familyTrackTints)",
+    "SpatialTimelineTrack(tints: presenterTrackTints)",
+    "private struct SpatialTimelineRibbonBackground",
+    ".frame(minWidth: 96, minHeight: 96)",
+    ".frame(width: 288, height: 96)",
+    "LinearGradient(",
+    ".frame(height: 10)",
+    ".opacity(0.30)",
+)), "teaching timeline lacks one slim, visible color ribbon with stable family targets")
+require(all(token in immersive for token in (
     "ForEach(StrokePresenterTeachingBeat.allCases)",
     "experience.selectPresenterTeachingBeat(beat)",
     "SpatialPresenterTeachingBeatNode",
@@ -1081,9 +1091,10 @@ require(all(token in immersive for token in (
     "let showsContext = labelsVisible || hoveredBeat != nil",
     "STEP \\(displayedBeat.number) OF 6",
     "isHovered: hoveredBeat == beat",
-    ".frame(height: beat == experience.presenterTeachingBeat ? 12 : 8)",
+    ".frame(width: 648, height: 108)",
     "Color(red: 0.86, green: 0.31, blue: 0.34)",
 )), "doctor presenter timeline does not expose six stable direct checkpoints with context above")
+require(".frame(height: beat == experience.presenterTeachingBeat ? 12 : 8)" not in immersive, "redundant detached presenter progress strip remains")
 require("(teachingTimelineID, [0, 1.27, -0.86]" in immersive, "teaching timeline is not staged in the central-lower demo field")
 require(all(token in scene for token in (
     "addAccessTargetHighlight(to: accessPoint)",

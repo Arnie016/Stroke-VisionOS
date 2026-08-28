@@ -5343,18 +5343,7 @@ private struct SpatialTeachingTimeline: View {
                 familyTimeline
             }
         }
-        .padding(.horizontal, 13)
-        .padding(.vertical, 10)
-        .background {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .opacity(0.58)
-        }
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.10), radius: 14, y: 5)
+        .shadow(color: .black.opacity(0.14), radius: 16, y: 6)
         .task(id: revealKey) {
             labelsVisible = true
             try? await Task.sleep(for: .seconds(2.6))
@@ -5372,38 +5361,52 @@ private struct SpatialTeachingTimeline: View {
 
             Text("\(title(for: displayedStep)) · \(familySummary(for: displayedStep))")
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(Color.white.opacity(0.70))
+                .foregroundStyle(Color.white.opacity(0.82))
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, minHeight: 18)
+                .padding(.horizontal, 13)
+                .padding(.vertical, 7)
+                .frame(minHeight: 30)
+                .background(.ultraThinMaterial.opacity(0.48), in: Capsule())
                 .opacity(showsContext ? 1 : 0)
                 .contentTransition(.opacity)
                 .animation(.easeOut(duration: 0.22), value: showsContext)
                 .accessibilityHidden(!showsContext)
 
-            HStack(spacing: 6) {
-                ForEach(StrokeProcedureStep.allCases) { step in
-                    let isActive = step == experience.procedureStep
-                    Button {
-                        // `present` retains the existing Make-space consent gate.
-                        experience.present(step: step)
-                    } label: {
-                        SpatialTeachingTimelineNode(
-                            number: step.number,
-                            title: title(for: step),
-                            isActive: isActive,
-                            showLabel: false,
-                            tint: tint(for: step)
-                        )
+            ZStack {
+                SpatialTimelineRibbonBackground()
+
+                SpatialTimelineTrack(tints: familyTrackTints)
+                    .padding(.horizontal, 48)
+
+                HStack(spacing: 0) {
+                    ForEach(StrokeProcedureStep.allCases) { step in
+                        let isActive = step == experience.procedureStep
+                        Button {
+                            // `present` retains the existing Make-space consent gate.
+                            experience.present(step: step)
+                        } label: {
+                            SpatialTeachingTimelineNode(
+                                number: step.number,
+                                isActive: isActive,
+                                isHovered: hoveredStep == step,
+                                tint: tint(for: step)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .hoverEffect(.highlight)
+                        // The visible marker stays quiet while the 96-point
+                        // acquisition field remains dependable for gaze/pinch.
+                        .frame(minWidth: 96, minHeight: 96)
+                        .contentShape(Rectangle())
+                        .onHover { isHovering in
+                            hoveredStep = isHovering ? step : nil
+                        }
+                        .accessibilityLabel("Act \(step.number), \(title(for: step))")
+                        .accessibilityValue(isActive ? "Current act" : "Inactive act")
                     }
-                    .buttonStyle(.plain)
-                    .hoverEffect(.highlight)
-                    .onHover { isHovering in
-                        hoveredStep = isHovering ? step : nil
-                    }
-                    .accessibilityLabel("Act \(step.number), \(title(for: step))")
-                    .accessibilityValue(isActive ? "Current act" : "Inactive act")
                 }
             }
+            .frame(width: 288, height: 96)
         }
     }
 
@@ -5425,43 +5428,51 @@ private struct SpatialTeachingTimeline: View {
                 .animation(.easeOut(duration: 0.22), value: showsContext)
                 .accessibilityHidden(!showsContext)
 
-            HStack(spacing: 5) {
-                ForEach(StrokePresenterTeachingBeat.allCases) { beat in
-                    let isActive = beat == experience.presenterTeachingBeat
-                    Button {
-                        experience.selectPresenterTeachingBeat(beat)
-                    } label: {
-                        SpatialPresenterTeachingBeatNode(
-                            beat: beat,
-                            isActive: isActive,
-                            isHovered: hoveredBeat == beat,
-                            tint: tint(for: beat)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .hoverEffect(.highlight)
-                    // Six timeline targets must remain easy to acquire in
-                    // spatial use. A fixed 108-point field and 64-point disc
-                    // improve room-scale legibility without shifting targets
-                    // when a beat becomes active or gaze-hovered.
-                    .frame(minWidth: 108, minHeight: 108)
-                    .contentShape(Rectangle())
-                    .onHover { isHovering in
-                        hoveredBeat = isHovering ? beat : nil
-                    }
-                    .accessibilityLabel("Presenter beat \(beat.number), \(beat.title)")
-                    .accessibilityValue(isActive ? "Current checkpoint" : "Available checkpoint")
-                }
-            }
+            ZStack {
+                SpatialTimelineRibbonBackground()
 
-            HStack(spacing: 3) {
-                ForEach(StrokePresenterTeachingBeat.allCases) { beat in
-                    Capsule()
-                        .fill(tint(for: beat).opacity(beat == experience.presenterTeachingBeat ? 0.98 : 0.64))
-                        .frame(height: beat == experience.presenterTeachingBeat ? 12 : 8)
+                SpatialTimelineTrack(tints: presenterTrackTints)
+                    .padding(.horizontal, 54)
+
+                HStack(spacing: 0) {
+                    ForEach(StrokePresenterTeachingBeat.allCases) { beat in
+                        let isActive = beat == experience.presenterTeachingBeat
+                        Button {
+                            experience.selectPresenterTeachingBeat(beat)
+                        } label: {
+                            SpatialPresenterTeachingBeatNode(
+                                beat: beat,
+                                isActive: isActive,
+                                isHovered: hoveredBeat == beat,
+                                tint: tint(for: beat)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .hoverEffect(.highlight)
+                        // Six timeline targets must remain easy to acquire in
+                        // spatial use. A fixed 108-point field and 64-point disc
+                        // improve room-scale legibility without shifting targets
+                        // when a beat becomes active or gaze-hovered.
+                        .frame(minWidth: 108, minHeight: 108)
+                        .contentShape(Rectangle())
+                        .onHover { isHovering in
+                            hoveredBeat = isHovering ? beat : nil
+                        }
+                        .accessibilityLabel("Presenter beat \(beat.number), \(beat.title)")
+                        .accessibilityValue(isActive ? "Current checkpoint" : "Available checkpoint")
+                    }
                 }
             }
+            .frame(width: 648, height: 108)
         }
+    }
+
+    private var familyTrackTints: [Color] {
+        StrokeProcedureStep.allCases.map { tint(for: $0) }
+    }
+
+    private var presenterTrackTints: [Color] {
+        StrokePresenterTeachingBeat.allCases.map { tint(for: $0) }
     }
 
     private var revealKey: String {
@@ -5514,6 +5525,45 @@ private struct SpatialTeachingTimeline: View {
     }
 }
 
+/// A single continuous path replaces the earlier detached progress strip.
+/// Its cool-to-warm color only communicates authored story position.
+private struct SpatialTimelineTrack: View {
+    let tints: [Color]
+
+    var body: some View {
+        ZStack {
+            Capsule()
+                .fill(Color.white.opacity(0.10))
+
+            LinearGradient(
+                colors: tints.map { $0.opacity(0.88) },
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .clipShape(Capsule())
+        }
+        .frame(height: 10)
+        .overlay(Capsule().stroke(Color.white.opacity(0.16), lineWidth: 0.8))
+        .accessibilityHidden(true)
+    }
+}
+
+/// A slim, darkened glass ribbon keeps the controls readable in both a bright
+/// room and the optional black environment without becoming a window.
+private struct SpatialTimelineRibbonBackground: View {
+    var body: some View {
+        ZStack {
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .opacity(0.30)
+            Capsule()
+                .fill(Color.black.opacity(0.12))
+            Capsule()
+                .stroke(Color.white.opacity(0.10), lineWidth: 1)
+        }
+    }
+}
+
 private struct SpatialPresenterTeachingBeatNode: View {
     let beat: StrokePresenterTeachingBeat
     let isActive: Bool
@@ -5548,38 +5598,36 @@ private struct SpatialPresenterTeachingBeatNode: View {
 
 private struct SpatialTeachingTimelineNode: View {
     let number: Int
-    let title: String
     let isActive: Bool
-    let showLabel: Bool
+    let isHovered: Bool
     let tint: Color
 
     var body: some View {
-        HStack(spacing: showLabel ? 10 : 6) {
+        let isEmphasized = isActive || isHovered
+        ZStack {
+            Circle()
+                .fill(
+                    isActive
+                        ? AnyShapeStyle(.regularMaterial)
+                        : AnyShapeStyle(Color.black.opacity(isHovered ? 0.22 : 0.14))
+                )
+                .frame(width: 54, height: 54)
+
+            Circle()
+                .stroke(
+                    isEmphasized ? tint.opacity(0.90) : Color.white.opacity(0.14),
+                    lineWidth: isEmphasized ? 2 : 1
+                )
+                .frame(width: 54, height: 54)
+
             Text(String(number))
                 .font(.callout.monospacedDigit().weight(.black))
-                .frame(width: 38, height: 38)
-                .background(isActive ? tint : Color.white.opacity(0.08), in: Circle())
-                .foregroundStyle(isActive ? Color.black : Color.white.opacity(0.58))
-
-            if showLabel {
-                Text(title)
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.82))
-                    .lineLimit(1)
-            }
+                .frame(width: 40, height: 40)
+                .background(isEmphasized ? tint : Color.black.opacity(0.28), in: Circle())
+                .foregroundStyle(isEmphasized ? Color.black : Color.white.opacity(0.70))
         }
-        .padding(.horizontal, showLabel ? 16 : 10)
-        .frame(width: showLabel ? 252 : 65, height: 72)
-        .background(
-            isActive ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(Color.white.opacity(0.025)),
-            in: Capsule()
-        )
-        .overlay(
-            Capsule().stroke(
-                isActive ? tint.opacity(0.68) : Color.white.opacity(0.08),
-                lineWidth: isActive ? 1.5 : 1
-            )
-        )
+        .frame(width: 96, height: 96)
+        .contentShape(Rectangle())
     }
 }
 
