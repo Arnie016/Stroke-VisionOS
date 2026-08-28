@@ -70,6 +70,11 @@ made from actual visionOS Simulator captures of the current experience.
 | ![Direct clinician craniotomy layer study](Proof/110-direct-craniotomy-layer-study-simulator.png) | ![Six revisitable presenter checkpoints](Proof/73-clinician-six-beat-timeline-simulator.png) | ![Non-graphic protective-covering teaching composition](Proof/89-clinician-protective-covering-build23-simulator.png) |
 | Pinching the craniotomy point opens the registered layer study directly: the aperture boundary stays faint while the independently movable bone flap and dura remain legible. | The presenter can revisit context, access, protective covering, purpose, checks, and closure. | A reversible, generic explanation of the protective covering—not an operative simulator or a patient-specific procedure. |
 
+| Pressure speaking aid | Protective-covering speaking aid |
+| --- | --- |
+| ![Pressure checkpoint with authored technical-to-plain vocabulary](Proof/116-six-checkpoint-pressure-language-simulator.png) | ![Protective-covering checkpoint with its own authored vocabulary](Proof/117-six-checkpoint-covering-language-simulator.png) |
+| One short supply explanation opens first; Occlusion, Affected tissue and Swelling remain available without becoming a permanent label cloud. | The same left field changes with the timeline to Skull, Bone flap, Dura and the teaching boundary. Presenter controls use the same six-checkpoint count. |
+
 | Make-space purpose | Scholar skull review |
 | --- | --- |
 | ![Family make-space teaching cue](Proof/81-family-make-space-purpose-simulator.png) | ![Clinician scholar skull registration review](Proof/55-scholar-skull-registration-review-simulator.png) |
@@ -85,6 +90,18 @@ physical-device targetability, wearer comprehension, registration accuracy, or
 clinical validity.
 
 ## Latest verified Simulator composition
+
+Build `0.6 (29)` binds the left presenter speaking aid to all six timeline
+checkpoints. Each checkpoint has its own concise technical vocabulary and one
+authored plain-language expansion; the first expansion appears automatically,
+while the remaining terms stay quiet until selected. The left field and the
+presenter control rail now both use the same six-checkpoint count. Family mode
+retains the simpler three-act story. No wording is generated from a face,
+voice, scan or inferred emotion.
+
+![Pressure checkpoint speaking aid in visionOS Simulator](Proof/116-six-checkpoint-pressure-language-simulator.png)
+
+![Protective-covering checkpoint speaking aid in visionOS Simulator](Proof/117-six-checkpoint-covering-language-simulator.png)
 
 Build `0.6 (29)` gives the two bundled research-atlas scans the full imaging
 comparison surface instead of surrounding them with empty placeholders. The

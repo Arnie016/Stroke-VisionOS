@@ -311,7 +311,7 @@ require(
     "a fresh role or case-story entry can retain a stale clinical-evidence window",
 )
 require("audienceLens == .family, familyClarityWasSet" in state and "Let’s slow down." in state and "Pause, ask a question" in state, "family self-reported clarity does not adapt the visible teaching copy")
-require("experience.audienceLens == .family ? 360 : 410" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 220" in immersive, "family entry cue and clinician conversation rail lack their readable spatial footprints")
+require("experience.audienceLens == .family ? 360 : 460" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 220" in immersive, "family entry cue and clinician conversation rail lack their readable spatial footprints")
 require("var selectedFamilyQuestionAnswer: String?" in state and "Only a boundary action opens a clarification card" in state and "does not measure flow, identify a diagnosis, or predict an outcome" in state, "family exploration boundary does not produce a bounded, authored clarification")
 require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive and "WHY THIS VIEW MATTERS" in immersive and "Plain-language answer:" in immersive, "family rail does not surface the selected exploration's plain-language answer")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
@@ -1043,16 +1043,31 @@ and "it cannot feel like a question before they have explored" in immersive,
 "family entry still presents competing prompts or a clarity check before the first spatial reveal")
 require(all(token in state for token in (
     "selectedPresenterKeyPointIndex",
+    "presenterConversationTopics",
     "presenterPlainLanguagePoints",
     "selectPresenterKeyPoint",
+    "focusPresenterKeyPoint",
     "There is intentionally no runtime-generated paraphrase",
 )), "presenter technical-to-plain authored pointer state is missing")
 require("StrokePresenterConversationTopics().environmentObject(experience)" in immersive
         and all(token in reference_workspace for token in (
-            "Text(topic.meaning)", "case .regions:", "case .procedure:", "case .craniotomy:",
-            "experience.presenterTeachingBeat == .teamChecks", "expandedTerm = expanded ? nil : topic.term",
-            "Show a plain-language explanation", "topicButton(\"Flow\", field: .procedure)",
+            "Text(topic.plainWords)", "experience.presenterConversationTopics",
+            "experience.selectedPresenterKeyPointIndex == index",
+            "experience.selectPresenterKeyPoint(index)", "experience.focusPresenterKeyPoint(0)",
+            "Show a plain-language explanation",
         )), "presenter topics do not disclose contextual authored plain-language explanations")
+conversation_contract = state.split("var presenterConversationTopics", 1)[1].split("/// Exactly three", 1)[0]
+require(
+    all(f"case .{beat}" in conversation_contract for beat in (
+        "confirmContext", "discussAccess", "protectiveCovering",
+        "explainPurpose", "teamChecks", "explainClosure",
+    ))
+    and all(term in conversation_contract for term in (
+        'term: "Teaching anatomy"', 'term: "Occlusion"', 'term: "Dura"',
+        'term: "Making room"', 'term: "Monitoring"', 'term: "Closure detail"',
+    )),
+    "the presenter speaking aid is not authored for all six timeline checkpoints",
+)
 require("ASK ALOUD" not in immersive and "familyComfort" not in state and "familyComfort" not in immersive, "misleading voice or comfort terminology remains")
 require(all(token in immersive for token in (
     "SETTINGS",
@@ -1175,7 +1190,13 @@ require(all(token in state for token in (
     "selectPresenterTeachingBeat(requestedBeat",
     "beat == .explainClosure",
 )), "presenter beat navigation bypasses permission continuity or reversible closure")
-require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and ".frame(width: 520)" in immersive and "isFamily ? 0.86 : 0.94" in immersive and "familyQuestionSuggestions" in immersive and "StrokePresenterConversationTopics" in immersive, "role-aware left peripheral micro-cues are missing or too small for the family conversation")
+require("SpatialRoleMicroCues" in immersive and 'roleMicroCuesID = "spatial-role-micro-cues"' in immersive and ".frame(width: 520)" in immersive and "isFamily ? 0.86 : 0.98" in immersive and ".frame(width: experience.audienceLens == .family ? 360 : 460)" in immersive and "familyQuestionSuggestions" in immersive and "StrokePresenterConversationTopics" in immersive, "role-aware left peripheral micro-cues are missing or too small for the family conversation")
+require(
+    'role == .family' in immersive
+    and '"ACT \\(experience.procedureStep.number) OF 3"' in immersive
+    and '"CHECKPOINT \\(experience.presenterTeachingBeat.number) OF \\(StrokePresenterTeachingBeat.allCases.count)"' in immersive,
+    "family and presenter control rails do not expose their own coherent timeline scale",
+)
 require(all(token in immersive for token in (
     "let familyPointDisclosureActive = isFamily && experience.selectedPointEntityName != nil",
     "experience.familyBrainAtlasVisible || familyPointDisclosureActive",
@@ -2113,6 +2134,11 @@ require(
     "--proof-clinician-protective-covering" in capture_script
     and '"--proof-clinician-protective-covering"' in proof_verifier,
     "the Make Space access-point composition is not accepted by the deterministic proof harness",
+)
+require(
+    "--proof-presenter-plain-language" in capture_script
+    and '"--proof-presenter-plain-language"' in proof_verifier,
+    "the six-checkpoint presenter language surface is not accepted by the deterministic proof harness",
 )
 require(all(token in state for token in (
     "familyDiscoveryHintVisible",

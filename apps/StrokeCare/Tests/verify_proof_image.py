@@ -38,11 +38,17 @@ ROUTE_TEXT_TOKENS = {
     "--proof-family-entry-hint": ("begin here", "start with one glowing point"),
     "--proof-clinician-pressure-story": (
         "explain this",
-        "act 2 of 3",
+        "pressure",
     ),
     "--proof-clinician-protective-covering": (
         "explain this",
-        "act 3 of 3",
+        "covering",
+    ),
+    "--proof-presenter-plain-language": (
+        "explain this",
+        "pressure",
+        "occlusion",
+        "swelling",
     ),
     "--proof-presenter-controls": ("resume", "black"),
     "--proof-presentation-settings": ("settings", "visual detail"),
@@ -101,8 +107,8 @@ ROUTE_TEXT_TOKENS = {
         "close study deck",
     ),
     "--proof-imaging-return-to-anatomy": (
-        "presentation checklist",
-        "act 2 of 3",
+        "explain this",
+        "pressure",
     ),
     "--proof-imaging-return-reopen": (
         "placed teaching image",

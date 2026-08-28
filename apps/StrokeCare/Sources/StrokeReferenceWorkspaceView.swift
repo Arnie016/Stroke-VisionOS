@@ -284,86 +284,53 @@ struct StrokeMedicineTopic: Identifiable {
 
 struct StrokePresenterConversationTopics: View {
     @EnvironmentObject private var experience: StrokeExperienceState
-    @State private var expandedTerm: String?
-
-    private var topics: [(term: String, meaning: String)] {
-        switch experience.pointField {
-        case .regions:
-            return [
-                ("Cortex", "The folded outer part helps us sense, think, and move. Different regions work together."),
-                ("Cerebellum", "This region helps coordinate movement and balance."),
-                ("Brainstem", "This connection with the spinal cord supports vital functions, including breathing."),
-                ("Anatomy and imaging", "This model shows the general arrangement. A person's own scan can look different.")
-            ]
-        case .procedure:
-            return [
-                ("Artery", "This vessel brings blood to brain tissue. The moving lights show direction, not a measured flow rate."),
-                ("Occlusion", "Occlusion means a blockage. Here it interrupts one example blood-supply route."),
-                ("Injury", "A blockage and an injury are not the same thing. This model cannot measure how much tissue is injured."),
-                ("Swelling", "Swelling takes up space. This is separate from the clot and needs its own explanation.")
-            ]
-        case .craniotomy:
-            if experience.presenterTeachingBeat == .teamChecks {
-                return [
-                    ("Imaging", "Scans help the clinical team examine the person's situation. The pictures here are teaching examples."),
-                    ("Monitoring", "The team follows the person's condition over time. This model is not a monitor."),
-                    ("Pressure", "This view explains limited space, but it does not measure pressure."),
-                    ("Questions", "Which part would you like me to explain again before we continue?")
-                ]
-            }
-            return [
-                ("Skull and bone flap", "The skull is the hard outer protection. A bone flap is the section temporarily removed in a craniotomy."),
-                ("Dura", "The dura is a protective covering between the skull and brain."),
-                ("Craniotomy or craniectomy?", "In a craniotomy the bone flap is replaced. In a craniectomy it may remain off and be replaced later."),
-                ("Making space", "Separating these model layers helps explain the space around the brain. Reset puts the model back, not a surgical plan.")
-            ]
-        }
-    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                topicButton("Anatomy", field: .regions)
-                topicButton("Flow", field: .procedure)
-                topicButton("Access", field: .craniotomy)
-            }
-            ForEach(Array(topics.enumerated()), id: \.element.term) { index, topic in
-                let expanded = expandedTerm == topic.term
+        let topics = experience.presenterConversationTopics
+        return VStack(alignment: .leading, spacing: 9) {
+            Label(experience.presenterTeachingBeat.summary, systemImage: "quote.bubble")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.70))
+                .fixedSize(horizontal: false, vertical: true)
+
+            ForEach(Array(topics.enumerated()), id: \.element.id) { index, topic in
+                let expanded = experience.selectedPresenterKeyPointIndex == index
                 Button {
-                    expandedTerm = expanded ? nil : topic.term
+                    experience.selectPresenterKeyPoint(index)
                 } label: {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 7) {
                         HStack {
-                            Text(topic.term).font(.title3.weight(.semibold))
-                                .foregroundStyle(index == 1 ? Color.orange : Color.mint)
+                            Text(topic.term)
+                                .font(.callout.weight(.semibold))
+                                .foregroundStyle(topic.isEmphasized ? Color.orange : Color.mint)
                             Spacer(minLength: 10)
                             Image(systemName: expanded ? "chevron.up" : "text.bubble")
-                                .font(.callout).foregroundStyle(.white.opacity(0.6))
+                                .font(.caption).foregroundStyle(.white.opacity(0.56))
                         }
                         if expanded {
-                            Text(topic.meaning).font(.body).foregroundStyle(.white.opacity(0.88))
+                            Text(topic.plainWords)
+                                .font(.callout)
+                                .foregroundStyle(.white.opacity(0.88))
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
-                    .padding(12)
-                    .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 9)
+                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
                     .background(.white.opacity(expanded ? 0.09 : 0.035), in: RoundedRectangle(cornerRadius: 12))
                 }.buttonStyle(.plain).hoverEffect(.highlight)
-                    .accessibilityHint("Show a plain-language explanation")
+                    .accessibilityLabel(topic.term)
+                    .accessibilityValue(expanded ? topic.plainWords : "Plain words hidden")
+                    .accessibilityHint(expanded ? "Hide the plain-language explanation" : "Show a plain-language explanation")
             }
         }
-        .onAppear { if expandedTerm == nil { expandedTerm = topics.first?.term } }
-        .onChange(of: experience.pointField) { _, _ in expandedTerm = topics.first?.term }
-        .onChange(of: experience.presenterTeachingBeat) { _, _ in expandedTerm = topics.first?.term }
-    }
-
-    private func topicButton(_ title: String, field: StrokePointField) -> some View {
-        Button(title) {
-            expandedTerm = nil
-            experience.selectLessonFamily(field)
+        .onAppear {
+            if experience.selectedPresenterKeyPointIndex == nil {
+                experience.focusPresenterKeyPoint(0)
+            }
         }
-        .buttonStyle(.bordered)
-        .tint(experience.pointField == field ? .mint : .gray)
-        .frame(maxWidth: .infinity, minHeight: 48)
+        .onChange(of: experience.presenterTeachingBeat) { _, _ in
+            experience.focusPresenterKeyPoint(0)
+        }
     }
 }

@@ -683,6 +683,17 @@ enum StrokePresenterTeachingBeat: Int, CaseIterable, Identifiable {
     }
 }
 
+/// One technical phrase and one authored family-facing explanation. The
+/// presenter chooses when to reveal it; no runtime model generates or adapts
+/// medical wording from a person, scan, face, voice, or inferred emotion.
+struct StrokePresenterConversationTopic: Identifiable, Equatable {
+    let term: String
+    let plainWords: String
+    let isEmphasized: Bool
+
+    var id: String { term }
+}
+
 /// A question is stored in the anatomy root's coordinate space, not as a
 /// screen point. It therefore stays on the same teaching landmark when the
 /// wearer orbits or magnifies the model.
@@ -3050,9 +3061,21 @@ final class StrokeExperienceState: ObservableObject {
     /// There is intentionally no runtime-generated paraphrase in this path.
     func selectPresenterKeyPoint(_ index: Int) {
         guard audienceLens == .clinician,
-              presenterTimelineKeyPoints.indices.contains(index),
-              presenterPlainLanguagePoints.indices.contains(index) else { return }
+              presenterConversationTopics.indices.contains(index) else { return }
         selectedPresenterKeyPointIndex = selectedPresenterKeyPointIndex == index ? nil : index
+    }
+
+    /// Checkpoint changes begin with one plain-language phrase visible. This
+    /// is deterministic authored copy, not generated advice or an inferred
+    /// assessment of the family.
+    func focusPresenterKeyPoint(_ index: Int?) {
+        guard audienceLens == .clinician else { return }
+        guard let index else {
+            selectedPresenterKeyPointIndex = nil
+            return
+        }
+        guard presenterConversationTopics.indices.contains(index) else { return }
+        selectedPresenterKeyPointIndex = index
     }
 
     /// Directly revisits one authored presenter checkpoint. The six beats are
@@ -3074,6 +3097,7 @@ final class StrokeExperienceState: ObservableObject {
             pendingPresenterTeachingBeat = beat
             present(step: .discussCare, reduceMotion: reduceMotion)
             configurePresenterPointField(for: beat, preserving: preservedAccessSelection)
+            focusPresenterKeyPoint(0)
             return
         }
 
@@ -3082,6 +3106,7 @@ final class StrokeExperienceState: ObservableObject {
         guard procedureStep == beat.procedureStep else { return }
         presenterTeachingBeat = beat
         configurePresenterPointField(for: beat, preserving: preservedAccessSelection)
+        focusPresenterKeyPoint(0)
         if beat == .explainClosure {
             cancelLayerReveal()
             withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.55)) {
@@ -3279,6 +3304,56 @@ final class StrokeExperienceState: ObservableObject {
         if familyClarityCheck < 0.5 { return "Please explain again" }
         if familyClarityCheck < 1.5 { return "Still unsure" }
         return "Clear enough to continue"
+    }
+
+    /// The left presenter field follows all six authored checkpoints. It is a
+    /// speaking aid, not a second navigation system: the lower timeline owns
+    /// checkpoint changes, and each technical phrase reveals one short set of
+    /// plain words in place.
+    var presenterConversationTopics: [StrokePresenterConversationTopic] {
+        switch presenterTeachingBeat {
+        case .confirmContext:
+            [
+                .init(term: "Teaching anatomy", plainWords: "This is a generic teaching model, not the person's scan.", isEmphasized: false),
+                .init(term: "Whole-brain orientation", plainWords: "Begin with the whole brain before isolating vessels or protective layers.", isEmphasized: false),
+                .init(term: "Patient imaging", plainWords: "A person's CT or MRI can look different. Use their own clinical images for that conversation.", isEmphasized: true),
+            ]
+        case .discussAccess:
+            [
+                .init(term: "Blood supply", plainWords: "Arteries bring blood to brain tissue. The moving lights show direction, not a measured flow rate.", isEmphasized: false),
+                .init(term: "Occlusion", plainWords: "Occlusion means a blockage. It interrupts this example supply route.", isEmphasized: true),
+                .init(term: "Affected tissue", plainWords: "The blockage and tissue injury are different changes. This model cannot measure injury extent.", isEmphasized: false),
+                .init(term: "Swelling", plainWords: "Swelling takes up space inside the fixed skull. This view does not measure pressure.", isEmphasized: false),
+            ]
+        case .protectiveCovering:
+            [
+                .init(term: "Skull", plainWords: "The skull is the hard outer protection around the brain.", isEmphasized: false),
+                .init(term: "Bone flap", plainWords: "This removable model piece represents a section of skull used only to explain layer relationships.", isEmphasized: false),
+                .init(term: "Dura", plainWords: "The dura is a protective covering between the skull and the brain.", isEmphasized: false),
+                .init(term: "Teaching boundary", plainWords: "The separation is conceptual and reversible. It is not an operative opening or site plan.", isEmphasized: true),
+            ]
+        case .explainPurpose:
+            [
+                .init(term: "Fixed boundary", plainWords: "The skull normally limits how much space is available around the brain.", isEmphasized: false),
+                .init(term: "Making room", plainWords: "The separated layers illustrate why a team may discuss creating more room for swelling.", isEmphasized: false),
+                .init(term: "Existing injury", plainWords: "Making room and repairing injured brain tissue are not the same thing.", isEmphasized: true),
+                .init(term: "Outcome", plainWords: "This teaching view does not predict recovery or promise an outcome.", isEmphasized: true),
+            ]
+        case .teamChecks:
+            [
+                .init(term: "Imaging", plainWords: "Clinical scans help the team examine the person's situation. Images here are teaching references.", isEmphasized: false),
+                .init(term: "Monitoring", plainWords: "The team follows changes over time. This app is not a patient monitor.", isEmphasized: false),
+                .init(term: "Pressure and bleeding", plainWords: "These are examples of what a clinical team may reassess, not measurements from this model.", isEmphasized: false),
+                .init(term: "Decision-making", plainWords: "The app does not rank treatments, assess eligibility, or make a recommendation.", isEmphasized: true),
+            ]
+        case .explainClosure:
+            [
+                .init(term: "Whole again", plainWords: "The teaching layers return to one assembled anatomical view.", isEmphasized: false),
+                .init(term: "Bone flap", plainWords: "In a craniotomy the bone flap is replaced; this model does not simulate how it is fixed.", isEmphasized: false),
+                .init(term: "Closure detail", plainWords: "Stitches, plates, fixation, and wound care are not demonstrated here.", isEmphasized: true),
+                .init(term: "Questions", plainWords: "End by returning to the family's questions and the limits of the model.", isEmphasized: false),
+            ]
+        }
     }
 
     /// Exactly three glanceable teaching beats for each act. These are

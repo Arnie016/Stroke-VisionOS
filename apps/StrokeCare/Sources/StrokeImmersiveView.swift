@@ -1376,8 +1376,8 @@ struct StrokeImmersiveView: View {
             // second card at ceiling height without losing the boundary
             // between the whole-brain exhibit and the optional interior
             // journey.
-            (roleMicroCuesID, isFamily ? [-0.36, 1.62, -0.88] : [-0.59, 1.67, -0.94],
-             isFamily ? 0.86 : 0.94 * Float(experience.presenterPanelScale))
+            (roleMicroCuesID, isFamily ? [-0.36, 1.62, -0.88] : [-0.64, 1.67, -0.94],
+             isFamily ? 0.86 : 0.98 * Float(experience.presenterPanelScale))
         ]
 
         let familyPointDisclosureActive = isFamily && experience.selectedPointEntityName != nil
@@ -2218,7 +2218,11 @@ private struct SpatialRoleControls: View {
                 .tracking(1.0)
                 .foregroundStyle(role == .family ? .orange : .mint)
 
-                Text("ACT \(experience.procedureStep.number) OF 3")
+                Text(
+                    role == .family
+                        ? "ACT \(experience.procedureStep.number) OF 3"
+                        : "CHECKPOINT \(experience.presenterTeachingBeat.number) OF \(StrokePresenterTeachingBeat.allCases.count)"
+                )
                     .font(.caption2.monospacedDigit().weight(.bold))
                     .foregroundStyle(.secondary.opacity(0.82))
             }
@@ -6303,7 +6307,11 @@ private struct SpatialRoleMicroCues: View {
                 }
             } else {
                 HStack {
-                    Text("ACT \(experience.procedureStep.number) OF 3")
+                    Text(
+                        "CHECKPOINT \(experience.presenterTeachingBeat.number) / " +
+                        "\(StrokePresenterTeachingBeat.allCases.count) · " +
+                        experience.presenterTeachingBeat.shortTitle.uppercased()
+                    )
                         .font(.caption2.monospacedDigit().weight(.black))
                         .tracking(0.8)
                     Spacer()
@@ -6347,7 +6355,7 @@ private struct SpatialRoleMicroCues: View {
             radius: 12,
             y: 5
         )
-        .frame(width: experience.audienceLens == .family ? 360 : 410)
+        .frame(width: experience.audienceLens == .family ? 360 : 460)
         .frame(
             minHeight: experience.audienceLens == .clinician ? 300 : 220,
             alignment: .topLeading
