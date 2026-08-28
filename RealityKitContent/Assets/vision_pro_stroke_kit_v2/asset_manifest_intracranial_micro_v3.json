@@ -1,7 +1,7 @@
 {
   "kit": "Stroke Care original intracranial micro-teaching assets",
   "module": "Magnified cellular teaching references",
-  "version": "0.1.0-neuron-slice",
+  "version": "0.2.0-neurovascular-slice",
   "generated_with": "Blender 5.1.0 and Apple usdzip",
   "units": "meters",
   "usd_up_axis": "Y",
@@ -44,6 +44,41 @@
       "histology_derived": false,
       "quantitative_electrophysiology": false,
       "clinical_review_status": "REQUIRES_NEUROANATOMY_AND_CLINICAL_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "neurovascular_unit_detailed_conceptual_v3",
+      "title": "Magnified neurovascular-unit teaching morphology",
+      "description": "Original cutaway capillary reference with an endothelial wall, endothelial cell bodies and nuclei, tight-junction cues, basement membrane, pericyte, astrocyte endfeet, a nearby neuron process, and red blood cells.",
+      "source": "apps/StrokeCare/TechnicalArt/build_neurovascular_unit_teaching_reference.py",
+      "usdz": "exports/usdz/neurovascular_unit_detailed_conceptual_v3.usdz",
+      "preview": "previews/20_neurovascular_unit_detailed_conceptual_v3.png",
+      "usdz_bytes": 656437,
+      "usdz_sha256": "be82d271a33e3dee5c1c451384eccc84a783092b21ecb6ba3f3c8b1c4c1ed271",
+      "mesh_objects": 9,
+      "vertices": 7272,
+      "polygons": 8030,
+      "materials": 9,
+      "dimensions_m": [
+        0.622214,
+        0.386017,
+        0.438314
+      ],
+      "semantic_components": [
+        "CapillaryEndothelialWallCutaway",
+        "EndothelialCellBodies",
+        "EndothelialNuclei",
+        "TightJunctionBands",
+        "BasementMembraneCutaway",
+        "PericyteAndProcesses",
+        "AstrocyteAndEndfeet",
+        "NearbyNeuronAndProcesses",
+        "RedBloodCellSet"
+      ],
+      "animated": false,
+      "patient_specific": false,
+      "histology_derived": false,
+      "quantitative_permeability": false,
+      "clinical_review_status": "REQUIRES_NEUROANATOMY_AND_CLINICAL_SPECIALIST_REVIEW"
     }
   ],
   "planned_ids_without_bundled_geometry": [
@@ -63,6 +98,7 @@
     "The model is deliberately magnified and not to biological scale.",
     "Its morphology is author-created and not derived from microscopy, histology, a patient scan, or patient tissue.",
     "It does not simulate membrane voltage, ion exchange, synaptic timing, neurotransmitters, disease, treatment, or recorded neural activity.",
+    "The neurovascular unit does not simulate barrier permeability, oxygen delivery, blood pressure, blood velocity, perfusion, or measured cell contact.",
     "Use only as a generic teaching reference pending neuroanatomy and clinical specialist review."
   ]
 }

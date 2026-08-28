@@ -1250,6 +1250,10 @@ struct StrokeImmersiveView: View {
 
     @MainActor
     private func restoreProofRouteIfNeeded() {
+        if CommandLine.arguments.contains("--proof-family-neurovascular-reference") {
+            experience.prepareFamilyNeurovascularReferenceProof()
+            return
+        }
         if CommandLine.arguments.contains("--proof-family-point-conversation-reset") {
             experience.prepareFamilyPointConversationResetProof()
             return
@@ -4809,11 +4813,13 @@ private struct StrokeTeachingImagingDrawer: View {
         case (.family, .affectedVessel): return "FULL ARTERIAL TREE · TEACHING VIEW"
         case (.family, .brainSurface): return "WHOLE BRAIN SURFACE · TEACHING VIEW"
         case (.family, .neuron): return "ONE NEURON · DETAILED TEACHING MODEL"
+        case (.family, .neurovascularUnit): return "BRAIN-BLOOD INTERFACE · 3D TEACHING MODEL"
         case (.family, .internalStructures): return "INTERNAL STRUCTURES + VENTRICLES · TEACHING VIEW"
         case (.family, .makingRoomPurpose): return "MAKING-ROOM PURPOSE · TEACHING VIEW"
         case (.clinician, .affectedVessel): return "AFFECTED-VESSEL REFERENCE"
         case (.clinician, .brainSurface): return "BRAIN-SURFACE REFERENCE"
         case (.clinician, .neuron): return "ONE-NEURON SCHEMATIC"
+        case (.clinician, .neurovascularUnit): return "NEUROVASCULAR-UNIT REFERENCE"
         case (.clinician, .internalStructures): return "INTERNAL-STRUCTURES REFERENCE"
         case (.clinician, .makingRoomPurpose): return "MAKING-ROOM REFERENCE"
         }
@@ -4835,6 +4841,9 @@ private struct StrokeTeachingImagingDrawer: View {
         if experience.teachingImagingLens == .neuron {
             return "Magnified generic morphology · not patient tissue, histology, or a recording"
         }
+        if experience.teachingImagingLens == .neurovascularUnit {
+            return "Magnified generic relationship · not histology, permeability, oxygen delivery, or measured flow"
+        }
         if experience.audienceLens == .clinician {
             return "Registered-v2 teaching asset · review pending"
         }
@@ -4845,6 +4854,8 @@ private struct StrokeTeachingImagingDrawer: View {
             return "Complete generic brain surface · not a patient scan"
         case .neuron:
             return "Magnified generic morphology · not patient tissue, histology, or a recording"
+        case .neurovascularUnit:
+            return "Magnified generic relationship · not histology, permeability, oxygen delivery, or measured flow"
         case .internalStructures:
             return "Combined generic internal mesh · labels and registration under specialist review"
         case .makingRoomPurpose:
@@ -4857,6 +4868,7 @@ private struct StrokeTeachingImagingDrawer: View {
         case .affectedVessel: .orange
         case .brainSurface: .cyan
         case .neuron: .mint
+        case .neurovascularUnit: .cyan
         case .internalStructures: .purple
         case .makingRoomPurpose: .mint
         }

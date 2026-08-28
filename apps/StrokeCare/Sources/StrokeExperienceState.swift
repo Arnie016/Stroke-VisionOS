@@ -209,6 +209,11 @@ enum StrokePointField: String, CaseIterable, Identifiable {
                     index: 4,
                     shortTitle: "Neuron",
                     fullTitle: "Neuron anatomy · detailed teaching model"
+                ),
+                StrokeLessonPoint(
+                    index: 5,
+                    shortTitle: "Barrier",
+                    fullTitle: "Brain-blood interface · detailed teaching model"
                 )
             ]
         case .procedure:
@@ -2551,6 +2556,8 @@ final class StrokeExperienceState: ObservableObject {
             "A comparison reference—not a claim of normal function."
         case "Neuron anatomy · detailed teaching model":
             "Magnified generic morphology. Not patient tissue, histology, a recording, or a measurement."
+        case "Brain-blood interface · detailed teaching model":
+            "Magnified generic cell relationship. Not patient tissue, histology, microscopy, permeability, or measured flow."
         case "Blood supply approaches":
             "Follow the route toward the brain: direction only, not speed or volume."
         case "Arteries branch":
@@ -2599,6 +2606,7 @@ final class StrokeExperienceState: ObservableObject {
         case .affectedVessel: return "full arterial tree"
         case .brainSurface: return "whole brain surface"
         case .neuron: return "detailed neuron"
+        case .neurovascularUnit: return "brain-blood interface"
         case .internalStructures: return "internal structures"
         case .makingRoomPurpose: return "layer view"
         }
@@ -2609,7 +2617,9 @@ final class StrokeExperienceState: ObservableObject {
     /// explanation. Keeping a second reference card beside either would repeat
     /// the same relationship rather than add useful context.
     var selectedTeachingReferenceNeedsDrawer: Bool {
-        teachingImagingLens != .neuron && !familyBrainAtlasDirectSurfaceSelectionActive
+        teachingImagingLens != .neuron &&
+            teachingImagingLens != .neurovascularUnit &&
+            !familyBrainAtlasDirectSurfaceSelectionActive
     }
 
     /// Explains why the selected invitation owns the complete 3D reference.
@@ -2651,6 +2661,8 @@ final class StrokeExperienceState: ObservableObject {
             "LAYERS · SKULL, DURA, AND BRAIN — NOT A SITE PLAN"
         case "Neuron anatomy · detailed teaching model":
             "NEURON ANATOMY · NAMED CELL PARTS AND ONE QUALITATIVE SIGNAL PATH"
+        case "Brain-blood interface · detailed teaching model":
+            "BRAIN-BLOOD INTERFACE · CAPILLARY WALL, SUPPORT CELLS, AND BLOOD ELEMENTS"
         case nil:
             "GENERIC TEACHING RELATIONSHIP"
         default:
@@ -2694,6 +2706,8 @@ final class StrokeExperienceState: ObservableObject {
             "See the skull, protective covering, and brain as separate teaching layers."
         case "Neuron anatomy · detailed teaching model":
             "Inspect the soma, nucleus, dendrites, spines, axon, myelin, nodes, and terminals."
+        case "Brain-blood interface · detailed teaching model":
+            "Inspect a capillary wall beside pericyte and astrocyte support cells, a nearby neuron process, and red blood cells."
         default:
             "The selected point opens its larger teaching context."
         }
@@ -2718,6 +2732,8 @@ final class StrokeExperienceState: ObservableObject {
             .brainSurface
         case "Neuron anatomy · detailed teaching model":
             .neuron
+        case "Brain-blood interface · detailed teaching model":
+            .neurovascularUnit
         case let label? where label.hasSuffix("· combined internal atlas context"):
             .internalStructures
         case "Generic craniotomy teaching story":
@@ -2982,6 +2998,8 @@ final class StrokeExperienceState: ObservableObject {
             "This calm layer view separates skull, protective covering, and brain to explain the making-room concept. It is not an access plan or surgical instruction."
         case "Neuron anatomy · detailed teaching model":
             "A neuron has receiving branches, a cell body, and a long axon. The amber motion traces one teaching path. It is not a recording or voltage simulation."
+        case "Brain-blood interface · detailed teaching model":
+            "This magnified teaching model places a capillary wall beside support cells, a nearby nerve-cell process, and red blood cells. It shows a relationship, not permeability, oxygen delivery, pressure, or measured flow."
         case let label where label.hasSuffix("· generic atlas focus"):
             "This lit focus locates \(label.replacingOccurrences(of: " · generic atlas focus", with: "")) within a complete generic brain. It is an orientation aid, not a patient scan or a precise functional boundary."
         case let label where label.hasSuffix("· combined internal atlas context"):
@@ -3315,6 +3333,14 @@ final class StrokeExperienceState: ObservableObject {
             ]
         }
 
+        if selectedPointLabel == "Brain-blood interface · detailed teaching model" {
+            return [
+                "Which parts touch the capillary wall?",
+                "Why keep blood and nerve cells distinct?",
+                "See what this model cannot measure"
+            ]
+        }
+
         if selectedPointLabel == "Generic craniotomy teaching story" {
             return [
                 "Unfold the teaching layers",
@@ -3356,6 +3382,12 @@ final class StrokeExperienceState: ObservableObject {
         }
         if lowercasedQuestion.contains("teaching colors") {
             return "The colors separate the receiving branches from the outgoing fiber. They are a teaching key, not recorded electrical activity or a patient measurement."
+        }
+        if lowercasedQuestion.contains("touch the capillary wall") {
+            return "This model places endothelial wall, pericyte, and astrocyte endfeet next to one another. Contact is schematic, magnified, and not measured histology."
+        }
+        if lowercasedQuestion.contains("blood and nerve cells distinct") {
+            return "Red blood cells stay inside the capillary space while nearby neural and support-cell structures remain outside. The model explains arrangement, not barrier performance."
         }
         return nil
     }
@@ -4957,6 +4989,17 @@ final class StrokeExperienceState: ObservableObject {
             label: "Neuron anatomy · detailed teaching model"
         )
         spatialZoom = 1.18
+    }
+
+    /// Deterministic receipt for the second component-named biological USDZ.
+    /// The selected point opens a magnified generic neurovascular-unit model;
+    /// it does not claim histology, permeability, patient tissue, or flow data.
+    func prepareFamilyNeurovascularReferenceProof() {
+        prepareFamilyRegionalReferenceProof(
+            pointIndex: 5,
+            label: "Brain-blood interface · detailed teaching model"
+        )
+        spatialZoom = 1.14
     }
 
     /// Deterministic family receipt for the local written fallback. It keeps

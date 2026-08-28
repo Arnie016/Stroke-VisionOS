@@ -2,6 +2,7 @@
 """Static product-contract checks; not device, wearer, or clinical proof."""
 
 import hashlib
+import json
 from pathlib import Path
 import re
 
@@ -60,6 +61,24 @@ neuron_asset_root = (
 neuron_manifest = (neuron_asset_root / "asset_manifest_intracranial_micro_v3.json").read_text()
 neuron_provenance = (neuron_asset_root / "NEURON_TEACHING_REFERENCE_PROVENANCE_V3.md").read_text()
 neuron_usdz = neuron_asset_root / "exports/usdz/multipolar_neuron_detailed_conceptual_v3.usdz"
+neurovascular_builder = (
+    ROOT / "TechnicalArt" / "build_neurovascular_unit_teaching_reference.py"
+).read_text()
+neurovascular_provenance = (
+    neuron_asset_root / "NEUROVASCULAR_UNIT_TEACHING_REFERENCE_PROVENANCE_V3.md"
+).read_text()
+neurovascular_usdz = (
+    neuron_asset_root / "exports/usdz/neurovascular_unit_detailed_conceptual_v3.usdz"
+)
+micro_teaching_manifest = json.loads(neuron_manifest)
+neurovascular_manifest = next(
+    (
+        asset
+        for asset in micro_teaching_manifest.get("assets", [])
+        if asset.get("id") == "neurovascular_unit_detailed_conceptual_v3"
+    ),
+    {},
+)
 
 step_contract = state.split("enum StrokeProcedureStep", 1)[1].split("enum StrokePresenterTeachingBeat", 1)[0]
 require(all(case in step_contract for case in ("case chooseCase", "case inspectOcclusion", "case discussCare")), "three-step procedure is incomplete")
@@ -254,9 +273,9 @@ require(all(token in immersive for token in (
     'not a patient image',
 )), "clinician imaging handoff is incomplete")
 declared_usdz_paths = re.findall(r"- path: ([^\n]+\.usdz)", project_yml)
-require(len(declared_usdz_paths) == 35 and len(set(declared_usdz_paths)) == 35 and "asset_manifest" not in project_yml, "runtime asset slice must contain exactly thirty-five unique explicit USDZ resources")
+require(len(declared_usdz_paths) == 36 and len(set(declared_usdz_paths)) == 36 and "asset_manifest" not in project_yml, "runtime asset slice must contain exactly thirty-six unique explicit USDZ resources")
 require(
-    len({Path(path).name for path in declared_usdz_paths}) == 35
+    len({Path(path).name for path in declared_usdz_paths}) == 36
     and all((ROOT / path).resolve().exists() for path in declared_usdz_paths),
     "every explicit USDZ resource must exist and have a unique bundle basename",
 )
@@ -275,6 +294,7 @@ require(all(name in project_yml for name in (
     "cerebral_edema_registered_conceptual_v1.usdz",
     "thrombectomy_device_set_educational_v2.usdz",
     "multipolar_neuron_detailed_conceptual_v3.usdz",
+    "neurovascular_unit_detailed_conceptual_v3.usdz",
 )), "required detail/context, registered conceptual access, and educational device assets are not declared in the app bundle")
 require(all(token in catalog for token in (
     "dural_sinuses_jugulars_realistic_v2",
@@ -282,7 +302,8 @@ require(all(token in catalog for token in (
     "external_head_scalp_cutaway_v2",
     "eyes_context_realistic_v2",
     "multipolar_neuron_detailed_conceptual_v3",
-    "twenty-three catalogued exterior resources",
+    "neurovascular_unit_detailed_conceptual_v3",
+    "twenty-four catalogued exterior resources",
 )), "registered-v2 detail/context references are not recorded in the explicit bundle catalog")
 third_party_notices = (ROOT / "Resources/THIRD_PARTY_NOTICES.txt").read_text()
 require("THIRD_PARTY_NOTICES.txt" in project_yml and "Z-Anatomy" in third_party_notices and "BodyParts3D" in third_party_notices and "ShareAlike" in third_party_notices and "HRA Skin" in third_party_notices and "Visible Human eye context" in third_party_notices, "required atlas attribution and ShareAlike notice is not bundled")
@@ -643,6 +664,59 @@ require(
     ))
     and "No third-party source asset is incorporated" in neuron_provenance,
     "point-led detailed neuron USDZ is missing its named biological parts, fallback, or evidence boundary",
+)
+require(
+    all(token in state for token in (
+        '"Brain-blood interface · detailed teaching model"',
+        "prepareFamilyNeurovascularReferenceProof",
+        'case .neurovascularUnit: return "brain-blood interface"',
+        "Red blood cells stay inside the capillary space",
+        "selectedTeachingReferenceNeedsDrawer",
+    ))
+    and all(token in scene for token in (
+        "case neurovascularUnit",
+        'neurovascularRootName = "registered-teaching-imaging-neurovascular-unit-reference"',
+        'importedNeurovascularTeachingName = "neurovascular_unit_detailed_conceptual_v3"',
+        "makeDetailedNeurovascularReference(",
+        "makeProceduralNeurovascularFallback()",
+        "neurovascularUnit?.isEnabled = isVisible && lens == .neurovascularUnit",
+        'root.name = "procedural-neurovascular-fallback-missing-detailed-usdz"',
+    ))
+    and all(token in immersive for token in (
+        "BRAIN-BLOOD INTERFACE · 3D TEACHING MODEL",
+        "Magnified generic relationship · not histology, permeability, oxygen delivery, or measured flow",
+    ))
+    and neurovascular_usdz.exists()
+    and neurovascular_usdz.stat().st_size == 656437
+    and hashlib.sha256(neurovascular_usdz.read_bytes()).hexdigest()
+        == "be82d271a33e3dee5c1c451384eccc84a783092b21ecb6ba3f3c8b1c4c1ed271"
+    and neurovascular_manifest.get("mesh_objects") == 9
+    and neurovascular_manifest.get("vertices") == 7272
+    and neurovascular_manifest.get("polygons") == 8030
+    and neurovascular_manifest.get("materials") == 9
+    and neurovascular_manifest.get("semantic_components") == [
+        "CapillaryEndothelialWallCutaway",
+        "EndothelialCellBodies",
+        "EndothelialNuclei",
+        "TightJunctionBands",
+        "BasementMembraneCutaway",
+        "PericyteAndProcesses",
+        "AstrocyteAndEndfeet",
+        "NearbyNeuronAndProcesses",
+        "RedBloodCellSet",
+    ]
+    and neurovascular_manifest.get("patient_specific") is False
+    and neurovascular_manifest.get("histology_derived") is False
+    and neurovascular_manifest.get("quantitative_permeability") is False
+    and all(token in neurovascular_builder for token in (
+        "random.seed(280828)",
+        "consolidate_for_runtime()",
+        'root_prim_path="/NeurovascularUnitTeachingReference"',
+        "NEUROVASCULAR_ASSET_STATS=",
+    ))
+    and "No third-party source asset is incorporated" in neurovascular_provenance
+    and "7,272 vertices and 8,030 polygons" in neurovascular_provenance,
+    "point-led neurovascular USDZ is missing its named cellular parts, exact bundle evidence, fallback, or meaning boundary",
 )
 require("StrokeAnatomyPresentation" in state and all(mode in state for mode in ('case assembled', 'case transparent', 'case exploded')), "reversible anatomy presentation modes are missing")
 require("cortexOpacity" in state and "selectedPointEntityName" in state and "selectedPointLabel" in state, "transparent anatomy or point selection state is missing")
@@ -1442,7 +1516,9 @@ require(all(token in immersive for token in (
     "WHOLE-BRAIN CONTEXT",
 )), "direct Family Atlas surface selection still opens a dense or generic dashboard")
 require(
-    "teachingImagingLens != .neuron && !familyBrainAtlasDirectSurfaceSelectionActive" in state,
+    "teachingImagingLens != .neuron &&" in state
+    and "teachingImagingLens != .neurovascularUnit &&" in state
+    and "!familyBrainAtlasDirectSurfaceSelectionActive" in state,
     "direct Family Atlas surface selection still leaves a duplicate reference drawer visible",
 )
 require(all(token in state for token in (
@@ -1466,6 +1542,15 @@ require(
     and "--proof-family-neuron-reference" in simulator_proof
     and '"--proof-family-neuron-reference": ("one neuron", "3d teaching model")' in proof_image_check,
     "deterministic schematic-neuron reference proof route is missing",
+)
+require(
+    "--proof-family-neurovascular-reference" in launch
+    and "prepareFamilyNeurovascularReferenceProof" in launch
+    and "--proof-family-neurovascular-reference" in simulator_proof
+    and '"--proof-family-neurovascular-reference": (' in proof_image_check
+    and '"brain atlas"' in proof_image_check
+    and '"detailed teaching model"' in proof_image_check,
+    "deterministic neurovascular-unit reference proof route is missing",
 )
 require(
     "--proof-family-neuron-plain-words" in launch
@@ -2706,7 +2791,7 @@ print("graphic_content=EXPLICIT_PERMISSION_REQUIRED")
 print("presentation_modes=PATIENT_FAMILY_AND_CLINICIAN")
 print("family_feedback=EXPLICIT_CLARIFICATION_NOT_INFERRED_ANXIETY")
 print("heart_field_engine_reuse=ORBIT_SCALE_SMOOTHING_ANNOTATION")
-print("github_asset_runtime=THIRTY_FIVE_ASSET_INTEGRATED_SLICE")
+print("github_asset_runtime=THIRTY_SIX_ASSET_INTEGRATED_SLICE")
 print("required_asset_failure=VISIBLE_COMPLETE_PROCEDURAL_FALLBACK")
 print("patient_data=NONE_FICTIONAL_ONLY")
 print("clinical_review=PENDING")

@@ -52,6 +52,7 @@ enum StrokeSceneFactory {
     private static let importedScalpCutawayName = "external_head_scalp_cutaway_v2"
     private static let importedEyesName = "eyes_context_realistic_v2"
     private static let importedNeuronTeachingName = "multipolar_neuron_detailed_conceptual_v3"
+    private static let importedNeurovascularTeachingName = "neurovascular_unit_detailed_conceptual_v3"
     private static let importedAccessScalpName = "scalp_access_closure_registered_conceptual_v1"
     private static let importedAccessBoneName = "cranial_bone_access_closure_registered_conceptual_v1"
     private static let importedAccessDuraName = "dural_access_closure_registered_conceptual_v1"
@@ -186,10 +187,10 @@ enum StrokeSceneFactory {
     private static let regionPointDirections: [SIMD3<Float>] = [
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
         [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54],
-        [0.31, -0.66, 0.70]
+        [0.31, -0.66, 0.70], [0.67, -0.26, 0.68]
     ]
 
-    /// Five distinct, generic surface-orientation anchors for the Family
+    /// Six distinct, generic surface-orientation anchors for the Family
     /// Atlas. They intentionally live in the registered brain frame but do
     /// not claim sulcal precision, functional boundaries, or patient anatomy.
     private static let atlasPointDirections: [SIMD3<Float>] = [
@@ -209,7 +210,8 @@ enum StrokeSceneFactory {
     private static let regionPointLabels = [
         "Example affected area", "Nearby brain tissue",
         "Brain surface", "Opposite-side context",
-        "Neuron anatomy · detailed teaching model"
+        "Neuron anatomy · detailed teaching model",
+        "Brain-blood interface · detailed teaching model"
     ]
 
     /// Exact registered-v2 arterial-mesh surface samples for technical marker
@@ -299,9 +301,13 @@ enum StrokeSceneFactory {
             // The parent view decides when to present one mutually exclusive
             // lens; it never competes with the central hero anatomy by default.
             let detailedNeuron = await loadBundledUSDZ(named: importedNeuronTeachingName)
+            let detailedNeurovascularUnit = await loadBundledUSDZ(
+                named: importedNeurovascularTeachingName
+            )
             root.addChild(TeachingImagingMiniatureFactory.make(
                 from: importedForMiniature,
-                detailedNeuron: detailedNeuron
+                detailedNeuron: detailedNeuron,
+                detailedNeurovascularUnit: detailedNeurovascularUnit
             ))
         }
 
@@ -3574,6 +3580,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
     case affectedVessel
     case brainSurface
     case neuron
+    case neurovascularUnit
     case internalStructures
     case makingRoomPurpose
 
@@ -3584,6 +3591,7 @@ enum StrokeTeachingImagingLens: String, CaseIterable, Identifiable {
         case .affectedVessel: "Stroke effect"
         case .brainSurface: "Brain surface"
         case .neuron: "Single neuron"
+        case .neurovascularUnit: "Brain-blood interface"
         case .internalStructures: "Internal structures"
         case .makingRoomPurpose: "Making-room purpose"
         }
@@ -3603,6 +3611,7 @@ enum TeachingImagingMiniatureFactory {
     static let affectedRootName = "registered-teaching-imaging-affected-vessel"
     static let surfaceRootName = "registered-teaching-imaging-brain-surface"
     static let neuronRootName = "registered-teaching-imaging-detailed-neuron-reference"
+    static let neurovascularRootName = "registered-teaching-imaging-neurovascular-unit-reference"
     static let neuronPulseRootName = "registered-teaching-imaging-neuron-signal-cue"
     static let neuronSignalGuideRootName = "registered-teaching-imaging-neuron-signal-guide"
     static let internalRootName = "registered-teaching-imaging-internal-structures"
@@ -3632,10 +3641,11 @@ enum TeachingImagingMiniatureFactory {
     private static let clotAssetName = "ischemic_mca_clot_v2"
     private static let duraAssetName = "dura_mater_cutaway_conceptual_v2"
     private static let neuronAssetName = "multipolar_neuron_detailed_conceptual_v3"
+    private static let neurovascularAssetName = "neurovascular_unit_detailed_conceptual_v3"
     private static let referenceRegionDirections: [SIMD3<Float>] = [
         [-0.66, 0.56, 0.62], [-0.43, 0.20, 0.82],
         [-0.56, -0.43, 0.60], [0.69, 0.56, 0.54],
-        [0.31, -0.66, 0.70]
+        [0.31, -0.66, 0.70], [0.67, -0.26, 0.68]
     ]
     private static let atlasSurfaceDirections: [String: SIMD3<Float>] = [
         "Cerebral cortex · generic atlas focus": [-0.58, 0.58, 0.61],
@@ -3652,7 +3662,11 @@ enum TeachingImagingMiniatureFactory {
         [-0.053607, -0.011508, 0.017754]
     ]
 
-    static func make(from importedAnatomy: Entity?, detailedNeuron: Entity?) -> Entity {
+    static func make(
+        from importedAnatomy: Entity?,
+        detailedNeuron: Entity?,
+        detailedNeurovascularUnit: Entity?
+    ) -> Entity {
         let root = Entity()
         root.name = rootName
         root.isEnabled = false
@@ -3679,6 +3693,17 @@ enum TeachingImagingMiniatureFactory {
         let neuron = makeDetailedNeuronReference(from: detailedNeuron)
         neuron.isEnabled = false
         root.addChild(neuron)
+
+        // A second original USDZ turns the blood-brain-interface promise into
+        // an inspectable spatial object. It carries named vessel-wall, blood,
+        // pericyte, astrocyte, and nearby-neuron components. The asset is a
+        // magnified generic relationship, not histology, microscopy, measured
+        // permeability, oxygen delivery, patient tissue, or a patient scan.
+        let neurovascularUnit = makeDetailedNeurovascularReference(
+            from: detailedNeurovascularUnit
+        )
+        neurovascularUnit.isEnabled = false
+        root.addChild(neurovascularUnit)
 
         let internalStructures = Entity()
         internalStructures.name = internalRootName
@@ -3843,6 +3868,7 @@ enum TeachingImagingMiniatureFactory {
         let affected = root.findEntity(named: affectedRootName)
         let surface = root.findEntity(named: surfaceRootName)
         let neuron = root.findEntity(named: neuronRootName)
+        let neurovascularUnit = root.findEntity(named: neurovascularRootName)
         let internalStructures = root.findEntity(named: internalRootName)
         let purpose = root.findEntity(named: purposeRootName)
 
@@ -3850,6 +3876,7 @@ enum TeachingImagingMiniatureFactory {
         affected?.isEnabled = isVisible && lens == .affectedVessel
         surface?.isEnabled = isVisible && lens == .brainSurface
         neuron?.isEnabled = isVisible && lens == .neuron
+        neurovascularUnit?.isEnabled = isVisible && lens == .neurovascularUnit
         internalStructures?.isEnabled = isVisible && lens == .internalStructures
         purpose?.isEnabled = isVisible && lens == .makingRoomPurpose
 
@@ -4005,6 +4032,108 @@ enum TeachingImagingMiniatureFactory {
             let pulse = scale + sin((routePhase + Float(index) * 0.11) * 2 * .pi) * 0.08
             marker.scale = [pulse, pulse, pulse]
         }
+    }
+
+    /// The preferred blood-brain-interface reference is an original,
+    /// component-named USDZ. Its authored front looks down the negative Y axis,
+    /// so the root rotates that cutaway toward the wearer in RealityKit's
+    /// negative-Z stage. A visibly simpler fallback preserves route continuity
+    /// without claiming that the detailed biological asset loaded.
+    private static func makeDetailedNeurovascularReference(
+        from detailedNeurovascularUnit: Entity?
+    ) -> Entity {
+        let root = Entity()
+        root.name = neurovascularRootName
+        root.orientation = wearerFacingTilt
+            * simd_quatf(angle: -.pi / 2, axis: [1, 0, 0])
+        root.position = [-0.01, 0.005, 0]
+        let presentationScale: Float = detailedNeurovascularUnit == nil ? 0.82 : 0.72
+        root.scale = [presentationScale, presentationScale, presentationScale]
+
+        if let detailedNeurovascularUnit {
+            detailedNeurovascularUnit.name = neurovascularAssetName
+            root.addChild(detailedNeurovascularUnit)
+        } else {
+            root.addChild(makeProceduralNeurovascularFallback())
+        }
+        return root
+    }
+
+    /// Deliberately low-detail fallback for a missing neurovascular USDZ. The
+    /// translucent tube, red cells, support cell, and nearby neuron retain the
+    /// relationship only; they are not a barrier, flow, permeability, oxygen,
+    /// pressure, or tissue model.
+    private static func makeProceduralNeurovascularFallback() -> Entity {
+        let root = Entity()
+        root.name = "procedural-neurovascular-fallback-missing-detailed-usdz"
+
+        let wall = ModelEntity(
+            mesh: .generateCylinder(height: 0.48, radius: 0.066),
+            materials: [SimpleMaterial(
+                color: UIColor(red: 0.20, green: 0.76, blue: 0.80, alpha: 0.34),
+                roughness: 0.42,
+                isMetallic: false
+            )]
+        )
+        wall.name = "schematic-capillary-wall"
+        wall.orientation = simd_quatf(from: [0, 1, 0], to: [1, 0, 0])
+        root.addChild(wall)
+
+        for index in 0..<6 {
+            let cell = ModelEntity(
+                mesh: .generateSphere(radius: 0.021),
+                materials: [SimpleMaterial(
+                    color: UIColor(red: 0.72, green: 0.05, blue: 0.04, alpha: 0.96),
+                    roughness: 0.34,
+                    isMetallic: false
+                )]
+            )
+            cell.name = "schematic-red-blood-cell-\(index)"
+            cell.position = [-0.20 + Float(index) * 0.08, 0, 0]
+            cell.scale = [0.44, 1.0, 1.0]
+            root.addChild(cell)
+        }
+
+        let astrocyteMaterial = UnlitMaterial(color: UIColor(
+            red: 0.54,
+            green: 0.34,
+            blue: 0.90,
+            alpha: 0.92
+        ))
+        let astrocyte = ModelEntity(
+            mesh: .generateSphere(radius: 0.034),
+            materials: [astrocyteMaterial]
+        )
+        astrocyte.name = "schematic-astrocyte-support-cell"
+        astrocyte.position = [0.04, 0.16, 0.14]
+        root.addChild(astrocyte)
+        for (index, target) in ([
+            SIMD3<Float>(-0.14, 0.055, 0.055),
+            SIMD3<Float>(0.02, 0.060, 0.060),
+            SIMD3<Float>(0.18, 0.050, 0.045)
+        ]).enumerated() {
+            addSchematicNeuronBranch(
+                [astrocyte.position, target],
+                radius: 0.006,
+                material: astrocyteMaterial,
+                name: "schematic-astrocyte-endfoot-\(index)",
+                to: root
+            )
+        }
+
+        let neuron = ModelEntity(
+            mesh: .generateSphere(radius: 0.031),
+            materials: [UnlitMaterial(color: UIColor(
+                red: 0.92,
+                green: 0.34,
+                blue: 0.18,
+                alpha: 0.92
+            ))]
+        )
+        neuron.name = "schematic-nearby-neuron"
+        neuron.position = [-0.15, 0.15, -0.15]
+        root.addChild(neuron)
+        return root
     }
 
     /// One magnified generic neuron is a spatial teaching object, not measured

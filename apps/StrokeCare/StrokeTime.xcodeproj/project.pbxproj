@@ -30,6 +30,7 @@
 		37ABF67967BD8F5383657AA8 /* multipolar_neuron_detailed_conceptual_v3.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 7B7D7489A7551DDD00898D70 /* multipolar_neuron_detailed_conceptual_v3.usdz */; };
 		3A51A2FDD8794D115EC4BFCF /* suction_and_forceps.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8F408412E568DCAEDCCCFFF6 /* suction_and_forceps.usdz */; };
 		44DD9315D7655FD2CD86D1D2 /* cerebral_bloodflow_animation_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 4DCA91CA49F7E270C5C9AD1B /* cerebral_bloodflow_animation_v2.usdz */; };
+		464072366FFCA4361F0CDD37 /* neurovascular_unit_detailed_conceptual_v3.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 07C5EB2A271E61D5EE484509 /* neurovascular_unit_detailed_conceptual_v3.usdz */; };
 		4646FC7D9BF1266C096DD20A /* aspiration_catheter_educational_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 353A11204F48AF711E42472C /* aspiration_catheter_educational_v2.usdz */; };
 		46F6C1AB9D3C43ED4D1FA5CF /* CalmPaperFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D87FC5905588A8DB9CEA5 /* CalmPaperFlowView.swift */; };
 		4F593005BC786705159960E5 /* brain_anatomy_realistic_v2.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 8D21449476F29CBDA1BDF850 /* brain_anatomy_realistic_v2.usdz */; };
@@ -76,6 +77,7 @@
 
 /* Begin PBXFileReference section */
 		04D5BCA6AE16371C657F5AC8 /* cerebral_edema_registered_conceptual_v1.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_edema_registered_conceptual_v1.usdz; sourceTree = "<group>"; };
+		07C5EB2A271E61D5EE484509 /* neurovascular_unit_detailed_conceptual_v3.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = neurovascular_unit_detailed_conceptual_v3.usdz; sourceTree = "<group>"; };
 		08DB2AEDECA8F5A616239B9A /* cerebral_bloodflow_teaching_set_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = cerebral_bloodflow_teaching_set_v2.usdz; sourceTree = "<group>"; };
 		0CE81704BF9499FA5FEBCA60 /* brain_ventricles_v2.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = brain_ventricles_v2.usdz; sourceTree = "<group>"; };
 		10FA350040B089060558EE45 /* StrokeImagingGalleryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrokeImagingGalleryModel.swift; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 				1703AAEF5055302F28B0F724 /* ischemic_mca_clot_v2.usdz */,
 				C3D9F75C925FD700E3F51422 /* microcatheter_educational_v2.usdz */,
 				7B7D7489A7551DDD00898D70 /* multipolar_neuron_detailed_conceptual_v3.usdz */,
+				07C5EB2A271E61D5EE484509 /* neurovascular_unit_detailed_conceptual_v3.usdz */,
 				25E74DE33C0CCF24338CFCCE /* scalp_access_closure_registered_conceptual_v1.usdz */,
 				CAF4038A472C18CFE8C3C78A /* skull_semantic_realistic_v2.usdz */,
 				1B2E5D28BA86B8800DDA26C9 /* stent_retriever_educational_v2.usdz */,
@@ -378,6 +381,7 @@
 				A21A31319F377C21E9F009DA /* microcatheter_educational_v2.usdz in Resources */,
 				67FD00636C67FC3AC3E54C47 /* microcirculation_arterial_venous_v2.usdz in Resources */,
 				37ABF67967BD8F5383657AA8 /* multipolar_neuron_detailed_conceptual_v3.usdz in Resources */,
+				464072366FFCA4361F0CDD37 /* neurovascular_unit_detailed_conceptual_v3.usdz in Resources */,
 				74EF6E4505CE14F74A04E298 /* red_blood_cells_closeup_v2.usdz in Resources */,
 				8FCFEBBD5DE4FF59CB0042E2 /* scalp_access_closure_registered_conceptual_v1.usdz in Resources */,
 				21568DD20E99658BD2D7DADF /* skull_semantic_realistic_v2.usdz in Resources */,

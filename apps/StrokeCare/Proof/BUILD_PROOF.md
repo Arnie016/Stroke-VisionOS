@@ -1104,3 +1104,48 @@ generic morphology, not microscopy, histology, patient tissue, a neuronal
 recording, membrane-voltage simulation, diagnosis, treatment, or clinical
 validation. Physical depth, reach, readability, morphology acceptance, and
 wearer comprehension remain unproven.
+
+## 2026-08-28 22:03 SGT — detailed neurovascular-unit teaching USDZ
+
+Build `0.6 (29)` adds an original Blender-authored brain-blood-interface
+teaching reference beside the existing detailed neuron. The runtime USDZ has
+nine semantic mesh leaves, 7,272 vertices, 8,030 polygons, nine PBR materials,
+and independently named capillary endothelial wall, endothelial cell bodies
+and nuclei, tight-junction bands, basement membrane, pericyte processes,
+astrocyte endfeet, nearby neuron processes, and red-blood-cell components. A
+deliberately simpler RealityKit construction remains the visible load-failure
+fallback.
+
+Apple `usdchecker --arkit` passes for both the source USDC and packaged USDZ.
+The bundled USDZ is 656,437 bytes with SHA-256
+`be82d271a33e3dee5c1c451384eccc84a783092b21ecb6ba3f3c8b1c4c1ed271`.
+`python3 Tests/verify_contract.py` returns `STROKE_CARE_CONTRACT=PASS`, with
+36 explicit runtime USDZ resources and the separately audited 134-record
+catalog unchanged. The diagnostic and locally signed visionOS Simulator builds
+both end `** BUILD SUCCEEDED **`; `codesign --verify --deep --strict` passes.
+The captured app executable has SHA-256
+`91040db0391c623351febafbb23dc4792ee0d401da44459153f030c1c7ffa3fc`.
+
+`Proof/122-family-neurovascular-unit-usdz-simulator.png`, 3840×2160, passes
+the image-quality gate and route OCR 2/2 for `brain atlas` and `detailed
+teaching model`; SHA-256
+`111ae763793b9518f9b7d69545c16dd83feeb656cb939158eee94bdd1e3722fd`.
+Visual inspection confirms the capillary cutaway, luminal red cells,
+endothelial and junction cues, astrocyte/pericyte support structures, nearby
+neuron, dominant whole brain, one point-owned card, one family rail, and one
+three-act timeline.
+
+The first OCR gate expected the secondary title `3D teaching model`, while the
+visible point-owned card intentionally says `Detailed teaching model`; that
+failed receipt was not accepted. The verifier was aligned to two phrases that
+are actually visible in the inspected frame and then passed without lowering
+image thresholds.
+
+The guarded XCAT attempt stopped before build, install, or launch because the
+paired device was unavailable. Receipt:
+`Proof/xcat/20260828-213915/BLOCKED.md`. The asset is a magnified generic
+relationship, not microscopy, histology, patient tissue, a patient scan, or a
+measured blood-brain-barrier model. It does not simulate permeability, oxygen
+delivery, pressure, velocity, perfusion, disease, or treatment. Specialist
+morphology review, physical depth, targetability, readability, and wearer
+comprehension remain unproven.

@@ -871,6 +871,9 @@ struct StrokeJourneyLaunchView: View {
         } else if CommandLine.arguments.contains("--proof-family-neuron-reference") {
             experience.prepareFamilyNeuronReferenceProof()
             Task { await openProofSpace() }
+        } else if CommandLine.arguments.contains("--proof-family-neurovascular-reference") {
+            experience.prepareFamilyNeurovascularReferenceProof()
+            Task { await openProofSpace() }
         } else if CommandLine.arguments.contains("--proof-family-affected-reference") {
             experience.prepareFamilyAffectedReferenceProof()
             Task { await openProofSpace() }

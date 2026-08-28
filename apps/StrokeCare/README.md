@@ -91,6 +91,19 @@ clinical validity.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (29)` adds a second original cellular teaching asset: a magnified
+neurovascular-unit cutaway. Its bundled USDZ contains nine independently named
+biological components: capillary endothelial wall, endothelial cell bodies and
+nuclei, tight-junction bands, basement membrane, pericyte processes, astrocyte
+endfeet, a nearby neuron process, and red blood cells. Selecting **Brain-blood
+interface** presents that model beside the dominant whole brain; a visibly
+simpler procedural object appears only if the required USDZ cannot load.
+This is author-created generic morphology, not histology, microscopy, patient
+tissue, measured permeability, oxygen delivery, pressure, velocity, perfusion,
+disease, or treatment simulation.
+
+![Detailed bundled neurovascular-unit teaching USDZ in visionOS Simulator](Proof/122-family-neurovascular-unit-usdz-simulator.png)
+
 Build `0.6 (29)` replaces the earlier runtime-built neuron symbol with an
 original bundled RealityKit teaching asset. The USDZ has nine consolidated
 mesh objects, 10,808 vertices, 11,804 polygons, eight PBR materials, and named

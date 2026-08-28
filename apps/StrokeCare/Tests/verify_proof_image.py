@@ -128,6 +128,10 @@ ROUTE_TEXT_TOKENS = {
     "--proof-family-affected-reference": ("what this opens", "full arterial tree"),
     "--proof-family-surface-reference": ("brain surface", "teaching view"),
     "--proof-family-neuron-reference": ("one neuron", "3d teaching model"),
+    "--proof-family-neurovascular-reference": (
+        "brain atlas",
+        "detailed teaching model",
+    ),
     "--proof-family-neuron-plain-words": (
         "plain words",
         "one neuron",
