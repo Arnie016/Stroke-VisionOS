@@ -940,9 +940,16 @@ struct StrokeImmersiveView: View {
                             .frame(width: 310)
                     }
                     Attachment(id: familyBrainAtlasID) {
-                        SpatialFamilyBrainAtlas()
-                            .environmentObject(experience)
-                            .frame(width: 720)
+                        Group {
+                            if experience.familyBrainAtlasDirectSurfaceSelectionActive {
+                                SpatialFamilyAtlasSurfaceSelection()
+                                    .frame(width: 440)
+                            } else {
+                                SpatialFamilyBrainAtlas()
+                                    .frame(width: 720)
+                            }
+                        }
+                        .environmentObject(experience)
                     }
                     Attachment(id: teachingImagingDrawerID) {
                         StrokeTeachingImagingDrawer()
@@ -4580,6 +4587,8 @@ private struct StrokeTeachingImagingDrawer: View {
                             // example. The secondary field should identify its
                             // role, not repeat that point label a second time.
                             Text("ARTERIAL PATH · 3D TEACHING MODEL")
+                        } else if let selectedAtlasSurfaceChapter {
+                            Text("FROM BRAIN SURFACE · \(selectedAtlasSurfaceChapter.title.uppercased())")
                         } else {
                             Text("FROM \(isCombinedInternalChapter ? "CHAPTER" : "POINT") · \(selectedPointLabel.uppercased())")
                         }
@@ -4785,22 +4794,35 @@ private struct StrokeTeachingImagingDrawer: View {
     }
 
     private var referenceTitle: String {
+        if experience.audienceLens == .family,
+           experience.teachingImagingLens == .brainSurface,
+           let selectedAtlasSurfaceChapter {
+            return "\(selectedAtlasSurfaceChapter.title.uppercased()) · WHOLE-BRAIN CONTEXT"
+        }
         switch (experience.audienceLens, experience.teachingImagingLens) {
-        case (.family, .affectedVessel): "FULL ARTERIAL TREE · TEACHING VIEW"
-        case (.family, .brainSurface): "WHOLE BRAIN SURFACE · TEACHING VIEW"
-        case (.family, .neuron): "ONE NEURON · SCHEMATIC TEACHING VIEW"
-        case (.family, .internalStructures): "INTERNAL STRUCTURES + VENTRICLES · TEACHING VIEW"
-        case (.family, .makingRoomPurpose): "MAKING-ROOM PURPOSE · TEACHING VIEW"
-        case (.clinician, .affectedVessel): "AFFECTED-VESSEL REFERENCE"
-        case (.clinician, .brainSurface): "BRAIN-SURFACE REFERENCE"
-        case (.clinician, .neuron): "ONE-NEURON SCHEMATIC"
-        case (.clinician, .internalStructures): "INTERNAL-STRUCTURES REFERENCE"
-        case (.clinician, .makingRoomPurpose): "MAKING-ROOM REFERENCE"
+        case (.family, .affectedVessel): return "FULL ARTERIAL TREE · TEACHING VIEW"
+        case (.family, .brainSurface): return "WHOLE BRAIN SURFACE · TEACHING VIEW"
+        case (.family, .neuron): return "ONE NEURON · SCHEMATIC TEACHING VIEW"
+        case (.family, .internalStructures): return "INTERNAL STRUCTURES + VENTRICLES · TEACHING VIEW"
+        case (.family, .makingRoomPurpose): return "MAKING-ROOM PURPOSE · TEACHING VIEW"
+        case (.clinician, .affectedVessel): return "AFFECTED-VESSEL REFERENCE"
+        case (.clinician, .brainSurface): return "BRAIN-SURFACE REFERENCE"
+        case (.clinician, .neuron): return "ONE-NEURON SCHEMATIC"
+        case (.clinician, .internalStructures): return "INTERNAL-STRUCTURES REFERENCE"
+        case (.clinician, .makingRoomPurpose): return "MAKING-ROOM REFERENCE"
         }
     }
 
     private var isCombinedInternalChapter: Bool {
         experience.selectedPointLabel?.hasSuffix("· combined internal atlas context") == true
+    }
+
+    private var selectedAtlasSurfaceChapter: StrokeFamilyBrainAtlasChapter? {
+        guard experience.selectedPointLabel?.hasSuffix("· generic atlas focus") == true,
+              let chapter = experience.familyBrainAtlasCueChapter,
+              chapter.spatialCuePointIndex != nil
+        else { return nil }
+        return chapter
     }
 
     private var referenceBoundary: String {
@@ -5616,6 +5638,69 @@ private struct SpatialViewpointDot: View {
 /// A deliberately optional, room-anchored atlas for the family route. It
 /// advances through one idea at a time and changes the existing discovery
 /// points rather than placing a permanent cloud of labels around the brain.
+private struct SpatialFamilyAtlasSurfaceSelection: View {
+    @EnvironmentObject private var experience: StrokeExperienceState
+
+    private var chapter: StrokeFamilyBrainAtlasChapter {
+        experience.familyBrainAtlasChapter
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .center, spacing: 10) {
+                Label("SELECTED ON BRAIN", systemImage: "viewfinder")
+                    .font(.caption2.weight(.black))
+                    .tracking(0.9)
+                    .foregroundStyle(.mint)
+                Spacer(minLength: 8)
+                Button {
+                    experience.dismissFamilyBrainAtlas()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption.weight(.black))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .hoverEffect(.highlight)
+                .accessibilityLabel("Close selected brain region")
+                .accessibilityHint("Hides this generic region cue and its teaching reference")
+            }
+
+            Text(chapter.title)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+
+            Text(chapter.explanation)
+                .font(.callout.weight(.medium))
+                .foregroundStyle(.white.opacity(0.84))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text("BROAD ATLAS CONTEXT · NOT A PATIENT SCAN OR MEASURED BORDER")
+                .font(.caption2.monospaced().weight(.bold))
+                .tracking(0.25)
+                .foregroundStyle(.white.opacity(0.54))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                experience.expandFamilyBrainAtlasJourney()
+            } label: {
+                Label("Explore atlas", systemImage: "arrow.right")
+                    .font(.caption.weight(.bold))
+                    .frame(maxWidth: .infinity, minHeight: 48)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.orange)
+            .accessibilityHint("Opens the optional ten-part Brain Atlas at this region")
+        }
+        .padding(16)
+        .background(.black.opacity(0.66), in: RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(.mint.opacity(0.42)))
+        .shadow(color: .black.opacity(0.46), radius: 16, y: 7)
+        .accessibilityElement(children: .contain)
+    }
+}
+
 private struct SpatialFamilyBrainAtlas: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

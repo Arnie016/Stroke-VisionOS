@@ -572,7 +572,7 @@ require(
         "prepareFamilyNeuronReferenceProof",
         "prepareFamilyNeuronPlainWordsProof",
         "Think of this as a tree-like brain cell",
-        'case .neuron: "single neuron"',
+        'case .neuron: return "single neuron"',
         "selectedTeachingReferenceNeedsDrawer",
         "isSelectedNeuronSignalTraceActive",
     ))
@@ -1197,7 +1197,10 @@ require(all(token in state for token in (
     "familyBrainAtlasChapter",
     "familyBrainAtlasDetailIndex",
     "familyBrainAtlasCueChapter",
+    "familyBrainAtlasDirectSurfaceSelectionActive",
     "toggleFamilyBrainAtlas()",
+    "expandFamilyBrainAtlasJourney()",
+    "dismissFamilyBrainAtlas()",
     "advanceFamilyBrainAtlasChapter(by",
     "advanceFamilyBrainAtlasDetail(by",
     "selectLessonFamily(chapter.pointField)",
@@ -1304,7 +1307,31 @@ require("--proof-family-arterial-atlas-flow" in launch and "prepareFamilyArteria
 require("--proof-family-atlas-next-chapter" in launch and "prepareFamilyAtlasNextChapterProof" in launch, "deterministic Family Atlas next-chapter proof route is missing")
 require("--proof-family-atlas-interior-ready" in launch and "prepareFamilyAtlasInteriorReadyProof" in launch, "deterministic Family Atlas interior-ready proof route is missing")
 require("--proof-family-atlas-surface-cue" in launch and "prepareFamilyAtlasSurfaceCueProof" in launch, "deterministic family Atlas surface-cue proof route is missing")
-require("--proof-family-atlas-direct-surface-pick" in launch and "prepareFamilyAtlasDirectSurfacePickProof" in launch and "--proof-family-atlas-direct-surface-pick" in simulator_proof and '"--proof-family-atlas-direct-surface-pick": ("temporal lobe", "whole brain surface")' in proof_image_check, "deterministic direct Family Atlas surface-pick proof route is missing")
+require("--proof-family-atlas-direct-surface-pick" in launch and "prepareFamilyAtlasDirectSurfacePickProof" in launch and "--proof-family-atlas-direct-surface-pick" in simulator_proof and '"--proof-family-atlas-direct-surface-pick": ("selected on brain", "temporal lobe")' in proof_image_check, "deterministic direct Family Atlas surface-pick proof route is missing")
+require(all(token in immersive for token in (
+    "SpatialFamilyAtlasSurfaceSelection",
+    'Label("SELECTED ON BRAIN", systemImage: "viewfinder")',
+    'Label("Explore atlas", systemImage: "arrow.right")',
+    "experience.dismissFamilyBrainAtlas()",
+    "experience.expandFamilyBrainAtlasJourney()",
+    "selectedAtlasSurfaceChapter",
+    "WHOLE-BRAIN CONTEXT",
+)), "direct Family Atlas surface selection still opens a dense or generic dashboard")
+require(
+    "teachingImagingLens != .neuron && !familyBrainAtlasDirectSurfaceSelectionActive" in state,
+    "direct Family Atlas surface selection still leaves a duplicate reference drawer visible",
+)
+require(all(token in state for token in (
+    "familyBrainAtlasDirectSurfaceSelectionActive = true",
+    "selectedPointReferenceExpanded = false",
+    "teachingImagingDrawerVisible = false",
+)), "direct Family Atlas selection still opens a competing miniature automatically")
+require(all(token in scene for token in (
+    "source + simd_normalize(direction) * 0.030",
+    "addAtlasSurfaceTargetHighlight(to: point)",
+    "mesh: .generateSphere(radius: 0.0118)",
+    'halo.name = "family-atlas-selected-surface-halo"',
+)), "direct Family Atlas cue is not visibly separated from the brain surface")
 require("--proof-family-atlas-temporal-cue" in launch and "prepareFamilyAtlasTemporalCueProof" in launch, "deterministic temporal Atlas cue proof route is missing")
 require("--proof-family-atlas-internal-reference" in launch and "prepareFamilyAtlasInternalReferenceProof" in launch, "deterministic internal Atlas reference route is missing")
 require("--proof-family-atlas-internal-plain-words" in launch and "prepareFamilyAtlasInternalPlainWordsProof" in launch, "deterministic internal Atlas plain-language proof route is missing")

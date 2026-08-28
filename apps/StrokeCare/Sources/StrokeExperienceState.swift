@@ -955,6 +955,11 @@ final class StrokeExperienceState: ObservableObject {
     @Published var familyBrainAtlasVisible = false
     @Published private(set) var familyBrainAtlasChapter: StrokeFamilyBrainAtlasChapter = .cortex
     @Published private(set) var familyBrainAtlasDetailIndex = 0
+    /// True only when a family learner pinches the generic brain surface
+    /// itself. That direct spatial action gets a compact region response first;
+    /// the larger ten-chapter Atlas remains available as a deliberate follow-up
+    /// instead of appearing as an unsolicited dashboard.
+    @Published private(set) var familyBrainAtlasDirectSurfaceSelectionActive = false
     /// The chapter whose optional spatial cue the family member explicitly
     /// revealed. It is deliberately separate from the generic selected-point
     /// state so changing chapters cannot make an old marker look relevant to
@@ -1280,6 +1285,30 @@ final class StrokeExperienceState: ObservableObject {
     func toggleFamilyBrainAtlas() {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
         familyBrainAtlasVisible.toggle()
+        familyBrainAtlasDirectSurfaceSelectionActive = false
+        if !familyBrainAtlasVisible {
+            clearPointSelection()
+        }
+    }
+
+    /// Expands a compact, direct surface selection into the optional Atlas
+    /// journey without changing the selected generic region or its reference.
+    func expandFamilyBrainAtlasJourney() {
+        guard audienceLens == .family,
+              spatialPhase == .explanation,
+              familyBrainAtlasVisible
+        else { return }
+        familyBrainAtlasDirectSurfaceSelectionActive = false
+    }
+
+    /// Closes the optional Atlas and its selected teaching relationship as one
+    /// reversible action. This prevents a hidden Atlas from leaving a detached
+    /// point or secondary reference floating in the room.
+    func dismissFamilyBrainAtlas() {
+        guard audienceLens == .family, spatialPhase == .explanation else { return }
+        familyBrainAtlasVisible = false
+        familyBrainAtlasDirectSurfaceSelectionActive = false
+        clearPointSelection()
     }
 
     func selectFamilyBrainAtlasChapter(_ chapter: StrokeFamilyBrainAtlasChapter) {
@@ -1308,6 +1337,12 @@ final class StrokeExperienceState: ObservableObject {
         familyBrainAtlasVisible = true
         selectFamilyBrainAtlasChapter(chapter)
         revealFamilyBrainAtlasModelCue()
+        familyBrainAtlasDirectSurfaceSelectionActive = true
+        // The main brain already owns the localized highlight. Keep the
+        // secondary miniature collapsed until the learner deliberately opens
+        // the full Atlas, otherwise it competes with the compact explanation.
+        selectedPointReferenceExpanded = false
+        teachingImagingDrawerVisible = false
     }
 
     /// Every atlas chapter has one deliberate spatial reveal. Surface chapters
@@ -1356,6 +1391,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func advanceFamilyBrainAtlasChapter(by offset: Int) {
         guard audienceLens == .family, spatialPhase == .explanation else { return }
+        familyBrainAtlasDirectSurfaceSelectionActive = false
         let chapters = StrokeFamilyBrainAtlasChapter.allCases
         guard let current = chapters.firstIndex(of: familyBrainAtlasChapter) else { return }
         let next = (current + offset % chapters.count + chapters.count) % chapters.count
@@ -2531,20 +2567,30 @@ final class StrokeExperienceState: ObservableObject {
     /// Maps a quiet anatomy-attached invitation to one coherent full teaching
     /// structure. This is a generic atlas relationship, never a patient scan.
     func teachingReferenceActionTitle(for label: String? = nil) -> String {
-        switch teachingLens(for: label ?? selectedPointLabel) {
-        case .affectedVessel: "full arterial tree"
-        case .brainSurface: "whole brain surface"
-        case .neuron: "single neuron"
-        case .internalStructures: "internal structures"
-        case .makingRoomPurpose: "layer view"
+        let resolvedLabel = label ?? selectedPointLabel
+        switch resolvedLabel {
+        case "Cerebral cortex · generic atlas focus": return "cortex context"
+        case "Frontal lobe · generic atlas focus": return "frontal-lobe context"
+        case "Parietal lobe · generic atlas focus": return "parietal-lobe context"
+        case "Temporal lobe · generic atlas focus": return "temporal-lobe context"
+        case "Occipital lobe · generic atlas focus": return "occipital-lobe context"
+        default: break
+        }
+        switch teachingLens(for: resolvedLabel) {
+        case .affectedVessel: return "full arterial tree"
+        case .brainSurface: return "whole brain surface"
+        case .neuron: return "single neuron"
+        case .internalStructures: return "internal structures"
+        case .makingRoomPurpose: return "layer view"
         }
     }
 
     /// A single-cell schematic is already legible as a self-contained spatial
-    /// object. Keeping a second reference card beside it would repeat the
-    /// selected-point explanation rather than add a new relationship.
+    /// object. A direct family surface selection also owns its compact local
+    /// explanation. Keeping a second reference card beside either would repeat
+    /// the same relationship rather than add useful context.
     var selectedTeachingReferenceNeedsDrawer: Bool {
-        teachingImagingLens != .neuron
+        teachingImagingLens != .neuron && !familyBrainAtlasDirectSurfaceSelectionActive
     }
 
     /// Explains why the selected invitation owns the complete 3D reference.
@@ -2605,6 +2651,16 @@ final class StrokeExperienceState: ObservableObject {
             "The folded outer surface gives this point its whole-brain context."
         case "Opposite-side context":
             "The other side helps with orientation; it is not a diagnostic comparison."
+        case "Cerebral cortex · generic atlas focus":
+            "See the folded outer layer in the context of the complete brain."
+        case "Frontal lobe · generic atlas focus":
+            "See the front region while the complete brain stays visible for orientation."
+        case "Parietal lobe · generic atlas focus":
+            "See the upper rear region without treating a teaching cue as an exact boundary."
+        case "Temporal lobe · generic atlas focus":
+            "See the side region in whole-brain context; the cue is broad, not a measured border."
+        case "Occipital lobe · generic atlas focus":
+            "See the rear region while the complete brain remains visible for orientation."
         case "Blood supply approaches":
             "Follow the larger artery as blood approaches this teaching route."
         case "Arteries branch":
@@ -3703,6 +3759,7 @@ final class StrokeExperienceState: ObservableObject {
 
     func clearPointSelection() {
         endAccessLayerStudy()
+        familyBrainAtlasDirectSurfaceSelectionActive = false
         selectedPointEntityName = nil
         selectedPointLabel = nil
         selectedPointReferenceExpanded = false

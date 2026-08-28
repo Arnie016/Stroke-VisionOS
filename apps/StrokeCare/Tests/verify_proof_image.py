@@ -161,7 +161,7 @@ ROUTE_TEXT_TOKENS = {
     ),
     "--proof-family-layer-reference": ("generic craniotomy", "hide layer view"),
     "--proof-family-atlas-surface-cue": ("frontal lobe", "whole brain surface"),
-    "--proof-family-atlas-direct-surface-pick": ("temporal lobe", "whole brain surface"),
+    "--proof-family-atlas-direct-surface-pick": ("selected on brain", "temporal lobe"),
     "--proof-family-atlas-temporal-cue": ("temporal lobe", "whole brain surface"),
     "--proof-family-atlas-internal-reference": ("thalamus", "internal structures"),
     "--proof-family-atlas-internal-plain-words": ("thalamus", "plain words"),

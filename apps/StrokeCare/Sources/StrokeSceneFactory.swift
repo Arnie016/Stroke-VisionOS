@@ -193,7 +193,7 @@ enum StrokeSceneFactory {
     /// not claim sulcal precision, functional boundaries, or patient anatomy.
     private static let atlasPointDirections: [SIMD3<Float>] = [
         [-0.58, 0.58, 0.61], [-0.74, 0.35, 0.43],
-        [-0.18, 0.76, 0.44], [-0.48, -0.20, 0.72],
+        [-0.18, 0.76, 0.44], [0.48, -0.20, 0.72],
         [0.68, 0.34, 0.50]
     ]
 
@@ -1158,7 +1158,10 @@ enum StrokeSceneFactory {
             registeredAtlasSourcePoints,
             atlasPointDirections
         ).map { source, direction in
-            source + simd_normalize(direction) * 0.016
+            // Keep the selected invitation visibly separate from the cortex.
+            // The 30 mm lift is still close enough to read as anatomy-owned,
+            // while avoiding the embedded-dot effect on an opaque brain.
+            source + simd_normalize(direction) * 0.030
         }
         let atlasPointField = makePointField(
             name: atlasPointFieldName,
@@ -1167,6 +1170,11 @@ enum StrokeSceneFactory {
             material: careMaterial(opacity: 0.92)
         )
         regionPointAnchor.addChild(atlasPointField)
+        for index in registeredAtlasPoints.indices {
+            if let point = atlasPointField.findEntity(named: "\(atlasPointFieldName)-point-\(index)") {
+                addAtlasSurfaceTargetHighlight(to: point)
+            }
+        }
         let procedurePointField = makePointField(
             name: procedurePointFieldName,
             points: registeredFlowPoints,
@@ -2542,6 +2550,18 @@ enum StrokeSceneFactory {
         highlight.addChild(halo)
 
         point.addChild(highlight)
+    }
+
+    /// A direct surface selection gets one restrained, noninteractive halo.
+    /// The halo follows only the selected Atlas point because inactive Atlas
+    /// points are disabled; it is an orientation affordance, not a lobe border.
+    private static func addAtlasSurfaceTargetHighlight(to point: Entity) {
+        let halo = ModelEntity(
+            mesh: .generateSphere(radius: 0.0118),
+            materials: [careMaterial(opacity: 0.22)]
+        )
+        halo.name = "family-atlas-selected-surface-halo"
+        point.addChild(halo)
     }
 
     /// A world-locked ring under the model. It is the clock: the lesson's single
