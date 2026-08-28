@@ -976,3 +976,32 @@ performance, or wearer comprehension.
 The Simulator process remained listed after capture. XCAT still reported
 `unavailable`, so physical gaze-and-pinch selection, stereo depth, comfort,
 AirPlay legibility, specialist approval, and clinical validity remain open.
+
+## 2026-08-28 20:13 SGT — point-owned family follow-up
+
+Build `0.6 (29)` keeps the family learner's authored follow-up questions and
+explicit clarity response inside the already-selected teaching point. Opening
+the plain-language explanation removes the duplicate technical summary; it does
+not create another floating panel. The two neuron questions and their answers
+are deterministic teaching copy. **Again**, **Unsure**, and **Clear** are
+explicit session-local responses, never an inferred anxiety score.
+
+`python3 Tests/verify_contract.py` returned `STROKE_CARE_CONTRACT=PASS`,
+`git diff --check` passed, and the OS 26.5 visionOS Simulator build for
+`F8B7E8FD-DBF2-4270-A6FD-2BA02CD6F777` ended `** BUILD SUCCEEDED **`.
+A normal local-signing build also succeeded and
+`codesign --verify --deep --strict` passed. Its debug implementation dylib has
+SHA-256 `1e559d48f9f056d70a37c777fd7778f59a40e2d4fd44450ed244185697fc095d`.
+
+`Proof/118-selected-point-family-follow-up-simulator.png`, 3840×2160, passes
+the unchanged image-quality gate and route OCR 4/4 for `plain words`,
+`one neuron`, `ask next`, and `did this make sense`; SHA-256
+`516264fcac534a949b4f8a22df9a865da5a6be75956c8fbc21d8d306e6517ba1`.
+The inspected frame retains one dominant brain, one point-owned card, one
+separate neuron reference, the three-act timeline, and no duplicate family
+question window.
+
+XCAT was unavailable. The exact guarded receipt is
+`Proof/xcat/20260828-195020/BLOCKED.md`. This remains Simulator composition and
+interaction-state evidence only; it does not prove physical targetability,
+stereo placement, wearer comprehension, clinical acceptance, or device audio.

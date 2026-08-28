@@ -91,6 +91,15 @@ clinical validity.
 
 ## Latest verified Simulator composition
 
+Build `0.6 (29)` keeps the family learner's next questions inside the selected
+teaching point. After **Plain words** opens, the repeated technical summary
+steps aside, two authored follow-ups appear in the same card, and the learner
+can explicitly answer **Again**, **Unsure**, or **Clear**. This is session-local
+self-reporting, not inferred anxiety or a patient measurement. The whole brain
+remains central and the neuron remains a separate 3D teaching reference.
+
+![Selected family point with authored follow-ups and explicit clarity](Proof/118-selected-point-family-follow-up-simulator.png)
+
 Build `0.6 (29)` binds the left presenter speaking aid to all six timeline
 checkpoints. Each checkpoint has its own concise technical vocabulary and one
 authored plain-language expansion; the first expansion appears automatically,

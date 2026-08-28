@@ -3260,6 +3260,14 @@ final class StrokeExperienceState: ObservableObject {
             return ["Start with one glowing point"]
         }
 
+        if selectedPointLabel == "Single neuron · schematic reference" {
+            return [
+                "How can one cell connect with many others?",
+                "What do the teaching colors mean?",
+                "See what this model cannot conclude"
+            ]
+        }
+
         if selectedPointLabel == "Generic craniotomy teaching story" {
             return [
                 "Unfold the teaching layers",
@@ -3295,6 +3303,12 @@ final class StrokeExperienceState: ObservableObject {
         }
         if lowercasedQuestion.contains("access view generic") || lowercasedQuestion.contains("not simulated") {
             return "The access story separates generic layers to support explanation. It is not a site plan, operative rehearsal, or treatment recommendation."
+        }
+        if lowercasedQuestion.contains("one cell connect") {
+            return "A neuron can receive messages through many branches and pass a signal along one longer fiber. Networks form when many cells repeat those connections."
+        }
+        if lowercasedQuestion.contains("teaching colors") {
+            return "The colors separate the receiving branches from the outgoing fiber. They are a teaching key, not recorded electrical activity or a patient measurement."
         }
         return nil
     }

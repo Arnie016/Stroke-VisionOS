@@ -6409,13 +6409,13 @@ private struct SpatialControlBubbleLabel: View {
 private struct StrokeIntentionAnnotation: View {
     @EnvironmentObject private var experience: StrokeExperienceState
 
-    /// The selected neuron already has a visible 3D counterpart. Once its
-    /// learner explicitly opens the concise fallback, repeating the technical
-    /// summary above it adds words without adding a relationship.
-    private var isNeuronPlainWordsExpanded: Bool {
+    /// Once the learner explicitly opens the concise fallback, repeating the
+    /// technical summary above it adds words without adding a relationship.
+    /// The selected 3D object stays visible, so this remains spatial rather
+    /// than becoming a second, denser text card.
+    private var isFamilyPlainWordsExpanded: Bool {
         experience.audienceLens == .family &&
-            experience.familyNarrationTranscriptVisible &&
-            experience.selectedPointLabel == "Single neuron · schematic reference"
+            experience.familyNarrationTranscriptVisible
     }
 
     var body: some View {
@@ -6459,7 +6459,7 @@ private struct StrokeIntentionAnnotation: View {
                     .tracking(0.35)
                     .foregroundStyle(annotationTint)
 
-                if !isNeuronPlainWordsExpanded {
+                if !isFamilyPlainWordsExpanded {
                     Text(annotationMeaning)
                         .font(.callout.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.92))
@@ -6579,6 +6579,12 @@ private struct StrokeIntentionAnnotation: View {
                     .tint(annotationTint)
                     .accessibilityHint("Shows or hides the one generic 3D teaching reference related to this point")
                 }
+
+                if experience.audienceLens == .family,
+                   experience.familyNarrationTranscriptVisible,
+                   experience.selectedPointEntityName != nil {
+                    familyFollowUpControls
+                }
             }
         }
         .padding(.vertical, 7)
@@ -6588,6 +6594,79 @@ private struct StrokeIntentionAnnotation: View {
         .shadow(color: .black.opacity(0.72), radius: 8, y: 2)
         .frame(maxWidth: 310, alignment: .leading)
         .accessibilityElement(children: .contain)
+    }
+
+    /// Two authored follow-ups are enough to preserve curiosity without
+    /// rebuilding the hidden family rail inside the point disclosure. The
+    /// answer replaces itself in this same card, and clarity is always an
+    /// explicit family response rather than an inferred anxiety signal.
+    private var familyFollowUpControls: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Divider().overlay(Color.white.opacity(0.12))
+
+            Text("ASK NEXT")
+                .font(.caption2.weight(.black))
+                .tracking(0.7)
+                .foregroundStyle(annotationTint)
+
+            ForEach(Array(experience.familyQuestionSuggestions.prefix(2)), id: \.self) { question in
+                Button {
+                    experience.selectFamilyQuestion(question)
+                } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.caption.weight(.bold))
+                        Text(question)
+                            .font(.caption.weight(.semibold))
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(2)
+                        Spacer(minLength: 0)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                }
+                .buttonStyle(.bordered)
+                .tint(annotationTint)
+                .accessibilityHint("Shows one authored follow-up or moves to its matching teaching point")
+            }
+
+            if let answer = experience.selectedFamilyQuestionAnswer {
+                Text(answer)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.78))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
+                    .accessibilityLabel("Plain-language answer: \(answer)")
+            }
+
+            Text("DID THIS MAKE SENSE?")
+                .font(.caption2.weight(.black))
+                .tracking(0.65)
+                .foregroundStyle(.white.opacity(0.58))
+
+            HStack(spacing: 6) {
+                clarityButton("Again", value: 0)
+                clarityButton("Unsure", value: 1)
+                clarityButton("Clear", value: 2)
+            }
+        }
+        .padding(.top, 2)
+    }
+
+    private func clarityButton(_ title: String, value: Double) -> some View {
+        let isSelected = experience.familyClarityWasSet && experience.familyClarityCheck == value
+        return Button {
+            experience.setFamilyClarityCheck(value)
+        } label: {
+            Text(title)
+                .font(.caption2.weight(.bold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.78)
+                .frame(maxWidth: .infinity, minHeight: 44)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(isSelected ? annotationTint : Color.white.opacity(0.14))
+        .accessibilityLabel("Explanation clarity: \(title)")
+        .accessibilityValue(isSelected ? "Selected" : "Not selected")
     }
 
     private var annotationTitle: String {

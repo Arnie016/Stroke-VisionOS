@@ -1014,6 +1014,22 @@ require(all(token in state for token in (
     "selectedFamilyQuestion",
     "selectFamilyQuestion",
 )), "explicit session-local family clarity check or finite question selection is missing")
+require(all(token in state for token in (
+    '"How can one cell connect with many others?"',
+    '"What do the teaching colors mean?"',
+    'lowercasedQuestion.contains("one cell connect")',
+    'lowercasedQuestion.contains("teaching colors")',
+    "They are a teaching key, not recorded electrical activity or a patient measurement.",
+)), "the neuron lesson lacks authored, bounded family follow-up answers")
+require(all(token in immersive for token in (
+    "familyFollowUpControls",
+    'Text("ASK NEXT")',
+    'Text("DID THIS MAKE SENSE?")',
+    'clarityButton("Again", value: 0)',
+    'clarityButton("Unsure", value: 1)',
+    'clarityButton("Clear", value: 2)',
+    '.frame(maxWidth: .infinity, minHeight: 44',
+)), "selected family lessons do not keep authored follow-ups and explicit clarity inside one gaze-sized card")
 require(all(token in immersive for token in (
     '"BEGIN HERE"',
     '"EXPLORE NEXT"',
@@ -1399,7 +1415,8 @@ require(
     "--proof-family-neuron-plain-words" in launch
     and "prepareFamilyNeuronPlainWordsProof" in launch
     and "--proof-family-neuron-plain-words" in simulator_proof
-    and '"--proof-family-neuron-plain-words": ("plain words", "one neuron")' in proof_image_check,
+    and '"ask next"' in proof_image_check
+    and '"did this make sense"' in proof_image_check,
     "deterministic plain-words neuron proof route is missing",
 )
 require("atlasBeat(\"1\", \"POSITION\"" in immersive and "atlasBeat(\"2\", \"MEANING\"" in immersive and "atlasBeat(\"3\", \"ASK\"" in immersive, "family Brain Atlas lacks a visible three-beat explanation rhythm")
