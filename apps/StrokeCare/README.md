@@ -55,10 +55,10 @@ made from actual visionOS Simulator captures of the current experience.
 
 ### Six-step craniotomy teaching conversation
 
-| Presenter checkpoints | Protective-covering teaching moment |
-| --- | --- |
-| ![Six revisitable presenter checkpoints](Proof/73-clinician-six-beat-timeline-simulator.png) | ![Non-graphic protective-covering teaching composition](Proof/89-clinician-protective-covering-build23-simulator.png) |
-| The presenter can revisit context, access, protective covering, purpose, checks, and closure. | A reversible, generic explanation of the protective covering—not an operative simulator or a patient-specific procedure. |
+| Direct layer study | Presenter checkpoints | Protective-covering teaching moment |
+| --- | --- | --- |
+| ![Direct clinician craniotomy layer study](Proof/110-direct-craniotomy-layer-study-simulator.png) | ![Six revisitable presenter checkpoints](Proof/73-clinician-six-beat-timeline-simulator.png) | ![Non-graphic protective-covering teaching composition](Proof/89-clinician-protective-covering-build23-simulator.png) |
+| Pinching the craniotomy point opens the registered layer study directly: the aperture boundary stays faint while the independently movable bone flap and dura remain legible. | The presenter can revisit context, access, protective covering, purpose, checks, and closure. | A reversible, generic explanation of the protective covering—not an operative simulator or a patient-specific procedure. |
 
 | Make-space purpose | Scholar skull review |
 | --- | --- |
