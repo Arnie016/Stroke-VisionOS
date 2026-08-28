@@ -274,7 +274,6 @@ struct StrokeImmersiveView: View {
     private let teachingTimelineID = "spatial-teaching-timeline"
     private let viewpointControlID = "spatial-viewpoint-control"
     private let roleMicroCuesID = "spatial-role-micro-cues"
-    private let exteriorOrientationID = "spatial-exterior-orientation"
     private let familyBrainAtlasID = "spatial-family-brain-atlas"
     private let teachingImagingDrawerID = "spatial-teaching-imaging-drawer"
     private let spatialImagingPlateID = "spatial-clinician-imaging-plate"
@@ -574,7 +573,7 @@ struct StrokeImmersiveView: View {
                         cabinetLabelID, dockLabelID, hierarchySpineID,
                         speechFactID, armFactID, timeFactID, questionFactID, caseReviewActionsID,
                         caseHistoryTimelineID,
-                        teachingTimelineID, viewpointControlID, roleMicroCuesID, exteriorOrientationID,
+                        teachingTimelineID, viewpointControlID, roleMicroCuesID,
                         familyBrainAtlasID, teachingImagingDrawerID,
                         spatialImagingPlateID, spatialImagingComparisonPlateID,
                         spatialAnnotationIDs[0], spatialAnnotationIDs[1], spatialAnnotationIDs[2],
@@ -933,11 +932,6 @@ struct StrokeImmersiveView: View {
                         SpatialRoleMicroCues()
                             .environmentObject(experience)
                             .frame(width: 520)
-                    }
-                    Attachment(id: exteriorOrientationID) {
-                        SpatialExteriorOrientationCue()
-                            .environmentObject(experience)
-                            .frame(width: 310)
                     }
                     Attachment(id: familyBrainAtlasID) {
                         Group {
@@ -1377,13 +1371,13 @@ struct StrokeImmersiveView: View {
             // presenter rail. The larger 0.86-scale field makes authored
             // questions and the explicit clarity check legible in a shared
             // conversation while the anatomy remains central and dominant.
-            (roleMicroCuesID, isFamily ? [-0.43, 1.66, -0.90] : [-0.59, 1.67, -0.94],
-             isFamily ? 0.86 : 0.94 * Float(experience.presenterPanelScale)),
-            // The current experience is an exterior, whole-brain exhibit.
-            // State that plainly before a wearer tries to interpret a vessel
-            // reference as an interior fly-through. The separate journey is
-            // only named when room-scale magnification has made it available.
-            (exteriorOrientationID, isFamily ? [0, 2.02, -0.96] : [-0.46, 1.92, -0.94], isFamily ? 0.78 : 0.74)
+            // The family entry cue sits beside the brain and now contains the
+            // exterior-orientation context itself. This replaces the old
+            // second card at ceiling height without losing the boundary
+            // between the whole-brain exhibit and the optional interior
+            // journey.
+            (roleMicroCuesID, isFamily ? [-0.36, 1.62, -0.88] : [-0.59, 1.67, -0.94],
+             isFamily ? 0.86 : 0.94 * Float(experience.presenterPanelScale))
         ]
 
         let familyPointDisclosureActive = isFamily && experience.selectedPointEntityName != nil
@@ -1397,18 +1391,9 @@ struct StrokeImmersiveView: View {
             // underneath it. Closing the point restores the chooser.
             let familyLeftFieldOccupied = isFamily &&
                 (experience.familyBrainAtlasVisible || familyPointDisclosureActive)
-            // The exterior/interior distinction is a one-time family
-            // orientation cue. A clinician already has the labelled
-            // presenter rail and current-act guide, so keeping this card high
-            // above the model creates a detached floating object rather than
-            // useful context. It also yields once the family has selected a
-            // point or opened the Atlas.
-            let exteriorOrientationRedundant = id == exteriorOrientationID &&
-                (!isFamily || familyLeftFieldOccupied)
             attachment.isEnabled = visible &&
                 !imageWorkingMode &&
-                !(id == roleMicroCuesID && familyLeftFieldOccupied) &&
-                !exteriorOrientationRedundant
+                !(id == roleMicroCuesID && familyLeftFieldOccupied)
             attachment.components.set(BillboardComponent())
         }
 
@@ -6176,54 +6161,6 @@ private struct SpatialFamilyBrainAtlas: View {
     }
 }
 
-/// A glanceable location cue that prevents the exterior exhibit from being
-/// confused with the separately installed vessel fly-through. It is passive:
-/// the brain stays the primary interaction surface, and the handoff remains
-/// the explicit Enter the Brain control once room scale is available.
-private struct SpatialExteriorOrientationCue: View {
-    @EnvironmentObject private var experience: StrokeExperienceState
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 9) {
-            Image(systemName: "view.3d")
-                .font(.caption.weight(.black))
-                .foregroundStyle(.mint)
-                .frame(width: 28, height: 28)
-                .background(.mint.opacity(0.14), in: Circle())
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("OUTSIDE THE BRAIN")
-                    .font(.caption2.weight(.black))
-                    .tracking(0.9)
-                    .foregroundStyle(.mint)
-
-                Text("Generic whole-brain anatomy · vessel paths and teaching points")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.76))
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if experience.isInteriorPortalAvailable {
-                    Text("Room scale ready · Enter the Brain opens a separate guided vessel journey")
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(.orange.opacity(0.92))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 9)
-        .background(.black.opacity(0.58), in: RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(.mint.opacity(0.26)))
-        .shadow(color: .black.opacity(0.42), radius: 8, y: 3)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(
-            experience.isInteriorPortalAvailable
-                ? "Outside the brain. You are viewing generic whole-brain anatomy. Room scale is ready; Enter the Brain opens a separate guided vessel journey."
-                : "Outside the brain. You are viewing generic whole-brain anatomy with vessel paths and teaching points."
-        )
-    }
-}
-
 private struct SpatialRoleMicroCues: View {
     @EnvironmentObject private var experience: StrokeExperienceState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -6241,6 +6178,42 @@ private struct SpatialRoleMicroCues: View {
             .foregroundStyle(accent)
 
             if experience.audienceLens == .family {
+                if experience.selectedPointEntityName == nil {
+                    HStack(alignment: .top, spacing: 9) {
+                        Image(systemName: "view.3d")
+                            .font(.caption.weight(.black))
+                            .foregroundStyle(.mint)
+                            .frame(width: 28, height: 28)
+                            .background(.mint.opacity(0.14), in: Circle())
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("OUTSIDE THE BRAIN")
+                                .font(.caption2.weight(.black))
+                                .tracking(0.9)
+                                .foregroundStyle(.mint)
+
+                            Text("Generic whole-brain teaching anatomy")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.78))
+
+                            if experience.isInteriorPortalAvailable {
+                                Text("Room scale is ready. Enter the Brain opens the separate guided journey.")
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(.orange.opacity(0.92))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(
+                        experience.isInteriorPortalAvailable
+                            ? "Outside the brain. Generic whole-brain teaching anatomy. Room scale is ready; Enter the Brain opens the separate guided journey."
+                            : "Outside the brain. Generic whole-brain teaching anatomy."
+                    )
+
+                    Divider().overlay(Color.white.opacity(0.12))
+                }
+
                 ForEach(Array(experience.familyQuestionSuggestions.enumerated()), id: \.offset) { index, question in
                     let isSelected = experience.selectedFamilyQuestion == question
                     let opensSpatialReference = experience.familyExploreDestination(for: question) != nil
@@ -6355,10 +6328,30 @@ private struct SpatialRoleMicroCues: View {
         .foregroundStyle(.white.opacity(0.92))
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.10)))
+        .background(
+            experience.audienceLens == .family
+                ? AnyShapeStyle(Color.black.opacity(0.66))
+                : AnyShapeStyle(.thinMaterial),
+            in: RoundedRectangle(cornerRadius: 18)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(
+                    experience.audienceLens == .family
+                        ? accent.opacity(0.30)
+                        : Color.white.opacity(0.10)
+                )
+        )
+        .shadow(
+            color: experience.audienceLens == .family ? .black.opacity(0.42) : .clear,
+            radius: 12,
+            y: 5
+        )
         .frame(width: experience.audienceLens == .family ? 360 : 410)
-        .frame(minHeight: experience.audienceLens == .clinician ? 300 : 336, alignment: .topLeading)
+        .frame(
+            minHeight: experience.audienceLens == .clinician ? 300 : 220,
+            alignment: .topLeading
+        )
         .accessibilityElement(children: .contain)
     }
 

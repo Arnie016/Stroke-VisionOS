@@ -143,7 +143,12 @@ swelling. All three cues are derived from the loaded registered-v2 brain/clot
 bounds, remain qualitative, and disappear outside Pressure / Make space. The
 prototype-v1 edema, flap, and patch meshes remain quarantined.
 
-![Family Pressure story in visionOS Simulator](Proof/79-family-pressure-story-simulator.png)
+The family Pressure entry now combines location and first action in one
+brain-adjacent cue. `OUTSIDE THE BRAIN` identifies the generic whole-brain
+teaching model, while `BEGIN HERE` leads to one glowing point. The older
+ceiling-height orientation card has been removed.
+
+![Single family Pressure entry cue in visionOS Simulator](Proof/112-single-family-entry-cue-simulator.png)
 
 ![Quiet doctor-presenter Pressure story in visionOS Simulator](Proof/111-quiet-clinician-pressure-story-simulator.png)
 

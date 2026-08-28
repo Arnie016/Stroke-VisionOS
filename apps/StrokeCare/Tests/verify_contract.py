@@ -309,7 +309,7 @@ require(
     "a fresh role or case-story entry can retain a stale clinical-evidence window",
 )
 require("audienceLens == .family, familyClarityWasSet" in state and "Let’s slow down." in state and "Pause, ask a question" in state, "family self-reported clarity does not adapt the visible teaching copy")
-require("experience.audienceLens == .family ? 360 : 410" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 336" in immersive, "family and clinician conversation rails lack their readable spatial footprints")
+require("experience.audienceLens == .family ? 360 : 410" in immersive and "minHeight: experience.audienceLens == .clinician ? 300 : 220" in immersive, "family entry cue and clinician conversation rail lack their readable spatial footprints")
 require("var selectedFamilyQuestionAnswer: String?" in state and "Only a boundary action opens a clarification card" in state and "does not measure flow, identify a diagnosis, or predict an outcome" in state, "family exploration boundary does not produce a bounded, authored clarification")
 require("if let answer = experience.selectedFamilyQuestionAnswer" in immersive and "WHY THIS VIEW MATTERS" in immersive and "Plain-language answer:" in immersive, "family rail does not surface the selected exploration's plain-language answer")
 require("--proof-case-unfold" in launch and "prepareCaseHistoryWebProof" in launch, "current room-scale case-unfold proof route is missing")
@@ -1173,10 +1173,12 @@ require(all(token in immersive for token in (
     "id == roleMicroCuesID && familyLeftFieldOccupied",
 )), "family Explore Next remains stacked behind an active point explanation")
 require(all(token in immersive for token in (
-    "let exteriorOrientationRedundant = id == exteriorOrientationID",
-    "(!isFamily || familyLeftFieldOccupied)",
-    "!exteriorOrientationRedundant",
-)), "the exterior orientation card still floats above clinician or active family teaching scenes")
+    'Text("OUTSIDE THE BRAIN")',
+    'Text("Generic whole-brain teaching anatomy")',
+    "experience.selectedPointEntityName == nil",
+    "isFamily ? [-0.36, 1.62, -0.88]",
+)) and "spatial-exterior-orientation" not in immersive,
+"family entry still splits orientation and first action across detached spatial cards")
 require(all(token in immersive for token in (
     "StrokeSceneReadinessOverlay",
     "Preparing the 3D teaching model",
