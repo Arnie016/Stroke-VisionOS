@@ -46,6 +46,13 @@ made from actual visionOS Simulator captures of the current experience.
 | ![Clinician internal layer study](Proof/65-layer-study-internal-anatomy-simulator.png) | ![Registered flow overlay](Proof/75-registered-flow-overlay-simulator.png) |
 | Deep structures are a clinician teaching layer, not a diagnostic result. | Arterial context stays tied to the registered teaching assembly. |
 
+### Open one focused reference workspace
+
+| Spatial medication exhibit | Single Guides workspace |
+| --- | --- |
+| ![One selected medication teaching prop with recessed alternatives](Proof/109-spatial-medication-carousel-simulator.png) | ![One centred Guides workspace](Proof/104-singleton-guides-workspace-simulator.png) |
+| One generic teaching prop becomes the spatial focus while three alternatives remain available in depth. No dose, product match, prescription or patient recommendation is shown. | Reopening Guides raises the same focused workspace instead of leaving duplicate panels around the room. |
+
 ### Six-step craniotomy teaching conversation
 
 | Presenter checkpoints | Protective-covering teaching moment |

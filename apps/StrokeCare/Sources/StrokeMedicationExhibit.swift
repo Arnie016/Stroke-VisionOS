@@ -9,15 +9,24 @@ enum StrokeMedicationExhibit {
     static let rootName = "spatial-medication-teaching-exhibits"
     static let ids = ["antiplatelets", "anticoagulants", "thrombolysis", "prevention"]
 
+    /// The selected prop owns the teaching plane. The other three remain
+    /// available as a quiet, recessed spatial carousel instead of competing
+    /// with it in a flat row.
+    private static let selectedPosition: SIMD3<Float> = [0, 1.655, -0.57]
+    private static let carouselPositions: [SIMD3<Float>] = [
+        [-0.245, 1.64, -0.69],
+        [0.19, 1.77, -0.73],
+        [0.245, 1.64, -0.69]
+    ]
+
     static func makeRoot() -> Entity {
         let root = Entity()
         root.name = rootName
         root.isEnabled = false
-        let x: [Float] = [-0.21, -0.07, 0.07, 0.21]
-        for (index, id) in ids.enumerated() {
+        for id in ids {
             let exhibit = makeExhibit(id)
             exhibit.name = "medicine-exhibit-\(id)"
-            exhibit.position = [x[index], 1.69, -0.61]
+            exhibit.position = selectedPosition
             exhibit.components.set(StrokeMedicineExhibitTargetComponent(medicineID: id))
             exhibit.components.set(CollisionComponent(shapes: [.generateBox(size: [0.18, 0.21, 0.08])]))
             exhibit.components.set(InputTargetComponent())
@@ -29,12 +38,19 @@ enum StrokeMedicationExhibit {
 
     static func update(root: Entity, selectedID: String, yaw: Float, visible: Bool) {
         root.isEnabled = visible
-        for id in ids {
+        let selectedIndex = ids.firstIndex(of: selectedID) ?? 0
+        var carouselSlot = 0
+        for (index, id) in ids.enumerated() {
             guard let exhibit = root.findEntity(named: "medicine-exhibit-\(id)") else { continue }
-            let selected = id == selectedID
-            exhibit.scale = selected ? [0.68, 0.68, 0.68] : [0.56, 0.56, 0.56]
+            let selected = index == selectedIndex
+            if selected {
+                exhibit.position = selectedPosition
+            } else {
+                exhibit.position = carouselPositions[carouselSlot]
+                carouselSlot += 1
+            }
+            exhibit.scale = selected ? [0.88, 0.88, 0.88] : [0.39, 0.39, 0.39]
             exhibit.orientation = simd_quatf(angle: selected ? yaw : 0, axis: [0, 1, 0])
-            exhibit.findEntity(named: "selection-rim")?.isEnabled = selected
         }
     }
 
@@ -81,8 +97,6 @@ enum StrokeMedicationExhibit {
             label.position.z = 0.045
             root.addChild(bottle); root.addChild(cap); root.addChild(label)
         }
-        let rim = ModelEntity(mesh: .generateBox(size: [0.18, 0.006, 0.075], cornerRadius: 0.003), materials: [mint])
-        rim.name = "selection-rim"; rim.position.y = -0.13; rim.isEnabled = false; root.addChild(rim)
         return root
     }
 }

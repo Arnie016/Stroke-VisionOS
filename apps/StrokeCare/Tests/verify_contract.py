@@ -2420,10 +2420,15 @@ require(all(token in reference_workspace for token in (
     "case .settings: settings", "case .guides: guides", "case .medications: medications",
     "NHS medicine reference", "no dose or prescribing", "not actual medicine packaging",
     "experience.presenterPanelScale", "experience.selectDetailLevel(level)",
+    "Previous medication exhibit", "Next medication exhibit", "selectAdjacentMedicine",
 )), "reference workspace lacks functional content, settings, or Back")
 gallery_model = (ROOT / "Sources/StrokeImagingGalleryModel.swift").read_text()
 gallery_view = (ROOT / "Sources/StrokeImagingGalleryView.swift").read_text()
 medicine_exhibit = (ROOT / "Sources/StrokeMedicationExhibit.swift").read_text()
+require(all(token in medicine_exhibit for token in (
+    "selectedPosition", "carouselPositions", "carouselSlot",
+    "selected ? [0.88, 0.88, 0.88] : [0.39, 0.39, 0.39]",
+)), "medication props do not preserve a selected hero and recessed spatial carousel")
 require(all(token in gallery_model for token in (
     "case two = 2, three = 3, four = 4", "maximumImageCount = 40", "maximumBytes = 64",
     "guard pendingImport == request", "mutating func clearLocalImages()", "mutating func appendStroke",
@@ -2462,7 +2467,7 @@ require(all(route in launch and route in simulator_proof and route in proof_imag
 )), "gallery placement lacks bundled, local and Back proof routes")
 require(all(token in medicine_exhibit for token in (
     "StrokeMedicineExhibitTargetComponent", "CollisionComponent", "InputTargetComponent", "HoverEffectComponent",
-    "selected ? yaw : 0", "selection-rim",
+    "selected ? yaw : 0", "selectedPosition", "carouselPositions",
 )), "medications lack selectable real spatial geometry and rotation state")
 require(all(route in launch and route in simulator_proof and route in proof_image_check for route in (
     "--proof-imaging-gallery", "--proof-imaging-gallery-nine", "--proof-imaging-gallery-sixteen",

@@ -38,7 +38,7 @@ struct StrokeReferenceWorkspaceView: View {
             }
             .padding(30)
             .frame(width: workspace == .imagingGallery ? 1_140 : 1_000,
-                   height: workspace == .imagingGallery ? 780 : (workspace == .medications ? 760 : 520),
+                   height: workspace == .imagingGallery ? 780 : (workspace == .medications ? 700 : 520),
                    alignment: .topLeading)
             .background(Color(white: 0.12), in: RoundedRectangle(cornerRadius: 30))
             .overlay(RoundedRectangle(cornerRadius: 30).stroke(.mint.opacity(0.25)))
@@ -147,29 +147,68 @@ struct StrokeReferenceWorkspaceView: View {
     private var medications: some View {
         let topic = StrokeMedicineTopic.library.first(where: { $0.id == experience.selectedMedicineID })
             ?? StrokeMedicineTopic.library[0]
-        return VStack(alignment: .leading, spacing: 18) {
-            Text("Select an exhibit. Pinch-drag to turn it.")
-                .font(.callout).foregroundStyle(.white.opacity(0.65))
-            // The four RealityKit objects occupy this real depth interval in
-            // front of the attachment. This is not an image or embedded video.
-            Spacer().frame(height: 210)
-            HStack(spacing: 12) {
-                ForEach(StrokeMedicineTopic.library) { item in
-                    Button {
-                        experience.selectSpatialMedicine(item.id)
-                    } label: {
-                        Label(item.title, systemImage: item.symbol)
-                            .font(.callout.weight(.semibold))
-                            .frame(maxWidth: .infinity, minHeight: 56)
-                            .padding(.horizontal, 8)
-                            .background(topic.id == item.id ? Color.mint.opacity(0.22) : .white.opacity(0.07),
-                                        in: RoundedRectangle(cornerRadius: 14))
-                    }.buttonStyle(.plain).hoverEffect(.highlight)
+        let selectedIndex = StrokeMedicineTopic.library.firstIndex(where: { $0.id == topic.id }) ?? 0
+        return VStack(alignment: .leading, spacing: 16) {
+            // The RealityKit props occupy this real depth interval in front of
+            // the attachment. One selected object is intentionally dominant;
+            // the remaining three are recessed, selectable alternatives.
+            Spacer().frame(height: 255)
+            HStack(spacing: 18) {
+                Button {
+                    selectAdjacentMedicine(from: selectedIndex, offset: -1)
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.title3.weight(.bold))
+                        .frame(width: 58, height: 58)
                 }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Previous medication exhibit")
+
+                VStack(spacing: 6) {
+                    HStack {
+                        Label(topic.title, systemImage: topic.symbol)
+                            .font(.title2.weight(.semibold))
+                        Spacer()
+                        Text("\(selectedIndex + 1) OF \(StrokeMedicineTopic.library.count)")
+                            .font(.caption.monospacedDigit().weight(.bold))
+                            .foregroundStyle(.mint)
+                    }
+                    HStack(spacing: 9) {
+                        ForEach(Array(StrokeMedicineTopic.library.enumerated()), id: \.element.id) { index, item in
+                            Button {
+                                experience.selectSpatialMedicine(item.id)
+                            } label: {
+                                Circle()
+                                    .fill(index == selectedIndex ? Color.mint : Color.white.opacity(0.28))
+                                    .frame(width: index == selectedIndex ? 12 : 9,
+                                           height: index == selectedIndex ? 12 : 9)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .hoverEffect(.highlight)
+                            .accessibilityLabel(item.title)
+                            .accessibilityAddTraits(index == selectedIndex ? [.isSelected] : [])
+                        }
+                    }
+                    Text("Pinch a prop to select · drag to turn")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.58))
+                }
+                .frame(maxWidth: .infinity)
+
+                Button {
+                    selectAdjacentMedicine(from: selectedIndex, offset: 1)
+                } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.title3.weight(.bold))
+                        .frame(width: 58, height: 58)
+                }
+                .buttonStyle(.borderedProminent).tint(.mint)
+                .accessibilityLabel("Next medication exhibit")
             }
             HStack(alignment: .top, spacing: 30) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(topic.title).font(.title2.weight(.semibold))
                     Text(topic.explanation).font(.body)
                     Text(topic.caution).font(.callout).foregroundStyle(.orange.opacity(0.9))
                 }.frame(maxWidth: .infinity, alignment: .leading)
@@ -194,6 +233,13 @@ struct StrokeReferenceWorkspaceView: View {
             Text("Generic teaching props · no dose or prescribing · not actual medicine packaging")
                 .font(.caption).foregroundStyle(.white.opacity(0.60))
         }
+    }
+
+    private func selectAdjacentMedicine(from index: Int, offset: Int) {
+        let topics = StrokeMedicineTopic.library
+        guard !topics.isEmpty else { return }
+        let nextIndex = (index + offset + topics.count) % topics.count
+        experience.selectSpatialMedicine(topics[nextIndex].id)
     }
 }
 

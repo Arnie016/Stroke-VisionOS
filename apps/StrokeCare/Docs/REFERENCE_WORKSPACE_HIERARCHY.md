@@ -1,6 +1,6 @@
 # Reference workspace hierarchy
 
-Updated: 26 August 2026. Local prototype, clinician review pending.
+Updated: 28 August 2026. Local prototype, clinician review pending.
 
 ## One destination at a time
 
@@ -14,7 +14,7 @@ Guides is the single normal entry for published evidence.
 | --- | --- | --- |
 | Imaging | Large image, CT/MRI switch, study deck, import, comparison and image-surface annotation | Back to the brain and timeline |
 | Imaging gallery | 2×2, 3×3 or 4×4 comparison, modality filters, pages, multiple local images and per-image marks | Gallery from detail, or Place beside brain with the selected image |
-| Medications | Four selectable 3D teaching props, rotation, delivery context, cautions and named NHS references | Back to the same explanation |
+| Medications | One selected 3D teaching prop, three recessed alternatives, direct selection, rotation, delivery context, cautions and named NHS references | Back to the same explanation |
 | Guides | One source list and one selected source, with support and limitation | Back to the same explanation |
 | Settings | Visual detail, background, sound and explanation-panel size | Back to the same explanation |
 
@@ -51,8 +51,10 @@ eligibility rule, individualized prescription, treatment ranking or outcome
 claim. The medication exhibits are authored low-poly RealityKit geometry,
 not exact branded products or a validated pharmacy training simulator. They
 show a tablet blister, a generic delivery-form grouping, an IV bag and a
-medicine bottle. Pinch selects the matching topic; pinch-drag turns the
-selected object. Turn and Reset provide button fallbacks. Hospital stock,
+medicine bottle. The selected prop sits forward as the teaching focus while
+the other three remain smaller and recessed. Pinch selects a prop; pinch-drag
+turns the selected object. Previous, Next, Turn and Reset provide button
+fallbacks with stable acquisition areas. Hospital stock,
 local formularies, procurement and actual product appearance are not connected.
 No new scan assets were added in the gallery pass.
 
